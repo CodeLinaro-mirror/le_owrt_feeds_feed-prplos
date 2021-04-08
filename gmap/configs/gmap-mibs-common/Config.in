@@ -1,0 +1,16 @@
+config PACKAGE_gmap-mibs
+    tristate
+    select SAH_SERVICES_GMAP-MIBS
+
+if PACKAGE_gmap-mibs
+
+menu "Select gmap-mibs build options"
+    depends on PACKAGE_gmap-mibs
+
+config SAH_SERVICES_GMAP-MIBS
+    bool "Include gmap mibs"
+    default y
+
+endmenu
+
+endif

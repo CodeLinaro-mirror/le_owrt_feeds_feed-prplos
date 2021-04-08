@@ -1,0 +1,16 @@
+config PACKAGE_gmap-mod-self
+    tristate
+    select SAH_SERVICES_GMAP-SELF
+
+if PACKAGE_gmap-mod-self
+
+menu "Select gmap-mod-self build options"
+    depends on PACKAGE_gmap-mod-self
+
+config SAH_SERVICES_GMAP-SELF
+    bool "Build GMAP SELF"
+    default y
+
+endmenu
+
+endif

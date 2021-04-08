@@ -1,0 +1,16 @@
+config PACKAGE_libgmap-client
+    tristate
+    select SAH_LIB_GMAP-CLIENT
+
+if PACKAGE_libgmap-client
+
+menu "Select libgmap-client build options"
+    depends on PACKAGE_libgmap-client
+
+config SAH_LIB_GMAP-CLIENT
+    bool "Build libgmap-client"
+    default y
+
+endmenu
+
+endif
