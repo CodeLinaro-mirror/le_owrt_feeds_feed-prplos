@@ -14,14 +14,13 @@ PKG_LICENSE_FILES:=LICENSE
 
 PKG_RELEASE:=1
 
-
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=gmap
   SUBMENU:=Libraries
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=git@gitlab.com:soft.at.home/gmap/libraries/libgmap-client
+  URL:=https://gitlab.com/soft.at.home/gmap/libraries/libgmap-client
   DEPENDS += +libamxc
   DEPENDS += +libamxp
   DEPENDS += +libamxb
