@@ -16,7 +16,6 @@ COMPONENT:=gmap-server
 
 PKG_RELEASE:=1
 
-
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
 	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S71$(COMPONENT)
@@ -37,7 +36,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=gmap
   SUBMENU:=Applications
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=git@gitlab.com:soft.at.home/gmap/applications/gmap-server
+  URL:=https://gitlab.com/soft.at.home/gmap/applications/gmap-server
   DEPENDS += +libamxc
   DEPENDS += +libamxd
   DEPENDS += +libamxp
