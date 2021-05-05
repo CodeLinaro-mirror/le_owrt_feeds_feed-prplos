@@ -14,14 +14,13 @@ PKG_LICENSE_FILES:=LICENSE
 
 PKG_RELEASE:=1
 
-
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=gmap
   SUBMENU:=Configurations
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=git@gitlab.com:soft.at.home/gmap/mibs/gmap-mibs-common
+  URL:=https://gitlab.com/soft.at.home/gmap/mibs/gmap-mibs-common
   DEPENDS += +gmap-server
   MENU:=1
 endef
