@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=gmap module to fetch information about the hgw itself and the
 
 PKG_SOURCE:=gmap-mod-self-v0.0.9.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/gmap/applications/gmap-mod-self/-/archive/v0.0.9
-PKG_HASH:=skip
+PKG_HASH:=0663725434372d6e5452bf96ac7923eee24899095c61f54a0208bd629ed75ec5
 PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mod-self-v0.0.9
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
