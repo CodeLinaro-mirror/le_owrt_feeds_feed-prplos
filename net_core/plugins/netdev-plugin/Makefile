@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=NetDev monitors the operating system's network devices
 
 PKG_SOURCE:=netdev-v1.1.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/netdev/-/archive/v1.1.0
-PKG_HASH:=skip
+PKG_HASH:=f2218c54f7db841522c9d64e13d94c4ddc129b88d961859c432d80dc7dffd3ef
 PKG_BUILD_DIR:=$(BUILD_DIR)/netdev-v1.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
