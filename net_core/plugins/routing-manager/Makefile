@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Implementation of Device
 
 PKG_SOURCE:=tr181-routing-v1.0.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-routing/-/archive/v1.0.0
-PKG_HASH:=381f2c8e0040e4af1447eb1ec9c6ce0b6a09fd2c256ea040297fb45209a5ed66
+PKG_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routing-v1.0.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
@@ -35,7 +35,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=ambiorix
-  SUBMENU:=Applications
+  SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/soft.at.home/plugins/tr181-routing
   DEPENDS += +amxrt
