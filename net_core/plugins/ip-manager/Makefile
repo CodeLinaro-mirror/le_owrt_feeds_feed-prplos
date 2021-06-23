@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Implementation of Device
 
 PKG_SOURCE:=tr181-ip-v1.0.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-ip/-/archive/v1.0.0
-PKG_HASH:=skip
+PKG_HASH:=0da039b4a571248477ac348a6f1a4f031a5f1cb27294fc4dab81be126d25d2b5
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ip-v1.0.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
