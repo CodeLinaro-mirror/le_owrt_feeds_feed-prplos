@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Implementation of Device
 
 PKG_SOURCE:=tr181-routing-v1.0.1.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-routing/-/archive/v1.0.1
-PKG_HASH:=skip
+PKG_HASH:=8f7fe60488eddceac4ac4c889a02189163c71e2c509186adcf63547e1cc888ca
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routing-v1.0.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
