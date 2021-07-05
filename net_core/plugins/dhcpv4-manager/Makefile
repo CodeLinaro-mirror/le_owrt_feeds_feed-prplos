@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Implementation of Device
 
 PKG_SOURCE:=tr181-dhcpv4-v1.0.4.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-dhcpv4/-/archive/v1.0.4
-PKG_HASH:=skip
+PKG_HASH:=208da78f5bed70c7d9cfea93e558af274c46683e643ffcf7b50bbca41074af44
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4-v1.0.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
