@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-mod-self
-PKG_VERSION:=v0.0.11
+PKG_VERSION:=v0.0.12
 SHORT_DESCRIPTION:=gmap module to fetch information about the hgw itself and the layer 2 'devices' on it
 
-PKG_SOURCE:=gmap-mod-self-v0.0.11.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/gmap/applications/gmap-mod-self/-/archive/v0.0.11
-PKG_HASH:=50b2d558d27014d7db5ed78e3e20543026585f2b9c9858297894b598c20fb80d
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mod-self-v0.0.11
+PKG_SOURCE:=gmap-mod-self-v0.0.12.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/gmap/applications/gmap-mod-self/-/archive/v0.0.12
+PKG_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mod-self-v0.0.12
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
