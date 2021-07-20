@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Service implementing the gmap data model
 
 PKG_SOURCE:=gmap-server-v0.1.3.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/gmap/applications/gmap-server/-/archive/v0.1.3
-PKG_HASH:=skip
+PKG_HASH:=ab2967c41079a6047820a7b2bab99b2c56dc2cd62007b036ecfa8de9594834a5
 PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-server-v0.1.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
