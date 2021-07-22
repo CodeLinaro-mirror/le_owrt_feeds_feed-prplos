@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Generic mib files for the gmap service
 
 PKG_SOURCE:=gmap-mibs-common-v0.2.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/gmap/mibs/gmap-mibs-common/-/archive/v0.2.0
-PKG_HASH:=skip
+PKG_HASH:=f7993852b6d8f58d8fe3f7bd4d5d4c8c989b50738a7505913173d258426c4faf
 PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mibs-common-v0.2.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
