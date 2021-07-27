@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Implementation of Device
 
 PKG_SOURCE:=tr181-bridging-v1.2.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-bridging/-/archive/v1.2.0
-PKG_HASH:=skip
+PKG_HASH:=88b7e737841fa98bad8873c0100cdbebe01757b6207793fc7d592e4bf708b3e4
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bridging-v1.2.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
