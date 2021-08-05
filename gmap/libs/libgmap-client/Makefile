@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libgmap-client
-PKG_VERSION:=v0.2.0
+PKG_VERSION:=v0.2.1
 SHORT_DESCRIPTION:=Client library for gmap modules
 
-PKG_SOURCE:=libgmap-client-v0.2.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/gmap/libraries/libgmap-client/-/archive/v0.2.0
-PKG_HASH:=e97e78c1c8067d92e00d7154a4688448eaef79e4c4337f49c5081543747ae3fd
-PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-client-v0.2.0
+PKG_SOURCE:=libgmap-client-v0.2.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/gmap/libraries/libgmap-client/-/archive/v0.2.1
+PKG_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-client-v0.2.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -26,7 +26,6 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxb
   DEPENDS += +libamxd
   DEPENDS += +libsahtrace
-  DEPENDS += +gmap-server
   MENU:=1
 endef
 
