@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Client library for gmap modules
 
 PKG_SOURCE:=libgmap-client-v0.2.1.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/gmap/libraries/libgmap-client/-/archive/v0.2.1
-PKG_HASH:=skip
+PKG_HASH:=c74b83c5b154d9130020eeb6e4300130c8a463b92f248c35dad5ed3496fef29c
 PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-client-v0.2.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
