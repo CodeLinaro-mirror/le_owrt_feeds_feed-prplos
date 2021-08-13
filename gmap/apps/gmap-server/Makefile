@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-server
-PKG_VERSION:=v0.1.4
+PKG_VERSION:=v0.1.5
 SHORT_DESCRIPTION:=Service implementing the gmap data model
 
-PKG_SOURCE:=gmap-server-v0.1.4.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/gmap/applications/gmap-server/-/archive/v0.1.4
-PKG_HASH:=a3e04cdc1db3371a6cfd5e850308b9e730fbd8a97af0c0169c729cf3e07584b0
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-server-v0.1.4
+PKG_SOURCE:=gmap-server-v0.1.5.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/gmap/applications/gmap-server/-/archive/v0.1.5
+PKG_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-server-v0.1.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
