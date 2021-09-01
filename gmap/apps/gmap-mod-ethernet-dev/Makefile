@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=gMap component that adds discovered devices to the gmap datam
 
 PKG_SOURCE:=gmap-mod-ethernet-dev-v0.1.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/gmap/applications/gmap-mod-ethernet-dev/-/archive/v0.1.0
-PKG_HASH:=skip
+PKG_HASH:=17d9f2d7172b5a37873855da24e85ecbfde0b1b49c314aba13da2d6e4f95472e
 PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mod-ethernet-dev-v0.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
