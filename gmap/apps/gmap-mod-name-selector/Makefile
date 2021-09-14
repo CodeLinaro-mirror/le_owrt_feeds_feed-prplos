@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-mod-name-selector
-PKG_VERSION:=v0.1.1
+PKG_VERSION:=v0.1.2
 SHORT_DESCRIPTION:=Name selection module for gmap
 
-PKG_SOURCE:=gmap-mod-name-selector-v0.1.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/gmap/applications/gmap-mod-name-selector/-/archive/v0.1.1
-PKG_HASH:=229dde99a87b9dd2e89f2619965c4669cb325ac923c5a10015beebf6705bd3c8
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mod-name-selector-v0.1.1
+PKG_SOURCE:=gmap-mod-name-selector-v0.1.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/gmap/applications/gmap-mod-name-selector/-/archive/v0.1.2
+PKG_HASH:=03495128b18464026632d799b153d72413d7f9eeb4ae1e4e831f91defe28adbe
+PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mod-name-selector-v0.1.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
