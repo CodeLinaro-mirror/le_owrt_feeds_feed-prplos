@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Name selection module for gmap
 
 PKG_SOURCE:=gmap-mod-name-selector-v0.1.2.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/gmap/applications/gmap-mod-name-selector/-/archive/v0.1.2
-PKG_HASH:=03495128b18464026632d799b153d72413d7f9eeb4ae1e4e831f91defe28adbe
+PKG_HASH:=4e6ffc69f79ac440b974b2d403da56a2974a1f3a536a2fba11aaa1ad15eb2fd6
 PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mod-name-selector-v0.1.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
