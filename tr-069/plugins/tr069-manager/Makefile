@@ -1,9 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=dev_m3
+PKG_VERSION:=v1.0.1
 SHORT_DESCRIPTION:=TR069 Manager
 
+PKG_SOURCE:=tr069-manager-v1.0.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr069-manager/-/archive/v1.0.1
+PKG_HASH:=9e4605a8affd67bc8519c9ca473774fd0b2065e674bdb54b5c2d1d42fb03b183
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.0.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -29,10 +33,9 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxd
   DEPENDS += +libamxb
   DEPENDS += +libamxo
-  DEPENDS += +amxrt
   DEPENDS += +mod-dmext
   DEPENDS += +libsahtrace
-  DEPENDS += +libwebsockets-full
+  DEPENDS += +libwebsockets
   DEPENDS += +libevent2
   DEPENDS += +libtr69-engine
   MENU:=1
