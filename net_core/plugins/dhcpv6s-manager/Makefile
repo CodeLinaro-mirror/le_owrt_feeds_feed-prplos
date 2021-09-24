@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dhcpv6s-manager
-PKG_VERSION:=v0.2.0
+PKG_VERSION:=v0.4.0
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-dhcpv6s-v0.2.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-dhcpv6s/-/archive/v0.2.0
-PKG_HASH:=b540ef482b7fa583da49b724f57e434809f5dd5ce10b29b24f2063cdd4b667f8
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6s-v0.2.0
+PKG_SOURCE:=tr181-dhcpv6s-v0.4.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-dhcpv6s/-/archive/v0.4.0
+PKG_HASH:=4a79bb063c34a43aee8fe65e0b23da7384e2d65a3d82da182195d7b0014b565f
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6s-v0.4.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -43,6 +43,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxp
   DEPENDS += +libamxb
   DEPENDS += +libamxo
+  DEPENDS += +libamxm
   DEPENDS += +libsahtrace
   DEPENDS += +mod-dmext
   MENU:=1
