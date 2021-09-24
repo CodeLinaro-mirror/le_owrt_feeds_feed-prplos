@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libtr69-engine
-PKG_VERSION:=v0.1.3
+PKG_VERSION:=v0.1.4
 SHORT_DESCRIPTION:=libraries to define and implement the ACS RPCs methods and data parser
 
-PKG_SOURCE:=libtr69-engine-v0.1.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/libraries/libtr69-engine/-/archive/v0.1.3
-PKG_HASH:=d9802ed2e80f5f5124a534c5dbd4216647a63aa3e566427c75401330722981d2
-PKG_BUILD_DIR:=$(BUILD_DIR)/libtr69-engine-v0.1.3
+PKG_SOURCE:=libtr69-engine-v0.1.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/libraries/libtr69-engine/-/archive/v0.1.4
+PKG_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/libtr69-engine-v0.1.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -21,6 +21,11 @@ define Package/$(PKG_NAME)
   SUBMENU:=Libraries
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/soft.at.home/libraries/libtr69-engine
+  DEPENDS += +libamxc
+  DEPENDS += +libamxp
+  DEPENDS += +libamxd
+  DEPENDS += +libamxb
+  DEPENDS += +libamxo
   DEPENDS += +libsahtrace
   MENU:=1
 endef
