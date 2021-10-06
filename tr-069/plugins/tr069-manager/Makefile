@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=v1.0.3
+PKG_VERSION:=v1.1.0
 SHORT_DESCRIPTION:=TR069 Manager
 
-PKG_SOURCE:=tr069-manager-v1.0.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr069-manager/-/archive/v1.0.3
-PKG_HASH:=79ffaf5a071ae036a6855a3b0c0639db9daee2339073ff296465b6ac2e971c2f
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.0.3
+PKG_SOURCE:=tr069-manager-v1.1.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr069-manager/-/archive/v1.1.0
+PKG_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -38,6 +38,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libwebsockets
   DEPENDS += +libevent2
   DEPENDS += +libtr69-engine
+  DEPENDS += +uriparser
   MENU:=1
 endef
 
