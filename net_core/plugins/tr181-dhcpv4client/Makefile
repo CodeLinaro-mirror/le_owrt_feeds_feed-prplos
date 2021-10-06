@@ -1,10 +1,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dhcpv4client
-PKG_VERSION:=v1.3.0
+PKG_VERSION:=v1.3.2
 SHORT_DESCRIPTION:=TR-181 compatible DHCPV4 client
 
+PKG_SOURCE:=tr181-dhcpv4client-v1.3.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-dhcpv4client/-/archive/v1.3.2
+PKG_HASH:=958c8c7d085f95f8cdf536b365f45aae316345f41c332de2697d40a3651b01bf
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4client-v1.3.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
+PKG_LICENSE:=BSD-2-Clause-Patent
+PKG_LICENSE_FILES:=LICENSE
 
 COMPONENT:=tr181-dhcpv4client
 
@@ -30,6 +36,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=ambiorix
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
+  URL:=https://gitlab.com/soft.at.home/plugins/tr181-dhcpv4client
   DEPENDS += +libamxb
   DEPENDS += +libamxc
   DEPENDS += +libamxd
