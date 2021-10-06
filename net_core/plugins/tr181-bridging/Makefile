@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-bridging
-PKG_VERSION:=v1.4.0
+PKG_VERSION:=v1.5.2
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-bridging-v1.4.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-bridging/-/archive/v1.4.0
-PKG_HASH:=98caf3d606ef644bcda1ef87530f8cee100c89071f088cfa9beec69c1dbc6c26
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bridging-v1.4.0
+PKG_SOURCE:=tr181-bridging-v1.5.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-bridging/-/archive/v1.5.2
+PKG_HASH:=2481e236b511e410d9bd1409e9fae9c2cd2cf0a65e6e00075e51ea6fb912631d
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bridging-v1.5.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -30,11 +30,13 @@ define Package/$(PKG_NAME)
   URL:=https://gitlab.com/soft.at.home/plugins/tr181-bridging
   DEPENDS += +libamxc
   DEPENDS += +libamxd
+  DEPENDS += +libamxj
   DEPENDS += +libamxp
   DEPENDS += +libamxb
   DEPENDS += +libamxo
   DEPENDS += +libamxm
   DEPENDS += +libsahtrace
+  DEPENDS += +mod-dmstats
   MENU:=1
 endef
 
