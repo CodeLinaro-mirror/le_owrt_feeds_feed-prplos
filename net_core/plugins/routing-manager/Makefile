@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=routing-manager
-PKG_VERSION:=v1.0.6
+PKG_VERSION:=v1.1.1
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-routing-v1.0.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-routing/-/archive/v1.0.6
-PKG_HASH:=01e411bec6cda8d34606da4d876b18577d508301710909c1d74d050b777cdeb2
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routing-v1.0.6
+PKG_SOURCE:=tr181-routing-v1.1.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-routing/-/archive/v1.1.1
+PKG_HASH:=d046d1903736f31fa07643674033e4260405dc18c78bb3a6dd6be16bc5471a2d
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routing-v1.1.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -44,6 +44,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxp
   DEPENDS += +libamxb
   DEPENDS += +libamxo
+  DEPENDS += +libamxm
   DEPENDS += +libsahtrace
   DEPENDS += +mod-dmext
   MENU:=1
