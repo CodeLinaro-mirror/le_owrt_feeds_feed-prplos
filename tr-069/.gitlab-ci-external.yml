@@ -1,0 +1,30 @@
+variables:
+  CI_DESIGNATED_BRANCH: prplos
+
+include:
+  - remote: https://gitlab.com/prpl-foundation/prplOS/prplos/-/raw/prplos/.gitlab/sdk.yml
+
+generate:
+  extends: .generate SDK package build jobs
+  rules:
+    - if: '$GITLAB_INTERNAL && $CI_COMMIT_REF_NAME == $INTERNAL_REF_BRANCH'
+    - if: '$GITLAB_INTERNAL == null && $CI_COMMIT_REF_NAME == "main"'
+    - if: '$GITLAB_INTERNAL == null && $CI_COMMIT_TAG'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  variables:
+    CI_SDK_TARGETS: |
+      intel_mips-xrx500
+      ath79-generic-19.07.7
+      mvebu-cortexa9
+      ipq40xx-generic
+    CI_SDK_BUILD_PACKAGES: |
+        libtr69-engine
+        tr069-manager
+
+build:
+  extends: .execute SDK package build jobs
+  rules:
+    - if: '$GITLAB_INTERNAL && $CI_COMMIT_REF_NAME == $INTERNAL_REF_BRANCH'
+    - if: '$GITLAB_INTERNAL == null && $CI_COMMIT_REF_NAME == "main"'
+    - if: '$GITLAB_INTERNAL == null && $CI_COMMIT_TAG'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
