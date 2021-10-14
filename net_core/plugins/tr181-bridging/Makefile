@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-bridging
-PKG_VERSION:=v1.5.2
+PKG_VERSION:=v1.5.3
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-bridging-v1.5.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-bridging/-/archive/v1.5.2
-PKG_HASH:=2481e236b511e410d9bd1409e9fae9c2cd2cf0a65e6e00075e51ea6fb912631d
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bridging-v1.5.2
+PKG_SOURCE:=tr181-bridging-v1.5.3.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-bridging/-/archive/v1.5.3
+PKG_HASH:=6268f360c59979aba3c22ba81cffa8b696fd14f336d10ef92ff3e666984a41de
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bridging-v1.5.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -18,7 +18,7 @@ PKG_RELEASE:=1
 
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S24$(COMPONENT)
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S22$(COMPONENT)
 endef
 
 include $(INCLUDE_DIR)/package.mk
