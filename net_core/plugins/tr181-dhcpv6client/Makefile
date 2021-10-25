@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dhcpv6client
-PKG_VERSION:=v0.1.1
-SHORT_DESCRIPTION:=TR-181 compatible DHCPV6 client
+PKG_VERSION:=v0.2.0
+SHORT_DESCRIPTION:=TR-181 compatible DHCPv6 client
 
-PKG_SOURCE:=tr181-dhcpv6client-v0.1.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-dhcpv6client/-/archive/v0.1.1
-PKG_HASH:=19e9806968084082822228ff15f1533afdfaa22bc8117fbc9c4103e6b596bf2d
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6client-v0.1.1
+PKG_SOURCE:=tr181-dhcpv6client-v0.2.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6client/-/archive/v0.2.0
+PKG_HASH:=043870289cf93c5ffe22687a7a15ba97b0a486fb0d40de1fdc50de000517e41d
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6client-v0.2.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -36,7 +36,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=ambiorix
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/soft.at.home/plugins/tr181-dhcpv6client
+  URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6client
   DEPENDS += +libamxb
   DEPENDS += +libamxc
   DEPENDS += +libamxd
@@ -50,7 +50,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-	TR-181 compatible DHCPV6 client
+	TR-181 compatible DHCPv6 client
 endef
 
 define Build/Compile
