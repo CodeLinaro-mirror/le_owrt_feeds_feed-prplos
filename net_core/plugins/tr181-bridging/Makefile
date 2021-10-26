@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-bridging
-PKG_VERSION:=v1.5.3
+PKG_VERSION:=v1.6.0
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-bridging-v1.5.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-bridging/-/archive/v1.5.3
-PKG_HASH:=6268f360c59979aba3c22ba81cffa8b696fd14f336d10ef92ff3e666984a41de
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bridging-v1.5.3
+PKG_SOURCE:=tr181-bridging-v1.6.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bridging/-/archive/v1.6.0
+PKG_HASH:=e1279e5699d2570a823bbc4e42772cfa2c4f8a8a35593aa84f3557f145ddbfdb
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bridging-v1.6.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -27,7 +27,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=ambiorix
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/soft.at.home/plugins/tr181-bridging
+  URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bridging
   DEPENDS += +libamxc
   DEPENDS += +libamxd
   DEPENDS += +libamxj
