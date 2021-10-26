@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dhcpv4client
-PKG_VERSION:=v1.3.4
+PKG_VERSION:=v1.3.5
 SHORT_DESCRIPTION:=TR-181 compatible DHCPv4 client
 
-PKG_SOURCE:=tr181-dhcpv4client-v1.3.4.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4client/-/archive/v1.3.4
-PKG_HASH:=80328886fb1edb3ba9e2343a0b176ad8ed4d28b69552cd3d9d138ef1966942a1
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4client-v1.3.4
+PKG_SOURCE:=tr181-dhcpv4client-v1.3.5.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4client/-/archive/v1.3.5
+PKG_HASH:=e4493a706d53c57c903745653ddda63a963b229bc7ab4567be023011c26236c8
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4client-v1.3.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
