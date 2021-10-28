@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ip-manager
-PKG_VERSION:=v1.3.1
+PKG_VERSION:=v1.4.1
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-ip-v1.3.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-ip/-/archive/v1.3.1
-PKG_HASH:=754bfc4ff551c5fa4d4aec4b8dfbc60aa8f2f0c4dfd933967f34dad96d2a4b90
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ip-v1.3.1
+PKG_SOURCE:=tr181-ip-v1.4.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ip/-/archive/v1.4.1
+PKG_HASH:=77b4fd8c18adf118ef11f3537c629342921f4195a602551d7beb8e5237b82737
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ip-v1.4.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -37,7 +37,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=ambiorix
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/soft.at.home/plugins/tr181-ip
+  URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ip
   DEPENDS += +libamxc
   DEPENDS += +libamxd
   DEPENDS += +libamxo
