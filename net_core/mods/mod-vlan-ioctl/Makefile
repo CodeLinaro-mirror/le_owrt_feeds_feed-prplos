@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=SoC module to help handling vlans
 
 PKG_SOURCE:=mod-vlan-ioctl-v0.1.1.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-vlan-ioctl/-/archive/v0.1.1
-PKG_HASH:=a26297d19dd971430be7428f8a8c8c7d615257082d018fe49054a7ce50a92f6a
+PKG_HASH:=3c2582e6ec4dad1a12f4b4a6d4ebe5b74ed57ea2ae34aee64ee46269e3c9542e
 PKG_BUILD_DIR:=$(BUILD_DIR)/mod-vlan-ioctl-v0.1.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
