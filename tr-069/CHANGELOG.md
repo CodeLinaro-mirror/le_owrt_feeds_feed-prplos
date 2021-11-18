@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.4.0 - 2021-11-18(10:44:20 +0000)
+
+### New
+
+- [tr069-manager](https://gitlab.com/soft.at.home/plugins/tr069-manager): use DNS Service to resolve ACS Server IP
+- [tr069-manager](https://gitlab.com/soft.at.home/plugins/tr069-manager): properly handle root parameter
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/soft.at.home/plugins/tr069-manager): enable persistent settings and use ODL persistent storage
+- [libtr69-engine](https://gitlab.com/soft.at.home/libraries/libtr69-engine): missing const blocks tr069-manager tests from compiling
+
 ## Release v0.3.0 - 2021-10-28(14:40:10 +0000)
 
 ### New
