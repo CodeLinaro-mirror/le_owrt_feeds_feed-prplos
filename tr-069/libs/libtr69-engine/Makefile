@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=libraries to define and implement the ACS RPCs methods and da
 
 PKG_SOURCE:=libtr69-engine-v0.4.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/libraries/libtr69-engine/-/archive/v0.4.0
-PKG_HASH:=skip
+PKG_HASH:=912e980301b346bad147684ff8543b0e136f8fccecd20c19007986046e462690
 PKG_BUILD_DIR:=$(BUILD_DIR)/libtr69-engine-v0.4.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=Apache-2.0
