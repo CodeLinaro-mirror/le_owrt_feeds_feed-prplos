@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=v1.4.1
+PKG_VERSION:=v1.5.1
 SHORT_DESCRIPTION:=TR069 Manager
 
 PKG_SOURCE:=tr069-manager-v1.4.1.tar.gz

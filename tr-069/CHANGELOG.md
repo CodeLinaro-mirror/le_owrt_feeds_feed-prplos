@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.5.0 - 2021-11-23(12:27:47 +0000)
+
+### New
+
+- [tr069-manager](https://gitlab.com/soft.at.home/plugins/tr069-manager): support for ACS evnt subscription
+- [libtr69-engine](https://gitlab.com/soft.at.home/libraries/libtr69-engine): Add support for ACS Address Family
+- [libtr69-engine](https://gitlab.com/soft.at.home/libraries/libtr69-engine): Add cache file option
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/soft.at.home/plugins/tr069-manager): properly handle the connection with ACSIP list
+- [libtr69-engine](https://gitlab.com/soft.at.home/libraries/libtr69-engine): Isssue: PCF-483 Fix make clean target to remove deb package
+
+### Changes
+
+- [libtr69-engine](https://gitlab.com/soft.at.home/libraries/libtr69-engine): replace printf by sahtrace
+
 ## Release v0.4.0 - 2021-11-18(10:44:20 +0000)
 
 ### New

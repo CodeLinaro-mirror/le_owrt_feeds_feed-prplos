@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libtr69-engine
-PKG_VERSION:=v0.2.1
+PKG_VERSION:=v0.4.1
 SHORT_DESCRIPTION:=libraries to define and implement the ACS RPCs methods and data parser
 
 PKG_SOURCE:=libtr69-engine-v0.2.1.tar.gz
