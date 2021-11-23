@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ip-manager
-PKG_VERSION:=v1.6.1
+PKG_VERSION:=v1.7.1
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-ip-v1.6.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ip/-/archive/v1.6.1
-PKG_HASH:=f7513cfea1f0831f7d406e600e9099b040872d15719376755d6f0ae4794ff929
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ip-v1.6.1
+PKG_SOURCE:=tr181-ip-v1.7.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ip/-/archive/v1.7.1
+PKG_HASH:=6ebad38aca3d666523a21502a20bd9cdaf81b43ca251c77a8f4ee5264fbaef16
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ip-v1.7.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -44,6 +44,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxm
   DEPENDS += +libsahtrace
   DEPENDS += +mod-dmext
+  DEPENDS += +mod-netmodel
   MENU:=1
 endef
 
