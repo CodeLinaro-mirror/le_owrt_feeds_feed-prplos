@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.6.0 - 2021-11-24(16:00:22 +0000)
+
+### New
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Add support for ACS Address Family
+
 ## Release v0.5.0 - 2021-11-23(12:27:47 +0000)
 
 ### New

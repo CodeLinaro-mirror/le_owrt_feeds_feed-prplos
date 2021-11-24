@@ -8,11 +8,11 @@ Feed_tr69 includes the following components:
 
 ### Libraries
 
-- [libtr69-engine](https://gitlab.com/soft.at.home/libraries/libtr69-engine) - libraries to define and implement the ACS RPCs methods and data parser
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine) - libraries to define and implement the ACS RPCs methods and data parser
 
 ### Plugins
 
-- [tr069-manager](https://gitlab.com/soft.at.home/plugins/tr069-manager) - TR069 Manager
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager) - TR069 Manager
 
 ## How to add feed_tr69 to your OpenWrt build
 

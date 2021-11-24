@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=v1.5.1
+PKG_VERSION:=v1.6.0
 SHORT_DESCRIPTION:=TR069 Manager
 
-PKG_SOURCE:=tr069-manager-v1.4.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr069-manager/-/archive/v1.4.1
-PKG_HASH:=2448acb5acee1b0bf4977965f311c4e0b8415b3e235141dd8a46b3ba771fa67a
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.4.1
+PKG_SOURCE:=tr069-manager-v1.6.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.6.0
+PKG_HASH:=d46d63dcadd5c9d547c93b76e6684976288371ec08e61c3d9a4b6b23148e3ccf
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.6.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -27,7 +27,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=ambiorix
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/soft.at.home/plugins/tr069-manager
+  URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager
   DEPENDS += +libamxc
   DEPENDS += +libamxp
   DEPENDS += +libamxd
