@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dhcpv4-manager
-PKG_VERSION:=v1.5.3
+PKG_VERSION:=v1.5.4
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-dhcpv4-v1.5.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4/-/archive/v1.5.3
-PKG_HASH:=19e2b503cee7cc5cf9f93e23bf8916dc90cc7a21093bfe2d0aa7b8bda0945750
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4-v1.5.3
+PKG_SOURCE:=tr181-dhcpv4-v1.5.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4/-/archive/v1.5.4
+PKG_HASH:=738e9307cb90543d840c9cc8d8ebde5ce3a70de5cc7f77e7c2da38489163dd17
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4-v1.5.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
