@@ -6,6 +6,10 @@ SoftAtHome feed of Openwrt packages for netmodel components.
 
 Feed_netmodel includes the following components:
 
+### Libraries
+
+- [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip) - Network Model IP client
+
 ### Modules
 
 - [mod-netmodel](https://gitlab.com/prpl-foundation/components/netmodel/modules/mod-netmodel) - Module to populate NetModel
