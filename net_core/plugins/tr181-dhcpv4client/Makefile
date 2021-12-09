@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dhcpv4client
-PKG_VERSION:=v1.4.0
+PKG_VERSION:=v1.4.2
 SHORT_DESCRIPTION:=TR-181 compatible DHCPv4 client
 
-PKG_SOURCE:=tr181-dhcpv4client-v1.4.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4client/-/archive/v1.4.0
-PKG_HASH:=5934aff05bca8466d702d2e6f116bb66757122812edf365f80c43eabd12af807
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4client-v1.4.0
+PKG_SOURCE:=tr181-dhcpv4client-v1.4.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4client/-/archive/v1.4.2
+PKG_HASH:=2f9434f662b78dc1da9ad064877c9e3ef7392f200173079eaba46a1c0b722777
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4client-v1.4.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -46,6 +46,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxp
   DEPENDS += +amxrt
   DEPENDS += +libsahtrace
+  DEPENDS += +libdhcpoptions
   MENU:=1
 endef
 
