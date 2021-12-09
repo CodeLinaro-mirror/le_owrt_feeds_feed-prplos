@@ -8,5 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.2.0 - 2021-12-09(12:19:58 +0000)
+
+### New
+
+- [mod-netmodel](https://gitlab.com/prpl-foundation/components/netmodel/modules/mod-netmodel): Allow for filtered InstancePaths
+- [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip): Component added
+
 ## Release v0.1.0 - 2021-11-16(15:44:11 +0000)
 
