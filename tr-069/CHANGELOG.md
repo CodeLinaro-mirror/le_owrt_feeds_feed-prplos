@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.7.0 - 2021-12-14(17:31:18 +0000)
+
+### New
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Wait for required objects before starting cwmpd
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Downgrade to libwebsockets3
+
 ## Release v0.6.0 - 2021-11-24(16:00:22 +0000)
 
 ### New
