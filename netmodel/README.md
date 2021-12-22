@@ -8,6 +8,7 @@ Feed_netmodel includes the following components:
 
 ### Libraries
 
+- [netmodel-ethernet](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ethernet) - Network Model ethernet client
 - [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip) - Network Model IP client
 
 ### Modules
