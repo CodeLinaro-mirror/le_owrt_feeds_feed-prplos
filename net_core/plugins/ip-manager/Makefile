@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ip-manager
-PKG_VERSION:=v1.10.0
+PKG_VERSION:=v1.11.0
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-ip-v1.10.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ip/-/archive/v1.10.0
-PKG_HASH:=915c1249f6afe2a90196e0e9a4ed82e8f926c1ed4062e121ad9b2bed42d44b13
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ip-v1.10.0
+PKG_SOURCE:=tr181-ip-v1.11.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ip/-/archive/v1.11.0
+PKG_HASH:=28fd121271997296549140351b274fa4f34278d6f338c873848ee3e60b5bf50d
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ip-v1.11.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -15,7 +15,6 @@ PKG_LICENSE_FILES:=LICENSE
 COMPONENT:=ip-manager
 
 PKG_RELEASE:=1
-PKG_BUILD_DEPENDS += libamxb
 
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
@@ -38,10 +37,13 @@ define Package/$(PKG_NAME)
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ip
+  DEPENDS += +libamxb
   DEPENDS += +libamxc
   DEPENDS += +libamxd
-  DEPENDS += +libamxo
+  DEPENDS += +libamxj
   DEPENDS += +libamxm
+  DEPENDS += +libamxo
+  DEPENDS += +libamxp
   DEPENDS += +libsahtrace
   DEPENDS += +mod-dmext
   DEPENDS += +mod-netmodel
