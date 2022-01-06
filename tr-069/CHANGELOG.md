@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.7.2 - 2022-01-06(17:03:26 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Clean ressources when cwmpd cant connect
+
 ## Release v0.7.1 - 2021-12-23(10:34:51 +0000)
 
 ## Release v0.7.0 - 2021-12-14(17:31:18 +0000)
