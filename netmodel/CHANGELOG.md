@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.4.0 - 2022-01-07(17:10:33 +0000)
+
+### New
+
+- [netmodel-dhcpv4](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv4): Component added
+
+### Fixes
+
+- [mod-netmodel](https://gitlab.com/prpl-foundation/components/netmodel/modules/mod-netmodel): Filtered parameters do not always work when a plugin starts before NetModel
+- [netmodel-ethernet](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ethernet): create mib_ethernet
+
 ## Release v0.3.0 - 2021-12-22(19:31:15 +0000)
 
 ### New
