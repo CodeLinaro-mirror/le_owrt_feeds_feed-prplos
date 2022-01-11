@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.6.0 - 2022-01-11(20:13:28 +0000)
+
+### New
+
+- [netmodel-dhcpv6](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv6): Component added
+
 ## Release v0.5.0 - 2022-01-11(12:37:00 +0000)
 
 ### New
