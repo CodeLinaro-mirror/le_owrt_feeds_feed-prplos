@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.5.0 - 2022-01-11(12:37:00 +0000)
+
+### New
+
+- [mod-netmodel](https://gitlab.com/prpl-foundation/components/netmodel/modules/mod-netmodel): Create DHCPv4 Client mapping in NetModel
+- [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip): implement ip client and ip mib
+- [netmodel-dhcpv4](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv4): Create DHCPv4 Client mapping in NetModel
+
 ## Release v0.4.0 - 2022-01-07(17:10:33 +0000)
 
 ### New
