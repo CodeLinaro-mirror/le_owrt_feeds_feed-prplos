@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.7.3 - 2022-01-11(20:13:59 +0000)
+
+### Changes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Add LDFLAGS and CFLAGS allowing to search libraries under /opt/prplos
+
 ## Release v0.7.2 - 2022-01-06(17:03:26 +0000)
 
 ### Fixes
