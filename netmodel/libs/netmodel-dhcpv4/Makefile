@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-dhcpv4
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=v0.2.0
 SHORT_DESCRIPTION:=Network Model DHCPv4client client
 
-PKG_SOURCE:=netmodel-dhcpv4-v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv4/-/archive/v0.1.0
-PKG_HASH:=51b3bba56e7887253682c32d0f16077133217ae2d0257272d92aea779d4c11b0
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-dhcpv4-v0.1.0
+PKG_SOURCE:=netmodel-dhcpv4-v0.2.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv4/-/archive/v0.2.0
+PKG_HASH:=c93f46cdae5a148645281e2ee670cc8bdd658d966f828cb8ccc7bc5337d66e4a
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-dhcpv4-v0.2.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
