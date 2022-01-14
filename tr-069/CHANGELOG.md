@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.8.0 - 2022-01-14(21:26:09 +0000)
+
+### New
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Find and update wan Interface and IP address
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Set mod_sahtrace as an optional include in odl file
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Clean up data model from non standard parameters
+
 ## Release v0.7.3 - 2022-01-11(20:13:59 +0000)
 
 ### Changes
