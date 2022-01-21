@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.6.1 - 2022-01-21(19:21:46 +0000)
+
+### Changes
+
+- [mod-netmodel](https://gitlab.com/prpl-foundation/components/netmodel/modules/mod-netmodel): IP client startup does not always work properly
+- [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip): expand libnetmodel for mibs/netmodel-clients
+- [netmodel-dhcpv6](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv6): expand libnetmodel for mibs/netmodel-clients
+- [netmodel-dhcpv4](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv4): expand libnetmodel for mibs/netmodel-clients
+
 ## Release v0.6.0 - 2022-01-11(20:13:28 +0000)
 
 ### New
