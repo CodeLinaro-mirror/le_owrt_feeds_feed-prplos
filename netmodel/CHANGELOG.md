@@ -8,13 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
-## Release v0.7.0 - 2022-01-30(15:31:59 +0000)
-
-### New
-
-- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): Component added
-- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): Component added
-
 ## Release v0.6.1 - 2022-01-21(19:21:46 +0000)
 
 ### Changes
