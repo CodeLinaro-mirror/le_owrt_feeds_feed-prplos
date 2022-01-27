@@ -8,6 +8,7 @@ Feed_netmodel includes the following components:
 
 ### Libraries
 
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel) - NetModel client library
 - [netmodel-dhcpv4](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv4) - Network Model DHCPv4client client
 - [netmodel-dhcpv6](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv6) - Network Model DHCPv6client client
 - [netmodel-ethernet](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ethernet) - Network Model ethernet client
@@ -16,6 +17,10 @@ Feed_netmodel includes the following components:
 ### Modules
 
 - [mod-netmodel](https://gitlab.com/prpl-foundation/components/netmodel/modules/mod-netmodel) - Module to populate NetModel
+
+### Plugins
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel) - Network Model plugin
 
 ## How to add feed_netmodel to your OpenWrt build
 
