@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.8.1 - 2022-01-28(19:52:16 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Cleanup and fix some cwmpd issues
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Expose only the standard parameters to ACS
+
 ## Release v0.8.0 - 2022-01-14(21:26:09 +0000)
 
 ### New
