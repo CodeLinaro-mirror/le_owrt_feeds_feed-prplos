@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-ethernet
-PKG_VERSION:=v0.1.3
+PKG_VERSION:=v0.2.0
 SHORT_DESCRIPTION:=Network Model ethernet client
 
-PKG_SOURCE:=netmodel-ethernet-v0.1.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ethernet/-/archive/v0.1.3
-PKG_HASH:=aa87e1b3ebbdd5cbb5ddafc1c513f462fef2c76f3e9c68f42357926e2289de7c
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-ethernet-v0.1.3
+PKG_SOURCE:=netmodel-ethernet-v0.2.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ethernet/-/archive/v0.2.0
+PKG_HASH:=2771c69f76ab11576a1728f38ebde59409d64805396b6c1ae40b379bc99c4cfb
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-ethernet-v0.2.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
