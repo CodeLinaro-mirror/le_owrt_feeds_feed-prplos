@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netdev-plugin
-PKG_VERSION:=v1.4.1
+PKG_VERSION:=v1.4.2
 SHORT_DESCRIPTION:=NetDev monitors the operating system's network devices
 
-PKG_SOURCE:=netdev-v1.4.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/netdev/-/archive/v1.4.1
-PKG_HASH:=ed3c5dcecc10c0fe18130de2ad5acb057bd5894fd4c8edfcb80701278e76df58
-PKG_BUILD_DIR:=$(BUILD_DIR)/netdev-v1.4.1
+PKG_SOURCE:=netdev-v1.4.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/netdev/-/archive/v1.4.2
+PKG_HASH:=eb1ee25197148b904ba76e6a91cd997f08ac9c03c9a8e332f273b7f5c7254b10
+PKG_BUILD_DIR:=$(BUILD_DIR)/netdev-v1.4.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
