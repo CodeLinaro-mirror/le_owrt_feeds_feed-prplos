@@ -8,6 +8,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v1.0.0 - 2022-02-03(20:09:20 +0000)
+
+### Breaking
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): wrong mib can be unsubscribed when netmodel clients share a netmodel interface
+
+### New
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): Integrate support for bridging in NetModel
+- [netmodel-vlan](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-vlan): Component added
+- [netmodel-bridge](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge): Component added
+- [netmodel-ethernet](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ethernet): Integrate support for bridging in NetModel
+
+### Fixes
+
+- [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip): wrong mib can be unsubscribed when netmodel clients share a netmodel interface
+- [netmodel-ethernet](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ethernet): wrong mib can be unsubscribed when netmodel clients share a netmodel interface
+- [netmodel-dhcpv6](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv6): wrong mib can be unsubscribed when netmodel clients share a netmodel interface
+- [netmodel-dhcpv4](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv4): wrong mib can be unsubscribed when netmodel clients share a netmodel interface
+
+### Changes
+
+- [netmodel-ethernet](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ethernet): expand libnetmodel for mibs/netmodel-clients
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): Integrate support for bridging in NetModel
+
 ## Release v0.7.0 - 2022-01-30(15:31:59 +0000)
 
 ### New
