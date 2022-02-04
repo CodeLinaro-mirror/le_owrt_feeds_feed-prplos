@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v1.1.0 - 2022-02-04(15:19:54 +0000)
+
+### New
+
+- [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip): mib_ip should set flags "ipv4-up" and "ipv6-up"
+
 ## Release v1.0.0 - 2022-02-03(20:09:20 +0000)
 
 ### Breaking
