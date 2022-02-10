@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.10.0 - 2022-02-10(20:55:06 +0000)
+
+### New
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Add unit tests
+
 ## Release v0.9.0 - 2022-02-10(10:16:22 +0000)
 
 ### New
