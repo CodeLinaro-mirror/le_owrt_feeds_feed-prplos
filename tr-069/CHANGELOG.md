@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.9.0 - 2022-02-10(10:16:22 +0000)
+
+### New
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Add ssl support for the cwmp_client
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Issue : PCF-546 Properly generate coverage report
+
 ## Release v0.8.1 - 2022-01-28(19:52:16 +0000)
 
 ### Fixes
