@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v1.2.0 - 2022-02-10(09:12:28 +0000)
+
+### New
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [netmodel] Support getDHCPOption() queries
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): create netmodel client for tr181-logical
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): implement netdev client and netdev mib
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [netmodel] Support getDHCPOption() queries
+
+### Fixes
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Ensure that the private intf_t structure is created when needed
+
 ## Release v1.1.0 - 2022-02-04(15:19:54 +0000)
 
 ### New
