@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=routing-manager
-PKG_VERSION:=v1.2.0
+PKG_VERSION:=v1.2.1
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-routing-v1.2.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routing/-/archive/v1.2.0
-PKG_HASH:=b4817d4de52b4fbff7e94fbd51cfab4dbf12c6c7abce7174e97ad68ce2a67e86
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routing-v1.2.0
+PKG_SOURCE:=tr181-routing-v1.2.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routing/-/archive/v1.2.1
+PKG_HASH:=e0a9c773845028c04db2423c481620abb6007479051e4f805670fa0fe1ee6b95
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routing-v1.2.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -48,6 +48,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libsahtrace
   DEPENDS += +mod-dmext
   DEPENDS += +libnetmodel
+  DEPENDS += +libdhcpoptions
   MENU:=1
 endef
 
