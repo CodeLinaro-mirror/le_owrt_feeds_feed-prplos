@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-vlan
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=v0.1.1
 SHORT_DESCRIPTION:=Network Model vlan client
 
-PKG_SOURCE:=netmodel-vlan-v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-vlan/-/archive/v0.1.0
-PKG_HASH:=bdeb3e18a78af035fde481dbf5d1d033bc29e1e3f879b39bcce748b5e3d4f9cc
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-vlan-v0.1.0
+PKG_SOURCE:=netmodel-vlan-v0.1.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-vlan/-/archive/v0.1.1
+PKG_HASH:=628579c090323e157cd604ed224b696100c7c48665af83d4c1dbf23084f5fcdf
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-vlan-v0.1.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
