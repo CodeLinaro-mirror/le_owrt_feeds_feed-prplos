@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v1.3.0 - 2022-02-14(20:55:00 +0000)
+
+### New
+
+- [netmodel-netdev](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-netdev): Component added
+
+### Fixes
+
+- [netmodel-vlan](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-vlan): only the NetDev client should synchronize NetDevName
+- [netmodel-ethernet](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ethernet): only the NetDev client should synchronize NetDevName
+
 ## Release v1.2.0 - 2022-02-10(09:12:28 +0000)
 
 ### New
