@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v1.4.0 - 2022-02-18(16:44:39 +0000)
+
+### New
+
+- [netmodel-ethernet](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ethernet): The Upstream parameter must be mapped to the upstream netmodel flag
+
+### Fixes
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Typo in regex for dhcpOption change events
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Crash when opening the same getDHCPOption query twice
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Bridging instances are no longer added to NetModel
+- [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip): only the NetDev client should synchronize NetDevName
+
+### Changes
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Disable datamodel persistency
+
 ## Release v1.3.0 - 2022-02-14(20:55:00 +0000)
 
 ### New
