@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v1.5.0 - 2022-02-22(15:39:26 +0000)
+
+### New
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Add getMibs API
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [NetModel] Add getMibs API
+
 ## Release v1.4.0 - 2022-02-18(16:44:39 +0000)
 
 ### New
