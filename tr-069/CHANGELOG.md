@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.11.0 - 2022-02-24(09:41:40 +0000)
+
+### New
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): - Add subscription to data model
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine): - Add notification mode to engine
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): issue: HOP-1028 connection error when host is set
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): It should be possible to setup some odl default values from environment
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine): Avoid casting from const char* to char*
+
+### Other
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Avoid casting const char* to char*
+
 ## Release v0.10.0 - 2022-02-10(20:55:06 +0000)
 
 ### New
