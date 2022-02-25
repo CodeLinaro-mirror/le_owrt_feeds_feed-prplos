@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v1.5.1 - 2022-02-25(13:26:19 +0000)
+
+### Other
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): Enable core dumps by default
+
 ## Release v1.5.0 - 2022-02-22(15:39:26 +0000)
 
 ### New
