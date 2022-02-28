@@ -23,6 +23,7 @@ Feed_netmodel includes the following components:
 
 ### Plugins
 
+- [netmodel-clients](https://gitlab.com/prpl-foundation/components/netmodel/applications/netmodel-clients) - Network Model clients plugin
 - [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel) - Network Model plugin
 
 ## How to add feed_netmodel to your OpenWrt build

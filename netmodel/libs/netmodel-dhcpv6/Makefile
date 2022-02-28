@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-dhcpv6
-PKG_VERSION:=v0.2.2
+PKG_VERSION:=v1.0.0
 SHORT_DESCRIPTION:=Network Model DHCPv6client client
 
-PKG_SOURCE:=netmodel-dhcpv6-v0.2.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv6/-/archive/v0.2.2
-PKG_HASH:=3fb87c22743647281d40eafa05463df2371791b501ed2d47c072bcd89dd3f5a8
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-dhcpv6-v0.2.2
+PKG_SOURCE:=netmodel-dhcpv6-v1.0.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv6/-/archive/v1.0.0
+PKG_HASH:=24c75d37a522dbfda1bef5b0b812662a3cc672c84cfbdeffde647ddce962cfa8
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-dhcpv6-v1.0.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -27,6 +27,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxb
   DEPENDS += +libamxo
   DEPENDS += +libamxs
+  DEPENDS += +libamxm
   DEPENDS += +libsahtrace
   DEPENDS += +libnetmodel
   MENU:=1

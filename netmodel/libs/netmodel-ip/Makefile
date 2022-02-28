@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-ip
-PKG_VERSION:=v0.3.1
+PKG_VERSION:=v1.0.0
 SHORT_DESCRIPTION:=Network Model IP client
 
-PKG_SOURCE:=netmodel-ip-v0.3.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip/-/archive/v0.3.1
-PKG_HASH:=3b47521b8050c0efd3712e2cd74e0cd35c277e8e14c90978a12d8de7d7e4b98d
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-ip-v0.3.1
+PKG_SOURCE:=netmodel-ip-v1.0.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip/-/archive/v1.0.0
+PKG_HASH:=5826d1413b725ad245ac236d1dbc198880e8bdf2bd2cd572bc6a5df6886ac206
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-ip-v1.0.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -27,6 +27,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxb
   DEPENDS += +libamxo
   DEPENDS += +libamxs
+  DEPENDS += +libamxm
   DEPENDS += +libsahtrace
   DEPENDS += +libnetmodel
   MENU:=1

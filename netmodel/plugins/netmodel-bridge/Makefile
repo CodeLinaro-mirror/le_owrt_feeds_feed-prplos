@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-bridge
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=v1.0.0
 SHORT_DESCRIPTION:=Network Model bridge client
 
-PKG_SOURCE:=netmodel-bridge-v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge/-/archive/v0.1.0
-PKG_HASH:=dfa7d03c1f950b2b14235750bd4ad451520e9d7a989cb3c37bde6f5dd1bd82ef
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-bridge-v0.1.0
+PKG_SOURCE:=netmodel-bridge-v1.0.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge/-/archive/v1.0.0
+PKG_HASH:=967cef88afb141033fd6b508a8911f2791e3da037e9f847ee1a0dc0d2444d585
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-bridge-v1.0.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -27,6 +27,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxb
   DEPENDS += +libamxo
   DEPENDS += +libamxs
+  DEPENDS += +libamxm
   DEPENDS += +libsahtrace
   DEPENDS += +libnetmodel
   MENU:=1
