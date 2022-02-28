@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v2.0.0 - 2022-02-28(14:17:02 +0000)
+
+### Breaking
+
+- [netmodel-bridge](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge): Use amxm to start/stop syncing netmodel clients
+- [netmodel-dhcpv4](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv4): Use amxm to start/stop syncing netmodel clients
+- [netmodel-dhcpv6](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv6): Use amxm to start/stop syncing netmodel clients
+- [netmodel-ethernet](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ethernet): Use amxm to start/stop syncing netmodel clients
+- [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip): Use amxm to start/stop syncing netmodel clients
+- [netmodel-netdev](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-netdev): Use amxm to start/stop syncing netmodel clients
+- [netmodel-vlan](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-vlan): Use amxm to start/stop syncing netmodel clients
+
+### New
+
+- [netmodel-clients](https://gitlab.com/prpl-foundation/components/netmodel/applications/netmodel-clients): Component added
+
+### Fixes
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Create separate plugin to run NetModel clients
+
 ## Release v1.5.1 - 2022-02-25(13:26:19 +0000)
 
 ### Other
