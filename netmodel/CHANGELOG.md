@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v2.0.1 - 2022-03-01(16:06:43 +0000)
+
+### Other
+
+- [netmodel-bridge](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge): [netmodel][tr181-bridge] Bridge Management ports must have the netdev flag set
+
 ## Release v2.0.0 - 2022-02-28(14:17:02 +0000)
 
 ### Breaking
