@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-bridge
-PKG_VERSION:=v1.0.0
+PKG_VERSION:=v1.0.1
 SHORT_DESCRIPTION:=Network Model bridge client
 
-PKG_SOURCE:=netmodel-bridge-v1.0.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge/-/archive/v1.0.0
-PKG_HASH:=967cef88afb141033fd6b508a8911f2791e3da037e9f847ee1a0dc0d2444d585
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-bridge-v1.0.0
+PKG_SOURCE:=netmodel-bridge-v1.0.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge/-/archive/v1.0.1
+PKG_HASH:=c5a846bb9008ca0f887a32658eb0b724779f902c33c04d0986b91ea1717996d3
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-bridge-v1.0.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
