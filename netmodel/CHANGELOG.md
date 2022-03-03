@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v2.0.2 - 2022-03-03(17:44:55 +0000)
+
+### Fixes
+
+- [netmodel-bridge](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge): [NetModel-bridge] The netdev flag should not be cleared if the Port is not a VLAN
+
 ## Release v2.0.1 - 2022-03-01(16:06:43 +0000)
 
 ### Other
