@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dhcpv6client
-PKG_VERSION:=v0.7.1
+PKG_VERSION:=v0.7.2
 SHORT_DESCRIPTION:=TR-181 compatible DHCPv6 client
 
-PKG_SOURCE:=tr181-dhcpv6client-v0.7.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6client/-/archive/v0.7.1
-PKG_HASH:=4e48b98fb25c35f2144b9a3ff277413555de001766422de5ed3da268530122eb
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6client-v0.7.1
+PKG_SOURCE:=tr181-dhcpv6client-v0.7.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6client/-/archive/v0.7.2
+PKG_HASH:=16d796df05d8a230c6c8b0fc8f86289d49e0f7d2eba2513eb4e0614171f95787
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6client-v0.7.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -47,6 +47,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +amxrt
   DEPENDS += +libsahtrace
   DEPENDS += +libdhcpoptions
+  DEPENDS += +libnetmodel
   DEPENDS += +mod-netmodel
   DEPENDS += +mod-dmext
   MENU:=1
