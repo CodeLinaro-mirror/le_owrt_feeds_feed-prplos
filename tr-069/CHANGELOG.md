@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.12.0 - 2022-03-09(13:59:23 +0000)
+
+### New
+
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine): Make DNS fully async
+
+### Changes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Make DNS fully async
+
 ## Release v0.11.0 - 2022-02-24(09:41:40 +0000)
 
 ### New
