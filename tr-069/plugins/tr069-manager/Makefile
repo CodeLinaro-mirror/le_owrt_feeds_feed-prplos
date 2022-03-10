@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=v1.12.2
+PKG_VERSION:=v1.13.0
 SHORT_DESCRIPTION:=TR069 Manager
 
-PKG_SOURCE:=tr069-manager-v1.12.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.12.2
-PKG_HASH:=9466de1146f1a46b9a6dd9160d8e517a4eb6063667bda7ab9d47422ae128d217
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.12.2
+PKG_SOURCE:=tr069-manager-v1.13.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.13.0
+PKG_HASH:=6d46c410cea216eeed86d94c18e41998b4aec7c7697ff06ba7b0fcdc95220119
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.13.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -40,6 +40,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libtr69-engine
   DEPENDS += +uriparser
   DEPENDS += +libcares
+  DEPENDS += +libnetmodel
   MENU:=1
 endef
 
