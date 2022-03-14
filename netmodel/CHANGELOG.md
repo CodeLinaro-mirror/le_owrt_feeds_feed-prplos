@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v2.0.4 - 2022-03-14(17:29:54 +0000)
+
+### Other
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Add doxygen generation
+
 ## Release v2.0.3 - 2022-03-10(13:56:38 +0000)
 
 ### Other
