@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v2.1.0 - 2022-03-17(15:30:32 +0000)
+
+### New
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): implement iprouter client and iprouter mib
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): implement iprouter client and iprouter mib
+
 ## Release v2.0.4 - 2022-03-14(17:29:54 +0000)
 
 ### Other
