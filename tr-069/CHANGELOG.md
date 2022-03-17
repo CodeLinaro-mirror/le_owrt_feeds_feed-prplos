@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.13.0 - 2022-03-17(19:22:33 +0000)
+
+### New
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Use netmodel to get wan interface info
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Open the port for connection request
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Fix cwmpd crash if DHCP Client instance goes down
+
+### Other
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): support for a http stateless mode
+
 ## Release v0.12.0 - 2022-03-09(13:59:23 +0000)
 
 ### New
