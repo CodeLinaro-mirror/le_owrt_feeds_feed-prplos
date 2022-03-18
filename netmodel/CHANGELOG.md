@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v2.1.1 - 2022-03-18(10:05:40 +0000)
+
+### Fixes
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [Lib NetModel] Use amxb_be_who_has instead of own implementation
+
 ## Release v2.1.0 - 2022-03-17(15:30:32 +0000)
 
 ### New
