@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v2.2.0 - 2022-03-24(14:08:45 +0000)
+
+### New
+
+- [netmodel-iprouter](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-iprouter): Component added
+
+### Changes
+
+- [netmodel-clients](https://gitlab.com/prpl-foundation/components/netmodel/applications/netmodel-clients): [GetDebugInformation] Add data model debuginfo in component services
+
 ## Release v2.1.1 - 2022-03-18(10:05:40 +0000)
 
 ### Fixes
