@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.13.1 - 2022-03-24(10:09:38 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): send notif when connrequrl is changed
+
+### Changes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Enable core dumps by default
+
 ## Release v0.13.0 - 2022-03-17(19:22:33 +0000)
 
 ### New
