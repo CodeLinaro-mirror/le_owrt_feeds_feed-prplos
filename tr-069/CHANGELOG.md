@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.13.2 - 2022-03-24(15:36:32 +0000)
+
+### Changes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): [GetDebugInformation] Add data model debuginfo in component services
+
 ## Release v0.13.1 - 2022-03-24(10:09:38 +0000)
 
 ### Fixes
