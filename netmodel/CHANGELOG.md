@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v2.2.1 - 2022-03-25(21:25:28 +0000)
+
+### Fixes
+
+- [mod-netmodel](https://gitlab.com/prpl-foundation/components/netmodel/modules/mod-netmodel): [NetModel] Move populate code back to mod_netmodel
+
 ## Release v2.2.0 - 2022-03-24(14:08:45 +0000)
 
 ### New
