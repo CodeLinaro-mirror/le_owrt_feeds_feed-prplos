@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v2.2.2 - 2022-03-28(16:44:56 +0000)
+
+### Fixes
+
+- [netmodel-ethernet](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ethernet): The loopback interface must be marked with the netdev flag.
+
 ## Release v2.2.1 - 2022-03-25(21:25:28 +0000)
 
 ### Fixes
