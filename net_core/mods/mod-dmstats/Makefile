@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=mod-pcm-svc
-PKG_VERSION:=v0.2.1
-SHORT_DESCRIPTION:=Upgrade Persistent Configuration Manager service module
+PKG_NAME:=mod-dmstats
+PKG_VERSION:=v0.1.1
+SHORT_DESCRIPTION:=Reusable stats module
 
-PKG_SOURCE:=mod-pcm-svc-v0.2.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-pcm-svc/-/archive/v0.2.1
-PKG_HASH:=515a190521160b852ad0042b0b4b225557470a06557ec9642d11e20a11bdc25a
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-pcm-svc-v0.2.1
+PKG_SOURCE:=mod-dmstats-v0.1.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/ambiorix/modules/mod-dmstats/-/archive/v0.1.1
+PKG_HASH:=d3ac3efc4f5e101f18c3dc651f842b68436de828237abfb8e96729ac222c6287
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-dmstats-v0.1.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -20,20 +20,19 @@ define Package/$(PKG_NAME)
   CATEGORY:=amx
   SUBMENU:=Modules
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-pcm-svc
-  DEPENDS += +amxrt
+  URL:=https://gitlab.com/soft.at.home/ambiorix/modules/mod-dmstats
   DEPENDS += +libamxc
-  DEPENDS += +libamxd
   DEPENDS += +libamxp
+  DEPENDS += +libamxd
   DEPENDS += +libamxb
   DEPENDS += +libamxo
-  DEPENDS += +libamxm
   DEPENDS += +libsahtrace
+  DEPENDS += +amxrt
   MENU:=1
 endef
 
 define Package/$(PKG_NAME)/description
-	Upgrade Persistent Configuration Manager service module
+	Reusable stats module
 endef
 
 define Build/Compile
