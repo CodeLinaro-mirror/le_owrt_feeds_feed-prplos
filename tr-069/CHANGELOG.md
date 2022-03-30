@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.14.0 - 2022-03-30(10:02:29 +0000)
+
+### New
+
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine): Add support for digest auth
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): add support for digest authentication
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): rework cwmpd configs
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Shutdown Notif interface when exit, Fix errors
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Notify cwmpd when connectionRequestURL is modified
+
 ## Release v0.13.2 - 2022-03-24(15:36:32 +0000)
 
 ### Changes

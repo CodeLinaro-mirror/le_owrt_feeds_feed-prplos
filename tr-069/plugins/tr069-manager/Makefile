@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=v1.14.3
+PKG_VERSION:=v1.16.2
 SHORT_DESCRIPTION:=TR069 Manager
 
-PKG_SOURCE:=tr069-manager-v1.14.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.14.3
-PKG_HASH:=b3621b073f273fc8cd258be5a228b37954352f1c20b4956234487cc40ef23acf
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.14.3
+PKG_SOURCE:=tr069-manager-v1.16.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.16.2
+PKG_HASH:=e97eb1dec2d6317fdfee4c51f945294d522945eb6ddafccf4ed39f458209e3f1
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.16.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -34,6 +34,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxb
   DEPENDS += +libamxo
   DEPENDS += +libamxm
+  DEPENDS += +libamxa
   DEPENDS += +mod-dmext
   DEPENDS += +libsahtrace
   DEPENDS += +libwebsockets
