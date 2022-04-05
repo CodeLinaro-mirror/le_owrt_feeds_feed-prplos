@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v2.2.3 - 2022-04-05(10:30:45 +0000)
+
+### Fixes
+
+- [netmodel-ethernet](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ethernet): The loopback interface must be marked with the netdev flag.
+
+### Changes
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [GetDebugInformation] Add data model debuginfo in component services
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): The loopback interface must be marked with the netdev flag.
+
 ## Release v2.2.2 - 2022-03-28(16:44:56 +0000)
 
 ### Fixes
