@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=wan-manager
-PKG_VERSION:=v0.2.4
+PKG_VERSION:=v0.2.5
 SHORT_DESCRIPTION:=TR-181 compatible plugin for advanced WAN mode configuration
 
-PKG_SOURCE:=wan-manager-v0.2.4.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/wan-manager/-/archive/v0.2.4
-PKG_HASH:=102e8fd9530977ab6c49c4735bbe1d9d83255addeef4b77d8e3c5d957de9a9a8
-PKG_BUILD_DIR:=$(BUILD_DIR)/wan-manager-v0.2.4
+PKG_SOURCE:=wan-manager-v0.2.5.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/wan-manager/-/archive/v0.2.5
+PKG_HASH:=d2a8f00af36212902e6fc82204999884363ba55ddba7d279e74db626c46b54dd
+PKG_BUILD_DIR:=$(BUILD_DIR)/wan-manager-v0.2.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -35,6 +35,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxo
   DEPENDS += +amxrt
   DEPENDS += +libsahtrace
+  DEPENDS += +libnetmodel
   MENU:=1
 endef
 
