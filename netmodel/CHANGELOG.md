@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v2.2.4 - 2022-04-06(10:04:19 +0000)
+
+### Fixes
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [NetModel] Change query updated event to match the event sent by NeMo
+
+### Changes
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Change query updated event to match the event sent by NeMo
+
 ## Release v2.2.3 - 2022-04-05(10:30:45 +0000)
 
 ### Fixes
