@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.14.1 - 2022-04-06(16:35:06 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Fix SIGFPE when DNS resolution fail
+
 ## Release v0.14.0 - 2022-03-30(10:02:29 +0000)
 
 ### New
