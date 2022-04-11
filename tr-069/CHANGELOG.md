@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.14.2 - 2022-04-11(16:52:56 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Gitlab pipeline: complexity-check warnings
+
 ## Release v0.14.1 - 2022-04-06(16:35:06 +0000)
 
 ### Fixes
