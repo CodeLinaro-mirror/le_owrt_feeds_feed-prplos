@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.14.3 - 2022-04-13(17:01:49 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Fix cwmpd crash when excuting DHCP renew
+
 ## Release v0.14.2 - 2022-04-11(16:52:56 +0000)
 
 ### Fixes
