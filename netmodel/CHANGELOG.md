@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v2.2.5 - 2022-04-14(13:42:23 +0000)
+
+### Changes
+
+- [mod-netmodel](https://gitlab.com/prpl-foundation/components/netmodel/modules/mod-netmodel): Make the Interface path prefixed
+- [netmodel-dhcpv4](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv4): Make the Interface path prefixed
+- [netmodel-dhcpv6](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv6): Make the Interface path prefixed
+- [netmodel-netdev](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-netdev): Vlan Interfaces are not up after creation
+
 ## Release v2.2.4 - 2022-04-06(10:04:19 +0000)
 
 ### Fixes
