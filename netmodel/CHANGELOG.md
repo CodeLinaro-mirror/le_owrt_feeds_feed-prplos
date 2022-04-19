@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v2.3.0 - 2022-04-19(14:17:48 +0000)
+
+### New
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [netmodel] Support of prefix queries in netmodel/libnetmodel
+- [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip): [netmodel] Support of prefix queries in netmodel/libnetmodel
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [netmodel] Support of prefix queries in netmodel/libnetmodel
+
 ## Release v2.2.5 - 2022-04-14(13:42:23 +0000)
 
 ### Changes
