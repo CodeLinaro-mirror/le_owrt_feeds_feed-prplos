@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v2.3.1 - 2022-04-21(17:19:55 +0000)
+
+### Fixes
+
+- [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip): NetModel getAddr asynchronous query not working
+
+### Changes
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [Lib NetModel] Add an initialized check for each API method
+
 ## Release v2.3.0 - 2022-04-19(14:17:48 +0000)
 
 ### New
