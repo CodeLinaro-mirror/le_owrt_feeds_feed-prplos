@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-routeradvertisement
-PKG_VERSION:=v0.5.1
+PKG_VERSION:=v0.6.0
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-routeradvertisement-v0.5.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routeradvertisement/-/archive/v0.5.1
-PKG_HASH:=4893cbf3d70eee789139a24ee750ab224d073cdc3e464f8078230d89a47dfe7f
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routeradvertisement-v0.5.1
+PKG_SOURCE:=tr181-routeradvertisement-v0.6.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routeradvertisement/-/archive/v0.6.0
+PKG_HASH:=f6738a5b07118d5788c3ceee1325987d7f2d9717c8cb02d55cb23f743a3197d2
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routeradvertisement-v0.6.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -45,6 +45,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxm
   DEPENDS += +libsahtrace
   DEPENDS += +mod-dmext
+  DEPENDS += +libnetmodel
   MENU:=1
 endef
 
