@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v2.3.2 - 2022-04-23(07:27:40 +0000)
+
+### Fixes
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): netdev-up flag on vlan-vlan201 is gone after switching WANManager's WANMode twice
+
 ## Release v2.3.1 - 2022-04-21(17:19:55 +0000)
 
 ### Fixes
