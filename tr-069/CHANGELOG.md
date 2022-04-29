@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.14.4 - 2022-04-29(16:37:34 +0000)
+
+### Fixes
+
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine): failed to generate auth headers
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): failed to generate auth headers
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): SIGABRT when timer is started twice before it is expire
+
 ## Release v0.14.3 - 2022-04-13(17:01:49 +0000)
 
 ### Fixes
