@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.14.5 - 2022-05-03(16:58:00 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Fix cwmpd client append handshake headers
+
 ## Release v0.14.4 - 2022-04-29(16:37:34 +0000)
 
 ### Fixes
