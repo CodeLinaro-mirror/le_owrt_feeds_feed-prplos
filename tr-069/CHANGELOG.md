@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.14.6 - 2022-05-18(10:08:12 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): libwebsockets crash after the first server reply in a multi client context
+
 ## Release v0.14.5 - 2022-05-03(16:58:00 +0000)
 
 ### Fixes
