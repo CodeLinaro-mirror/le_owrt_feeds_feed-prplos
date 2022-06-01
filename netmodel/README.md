@@ -16,6 +16,7 @@ Feed_netmodel includes the following components:
 - [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip) - Network Model IP client
 - [netmodel-iprouter](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-iprouter) - Network Model Router Advertisement client
 - [netmodel-netdev](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-netdev) - Network Model NetDev client
+- [netmodel-ppp](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ppp) - Network Model PPP client
 - [netmodel-vlan](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-vlan) - Network Model vlan client
 
 ### Modules
@@ -30,11 +31,6 @@ Feed_netmodel includes the following components:
 ## How to add feed_netmodel to your OpenWrt build
 
 At the root of your OpenWrt tree, add the following to your `feeds.conf` file:
-
-```sh
-src-git feed_netmodel git@gitlab.softathome.com:ext_dish/feeds/feed_netmodel.git;main
-```
-
 Add the packages to your OpenWrt instance with the following commands:
 ```sh
 ./scripts/feeds update feed_netmodel #retrieve the feed from service/update to latest
