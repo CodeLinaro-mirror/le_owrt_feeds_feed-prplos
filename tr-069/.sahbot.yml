@@ -1,0 +1,10 @@
+components:
+  default:
+    merge_strategy: "group_1"
+    auto_merge: false
+
+build:
+  config: []
+
+  whitelist:
+  - "wrt-hgw/config/full-featured-prplwrt/.*"

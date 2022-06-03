@@ -1,0 +1,9 @@
+---
+variables:
+  PC_AUTO_OPENSOURCE: "on"
+  PC_SQUASH_COMMITS_OPENSOURCE: "on"
+
+include:
+  - project: 'sofa/gitlab-ci/yml-templates'
+    ref: master
+    file: '.sah-wrt-feed-build-test.yml'
