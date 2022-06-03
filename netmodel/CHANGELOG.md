@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release proj_prpl_M1-2022_v0.0.1 - 2022-06-03(14:14:59 +0000)
+
 ## Release v2.4.2 - 2022-05-31(10:33:09 +0000)
 
 ### Fixes
