@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-ppp
-PKG_VERSION:=v0.5.0
+PKG_VERSION:=v0.5.1
 SHORT_DESCRIPTION:=TR-181 compatible PPP plugin
 
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
@@ -42,6 +42,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +mod-dmext
   DEPENDS += +mod-dmstats
   DEPENDS += +mod-netmodel
+  DEPENDS += +libnetmodel
   MENU:=1
 endef
 
