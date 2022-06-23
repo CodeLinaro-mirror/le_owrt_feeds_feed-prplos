@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dns
-PKG_VERSION:=v0.5.1
+PKG_VERSION:=v0.5.2
 SHORT_DESCRIPTION:=dns plugin
 
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
