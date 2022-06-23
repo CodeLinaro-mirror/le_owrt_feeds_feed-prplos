@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-ppp
-PKG_VERSION:=v0.6.0
+PKG_VERSION:=v0.6.1
 SHORT_DESCRIPTION:=TR-181 compatible PPP plugin
 
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
