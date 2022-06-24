@@ -15,6 +15,7 @@ Feed_netmodel includes the following components:
 - [netmodel-ethernet](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ethernet) - Network Model ethernet client
 - [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip) - Network Model IP client
 - [netmodel-iprouter](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-iprouter) - Network Model Router Advertisement client
+- [netmodel-logical](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-logical) - Network Model Logical client
 - [netmodel-netdev](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-netdev) - Network Model NetDev client
 - [netmodel-ppp](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ppp) - Network Model PPP client
 - [netmodel-vlan](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-vlan) - Network Model vlan client

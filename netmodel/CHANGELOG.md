@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release proj_prpl_M1-2022_v0.1.0 - 2022-06-22(19:17:15 +0000)
+
+### New
+
+- [netmodel-logical](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-logical): Component added
+
 ## Release proj_prpl_M1-2022_v0.0.2 - 2022-06-21(07:43:02 +0000)
 
 ### Other
