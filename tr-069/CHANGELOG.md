@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.14.8 - 2022-06-27(08:58:52 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Empty POST must not contain a SOAPAction and content-Type headers
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Fix Set session cookies
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): GPV RPC stop on a non-tr181 components
+
+### Other
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): [Gitlab CI][Unit tests][valgrind] Pipeline doesn't stop when memory leaks are detected
+
 ## Release v0.14.7 - 2022-06-08(16:13:57 +0000)
 
 ### Fixes
