@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-neighbordiscovery
-PKG_VERSION:=v0.3.0
+PKG_VERSION:=v0.3.1
 SHORT_DESCRIPTION:=TR-181 compatible neighbordiscovery plugin
 
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
