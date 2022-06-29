@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release proj_prpl_M1-2022_v0.2.0 - 2022-06-29(17:33:59 +0000)
+
+### New
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [Lib NetModel] Add API to retrieve the root object name
+
+### Fixes
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [NetModel] NetDevName doesn't sync if the interface does not yet exist during find_instance_to_sync_callback
+
+### Other
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [NetModel] Change query updated event to match the event sent by NeMo
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): Fix makefile always using "NeMo" as root object name
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [PRPLoS] Reduce logging during start up.
+
 ## Release proj_prpl_M1-2022_v0.1.0 - 2022-06-22(19:17:15 +0000)
 
 ### New
