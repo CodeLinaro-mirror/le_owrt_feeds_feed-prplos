@@ -1,5 +1,5 @@
 #!/bin/sh
 
-sed -i "s/config dnsmasq/config dnsmasq\n    option port '0'/" /etc/config/dhcp
+sed -i "s/option port '53'/option port '0'/" /etc/config/dhcp
 
 exit 0
