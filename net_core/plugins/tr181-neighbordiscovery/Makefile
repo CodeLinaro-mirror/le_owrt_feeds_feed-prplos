@@ -1,10 +1,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-neighbordiscovery
-PKG_VERSION:=v0.3.1
+PKG_VERSION:=v0.3.2
 SHORT_DESCRIPTION:=TR-181 compatible neighbordiscovery plugin
 
+PKG_SOURCE:=tr181-neighbordiscovery-v0.3.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-neighbordiscovery/-/archive/v0.3.2
+PKG_HASH:=b9e8fe4bbca183da8819c07166408c9f42ebb8c955631689b9f249071b2e0a6b
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-neighbordiscovery-v0.3.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
+PKG_LICENSE:=BSD-2-Clause-Patent
+PKG_LICENSE_FILES:=LICENSE
 
 COMPONENT:=tr181-neighbordiscovery
 
@@ -21,6 +27,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=ambiorix
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
+  URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-neighbordiscovery
   DEPENDS += +libamxc
   DEPENDS += +libamxp
   DEPENDS += +libamxd
