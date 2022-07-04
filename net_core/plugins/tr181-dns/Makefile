@@ -1,10 +1,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dns
-PKG_VERSION:=v0.5.2
+PKG_VERSION:=v0.5.3
 SHORT_DESCRIPTION:=dns plugin
 
+PKG_SOURCE:=tr181-dns-v0.5.3.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dns/-/archive/v0.5.3
+PKG_HASH:=7d9027ae3c3dc6bcd41fca1a469142367aee9474a9d41cb468429529572a593a
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dns-v0.5.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
+PKG_LICENSE:=BSD-2-Clause-Patent
+PKG_LICENSE_FILES:=LICENSE
 
 COMPONENT:=tr181-dns
 
@@ -21,6 +27,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=ambiorix
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
+  URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dns
   DEPENDS += +libamxb
   DEPENDS += +libamxc
   DEPENDS += +libamxd
