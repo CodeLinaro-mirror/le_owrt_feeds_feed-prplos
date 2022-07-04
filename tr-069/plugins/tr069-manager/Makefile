@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=v1.16.13
+PKG_VERSION:=v1.16.15
 SHORT_DESCRIPTION:=TR069 Manager
 
-PKG_SOURCE:=tr069-manager-v1.16.13.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.16.13
-PKG_HASH:=b9bfb1ff61eb9ea8c4d894c8189f9abb9479558249d79512bb7acac30aff9a44
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.16.13
+PKG_SOURCE:=tr069-manager-v1.16.15.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.16.15
+PKG_HASH:=c0b125095293440e323e6c9bb3644efecffc15767b96a19f0e80a269b60d91e3
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.16.15
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -37,12 +37,11 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxa
   DEPENDS += +mod-dmext
   DEPENDS += +libsahtrace
-  DEPENDS += +libwebsockets4
-  DEPENDS += +libwebsockets4-full
+  DEPENDS += +libwebsockets
   DEPENDS += +libevent2
   DEPENDS += +libtr69-engine
   DEPENDS += +uriparser
-  DEPENDS += +libcares1
+  DEPENDS += +libcares
   DEPENDS += +libnetmodel
   MENU:=1
 endef
