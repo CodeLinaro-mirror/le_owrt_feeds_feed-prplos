@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.14.9 - 2022-07-04(17:30:46 +0000)
+
+### Fixes
+
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine): warning on some parameter types
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): missing "M Reboot" in inform msg after reboot
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Firewall service should be required by cwmpd
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Remove duplicated env script from tr069-manager
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): warning on some parameter types
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): TCP connection is not persistent
+
 ## Release v0.14.8 - 2022-06-27(08:58:52 +0000)
 
 ### Fixes
