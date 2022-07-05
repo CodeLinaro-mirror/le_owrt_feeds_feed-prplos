@@ -4,7 +4,13 @@ PKG_NAME:=netmodel-ppp
 PKG_VERSION:=v0.1.0
 SHORT_DESCRIPTION:=Network Model PPP client
 
+PKG_SOURCE:=netmodel-ppp-v0.1.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ppp/-/archive/v0.1.0
+PKG_HASH:=190c39b170f1d9c2c19403905c22ecfb6630231135d163d123637e328d7f7cb6
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-ppp-v0.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
+PKG_LICENSE:=BSD-2-Clause-Patent
+PKG_LICENSE_FILES:=LICENSE
 
 PKG_RELEASE:=1
 
@@ -14,6 +20,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=ambiorix
   SUBMENU:=Libraries
   TITLE:=$(SHORT_DESCRIPTION)
+  URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ppp
   DEPENDS += +libamxc
   DEPENDS += +libamxp
   DEPENDS += +libamxd
