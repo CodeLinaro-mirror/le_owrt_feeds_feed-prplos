@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dns
-PKG_VERSION:=v0.5.3
+PKG_VERSION:=v0.5.4
 SHORT_DESCRIPTION:=dns plugin
 
-PKG_SOURCE:=tr181-dns-v0.5.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dns/-/archive/v0.5.3
-PKG_HASH:=7d9027ae3c3dc6bcd41fca1a469142367aee9474a9d41cb468429529572a593a
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dns-v0.5.3
+PKG_SOURCE:=tr181-dns-v0.5.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dns/-/archive/v0.5.4
+PKG_HASH:=fd98b048a436950056df63c53032211b7fcc35ff268bc78a21ccb0783ec2a14f
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dns-v0.5.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -64,7 +64,6 @@ define Build/InstallDev
 endef
 
 define Package/$(PKG_NAME)/install
-	$(CP) ./files/* $(1)/
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 endef
 
