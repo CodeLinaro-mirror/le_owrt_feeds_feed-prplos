@@ -1,10 +1,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-logical
-PKG_VERSION:=master
+PKG_VERSION:=v0.1.4
 SHORT_DESCRIPTION:=logical interface plugin
 
+PKG_SOURCE:=tr181-logical-v0.1.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-logical/-/archive/v0.1.4
+PKG_HASH:=7717d2109f33cdf64ecdb9e83dea6ad7b6494264f6eb1f5dd7f127ed510fb467
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-logical-v0.1.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
+PKG_LICENSE:=BSD-2-Clause-Patent
+PKG_LICENSE_FILES:=LICENSE
 
 COMPONENT:=tr181-logical
 
@@ -21,6 +27,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=ambiorix
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
+  URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-logical
   DEPENDS += +libamxb
   DEPENDS += +libamxc
   DEPENDS += +libamxd
