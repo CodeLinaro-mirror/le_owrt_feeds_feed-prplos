@@ -32,6 +32,11 @@ Feed_netmodel includes the following components:
 ## How to add feed_netmodel to your OpenWrt build
 
 At the root of your OpenWrt tree, add the following to your `feeds.conf` file:
+
+```sh
+src-git feed_netmodel git@gitlab.com:soft.at.home/buildsystems/openwrt/feed_netmodel.git;main
+```
+
 Add the packages to your OpenWrt instance with the following commands:
 ```sh
 ./scripts/feeds update feed_netmodel #retrieve the feed from service/update to latest
