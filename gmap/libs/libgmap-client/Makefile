@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libgmap-client
-PKG_VERSION:=v0.3.1
+PKG_VERSION:=v0.3.2
 SHORT_DESCRIPTION:=Client library for gmap modules
 
-PKG_SOURCE:=libgmap-client-v0.3.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-client/-/archive/v0.3.1
-PKG_HASH:=507f2181591ac8e5f95fba4d3d21f4eb5922ba2c57faa972883e72f4e8113848
-PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-client-v0.3.1
+PKG_SOURCE:=libgmap-client-v0.3.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-client/-/archive/v0.3.2
+PKG_HASH:=40355a2e03ddd9f1be7e3a241ccb3f995746c8b6f07d4cfd8c3ebb17d6169399
+PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-client-v0.3.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
