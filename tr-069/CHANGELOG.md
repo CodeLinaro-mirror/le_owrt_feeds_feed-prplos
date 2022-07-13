@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.14.10 - 2022-07-13(08:25:19 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Fix PeriodicInformTime format
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): GPN/GPA fail with parameter search path
+
 ## Release v0.14.9 - 2022-07-04(17:30:46 +0000)
 
 ### Fixes
