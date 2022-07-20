@@ -17,6 +17,11 @@ Feed_tr69 includes the following components:
 ## How to add feed_tr69 to your OpenWrt build
 
 At the root of your OpenWrt tree, add the following to your `feeds.conf` file:
+
+```sh
+src-git feed_tr69 git@gitlab.com:soft.at.home/buildsystems/openwrt/feed_tr69.git;main
+```
+
 Add the packages to your OpenWrt instance with the following commands:
 ```sh
 ./scripts/feeds update feed_tr69 #retrieve the feed from service/update to latest
