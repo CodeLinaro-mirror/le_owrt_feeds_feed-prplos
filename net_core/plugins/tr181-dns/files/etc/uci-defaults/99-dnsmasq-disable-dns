@@ -1,5 +1,0 @@
-#!/bin/sh
-
-sed -i "s/option port '53'/option port '0'/" /etc/config/dhcp
-
-exit 0
