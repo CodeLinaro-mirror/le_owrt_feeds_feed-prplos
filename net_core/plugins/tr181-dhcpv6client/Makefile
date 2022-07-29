@@ -76,6 +76,7 @@ define Build/InstallDev
 endef
 
 define Package/$(PKG_NAME)/install
+	$(CP) ./files/* $(1)/
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 endef
 
