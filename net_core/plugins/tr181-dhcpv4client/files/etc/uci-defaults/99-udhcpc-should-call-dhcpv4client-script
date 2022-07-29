@@ -1,5 +1,0 @@
-#!/bin/sh
-
-sed -i "s/-s \/lib\/netifd\/dhcp.script/-s \/etc\/udhcpc.user/" /lib/netifd/proto/dhcp.sh
-
-exit 0
