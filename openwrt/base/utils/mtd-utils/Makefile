@@ -80,5 +80,18 @@ define Package/nand-utils/install
 	$(PKG_INSTALL_DIR)/usr/sbin/{flash_erase,nanddump,nandwrite,nandtest,mtdinfo} $(1)/usr/sbin/
 endef
 
+# This installs files into ./staging_dir/. so that you can cross compile from the host
+define Build/InstallDev
+	echo "INSTALLDEV"
+	$(INSTALL_DIR) $(1)/usr/include
+	$(INSTALL_DIR) $(1)/usr/include/mtd
+	$(CP) $(PKG_BUILD_DIR)/include/libmtd.h $(1)/usr/include
+	$(CP) $(PKG_BUILD_DIR)/include/libubi.h $(1)/usr/include
+	$(CP) $(PKG_BUILD_DIR)/include/mtd/* $(1)/usr/include/mtd
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(CP) $(PKG_BUILD_DIR)/libmtd.a $(1)/usr/lib
+	$(CP) $(PKG_BUILD_DIR)/libubi.a $(1)/usr/lib
+endef
+
 $(eval $(call BuildPackage,ubi-utils))
 $(eval $(call BuildPackage,nand-utils))
