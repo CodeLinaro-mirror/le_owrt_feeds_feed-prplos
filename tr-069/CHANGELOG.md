@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.14.11 - 2022-08-02(16:43:05 +0000)
+
+### Fixes
+
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine): Fix InformMessageScheduler cleanup before initialzing
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Check if wan is not connected, no starting cwmpd server
+
 ## Release v0.14.10 - 2022-07-13(08:25:19 +0000)
 
 ### Fixes
