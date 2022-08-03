@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libgmap-client
-PKG_VERSION:=v0.3.2
+PKG_VERSION:=v0.4.0
 SHORT_DESCRIPTION:=Client library for gmap modules
 
-PKG_SOURCE:=libgmap-client-v0.3.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-client/-/archive/v0.3.2
-PKG_HASH:=40355a2e03ddd9f1be7e3a241ccb3f995746c8b6f07d4cfd8c3ebb17d6169399
-PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-client-v0.3.2
+PKG_SOURCE:=libgmap-client-v0.4.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-client/-/archive/v0.4.0
+PKG_HASH:=630e91152d00b4463392057d9780a1f7a6aa4e0eea45439cda0e0e5f204c18e7
+PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-client-v0.4.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -49,6 +49,9 @@ define Build/InstallDev
 endef
 
 define Package/$(PKG_NAME)/install
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
+	fi
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 endef
 
