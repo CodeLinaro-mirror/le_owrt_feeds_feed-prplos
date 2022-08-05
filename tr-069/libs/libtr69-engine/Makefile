@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libtr69-engine
-PKG_VERSION:=v0.7.5
+PKG_VERSION:=v0.7.6
 SHORT_DESCRIPTION:=libraries to define and implement the ACS RPCs methods and data parser
 
-PKG_SOURCE:=libtr69-engine-v0.7.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine/-/archive/v0.7.5
-PKG_HASH:=66f7ad6e3326e561f18c96c1372c440e044e295a8ffd774d228eb866e8add386
-PKG_BUILD_DIR:=$(BUILD_DIR)/libtr69-engine-v0.7.5
+PKG_SOURCE:=libtr69-engine-v0.7.6.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine/-/archive/v0.7.6
+PKG_HASH:=488f8e848b5ab4187ba865e3eff30686396af05c8995b91be2376a1c3f3a6833
+PKG_BUILD_DIR:=$(BUILD_DIR)/libtr69-engine-v0.7.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -50,6 +50,9 @@ define Build/InstallDev
 endef
 
 define Package/$(PKG_NAME)/install
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
+	fi
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 endef
 

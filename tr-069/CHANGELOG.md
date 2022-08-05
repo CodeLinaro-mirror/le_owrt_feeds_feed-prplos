@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.14.12 - 2022-08-05(14:38:47 +0000)
+
+### Fixes
+
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine): Fix cwmpd crash when SetParameterAttributes
+
+### Other
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Fix wrong error code returned when making a SetParameterValue...
+
 ## Release v0.14.11 - 2022-08-02(16:43:05 +0000)
 
 ### Fixes

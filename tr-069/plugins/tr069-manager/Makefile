@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=v1.16.18
+PKG_VERSION:=v1.16.19
 SHORT_DESCRIPTION:=TR069 Manager
 
-PKG_SOURCE:=tr069-manager-v1.16.18.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.16.18
-PKG_HASH:=d16e2bbeb4fc7ecd6da5437dfbfbe5171462181b13648972cdd4f4d9253e638e
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.16.18
+PKG_SOURCE:=tr069-manager-v1.16.19.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.16.19
+PKG_HASH:=d16c3411e78ced8187eaf54530e76efda4ffe8bbec979dae00b617c161c85eef
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.16.19
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -68,6 +68,9 @@ define Build/InstallDev
 endef
 
 define Package/$(PKG_NAME)/install
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
+	fi
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 endef
 
