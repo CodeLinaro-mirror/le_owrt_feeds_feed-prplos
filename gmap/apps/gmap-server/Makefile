@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-server
-PKG_VERSION:=v1.0.1
+PKG_VERSION:=v1.0.4
 SHORT_DESCRIPTION:=Service implementing the gmap data model
 
-PKG_SOURCE:=gmap-server-v1.0.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-server/-/archive/v1.0.1
-PKG_HASH:=154dd2d6e95fc6b815d5b3a7e04707a06ecee27f8d1674befa8fb13c9b383133
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-server-v1.0.1
+PKG_SOURCE:=gmap-server-v1.0.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-server/-/archive/v1.0.4
+PKG_HASH:=5d2021136f28ab3c3c81d240adabb83728cfd507c641cdea30602a0371f346ba
+PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-server-v1.0.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -15,6 +15,7 @@ PKG_LICENSE_FILES:=LICENSE
 COMPONENT:=gmap-server
 
 PKG_RELEASE:=1
+PKG_BUILD_DEPENDS += util-linux
 
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
@@ -44,6 +45,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxo
   DEPENDS += +libgmap-client
   DEPENDS += +libsahtrace
+  DEPENDS += +libuuid
   MENU:=1
 endef
 
@@ -70,6 +72,9 @@ define Build/InstallDev
 endef
 
 define Package/$(PKG_NAME)/install
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
+	fi
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 endef
 
