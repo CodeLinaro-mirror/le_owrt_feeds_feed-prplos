@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.14.13 - 2022-08-11(11:38:38 +0000)
+
+### Fixes
+
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine): Fix Digest Authentication when qop or nc headers values are quoted
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Issue : HOP-1466 Fix Digest Authentication and refactoring code
+
+### Other
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): It is not possible to contact the box using the ConnReqURL,...
+
 ## Release v0.14.12 - 2022-08-05(14:38:47 +0000)
 
 ### Fixes
