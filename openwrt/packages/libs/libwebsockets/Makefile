@@ -68,7 +68,7 @@ endef
 define Package/libwebsockets-full
 	$(call Package/libwebsockets/Default)
 	TITLE += (Full - OpenSSL, libuv, plugins, CGI)
-	DEPENDS += +libopenssl +libuv
+	DEPENDS += +libopenssl +libuv +libevent2
 	VARIANT:=full
 endef
 
@@ -90,6 +90,9 @@ ifeq ($(BUILD_VARIANT),full)
     CMAKE_OPTIONS += -DLWS_WITH_ACCESS_LOG=ON
     CMAKE_OPTIONS += -DLWS_WITH_CGI=ON
     CMAKE_OPTIONS += -DLWS_UNIX_SOCK=ON
+    CMAKE_OPTIONS += -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+    CMAKE_OPTIONS += -DLWS_WITH_LIBEVENT=ON
+    CMAKE_OPTIONS += -DLWS_MAX_SMP=10
 endif
 
 define Package/libwebsockets/install
