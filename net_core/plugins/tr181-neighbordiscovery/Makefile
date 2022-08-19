@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-neighbordiscovery
-PKG_VERSION:=v0.3.3
+PKG_VERSION:=v0.3.4
 SHORT_DESCRIPTION:=TR-181 compatible neighbordiscovery plugin
 
-PKG_SOURCE:=tr181-neighbordiscovery-v0.3.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-neighbordiscovery/-/archive/v0.3.3
-PKG_HASH:=c9c3672515e5d87e0a74864d2d3528c198688ace227bd5065aee95be3f2b6130
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-neighbordiscovery-v0.3.3
+PKG_SOURCE:=tr181-neighbordiscovery-v0.3.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-neighbordiscovery/-/archive/v0.3.4
+PKG_HASH:=75cf0bb61c2b6b93c02832d50f1fb51aa02414e41ee8c074afad7ceaf6ab22cf
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-neighbordiscovery-v0.3.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -63,6 +63,9 @@ define Build/InstallDev
 endef
 
 define Package/$(PKG_NAME)/install
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
+	fi
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 endef
 
