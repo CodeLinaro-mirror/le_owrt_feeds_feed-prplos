@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.14.14 - 2022-08-23(12:44:36 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Fix cwmpd crash when excute setParameterValues with object not found
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Fix Digest auth fails as the box send an empty cnonce
+
 ## Release v0.14.13 - 2022-08-11(11:38:38 +0000)
 
 ### Fixes
