@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ip-manager
-PKG_VERSION:=v1.23.1
+PKG_VERSION:=v1.23.2
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-ip-v1.23.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ip/-/archive/v1.23.1
-PKG_HASH:=28ef70214dd3106902e242b7ca5d2216393356008547ccdf26672f47ab05a007
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ip-v1.23.1
+PKG_SOURCE:=tr181-ip-v1.23.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ip/-/archive/v1.23.2
+PKG_HASH:=db3934a0cd7e91230819137639a5dc5c2137937d1b7e77a398ed97fad9e727f9
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ip-v1.23.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -75,6 +75,9 @@ define Build/InstallDev
 endef
 
 define Package/$(PKG_NAME)/install
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
+	fi
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 endef
 
