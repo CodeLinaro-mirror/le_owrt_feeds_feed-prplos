@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-ppp
-PKG_VERSION:=v0.7.3
+PKG_VERSION:=v0.7.4
 SHORT_DESCRIPTION:=TR-181 compatible PPP plugin
 
-PKG_SOURCE:=tr181-ppp-v0.7.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ppp/-/archive/v0.7.3
-PKG_HASH:=def27909365749e35658516662769744fce7edd3f633401c33334e94d988ad02
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ppp-v0.7.3
+PKG_SOURCE:=tr181-ppp-v0.7.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ppp/-/archive/v0.7.4
+PKG_HASH:=6fd3b1a6e333c655a959934d45b942d8c5ae651be8fc1694665fbf760edc280e
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ppp-v0.7.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -76,6 +76,9 @@ define Build/InstallDev
 endef
 
 define Package/$(PKG_NAME)/install
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
+	fi
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 endef
 
