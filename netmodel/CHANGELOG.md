@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release proj_prpl_M1-2022_v1.0.0 - 2022-08-29(18:54:10 +0000)
+
+### Removed
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Remove registerSync API
+
+### New
+
+- [netmodel-ppp](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ppp): Dynamic handling of network events (PPP)
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): Dynamic handling of network events (PPP)
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [netmodel][client] Add support for radio and ssid clients in netmodel
+
+### Fixes
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [Lib NetModel] Add a retry mechanism in case mib sync fails to start
+
+### Other
+
+- [netmodel-clients](https://gitlab.com/prpl-foundation/components/netmodel/applications/netmodel-clients): [netmodel] sometimes netmodel-clients won't start
+
 ## Release proj_prpl_M1-2022_v0.2.1 - 2022-07-05(12:39:20 +0000)
 
 ### Other
