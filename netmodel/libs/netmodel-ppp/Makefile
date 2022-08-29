@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-ppp
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=v0.2.0
 SHORT_DESCRIPTION:=Network Model PPP client
 
-PKG_SOURCE:=netmodel-ppp-v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ppp/-/archive/v0.1.0
-PKG_HASH:=190c39b170f1d9c2c19403905c22ecfb6630231135d163d123637e328d7f7cb6
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-ppp-v0.1.0
+PKG_SOURCE:=netmodel-ppp-v0.2.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ppp/-/archive/v0.2.0
+PKG_HASH:=161cf5df7aa19a01e463266829cfd797b28df0e6b70c8dac0fa02ca5d70caf1f
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-ppp-v0.2.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -53,6 +53,9 @@ define Build/InstallDev
 endef
 
 define Package/$(PKG_NAME)/install
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
+	fi
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 endef
 
