@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=TR-181 XPON manager
 
 PKG_SOURCE:=tr181-xpon-v1.0.2.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-xpon/-/archive/v1.0.2
-PKG_HASH:=skip
+PKG_HASH:=886b4ea69bed6f6d545abf6b5902b511c8322cd1659cc600848eb0a6333c3652
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-xpon-v1.0.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent

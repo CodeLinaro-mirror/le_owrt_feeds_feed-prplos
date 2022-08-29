@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=xpon prpl module
 
 PKG_SOURCE:=mod-xpon-prpl-v1.0.2.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-xpon-prpl/-/archive/v1.0.2
-PKG_HASH:=skip
+PKG_HASH:=3c1b309726b59472fe97cdab054efd4de812600736de18beb110481fcc4fe5ba
 PKG_BUILD_DIR:=$(BUILD_DIR)/mod-xpon-prpl-v1.0.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
