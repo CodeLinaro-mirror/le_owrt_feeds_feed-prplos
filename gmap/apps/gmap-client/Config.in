@@ -13,7 +13,7 @@ config SAH_AMX_GMAP_CLIENT
 
 config SAH_AMX_GMAP_CLIENT_ORDER
     int "gMap client plugin startup order"
-    default 50
+    default 82
 
 config SAH_AMX_GMAP_CLIENT_ONE_PROCESS
     bool "All gMap client modules run in same process"
