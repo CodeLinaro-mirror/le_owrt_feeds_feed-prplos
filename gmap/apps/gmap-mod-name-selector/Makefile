@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-mod-name-selector
-PKG_VERSION:=v1.0.0
+PKG_VERSION:=v1.0.1
 SHORT_DESCRIPTION:=Name selection module for gmap
 
-PKG_SOURCE:=gmap-mod-name-selector-v1.0.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-mod-name-selector/-/archive/v1.0.0
-PKG_HASH:=c7d1df3ba0960cf458bfa97272ec40e6ca2bf6f5c82e3eabeb2f9ad9173ba8bf
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mod-name-selector-v1.0.0
+PKG_SOURCE:=gmap-mod-name-selector-v1.0.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-mod-name-selector/-/archive/v1.0.1
+PKG_HASH:=cac734389d94a198f980ec4c39956655d0f12a1177fcb0d204a186df2becc206
+PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mod-name-selector-v1.0.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -52,6 +52,9 @@ define Build/InstallDev
 endef
 
 define Package/$(PKG_NAME)/install
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
+	fi
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 endef
 
