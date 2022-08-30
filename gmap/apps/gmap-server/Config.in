@@ -1,0 +1,20 @@
+config PACKAGE_gmap-server
+    tristate
+    select SAH_SERVICES_GMAP-SERVER
+
+if PACKAGE_gmap-server
+
+menu "Select gmap-server build options"
+    depends on PACKAGE_gmap-server
+
+config SAH_SERVICES_GMAP-SERVER
+    bool "Build gMap server"
+    default y
+
+config SAH_AMX_GMAP_SERVER_ORDER
+    int "gMap server plugin startup order"
+    default 71
+
+endmenu
+
+endif
