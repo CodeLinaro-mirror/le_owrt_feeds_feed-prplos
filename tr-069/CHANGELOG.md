@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.15.0 - 2022-09-13(16:17:01 +0000)
+
+### New
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): The amx TR069 client must be adapted to work with ACL's
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): ubus reported datetime as string type
+
 ## Release v0.14.14 - 2022-08-23(12:44:36 +0000)
 
 ### Fixes
