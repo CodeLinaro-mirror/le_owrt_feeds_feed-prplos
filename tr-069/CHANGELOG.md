@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.15.1 - 2022-09-22(12:20:19 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Fix cwmp free
+
 ## Release v0.15.0 - 2022-09-13(16:17:01 +0000)
 
 ### New
