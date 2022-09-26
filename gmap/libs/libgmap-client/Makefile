@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libgmap-client
-PKG_VERSION:=v0.5.0
+PKG_VERSION:=v0.5.2
 SHORT_DESCRIPTION:=Client library for gmap modules
 
-PKG_SOURCE:=libgmap-client-v0.5.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-client/-/archive/v0.5.0
-PKG_HASH:=081e41f699acae9760cd24b16d49a18d878f14b802ccebfab90a9afc1c753e07
-PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-client-v0.5.0
+PKG_SOURCE:=libgmap-client-v0.5.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-client/-/archive/v0.5.2
+PKG_HASH:=83ae6126d617d684452da97806a72f7db938c31153d23c070c783989e5634cd0
+PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-client-v0.5.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -22,6 +22,7 @@ define Package/$(PKG_NAME)
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-client
   DEPENDS += +libamxc
+  DEPENDS += +libamxo
   DEPENDS += +libamxp
   DEPENDS += +libamxb
   DEPENDS += +libamxd
