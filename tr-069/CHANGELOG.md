@@ -8,6 +8,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release proj_prpl_M1-2022_v0.2.0 - 2022-09-30(12:38:06 +0000)
+
+### New
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): The amx TR069 client must be adapted to work with ACL's
+
+### Fixes
+
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine): Fix InformMessageScheduler cleanup before initialzing
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine): Fix Digest Authentication when qop or nc headers values are quoted
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine): Fix cwmpd crash when SetParameterAttributes
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Issue : HOP-1466 Fix Digest Authentication and refactoring code
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Check if wan is not connected, no starting cwmpd server
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): ubus reported datetime as string type
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Fix cwmpd crash when excute setParameterValues with object not found
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Fix cwmp free
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Fix Digest auth fails as the box send an empty cnonce
+
+### Other
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): It is not possible to contact the box using the ConnReqURL,...
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Fix wrong error code returned when making a SetParameterValue...
+
 ## Release proj_prpl_M1-2022_v0.1.1 - 2022-09-20(14:32:23 +0000)
 
 ## Release proj_prpl_M1-2022_v0.1.0 - 2022-07-20(14:58:35 +0000)
