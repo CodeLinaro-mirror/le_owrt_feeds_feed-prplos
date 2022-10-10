@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.15.3 - 2022-10-10(09:14:58 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): InterfaceStackNumberOfEntries wrong type
+
 ## Release v0.15.2 - 2022-10-04(10:51:01 +0000)
 
 ### Fixes
