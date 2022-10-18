@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release proj_prpl_M1-2022_v0.2.1 - 2022-10-18(11:15:13 +0000)
+
+### Fixes
+
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine): latest versions break digest authentication
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Add some missing parameters to cwmp_plugin odl
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): InterfaceStackNumberOfEntries wrong type
+
 ## Release proj_prpl_M1-2022_v0.2.0 - 2022-09-30(12:38:06 +0000)
 
 ### New
