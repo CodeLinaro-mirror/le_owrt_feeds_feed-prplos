@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.15.5 - 2022-10-18(09:25:48 +0000)
+
+### Fixes
+
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine): latest versions break digest authentication
+
 ## Release v0.15.4 - 2022-10-14(08:38:36 +0000)
 
 ## Release v0.15.3 - 2022-10-10(09:14:58 +0000)
