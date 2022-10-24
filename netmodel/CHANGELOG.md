@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release proj_prpl_M2-2022_v1.1.0 - 2022-10-24(13:05:32 +0000)
+
+### New
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): Add API to get all link information
+
+### Fixes
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [NetModel] Optimize identical queries in lib netmodel
+- [netmodel-bridge](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge): The Management bridge port must not have the "bridgeport" tag set, only the "bridge" tag.
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): Add support of the mib for the brigde tag
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Take null variants into account when comparing query results
+
+### Other
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Use amxc_var_compare to compare htable and list variants
+
 ## Release proj_prpl_M2-2022_v1.0.0 - 2022-10-17(09:36:16 +0000)
 
 ### Removed
