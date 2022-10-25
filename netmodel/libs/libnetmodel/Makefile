@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=NetModel client library
 
 PKG_SOURCE:=libnetmodel-v1.5.3.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel/-/archive/v1.5.3
-PKG_HASH:=92d440b9286815bbebd5b67674fe28ece306e579ceafda178d9942a4bd8e4fc8
+PKG_HASH:=5b37b649057cf8b0f76a3c0f85edc4ada8588de8aa84320ad32b6a8031bd498c
 PKG_BUILD_DIR:=$(BUILD_DIR)/libnetmodel-v1.5.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=
