@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dhcpv6client
-PKG_VERSION:=dev_remove_line
+PKG_VERSION:=v0.7.10
 SHORT_DESCRIPTION:=TR-181 compatible DHCPv6 client
 
 PKG_SOURCE:=tr181-dhcpv6client-v0.7.10.tar.gz
