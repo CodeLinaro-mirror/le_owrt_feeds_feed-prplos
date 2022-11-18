@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.15.6 - 2022-11-18(12:27:19 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Cwmpd process leaking when retrying to reach ACS
+
 ## Release v0.15.5 - 2022-10-18(09:25:48 +0000)
 
 ### Fixes
