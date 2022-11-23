@@ -1,0 +1,16 @@
+config PACKAGE_libuspprotobuf
+    tristate
+    select SAH_LIB_USP_PROTOBUF
+
+if PACKAGE_libuspprotobuf
+
+menu "Select libuspprotobuf build options"
+    depends on PACKAGE_libuspprotobuf
+
+config SAH_LIB_USP_PROTOBUF
+    bool "Generate C code for creating USP protobuf messages and records"
+    default y
+
+endmenu
+
+endif
