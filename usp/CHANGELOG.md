@@ -8,6 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v4.0.0 - 2022-11-24(15:15:03 +0000)
+
+### Removed
+
+- [mod-usp-cli](https://gitlab.com/soft.at.home/usp/modules/amx_cli/mod-usp-cli): Component removed
+
+### Fixes
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [AMX] Apply new amxd_path_setf formatting
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): [AMX] Apply new amxd_path_setf formatting
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [AMX] Apply new amxd_path_setf formatting
+
+### Other
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Add extra controller instance
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] Add IMTP defaults to tr181-localagent
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): Rename EndpointID
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): Update IMTP defaults
+
 ## Release v3.11.0 - 2022-11-23(12:00:24 +0000)
 
 ### New
