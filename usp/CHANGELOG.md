@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v4.0.1 - 2022-11-25(10:07:14 +0000)
+
+### Fixes
+
+- [libusp](https://gitlab.com/soft.at.home/usp/libraries/libusp): [USP] GSDM response cannot be extracted properly
+
 ## Release v4.0.0 - 2022-11-24(15:15:03 +0000)
 
 ### Removed
