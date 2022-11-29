@@ -130,10 +130,8 @@ define Package/blockd/install
 endef
 
 define Build/InstallDev
-	$(INSTALL_DIR) $(1)/usr/include
-	$(CP) $(PKG_INSTALL_DIR)/usr/include/*.h $(1)/usr/include/
-	$(INSTALL_DIR) $(1)/usr/lib/
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libubi-utils.a $(1)/usr/lib/
+	# Do NOT install anything here, this breaks ubi usage for components who need mtd-utils
+	# for ubi usage. Also, no one is using those header/library files
 endef
 
 $(eval $(call BuildPackage,fstools))
