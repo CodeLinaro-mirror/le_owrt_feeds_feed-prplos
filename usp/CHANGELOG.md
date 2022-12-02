@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v4.1.0 - 2022-12-02(12:17:38 +0000)
+
+### New
+
+- [mod-amxb-usp](https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp): Component added
+
 ## Release v4.0.1 - 2022-11-25(10:07:14 +0000)
 
 ### Fixes

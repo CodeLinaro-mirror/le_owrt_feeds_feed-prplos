@@ -23,6 +23,9 @@ Feed_usp includes the following components:
 - [libuspi](https://gitlab.com/soft.at.home/usp/libraries/libuspi) - libuspi is a common library for setting up and managing IMTP connections
 - [libuspprotobuf](https://gitlab.com/soft.at.home/usp/libraries/libprotobuf) - This library generates C code from .proto files provided by bbf
 
+### Modules
+
+- [mod-amxb-usp](https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp) - USP backend implementation for amxb
 
 ## How to add feed_usp to your OpenWrt build
 
