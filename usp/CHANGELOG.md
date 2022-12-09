@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v4.1.3 - 2022-12-09(13:59:50 +0000)
+
+### Fixes
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] Triggered event needs an exclamation mark
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): [Config] coredump generation should be configurable
+
 ## Release v4.1.2 - 2022-12-07(16:15:02 +0000)
 
 ### Fixes
