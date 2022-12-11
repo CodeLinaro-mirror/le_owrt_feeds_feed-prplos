@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dslite
-PKG_VERSION:=v0.4.2
+PKG_VERSION:=v0.4.5
 SHORT_DESCRIPTION:=TR-181 compatible DSLite plugin
 
-PKG_SOURCE:=tr181-dslite-v0.4.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dslite/-/archive/v0.4.2
-PKG_HASH:=8e3b08c38c73f77d1a6df9ca7b4b7bd276dba220e939982ba6ecd9a8fb893504
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dslite-v0.4.2
+PKG_SOURCE:=tr181-dslite-v0.4.5.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dslite/-/archive/v0.4.5
+PKG_HASH:=532cde4fead5d9f5a86dd77fd8d9e49cfdfe62bf4af0308bde7180d148242d4a
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dslite-v0.4.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -39,6 +39,8 @@ define Package/$(PKG_NAME)
   DEPENDS += +mod-netmodel
   DEPENDS += +libnetmodel
   DEPENDS += +libcares
+  DEPENDS += +kmod-ip6-tunnel
+  DEPENDS += +kmod-iptunnel6
   MENU:=1
 endef
 
