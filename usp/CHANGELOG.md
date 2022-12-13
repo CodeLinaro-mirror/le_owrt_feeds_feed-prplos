@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v4.1.4 - 2022-12-13(13:15:51 +0000)
+
+### Other
+
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): Add interop with different MQTT Broker version
+
 ## Release v4.1.3 - 2022-12-09(13:59:50 +0000)
 
 ### Fixes
