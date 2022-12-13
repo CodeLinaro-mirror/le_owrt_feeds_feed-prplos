@@ -8,6 +8,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release proj_prpl_M4-2022_v1.0.0 - 2022-12-13(15:23:38 +0000)
+
+### Removed
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Remove registerSync API
+
+### New
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [Lib NetModel] Add API to retrieve the root object name
+- [mod-netmodel](https://gitlab.com/prpl-foundation/components/netmodel/modules/mod-netmodel): Increase in unit test coverage
+- [netmodel-dslite](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dslite): Component added
+- [netmodel-logical](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-logical): Component added
+- [netmodel-ppp](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ppp): Dynamic handling of network events (PPP)
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): Dynamic handling of network events (PPP)
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [netmodel][client] Add support for radio and ssid clients in netmodel
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): Add API to get all link information
+
+### Fixes
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [NetModel] NetDevName doesn't sync if the interface does not yet exist during find_instance_to_sync_callback
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [Lib NetModel] Add a retry mechanism in case mib sync fails to start
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [NetModel] Optimize identical queries in lib netmodel
+- [netmodel-bridge](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge): The Management bridge port must not have the "bridgeport" tag set, only the "bridge" tag.
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): Add support of the mib for the brigde tag
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [Netmodel] remove lowerlayers parameter from ssid and radio
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Take null variants into account when comparing query results
+
+### Other
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [NetModel] Change query updated event to match the event sent by NeMo
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): Fix makefile always using "NeMo" as root object name
+- [netmodel-clients](https://gitlab.com/prpl-foundation/components/netmodel/applications/netmodel-clients): [netmodel] sometimes netmodel-clients won't start
+- [netmodel-clients](https://gitlab.com/prpl-foundation/components/netmodel/applications/netmodel-clients): [PRPLoS] Reduce logging during start up.
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [PRPLoS] Reduce logging during start up.
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Use amxc_var_compare to compare htable and list variants
+
 ## Release proj_prpl_M2-2022_v1.1.0 - 2022-10-24(13:05:32 +0000)
 
 ### New
