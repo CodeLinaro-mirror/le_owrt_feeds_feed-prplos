@@ -12,6 +12,7 @@ Feed_netmodel includes the following components:
 - [netmodel-bridge](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge) - Network Model bridge client
 - [netmodel-dhcpv4](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv4) - Network Model DHCPv4client client
 - [netmodel-dhcpv6](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv6) - Network Model DHCPv6client client
+- [netmodel-dslite](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dslite) - Network Model dslite client
 - [netmodel-ethernet](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ethernet) - Network Model ethernet client
 - [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip) - Network Model IP client
 - [netmodel-iprouter](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-iprouter) - Network Model Router Advertisement client
