@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libnetmodel
-PKG_VERSION:=v1.5.3
+PKG_VERSION:=v1.5.8
 SHORT_DESCRIPTION:=NetModel client library
 
-PKG_SOURCE:=libnetmodel-v1.5.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel/-/archive/v1.5.3
-PKG_HASH:=5b37b649057cf8b0f76a3c0f85edc4ada8588de8aa84320ad32b6a8031bd498c
-PKG_BUILD_DIR:=$(BUILD_DIR)/libnetmodel-v1.5.3
+PKG_SOURCE:=libnetmodel-v1.5.8.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel/-/archive/v1.5.8
+PKG_HASH:=aebfba6a808a15a8b1df58b0f6eb2adbb2733d174b91927f1c747618ca6b05ac
+PKG_BUILD_DIR:=$(BUILD_DIR)/libnetmodel-v1.5.8
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=
 PKG_LICENSE_FILES:=LICENSE
@@ -51,10 +51,10 @@ define Build/InstallDev
 endef
 
 define Package/$(PKG_NAME)/install
+	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 	if [ -d ./files ]; then \
 		$(CP) ./files/* $(1)/; \
 	fi
-	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 endef
 
 define Package/$(PKG_NAME)/config

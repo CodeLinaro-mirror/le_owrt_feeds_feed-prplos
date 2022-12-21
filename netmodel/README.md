@@ -19,6 +19,8 @@ Feed_netmodel includes the following components:
 - [netmodel-logical](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-logical) - Network Model Logical client
 - [netmodel-netdev](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-netdev) - Network Model NetDev client
 - [netmodel-ppp](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ppp) - Network Model PPP client
+- [netmodel-radio](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-radio) - Network Model radio client
+- [netmodel-ssid](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ssid) - Network Model ssid client
 - [netmodel-vlan](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-vlan) - Network Model vlan client
 
 ### Modules

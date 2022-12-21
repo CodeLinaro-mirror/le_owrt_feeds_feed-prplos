@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=netmodel-ip
-PKG_VERSION:=v1.1.2
-SHORT_DESCRIPTION:=Network Model IP client
+PKG_NAME:=netmodel-radio
+PKG_VERSION:=v0.1.2
+SHORT_DESCRIPTION:=Network Model radio client
 
-PKG_SOURCE:=netmodel-ip-v1.1.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip/-/archive/v1.1.2
-PKG_HASH:=b68167e1c8604c8fe48df3e97a6b04bf1698ca7e5aad109d4b50179d175d7ce0
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-ip-v1.1.2
+PKG_SOURCE:=netmodel-radio-v0.1.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-radio/-/archive/v0.1.2
+PKG_HASH:=7a1086b444fefff2ed45836e3e49e03bf4e613e03fd570abed593a361ddbfa4f
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-radio-v0.1.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -20,7 +20,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=ambiorix
   SUBMENU:=Libraries
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip
+  URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-radio
   DEPENDS += +libamxc
   DEPENDS += +libamxp
   DEPENDS += +libamxd
@@ -34,7 +34,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-	Network Model IP client
+	Network Model radio client
 endef
 
 define Build/Compile

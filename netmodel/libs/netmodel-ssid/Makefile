@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=netmodel-ip
-PKG_VERSION:=v1.1.2
-SHORT_DESCRIPTION:=Network Model IP client
+PKG_NAME:=netmodel-ssid
+PKG_VERSION:=v0.1.2
+SHORT_DESCRIPTION:=Network Model ssid client
 
-PKG_SOURCE:=netmodel-ip-v1.1.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip/-/archive/v1.1.2
-PKG_HASH:=b68167e1c8604c8fe48df3e97a6b04bf1698ca7e5aad109d4b50179d175d7ce0
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-ip-v1.1.2
+PKG_SOURCE:=netmodel-ssid-v0.1.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ssid/-/archive/v0.1.2
+PKG_HASH:=2fdbce7b95527bbf0615b91a02da6aad06e23c578e1d09cf9aba9b372a53ee1d
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-ssid-v0.1.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -20,7 +20,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=ambiorix
   SUBMENU:=Libraries
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip
+  URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ssid
   DEPENDS += +libamxc
   DEPENDS += +libamxp
   DEPENDS += +libamxd
@@ -34,7 +34,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-	Network Model IP client
+	Network Model ssid client
 endef
 
 define Build/Compile
