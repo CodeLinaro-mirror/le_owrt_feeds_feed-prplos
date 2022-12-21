@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=routing-manager
-PKG_VERSION:=v1.7.4
+PKG_VERSION:=v1.8.4
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-routing-v1.7.4.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routing/-/archive/v1.7.4
-PKG_HASH:=e55664159bcbd884c060cd2a11e99361c63ba7096c02e8fc52e542c2b9b5d3e6
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routing-v1.7.4
+PKG_SOURCE:=tr181-routing-v1.8.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routing/-/archive/v1.8.4
+PKG_HASH:=b6fc835163535da44f47cca5ee67f24eb76c29f8375ab272df9e35160ad3268a
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routing-v1.8.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -77,6 +77,9 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
+	fi
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
