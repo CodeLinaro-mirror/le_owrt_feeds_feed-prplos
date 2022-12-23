@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libnetmodel
-PKG_VERSION:=v1.5.8
+PKG_VERSION:=v1.5.9
 SHORT_DESCRIPTION:=NetModel client library
 
-PKG_SOURCE:=libnetmodel-v1.5.8.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel/-/archive/v1.5.8
-PKG_HASH:=aebfba6a808a15a8b1df58b0f6eb2adbb2733d174b91927f1c747618ca6b05ac
-PKG_BUILD_DIR:=$(BUILD_DIR)/libnetmodel-v1.5.8
+PKG_SOURCE:=libnetmodel-v1.5.9.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel/-/archive/v1.5.9
+PKG_HASH:=b5a1ee8f382461d3223985e4f795a4321e1705276bf08d9e83ac63fe3daa5ad0
+PKG_BUILD_DIR:=$(BUILD_DIR)/libnetmodel-v1.5.9
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=
 PKG_LICENSE_FILES:=LICENSE
