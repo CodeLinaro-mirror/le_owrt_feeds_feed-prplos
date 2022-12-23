@@ -37,11 +37,12 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxa
   DEPENDS += +mod-dmext
   DEPENDS += +libsahtrace
-  DEPENDS += +libwebsockets-full
+  DEPENDS += +libwebsockets4
+  DEPENDS += +libwebsockets4-full
   DEPENDS += +libevent2
   DEPENDS += +libtr69-engine
   DEPENDS += +uriparser
-  DEPENDS += +libcares
+  DEPENDS += +libcares1
   DEPENDS += +libnetmodel
   DEPENDS += +libfiletransfer
   MENU:=1
