@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release proj_prpl_M4.1-2022_v0.1.1 - 2022-12-23(20:39:17 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Remove the m4 extension of the odl definition file
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Download file is not saved under tmp
+
 ## Release proj_prpl_M4.1-2022_v0.1.0 - 2022-12-21(14:18:34 +0000)
 
 ### New
