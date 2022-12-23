@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release proj_prpl_M4.1-2022_v1.0.1 - 2022-12-23(20:34:51 +0000)
+
+### Fixes
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): Do not call a query callback if the result is the same
+
 ## Release proj_prpl_M4.1-2022_v1.0.0 - 2022-12-21(13:05:19 +0000)
 
 ### Removed
