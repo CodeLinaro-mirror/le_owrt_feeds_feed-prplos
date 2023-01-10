@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v4.1.5 - 2023-01-10(16:12:24 +0000)
+
+### Fixes
+
+- [libusp](https://gitlab.com/soft.at.home/usp/libraries/libusp): [USP] Get requests with valid search expressions must return successful
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): [TR181-MQTT Client] tr181-mqtt wants a non empty ClientID with MQTT 3.1.1
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): Handle command output args for non-backend processes
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [Bulkdata][USP] Controller parameter must be set
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [uspagent] dm:OperationComplete created too late
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Get requests with valid search expressions must return successful
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): LocalAgent.MTP.i.Status must be Up if MQTT client is connected
+
+### Other
+
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): [KPN SW2][Security]Restrict ACL of admin user
+
 ## Release v4.1.4 - 2022-12-13(13:15:51 +0000)
 
 ### Other
