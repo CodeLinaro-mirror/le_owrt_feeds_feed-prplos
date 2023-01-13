@@ -8,6 +8,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.0.0 - 2023-01-13(12:03:03 +0000)
+
+### Breaking
+
+- [libusp](https://gitlab.com/soft.at.home/usp/libraries/libusp): [KPN][USP] max_depth has no effect on the Get Message
+
+### New
+
+- [mod-amxb-usp](https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp): [USP][AMX] Add support for asynchronous invokes to USP backend
+
+### Fixes
+
+- [mod-amxb-usp](https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp): Handle command output args for non-backend processes
+
+### Changes
+
+- [mod-amxb-usp](https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp): [KPN][USP] max_depth has no effect on the Get Message
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): [KPN][USP] max_depth has no effect on the Get Message
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [KPN][USP] max_depth has no effect on the Get Message
+
+### Other
+
+- [libimtp](https://gitlab.com/soft.at.home/usp/libraries/libimtp): [SAHPairing] Make sahpairing work with MQTT client
+
 ## Release v4.1.5 - 2023-01-10(16:12:24 +0000)
 
 ### Fixes
