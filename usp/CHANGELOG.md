@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.0.1 - 2023-01-19(15:30:26 +0000)
+
+### Fixes
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP Agent][Amx]USP request returns 'invalid path' all the time
+
 ## Release v5.0.0 - 2023-01-13(12:03:03 +0000)
 
 ### Breaking
