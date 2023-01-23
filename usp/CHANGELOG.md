@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.0.2 - 2023-01-23(20:32:13 +0000)
+
+### Other
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [KPN SW2][Security]Restrict ACL of admin user
+
 ## Release v5.0.1 - 2023-01-19(15:30:26 +0000)
 
 ### Fixes
