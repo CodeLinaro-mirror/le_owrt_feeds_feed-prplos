@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.0.3 - 2023-01-31(13:12:26 +0000)
+
+### Fixes
+
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): [MQTT][USP] Overlapping reconnects can cause a segmentation fault
+
 ## Release v5.0.2 - 2023-01-23(20:32:13 +0000)
 
 ### Other
