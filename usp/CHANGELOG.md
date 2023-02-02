@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.0.4 - 2023-02-02(09:48:02 +0000)
+
+### Fixes
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): Remove doc target from uspagent
+
 ## Release v5.0.3 - 2023-01-31(13:12:26 +0000)
 
 ### Fixes
