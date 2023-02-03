@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.17.0 - 2023-02-03(13:39:53 +0000)
+
+### New
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): [import-dbg] Disable import-dbg by default for all amxrt plugin
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Add support for ipv6
+
 ## Release v0.16.1 - 2022-12-22(16:42:37 +0000)
 
 ### Fixes
