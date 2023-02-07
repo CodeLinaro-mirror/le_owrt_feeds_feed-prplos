@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.0.6 - 2023-02-07(14:55:07 +0000)
+
+### Other
+
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): [SAHPairing] Make sahpairing work with MQTT client
+
 ## Release v5.0.5 - 2023-02-06(09:15:41 +0000)
 
 ## Release v5.0.4 - 2023-02-02(09:48:02 +0000)

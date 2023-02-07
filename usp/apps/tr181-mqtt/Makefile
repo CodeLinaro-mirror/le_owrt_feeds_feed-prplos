@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-mqtt
-PKG_VERSION:=v2.9.3
+PKG_VERSION:=v2.9.4
 SHORT_DESCRIPTION:=TR-181 compatible MQTT client
 
-PKG_SOURCE:=tr181-mqtt-v2.9.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-mqtt/-/archive/v2.9.3
-PKG_HASH:=6c675602a9296ace268456a1ce1ebe1ed7f9d7553aa24600d8dba0de30f0510a
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqtt-v2.9.3
+PKG_SOURCE:=tr181-mqtt-v2.9.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-mqtt/-/archive/v2.9.4
+PKG_HASH:=f10f25264ae8c349a1d7cabce170961c0ca306f5b5d5f2b5b461ec6f2f4002f9
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqtt-v2.9.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
