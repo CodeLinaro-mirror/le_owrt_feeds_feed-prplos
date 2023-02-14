@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.1.0 - 2023-02-14(19:04:39 +0000)
+
+### New
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Include advertisement module in localagent
+
+### Fixes
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Box12 doesn't onboard in Motive
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] Creation of LocalAgent.Subscription from save file can fail
+
+### Other
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Update unit tests after recent changes
+
 ## Release v5.0.7 - 2023-02-10(19:35:07 +0000)
 
 ## Release v5.0.6 - 2023-02-07(14:55:07 +0000)
