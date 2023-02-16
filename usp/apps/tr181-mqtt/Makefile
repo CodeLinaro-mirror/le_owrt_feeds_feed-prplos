@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-mqtt
-PKG_VERSION:=v2.9.4
+PKG_VERSION:=v2.9.5
 SHORT_DESCRIPTION:=TR-181 compatible MQTT client
 
-PKG_SOURCE:=tr181-mqtt-v2.9.4.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-mqtt/-/archive/v2.9.4
-PKG_HASH:=f10f25264ae8c349a1d7cabce170961c0ca306f5b5d5f2b5b461ec6f2f4002f9
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqtt-v2.9.4
+PKG_SOURCE:=tr181-mqtt-v2.9.5.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-mqtt/-/archive/v2.9.5
+PKG_HASH:=880826266c43c36a238b1fb1e2334c0b34c42854f6c334663d968f2958c51ba5
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqtt-v2.9.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -47,7 +47,7 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Compile
-	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_TR181_MQTT_ORDER=$(CONFIG_SAH_AMX_TR181_MQTT_ORDER))
+	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_TR181_MQTT_ORDER=$(CONFIG_SAH_AMX_TR181_MQTT_ORDER))
 endef
 
 define Build/Install

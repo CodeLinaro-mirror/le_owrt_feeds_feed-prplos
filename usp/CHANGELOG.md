@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.1.1 - 2023-02-16(15:27:47 +0000)
+
+### Other
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Add tr181-mqtt/tr181-localagent/uspagent into processmonitor
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Create direct pcb connection to tr181-mqtt
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): Add tr181-mqtt/tr181-localagent/uspagent into processmonitor
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): Setup direct pcb connection for tr181-localagent
+
 ## Release v5.1.0 - 2023-02-14(19:04:39 +0000)
 
 ### New
