@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-server
-PKG_VERSION:=v1.9.5
+PKG_VERSION:=v1.9.6
 SHORT_DESCRIPTION:=Service implementing the gmap data model
 
-PKG_SOURCE:=gmap-server-v1.9.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-server/-/archive/v1.9.5
-PKG_HASH:=5f5c8b20c338f08993b5cd38034dfc2618d4de6bed44cc21e048baf21c2724db
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-server-v1.9.5
+PKG_SOURCE:=gmap-server-v1.9.6.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-server/-/archive/v1.9.6
+PKG_HASH:=28b46b82eef706ceec0b2f9d4d923066a7e3baa9b3a536f93c8b00b79a36bf11
+PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-server-v1.9.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -54,7 +54,7 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Compile
-	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_GMAP_SERVER_ORDER=$(CONFIG_SAH_AMX_GMAP_SERVER_ORDER) CONFIG_AMX_GMAP_SERVER_NAME_ORDER=$(CONFIG_AMX_GMAP_SERVER_NAME_ORDER) CONFIG_AMX_GMAP_MAX_DEVICES=$(CONFIG_AMX_GMAP_MAX_DEVICES))
+	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_GMAP_SERVER_ORDER=$(CONFIG_SAH_AMX_GMAP_SERVER_ORDER) CONFIG_AMX_GMAP_SERVER_NAME_ORDER=$(CONFIG_AMX_GMAP_SERVER_NAME_ORDER) CONFIG_AMX_GMAP_MAX_DEVICES=$(CONFIG_AMX_GMAP_MAX_DEVICES))
 endef
 
 define Build/Install
