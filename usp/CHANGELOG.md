@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.1.2 - 2023-02-20(12:44:29 +0000)
+
+### Fixes
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Parameter paths must be fetched with depth=0
+
+### Other
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): Add tr181-mqtt/tr181-localagent/uspagent into processmonitor
+
 ## Release v5.1.1 - 2023-02-16(15:27:47 +0000)
 
 ### Other
