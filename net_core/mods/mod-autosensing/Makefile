@@ -1,60 +1,37 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=tr181-ppp
-PKG_VERSION:=v0.9.5
-SHORT_DESCRIPTION:=TR-181 compatible PPP plugin
+PKG_NAME:=mod-autosensing
+PKG_VERSION:=v0.2.0
+SHORT_DESCRIPTION:=SoC module wan-manager select the active wan-mode
 
-PKG_SOURCE:=tr181-ppp-v0.9.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ppp/-/archive/v0.9.5
-PKG_HASH:=23a5e086e89a8a3b1bff37d9ca47047be5b7fc80c8e7f622a84f1fce8de778c2
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ppp-v0.9.5
+PKG_SOURCE:=mod-autosensing-v0.2.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-autosensing/-/archive/v0.2.0
+PKG_HASH:=ebf0240352fcf8130304dfae67502d0bbdf4212e7aa34f0f085114b190716cbd
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-autosensing-v0.2.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
 
-COMPONENT:=tr181-ppp
-
 PKG_RELEASE:=1
-
-define SAHInit/Install
-	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S26$(COMPONENT)
-endef
-
-define SAHBackupRestore/Install
-	install -d ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/backup 
-	install -d ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/restore 
-	install -d ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/import 
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/backup/B26$(COMPONENT) 
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/restore/R26$(COMPONENT) 
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/import/R26$(COMPONENT) 
-endef
 
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=ambiorix
-  SUBMENU:=Plugins
+  SUBMENU:=Modules
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ppp
-  DEPENDS += +libamxb
+  URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-autosensing
   DEPENDS += +libamxc
-  DEPENDS += +libamxd
   DEPENDS += +libamxj
   DEPENDS += +libamxm
   DEPENDS += +libamxo
   DEPENDS += +libamxp
-  DEPENDS += +amxrt
   DEPENDS += +libsahtrace
-  DEPENDS += +mod-dmext
-  DEPENDS += +mod-dmstats
-  DEPENDS += +mod-netmodel
-  DEPENDS += +libnetmodel
   MENU:=1
 endef
 
 define Package/$(PKG_NAME)/description
-	TR-181 compatible PPP plugin
+	SoC module wan-manager select the active wan-mode
 endef
 
 define Build/Compile
@@ -66,9 +43,6 @@ define Build/Install
 	find $(PKG_INSTALL_DIR) -name *.a -exec rm {} +;
 	find $(PKG_INSTALL_DIR) -name *.h -exec rm {} +;
 	find $(PKG_INSTALL_DIR) -name *.pc -exec rm {} +;
-
-	$(call SAHInit/Install)
-	$(call SAHBackupRestore/Install)
 endef
 
 define Build/InstallDev
