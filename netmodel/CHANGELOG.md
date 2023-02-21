@@ -8,6 +8,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release proj_prpl_M4.1.1-2022_v1.0.0 - 2023-02-21(18:48:08 +0000)
+
+### Removed
+
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Remove registerSync API
+
+### New
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [Lib NetModel] Add API to retrieve the root object name
+- [mod-netmodel](https://gitlab.com/prpl-foundation/components/netmodel/modules/mod-netmodel): Increase in unit test coverage
+- [netmodel-dslite](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dslite): Component added
+- [netmodel-logical](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-logical): Component added
+- [netmodel-ppp](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ppp): Dynamic handling of network events (PPP)
+- [netmodel-radio](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-radio): Component added
+- [netmodel-ssid](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ssid): Component added
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): Dynamic handling of network events (PPP)
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [netmodel][client] Add support for radio and ssid clients in netmodel
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): Add API to get all link information
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Add statistics for queries and events
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [dslite][netmodel] Create a netmodel client for dslite interfaces.
+
+### Fixes
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [NetModel] NetDevName doesn't sync if the interface does not yet exist during find_instance_to_sync_callback
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [Lib NetModel] Add a retry mechanism in case mib sync fails to start
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [NetModel] Optimize identical queries in lib netmodel
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [NetModel] Close resolvePath queries in netmodel clients when the path is resolved
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [NetModel] Interface linking sometimes fails
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [NetModel] Queries are not properly closed in netmodel_cleanup
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): Do not call a query callback if the result is the same
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): gcc 11.2.0 linker cannot find -lsahtrace
+- [netmodel-bridge](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge): The Management bridge port must not have the "bridgeport" tag set, only the "bridge" tag.
+- [netmodel-clients](https://gitlab.com/prpl-foundation/components/netmodel/applications/netmodel-clients): Use the correct cleanup function to avoid memory leaks
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [netmodel][DHCPv6Client][getDHCPOption] DHCPv6 option 24 is wrongly parsed
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): Add support of the mib for the brigde tag
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [Netmodel] remove lowerlayers parameter from ssid and radio
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Take null variants into account when comparing query results
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [Config] coredump generation should be configurable
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Check query flag argument using regex when retriggering
+
+### Changes
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [NetModel] Synchronize the Name parameter by default
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Make the Intf Name parameter writable
+
+### Other
+
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [NetModel] Change query updated event to match the event sent by NeMo
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): Fix makefile always using "NeMo" as root object name
+- [libnetmodel](https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel): [NetModel] Update copyright information
+- [netmodel-clients](https://gitlab.com/prpl-foundation/components/netmodel/applications/netmodel-clients): [netmodel] sometimes netmodel-clients won't start
+- [netmodel-clients](https://gitlab.com/prpl-foundation/components/netmodel/applications/netmodel-clients): [PRPLoS] Reduce logging during start up.
+- [netmodel-clients](https://gitlab.com/prpl-foundation/components/netmodel/applications/netmodel-clients): [NetModel] Update copyright information
+- [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip): [NetModel] Update copyright information
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [PRPLoS] Reduce logging during start up.
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Use amxc_var_compare to compare htable and list variants
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Reduce the amount of variant copies
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): [NetModel] Update copyright information
+
 ## Release proj_prpl_M4.1-2022_v1.0.1 - 2022-12-23(20:34:51 +0000)
 
 ### Fixes
