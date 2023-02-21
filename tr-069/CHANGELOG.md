@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.17.1 - 2023-02-21(13:55:08 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): cd router tests are completely failing for tr-069
+
 ## Release v0.17.0 - 2023-02-03(13:39:53 +0000)
 
 ### New
