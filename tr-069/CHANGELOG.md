@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.17.2 - 2023-02-21(18:16:53 +0000)
+
+### Other
+
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine): Implementation of InstanceMode="InstanceAlias" [New]
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Implementation of InstanceMode="InstanceAlias" [New]
+
 ## Release v0.17.1 - 2023-02-21(13:55:08 +0000)
 
 ### Fixes
