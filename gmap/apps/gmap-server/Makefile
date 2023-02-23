@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-server
-PKG_VERSION:=v1.9.6
+PKG_VERSION:=v2.0.0
 SHORT_DESCRIPTION:=Service implementing the gmap data model
 
-PKG_SOURCE:=gmap-server-v1.9.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-server/-/archive/v1.9.6
-PKG_HASH:=28b46b82eef706ceec0b2f9d4d923066a7e3baa9b3a536f93c8b00b79a36bf11
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-server-v1.9.6
+PKG_SOURCE:=gmap-server-v2.0.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-server/-/archive/v2.0.0
+PKG_HASH:=91fd09e4a7090667fe20d86715835b17738937a6a64c83e5fd922af7cecfb407
+PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-server-v2.0.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -20,15 +20,16 @@ PKG_BUILD_DEPENDS += util-linux
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
 	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_SAH_AMX_GMAP_SERVER_ORDER)$(COMPONENT)
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/K$(CONFIG_SAH_AMX_GMAP_SERVER_ORDER)$(COMPONENT)
 endef
 
 define SAHBackupRestore/Install
-	install -d ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/backup 
-	install -d ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/restore 
-	install -d ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/import 
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/backup/B$(CONFIG_SAH_AMX_GMAP_SERVER_ORDER)$(COMPONENT) 
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/restore/R$(CONFIG_SAH_AMX_GMAP_SERVER_ORDER)$(COMPONENT) 
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/import/R$(CONFIG_SAH_AMX_GMAP_SERVER_ORDER)$(COMPONENT) 
+	install -d ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/backup
+	install -d ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/restore
+	install -d ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/import
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/backup/B$(CONFIG_SAH_AMX_GMAP_SERVER_ORDER)$(COMPONENT)
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/restore/R$(CONFIG_SAH_AMX_GMAP_SERVER_ORDER)$(COMPONENT)
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/import/R$(CONFIG_SAH_AMX_GMAP_SERVER_ORDER)$(COMPONENT)
 endef
 
 include $(INCLUDE_DIR)/package.mk
