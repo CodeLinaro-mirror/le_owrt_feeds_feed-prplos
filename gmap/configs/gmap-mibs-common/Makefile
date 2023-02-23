@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-mibs-common
-PKG_VERSION:=v0.5.2
+PKG_VERSION:=v0.5.3
 SHORT_DESCRIPTION:=Generic mib files for the gmap service
 
-PKG_SOURCE:=gmap-mibs-common-v0.5.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/mibs/gmap-mibs-common/-/archive/v0.5.2
-PKG_HASH:=a0db3aeeb976dfa03d4a33d804175d889a836912d2458baf5fdae71c25b2d386
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mibs-common-v0.5.2
+PKG_SOURCE:=gmap-mibs-common-v0.5.3.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/mibs/gmap-mibs-common/-/archive/v0.5.3
+PKG_HASH:=4b97fc942050e14b6f01fa2f9e7e4e6948f22692afa6201a658efc5d4c15a88b
+PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mibs-common-v0.5.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
