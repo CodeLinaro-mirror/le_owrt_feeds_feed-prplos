@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-mqtt
-PKG_VERSION:=v2.10.0
+PKG_VERSION:=v2.10.1
 SHORT_DESCRIPTION:=TR-181 compatible MQTT client
 
-PKG_SOURCE:=tr181-mqtt-v2.10.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-mqtt/-/archive/v2.10.0
-PKG_HASH:=2eb71f4631734d370c746ce7fa58b96d783281d9220b80acfc478c0ebd1febf0
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqtt-v2.10.0
+PKG_SOURCE:=tr181-mqtt-v2.10.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-mqtt/-/archive/v2.10.1
+PKG_HASH:=d1e1b4219bc27346c44e9f780c71c8ca76be2d7d18106cdd67941ba47c23b817
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqtt-v2.10.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -19,6 +19,7 @@ PKG_RELEASE:=1
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
 	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_MQTT_ORDER)$(COMPONENT)
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_MQTT_ORDER)$(COMPONENT)
 endef
 
 include $(INCLUDE_DIR)/package.mk

@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.1.4 - 2023-02-23(12:40:14 +0000)
+
+### Changes
+
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): [USP] Redirection to Management Broker without the need of ForceReconnect() command
+
 ## Release v5.1.3 - 2023-02-22(11:08:56 +0000)
 
 ### Other
