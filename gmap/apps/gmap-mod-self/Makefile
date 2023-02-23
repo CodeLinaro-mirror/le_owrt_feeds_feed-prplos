@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-mod-self
-PKG_VERSION:=v1.2.2
+PKG_VERSION:=v1.2.3
 SHORT_DESCRIPTION:=gmap module to fetch information about the hgw/repeater itself and the layer 2 'devices' on it
 
-PKG_SOURCE:=gmap-mod-self-v1.2.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-mod-self/-/archive/v1.2.2
-PKG_HASH:=e080a18c8b374fe474de1a336fd105e6d722a01f1611c385df042eee521fb8d6
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mod-self-v1.2.2
+PKG_SOURCE:=gmap-mod-self-v1.2.3.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-mod-self/-/archive/v1.2.3
+PKG_HASH:=731b61090a60a3c1c9e3fce4c9144787edb2ea760bf1913734e0660a62403d38
+PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mod-self-v1.2.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
