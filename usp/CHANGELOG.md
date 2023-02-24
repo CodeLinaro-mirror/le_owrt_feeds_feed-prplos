@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.1.5 - 2023-02-24(15:17:11 +0000)
+
+### Other
+
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): [MQTT] Remove protected attribute from Interface parameter
+
 ## Release v5.1.4 - 2023-02-23(12:40:14 +0000)
 
 ### Changes
