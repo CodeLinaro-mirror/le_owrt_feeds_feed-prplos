@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.1.6 - 2023-02-28(10:00:37 +0000)
+
+### Fixes
+
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): [V12] [USP] GET Message Object = Device. - Retry mechanism is not working
+
 ## Release v5.1.5 - 2023-02-24(15:17:11 +0000)
 
 ### Other
