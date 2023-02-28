@@ -51,6 +51,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +mod-dmext
   DEPENDS += +mod-fw-amx
   DEPENDS += +libdhcpoptions
+  DEPENDS += +rpcd
   MENU:=1
 endef
 
