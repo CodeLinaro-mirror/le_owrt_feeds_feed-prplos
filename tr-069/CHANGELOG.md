@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release proj_prpl_M4.1.1-2022_v0.1.0 - 2023-02-28(14:57:39 +0000)
+
+### New
+
+- [libtr69-engine](https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine): Component added
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Component added
+
 ## Release proj_prpl_M4.1-2022_v0.1.1 - 2022-12-23(20:39:17 +0000)
 
 ### Fixes
