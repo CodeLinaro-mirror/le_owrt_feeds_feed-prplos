@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release proj_prpl_M4.1.1-2022_v1.1.0 - 2023-03-02(14:48:02 +0000)
+
+### New
+
+- [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip): Box sends 2 ICMPv6 RA when a RS is received on LAN
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): Box sends 2 ICMPv6 RA when a RS is received on LAN
+
+### Fixes
+
+- [netmodel-ip](https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip): Return the relative lifetimes in getIPv6Prefix result
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): Return index in getIPv6Prefix
+- [netmodel](https://gitlab.com/prpl-foundation/components/core/plugins/netmodel): Return the relative lifetimes in getIPv6Prefix result
+
 ## Release proj_prpl_M4.1.1-2022_v1.0.0 - 2023-02-21(18:48:08 +0000)
 
 ### Removed
