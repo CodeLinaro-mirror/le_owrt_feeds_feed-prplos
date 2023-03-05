@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.2.0 - 2023-03-05(08:06:53 +0000)
+
+### New
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP][CDROUTER] The NotifExpiration limit is not respected
+
 ## Release v5.1.6 - 2023-02-28(10:00:37 +0000)
 
 ### Fixes
