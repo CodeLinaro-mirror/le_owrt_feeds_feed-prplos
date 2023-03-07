@@ -1,0 +1,28 @@
+From 8e2d40909d752f34a2ec8233297849be4157932a Mon Sep 17 00:00:00 2001
+From: Matthias Van Parys <matthias.vanparys@softathome.com>
+Date: Tue, 7 Mar 2023 17:15:39 +0100
+Subject: [PATCH] pppd: Check STAGING_DIR instead of toolchain sysroot for
+ openssl
+
+Since we're depending on the openwrt version of openssl, look there for
+the headers instead of in the toolchain sysroot.
+---
+ pppd/Makefile.linux | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/pppd/Makefile.linux b/pppd/Makefile.linux
+index 22837c5..e013333 100644
+--- a/pppd/Makefile.linux
++++ b/pppd/Makefile.linux
+@@ -155,7 +155,7 @@ endif
+ 
+ ifdef NEEDDES
+ ifndef USE_CRYPT
+-CFLAGS   += -I$(shell $(CC) --print-sysroot)/usr/include/openssl
++CFLAGS   += -I$(STAGING_DIR)/usr/include/openssl
+ NEEDCRYPTOLIB = y
+ else
+ CFLAGS   += -DUSE_CRYPT=1
+-- 
+2.25.1
+
