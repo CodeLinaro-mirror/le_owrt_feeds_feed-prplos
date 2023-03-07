@@ -1,0 +1,25 @@
+From 2e7ffa1c615dd56a49539defc47ae3b5adbd9a75 Mon Sep 17 00:00:00 2001
+From: Matthias Van Parys <matthias.vanparys@softathome.com>
+Date: Tue, 7 Mar 2023 17:59:09 +0100
+Subject: [PATCH] libfstools: Fix unused result error
+
+---
+ libfstools/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libfstools/common.c b/libfstools/common.c
+index 1b22d2c..f725036 100644
+--- a/libfstools/common.c
++++ b/libfstools/common.c
+@@ -117,7 +117,7 @@ int block_volume_format(struct volume *v, uint64_t offset, const char *bdev)
+ 	switch (volume_identify(v)) {
+ 	case FS_TARGZ:
+ 		snprintf(str, sizeof(str), "gzip -cd %s > /tmp/sysupgrade.tar", v->blk);
+-		system(str);
++		ret = system(str);
+ 		/* fall-through */
+ 	case FS_NONE:
+ 		ULOG_INFO("overlay filesystem in %s has not been formatted yet\n", v->blk);
+-- 
+2.25.1
+
