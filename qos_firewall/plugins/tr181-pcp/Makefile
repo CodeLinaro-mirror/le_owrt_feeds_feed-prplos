@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-pcp
-PKG_VERSION:=v0.4.0
+PKG_VERSION:=v0.4.1
 SHORT_DESCRIPTION:=Port control protocol
 
-PKG_SOURCE:=tr181-pcp-v0.4.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcp/-/archive/v0.4.0
-PKG_HASH:=798d0c768658291866a693fec5ab0df8e75ea9e2b596f7b0d7b73f5ce27bb17b
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-pcp-v0.4.0
+PKG_SOURCE:=tr181-pcp-v0.4.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcp/-/archive/v0.4.1
+PKG_HASH:=8c9e0880566dcd87da655634326b626a37cd254bcd43fd3ee163037feaf311c1
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-pcp-v0.4.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -19,6 +19,7 @@ PKG_RELEASE:=1
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
 	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_PCP_ORDER)$(COMPONENT)
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_PCP_ORDER)$(COMPONENT)
 endef
 
 include $(INCLUDE_DIR)/package.mk
@@ -47,7 +48,7 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Compile
-	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_TR181_PCP_ORDER=$(CONFIG_SAH_AMX_TR181_PCP_ORDER) CONFIG_SAH_AMX_TR181_PCP_CARES_RPATH=$(CONFIG_SAH_AMX_TR181_PCP_CARES_RPATH))
+	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_TR181_PCP_ORDER=$(CONFIG_SAH_AMX_TR181_PCP_ORDER) CONFIG_SAH_AMX_TR181_PCP_CARES_RPATH=$(CONFIG_SAH_AMX_TR181_PCP_CARES_RPATH))
 endef
 
 define Build/Install
