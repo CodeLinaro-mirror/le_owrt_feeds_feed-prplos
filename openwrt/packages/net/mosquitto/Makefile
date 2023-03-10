@@ -34,7 +34,7 @@ endef
 define Package/mosquitto-ssl
     $(call Package/mosquitto/default)
     TITLE+= (with SSL support)
-    DEPENDS+= +libopenssl +MOSQUITTO_LWS:libwebsockets-openssl +MOSQUITTO_DYNAMIC_SECURITY:cJSON
+    DEPENDS+= +libopenssl +MOSQUITTO_LWS:libwebsockets-full +MOSQUITTO_DYNAMIC_SECURITY:cJSON
     VARIANT:=ssl
     PROVIDES:=mosquitto
 endef
