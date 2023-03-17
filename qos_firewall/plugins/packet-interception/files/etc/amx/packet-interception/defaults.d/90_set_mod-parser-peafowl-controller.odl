@@ -1,0 +1,5 @@
+%populate {
+    object 'PacketInterception.CommunicationConfig.dns_socket' {
+        parameter 'Parser' = "peafowl";
+    }
+}
