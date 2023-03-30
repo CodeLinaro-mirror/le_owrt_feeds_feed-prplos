@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.17.3 - 2023-03-30(12:29:13 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): fix fw upgrade fail
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Box does not upload the backup file
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): open firewall port according to the IP version of ConRequestURL
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): no errors generated for non existing objects
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Device.ManagementServer is missing in version 0.5.1
+
+### Changes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): [Config] enable configurable coredump generation
+
+### Other
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Use sah_libc-ares instead of opensource_c-ares
+
 ## Release v0.17.2 - 2023-02-21(18:16:53 +0000)
 
 ### Other

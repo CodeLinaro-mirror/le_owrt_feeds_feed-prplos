@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=v1.21.2
+PKG_VERSION:=v1.22.1
 SHORT_DESCRIPTION:=TR069 Manager
 
-PKG_SOURCE:=tr069-manager-v1.21.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.21.2
-PKG_HASH:=638abd46c4fc631a76857daedff4e74424a80c335fe37dc06375a09c65ed95a8
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.21.2
+PKG_SOURCE:=tr069-manager-v1.22.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.22.1
+PKG_HASH:=768e886e4570ebea075358ab80adc465f045803e47946d1acd0ff5ce4fd590f0
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.22.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -19,6 +19,7 @@ PKG_RELEASE:=1
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
 	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/cwmp_plugin ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_SAH_AMX_TR069_MANAGER_ORDER)cwmp_plugin
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/cwmp_plugin ${PKG_INSTALL_DIR}/etc/rc.d/K$(CONFIG_SAH_AMX_TR069_MANAGER_ORDER)cwmp_plugin
 endef
 
 include $(INCLUDE_DIR)/package.mk
