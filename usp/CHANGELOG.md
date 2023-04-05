@@ -8,6 +8,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.3.1 - 2023-04-05(08:56:47 +0000)
+
+### Fixes
+
+- [libusp](https://gitlab.com/soft.at.home/usp/libraries/libusp): [USP] Remove var dumps from libusp
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Let uspagent save LastValue for parameter subscriptions
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [KPN][USP] Boot! event notification is not as expected
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] Incorrect parameter attributes
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] Lists of strings must be of type csv_string_t
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): [ACS] [V12]: No Request sent from Device side and Inconsistent onboarding behaviour of V12 on MQTT server
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): [MQTT] DNS resolving can still block
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): Correctly save last value of parameter subscriptions
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): Must be able to forward notifications on IMTP
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Dynamically adding LocalAgent.MTP. instances does not work
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [KPN][USP] Boot! event notification is not as expected
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): Discovery object should not be protected
+
+### Other
+
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): [Config] enable configurable coredump generation
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): Use sah_libc-ares instead of opensource_c-ares
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): Exposure of Device.MQTT.Client. instances for both Uber/BDD/Lansec and USP
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Documentation should be written for adding subscriptions to containers
+
 ## Release v5.3.0 - 2023-03-14(15:39:22 +0000)
 
 ## Release v5.2.0 - 2023-03-05(08:06:53 +0000)

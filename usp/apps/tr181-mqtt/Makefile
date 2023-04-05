@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-mqtt
-PKG_VERSION:=v2.10.3
+PKG_VERSION:=v2.12.1
 SHORT_DESCRIPTION:=TR-181 compatible MQTT client
 
-PKG_SOURCE:=tr181-mqtt-v2.10.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-mqtt/-/archive/v2.10.3
-PKG_HASH:=403ff538bd2ea65119a8b229f3a2b6929948f0eedd2fe22d6afa35a880e2b485
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqtt-v2.10.3
+PKG_SOURCE:=tr181-mqtt-v2.12.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-mqtt/-/archive/v2.12.1
+PKG_HASH:=0ab736983de521faad5cf6c7e2746d781d1c62a67c1b23e8c345e1261ed0b859
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqtt-v2.12.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -40,6 +40,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libmosquitto
   DEPENDS += +mod-amxb-usp
   DEPENDS += +libnetmodel
+  DEPENDS += +libcares
   MENU:=1
 endef
 
