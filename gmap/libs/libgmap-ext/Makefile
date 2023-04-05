@@ -1,16 +1,17 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libgmap-ext
-PKG_VERSION:=v0.2.1
+PKG_VERSION:=v0.2.2
 SHORT_DESCRIPTION:=Functionality common for gmap clients (not server)
 
-PKG_SOURCE:=libgmap-ext-v0.2.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-ext/-/archive/v0.2.1
-PKG_HASH:=674f45cb01b4a3b45db899bf0bc7ce12cb5f86e932aed5c8749e0f5e9ec34f55
-PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-ext-v0.2.1
+PKG_SOURCE:=libgmap-ext-v0.2.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-ext/-/archive/v0.2.2
+PKG_HASH:=96fb60815d4d80cefa4c50278363f4354d72564d1900e06e7ac7b5aacab7ed01
+PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-ext-v0.2.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
+
 
 PKG_RELEASE:=1
 
@@ -35,7 +36,7 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Compile
-	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include)
+	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include)
 endef
 
 define Build/Install
