@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.4.0 - 2023-04-06(08:57:15 +0000)
+
+### New
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): USP agent must know when to ForceReconnect() client
+
+### Fixes
+
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): Must use hostname in connect for certificate checking
+
+### Changes
+
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): [MQTT][USP] Make client auto reconnect configurable
+
 ## Release v5.3.1 - 2023-04-05(08:56:47 +0000)
 
 ### Fixes
