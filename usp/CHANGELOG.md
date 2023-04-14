@@ -8,6 +8,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.5.0 - 2023-04-14(15:12:32 +0000)
+
+### New
+
+- [libuspi](https://gitlab.com/soft.at.home/usp/libraries/libuspi): [USP] Add support for subscriptions to usp-endpoint
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): [USP] Add support for subscriptions to usp-endpoint
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): Send ForceReconnect based on AutoReconnect parameter
+
+### Fixes
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] Stopping tr181-mqtt before tr181-localagent resets references
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): Make sure BrokerAddress is used in connect
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Disabling second controller breaks IMTP connection for first
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP][Regression] Cannot find IMTP con for enabled controller
+
+### Changes
+
+- [libuspi](https://gitlab.com/soft.at.home/usp/libraries/libuspi): [USP] Port subscription changes to libuspi
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Move AutoReconnect to LocalAgent.MTP.i.MQTT.
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): [USP] Port subscription changes to usp-endpoint
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Add requests with search paths will be allowed
+
+### Other
+
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): [uspe] Remove default endpoint id for uspe
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Extend subscription unit tests
+
 ## Release v5.4.0 - 2023-04-06(08:57:15 +0000)
 
 ### New
