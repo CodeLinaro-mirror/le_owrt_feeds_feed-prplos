@@ -154,7 +154,7 @@ define Package/libunbound/config
 		default n
 	config PACKAGE_libunbound_dnstap
 		bool "Build with dnstap support."
-		default n
+		default y
 	endif
 endef
 
@@ -209,26 +209,6 @@ define Package/unbound-daemon/install
 	$(INSTALL_BIN) \
 		$(PKG_INSTALL_DIR)/usr/sbin/unbound $(1)/usr/sbin/
 	$(INSTALL_DIR) $(1)/etc/unbound
-	$(INSTALL_CONF) \
-		$(PKG_INSTALL_DIR)/var/lib/unbound/unbound.conf \
-		$(1)/etc/unbound/unbound.conf
-	$(INSTALL_DATA) ./files/root.key $(1)/etc/unbound/root.key
-	$(INSTALL_CONF) ./files/unbound_ext.conf $(1)/etc/unbound/unbound_ext.conf
-	$(INSTALL_CONF) ./files/unbound_srv.conf $(1)/etc/unbound/unbound_srv.conf
-	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) ./files/unbound.uci $(1)/etc/config/unbound
-	$(INSTALL_DIR) $(1)/etc/hotplug.d/ntp
-	$(INSTALL_BIN)  ./files/unbound.ntpd $(1)/etc/hotplug.d/ntp/25-unbound
-	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN)  ./files/unbound.init $(1)/etc/init.d/unbound
-	$(INSTALL_DIR) $(1)/usr/lib/unbound
-	$(INSTALL_DATA) ./files/defaults.sh $(1)/usr/lib/unbound/defaults.sh
-	$(INSTALL_DATA) ./files/dnsmasq.sh $(1)/usr/lib/unbound/dnsmasq.sh
-	$(INSTALL_DATA) ./files/iptools.sh $(1)/usr/lib/unbound/iptools.sh
-	$(INSTALL_BIN)  ./files/odhcpd.sh $(1)/usr/lib/unbound/odhcpd.sh
-	$(INSTALL_DATA) ./files/odhcpd.awk $(1)/usr/lib/unbound/odhcpd.awk
-	$(INSTALL_DATA) ./files/stopping.sh $(1)/usr/lib/unbound/stopping.sh
-	$(INSTALL_DATA) ./files/unbound.sh $(1)/usr/lib/unbound/unbound.sh
 endef
 
 define Package/libunbound/install
