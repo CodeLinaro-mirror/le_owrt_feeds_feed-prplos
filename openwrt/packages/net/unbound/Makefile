@@ -33,6 +33,8 @@ PKG_CONFIG_DEPENDS:=CONFIG_PACKAGE_libunbound_dnscrypt \
 	CONFIG_PACKAGE_libunbound_subnet \
 	CONFIG_PACKAGE_libunbound_dnstap
 
+PKG_BUILD_DEPENDS:=protobuf-c/host
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/unbound/Default
