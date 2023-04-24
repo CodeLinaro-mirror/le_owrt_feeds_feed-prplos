@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v5.5.1 - 2023-04-24(08:11:15 +0000)
+
+### Fixes
+
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): [V12][23.04.12-D] RG onboarding behaves differently on VDSL lines and on FIBER (possible DNS resolution timing issue on VDSL?)
+
 ## Release v5.5.0 - 2023-04-14(15:12:32 +0000)
 
 ### New
