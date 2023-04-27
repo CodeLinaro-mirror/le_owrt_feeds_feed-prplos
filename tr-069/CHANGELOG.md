@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.17.4 - 2023-04-27(05:50:11 +0000)
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): [odl] Remove deprecated odl keywords
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): [odl]Remove deprecated odl keywords
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): service protocol should be integers
+
 ## Release v0.17.3 - 2023-03-30(12:29:13 +0000)
 
 ### Fixes
