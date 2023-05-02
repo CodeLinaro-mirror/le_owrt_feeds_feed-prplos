@@ -1,16 +1,17 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-amxb-usp
-PKG_VERSION:=v2.5.1
+PKG_VERSION:=v3.0.0
 SHORT_DESCRIPTION:=USP backend implementation for amxb
 
-PKG_SOURCE:=amxb_usp-v2.5.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp/-/archive/v2.5.1
-PKG_HASH:=043c70f6c5e7359fa535ba4e7893580a2fc514c956952966823af2e877ff6092
-PKG_BUILD_DIR:=$(BUILD_DIR)/amxb_usp-v2.5.1
+PKG_SOURCE:=amxb_usp-v3.0.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp/-/archive/v3.0.0
+PKG_HASH:=38c9acab29f09b6f9d718cdcaf8b6a686c74560ab8ab4e4852d0307fcf5d6e32
+PKG_BUILD_DIR:=$(BUILD_DIR)/amxb_usp-v3.0.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
+
 
 PKG_RELEASE:=1
 
@@ -35,7 +36,7 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Compile
-	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include)
+	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include)
 endef
 
 define Build/Install

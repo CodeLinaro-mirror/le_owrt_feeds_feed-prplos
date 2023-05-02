@@ -1,16 +1,17 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libuspprotobuf
-PKG_VERSION:=v0.2.0
+PKG_VERSION:=v0.3.0
 SHORT_DESCRIPTION:=This library generates C code from 
 
-PKG_SOURCE:=libprotobuf-v0.2.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/usp/libraries/libprotobuf/-/archive/v0.2.0
-PKG_HASH:=d3e05af265cebbea7b3b066d8fa9da32417157b3ceb6d18133561eeeb4536b4c
-PKG_BUILD_DIR:=$(BUILD_DIR)/libprotobuf-v0.2.0
+PKG_SOURCE:=libprotobuf-v0.3.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/usp/libraries/libprotobuf/-/archive/v0.3.0
+PKG_HASH:=569f058cf6dddbd329afc3b98bbb3a4af5fe90084ce782cef56a387b239dc91d
+PKG_BUILD_DIR:=$(BUILD_DIR)/libprotobuf-v0.3.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BBF
 PKG_LICENSE_FILES:=LICENSE
+
 
 PKG_RELEASE:=1
 PKG_BUILD_DEPENDS += protobuf/host
@@ -32,7 +33,7 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Compile
-	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include)
+	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include)
 endef
 
 define Build/Install
@@ -47,10 +48,10 @@ define Build/InstallDev
 endef
 
 define Package/$(PKG_NAME)/install
+	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 	if [ -d ./files ]; then \
 		$(CP) ./files/* $(1)/; \
 	fi
-	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))

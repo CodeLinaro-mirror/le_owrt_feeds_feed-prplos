@@ -8,6 +8,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v6.0.0 - 2023-05-02(13:56:54 +0000)
+
+### Breaking
+
+- [mod-amxb-usp](https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp): Subscriptions with the USP backend no longer work
+
+### New
+
+- [libusp](https://gitlab.com/soft.at.home/usp/libraries/libusp): [USP] Add NotifType AmxNotification for ambiorix events
+- [libuspi](https://gitlab.com/soft.at.home/usp/libraries/libuspi): [USP] Add NotifType AmxNotification for ambiorix events
+- [libuspprotobuf](https://gitlab.com/soft.at.home/usp/libraries/libprotobuf): [USP] Add NotifType AmxNotification for ambiorix events
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Issue NET-4657: [USP] Add NotifType AmxNotification for ambiorix events
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): [USP] usp-endpoint must be able to broker amx subscriptions
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] uspagent must be able to broker amx subscriptions
+
+### Fixes
+
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): [USP][DNS] Resolution is not triggered systematically when Wan was NOK and recover
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): Improve ACL handling with adds
+
+### Other
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Also update Alias
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Extend defaults with Controller MTP
+
 ## Release v5.5.1 - 2023-04-24(08:11:15 +0000)
 
 ### Fixes
