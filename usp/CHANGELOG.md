@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v6.1.0 - 2023-05-09(14:38:09 +0000)
+
+### New
+
+- [libusp](https://gitlab.com/soft.at.home/usp/libraries/libusp): gsdm missing arguments for commands and events
+
+### Fixes
+
+- [libusp](https://gitlab.com/soft.at.home/usp/libraries/libusp): [USP][AMX] GSDM needs a ValueChangeType
+- [mod-amxb-usp](https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp): [USP] Get with depth not working as expected
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] tr181-localagent should use amxp_dir_owned_make
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): [MQTT] Client Status no longer goes to Error
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Missing index number in ObjectCreation notifications
+
+### Other
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] Add missing event parameters to data model
+
 ## Release v6.0.0 - 2023-05-02(13:56:54 +0000)
 
 ### Breaking
