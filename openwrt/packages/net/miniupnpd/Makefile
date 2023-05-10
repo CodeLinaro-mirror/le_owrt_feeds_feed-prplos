@@ -22,6 +22,8 @@ PKG_CPE_ID:=cpe:/a:miniupnp_project:miniupnpd
 
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
+PKG_CONFIG_DEPENDS += CONFIG_MINIUPNP_TR181-FIREWALL
+PKG_CONFIG_DEPENDS += CONFIG_MINIUPNP_IPTABLES
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/version.mk
@@ -32,7 +34,13 @@ define Package/miniupnpd/Default
   DEPENDS:= \
 	+libcap-ng \
 	+libmnl \
-	+libuuid
+	+libuuid \
+	+MINIUPNP_TR181-FIREWALL:libamxb \
+	+MINIUPNP_TR181-FIREWALL:libamxc \
+	+MINIUPNP_TR181-FIREWALL:libamxd \
+	+MINIUPNP_TR181-FIREWALL:libamxo \
+	+MINIUPNP_TR181-FIREWALL:libamxp \
+	+MINIUPNP_TR181-FIREWALL:tr181-firewall
   PROVIDES:=miniupnpd
   TITLE:=Lightweight UPnP IGD, NAT-PMP & PCP daemon
   SUBMENU:=Firewall
@@ -78,7 +86,7 @@ CONFIGURE_ARGS = \
 	--igd2 \
 	--leasefile \
 	--portinuse \
-	--firewall=$(BUILD_VARIANT) \
+	$(if $(CONFIG_MINIUPNP_TR181-FIREWALL),--firewall=amx,--firewall=$(BUILD_VARIANT)) \
 	--disable-fork
 
 TARGET_CFLAGS += $(FPIC)
@@ -115,6 +123,10 @@ define Package/miniupnpd-nftables/install
 	$(INSTALL_DATA) ./files/firewall4.include $(1)/usr/share/miniupnpd/firewall.include
 	$(INSTALL_DIR) $(1)/usr/share/nftables.d
 	$(CP) ./files/nftables.d/* $(1)/usr/share/nftables.d/
+endef
+
+define Package/miniupnpd-iptables/config
+	source "$(SOURCE)/Config.in"
 endef
 
 $(eval $(call BuildPackage,miniupnpd-iptables))
