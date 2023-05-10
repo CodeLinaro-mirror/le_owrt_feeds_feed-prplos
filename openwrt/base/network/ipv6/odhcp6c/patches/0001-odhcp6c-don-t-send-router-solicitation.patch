@@ -1,0 +1,23 @@
+diff --git a/src/ra.c b/src/ra.c
+index 01a8b72..2f77383 100644
+--- a/src/ra.c
++++ b/src/ra.c
+@@ -193,18 +193,6 @@ failure:
+ 
+ static void ra_send_rs(int signal __attribute__((unused)))
+ {
+-	const struct sockaddr_in6 dest = {AF_INET6, 0, 0, ALL_IPV6_ROUTERS, if_index};
+-	const struct icmpv6_opt llnull = {ND_OPT_SOURCE_LINKADDR, 1, {0}};
+-	size_t len;
+-
+-	if ((rs_attempt % 2 == 0) && memcmp(&rs.lladdr, &llnull, sizeof(llnull)))
+-		len = sizeof(rs);
+-	else
+-		len = sizeof(struct icmp6_hdr);
+-
+-	if (sendto(sock, &rs, len, MSG_DONTWAIT, (struct sockaddr*)&dest, sizeof(dest)) < 0)
+-		syslog(LOG_ERR, "Failed to send RS (%s)",  strerror(errno));
+-
+ 	if (++rs_attempt <= 3)
+ 		alarm(4);
+ }
