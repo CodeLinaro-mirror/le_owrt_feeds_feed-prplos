@@ -1,0 +1,745 @@
+From a6d1dd47f33d39ed901d54cc893917cb8933b620 Mon Sep 17 00:00:00 2001
+From: alexandre fiset <alexandre.fiset_ext@softathome.com>
+Date: Fri, 5 May 2023 08:13:19 +0200
+Subject: [PATCH] fix patch 9009
+
+---
+ pppd/main.c   | 292 +++----------------------------------------
+ pppd/pppd.h   |  13 +-
+ pppd/shared.c | 336 +++++++++++++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 353 insertions(+), 288 deletions(-)
+
+diff --git a/pppd/main.c b/pppd/main.c
+index 0a35d05..30f8449 100644
+--- a/pppd/main.c
++++ b/pppd/main.c
+@@ -122,10 +122,6 @@
+ TDB_CONTEXT *pppdb;		/* database for storing status etc. */
+ #endif
+ 
+-static int fd_loop;		/* fd for getting demand-dial packets */
+-
+-
+-
+ /* Prototypes for procedures local to this file. */
+ 
+ #ifdef USE_TDB
+@@ -142,58 +138,13 @@ int main(int, char *[]);
+ int
+ main(int argc, char *argv[])
+ {
+-    int i, t;
+-    char *p;
+-    struct passwd *pw;
++    int i, rv;
+     struct protent *protp;
+-    char numbuf[16];
+-
+-    strlcpy(path_ipup, _PATH_IPUP, sizeof(path_ipup));
+-    strlcpy(path_ipdown, _PATH_IPDOWN, sizeof(path_ipdown));
+-    strlcpy(path_ipv6up, _PATH_IPV6UP, sizeof(path_ipv6up));
+-    strlcpy(path_ipv6down, _PATH_IPV6DOWN, sizeof(path_ipv6down));
+-
+-    link_stats_valid = 0;
+-    new_phase(PHASE_INITIALIZE);
+-
+-    script_env = NULL;
+-
+-    /* Initialize syslog facilities */
+-    reopen_log();
+-
+-    if (gethostname(hostname, MAXNAMELEN) < 0 ) {
+-	option_error("Couldn't get hostname: %m");
+-	exit(1);
+-    }
+-    hostname[MAXNAMELEN-1] = 0;
+-
+-    /* make sure we don't create world or group writable files. */
+-    umask(umask(0777) | 022);
+-
+-    uid = getuid();
+-    privileged = uid == 0;
+-    slprintf(numbuf, sizeof(numbuf), "%d", uid);
+-    script_setenv("ORIG_UID", numbuf, 0);
+-
+-    ngroups = getgroups(NGROUPS_MAX, groups);
+-
+-    /*
+-     * Initialize magic number generator now so that protocols may
+-     * use magic numbers in initialization.
+-     */
+-    magic_init();
+-
+-    /*
+-     * Initialize each protocol.
+-     */
+-    for (i = 0; (protp = protocols[i]) != NULL; ++i)
+-        (*protp->init)(0);
+-
+-    /*
+-     * Initialize the default channel.
+-     */
+-    tty_init();
+ 
++	rv = init_pre_settings(protp);
++	if(rv != 0)
++	exit(rv);
++	
+     progname = *argv;
+ 
+     /*
+@@ -204,234 +155,31 @@ main(int argc, char *argv[])
+ 	|| !options_from_user()
+ 	|| !parse_args(argc-1, argv+1))
+ 	exit(EXIT_OPTION_ERROR);
+-    devnam_fixed = 1;		/* can no longer change device name */
+-
+-    /*
+-     * Work out the device name, if it hasn't already been specified,
+-     * and parse the tty's options file.
+-     */
+-    if (the_channel->process_extra_options)
+-	(*the_channel->process_extra_options)();
+-
+-    if (debug)
+-	setlogmask(LOG_UPTO(LOG_DEBUG));
+-
+-    /*
+-     * Check that we are running as root.
+-     */
+-    if (geteuid() != 0) {
+-	option_error("must be root to run %s, since it is not setuid-root",
+-		     argv[0]);
+-	exit(EXIT_NOT_ROOT);
+-    }
+-
+-    if (!ppp_available()) {
+-	option_error("%s", no_ppp_msg);
+-	exit(EXIT_NO_KERNEL_SUPPORT);
+-    }
+-
+-    /*
+-     * Check that the options given are valid and consistent.
+-     */
+-    check_options();
+-    if (!sys_check_options())
+-	exit(EXIT_OPTION_ERROR);
+-    auth_check_options();
+-#ifdef HAVE_MULTILINK
+-    mp_check_options();
+-#endif
+-    for (i = 0; (protp = protocols[i]) != NULL; ++i)
+-	if (protp->check_options != NULL)
+-	    (*protp->check_options)();
+-    if (the_channel->check_options)
+-	(*the_channel->check_options)();
+-
+-
+-    if (dump_options || dryrun) {
+-	init_pr_log(NULL, LOG_INFO);
+-	print_options(pr_log, NULL);
+-	end_pr_log();
+-    }
+-
+-    if (dryrun)
+-	die(0);
+-
+-    /* Make sure fds 0, 1, 2 are open to somewhere. */
+-    fd_devnull = open(_PATH_DEVNULL, O_RDWR);
+-    if (fd_devnull < 0)
+-	fatal("Couldn't open %s: %m", _PATH_DEVNULL);
+-    while (fd_devnull <= 2) {
+-	i = dup(fd_devnull);
+-	if (i < 0)
+-	    fatal("Critical shortage of file descriptors: dup failed: %m");
+-	fd_devnull = i;
+-    }
+-
+-    /*
+-     * Initialize system-dependent stuff.
+-     */
+-    sys_init();
+ 
+-#ifdef USE_TDB
+-    pppdb = tdb_open(_PATH_PPPDB, 0, 0, O_RDWR|O_CREAT, 0644);
+-    if (pppdb != NULL) {
+-	slprintf(db_key, sizeof(db_key), "pppd%d", getpid());
+-	update_db_entry();
+-    } else {
+-	warn("Warning: couldn't open ppp database %s", _PATH_PPPDB);
+-	if (multilink) {
+-	    warn("Warning: disabling multilink");
+-	    multilink = 0;
+-	}
+-    }
+-#endif
+-
+-    /*
+-     * Detach ourselves from the terminal, if required,
+-     * and identify who is running us.
+-     */
+-    if (!nodetach && !updetach)
+-	detach();
+-    p = getlogin();
+-    if (p == NULL) {
+-	pw = getpwuid(uid);
+-	if (pw != NULL && pw->pw_name != NULL)
+-	    p = pw->pw_name;
+-	else
+-	    p = "(unknown)";
+-    }
+-    syslog(LOG_NOTICE, "pppd %s started by %s, uid %d", VERSION, p, uid);
+-    script_setenv("PPPLOGNAME", p, 0);
++	rv = init_settings(protp, true);
++	if(rv == -1)
++	die(0); // dryrun
++	else if (rv != 0)
++	exit(rv);
+ 
+-    if (devnam[0])
+-	script_setenv("DEVICE", devnam, 1);
+-    slprintf(numbuf, sizeof(numbuf), "%d", getpid());
+-    script_setenv("PPPD_PID", numbuf, 1);
+-
+-    setup_signals();
+-
+-    create_linkpidfile(getpid());
+-
+-    waiting = 0;
+-
+-    /*
+-     * If we're doing dial-on-demand, set up the interface now.
+-     */
+-    if (demand) {
+-	/*
+-	 * Open the loopback channel and set it up to be the ppp interface.
+-	 */
+-	fd_loop = open_ppp_loopback();
+-	set_ifunit(1);
+-	/*
+-	 * Configure the interface and mark it up, etc.
+-	 */
+-	demand_conf();
+-    }
+-
+-    do_callback = 0;
+     for (;;) {
+ 
+-	bundle_eof = 0;
+-	bundle_terminating = 0;
+-	listen_time = 0;
+-	need_holdoff = 1;
+-	devfd = -1;
+-	status = EXIT_OK;
+-	++unsuccess;
+-	doing_callback = do_callback;
+-	do_callback = 0;
+-
+-	if (demand && !doing_callback) {
+-	    /*
+-	     * Don't do anything until we see some activity.
+-	     */
+-	    new_phase(PHASE_DORMANT);
+-	    demand_unblock();
+-	    add_fd(fd_loop);
+-	    for (;;) {
+-		handle_events();
+-		if (asked_to_quit)
+-		    break;
+-		if (get_loop_output())
+-		    break;
+-	    }
+-	    remove_fd(fd_loop);
+-	    if (asked_to_quit)
+-		break;
+-
+-	    /*
+-	     * Now we want to bring up the link.
+-	     */
+-	    demand_block();
+-	    info("Starting link");
+-	}
++	rv = init_connection(true);
++	if (rv != 0)
++	break;
+ 
+-	get_time(getstarttime());
+-	script_unsetenv("CONNECT_TIME");
+-	script_unsetenv("BYTES_SENT");
+-	script_unsetenv("BYTES_RCVD");
+-
+-	lcp_open(0);		/* Start protocol */
+-	start_link(0);
+ 	while (phase != PHASE_DEAD) {
+-	    handle_events();
++	    handle_events(true);
+ 	    get_input();
+-	    if (kill_link)
+-		lcp_close(0, "User request");
+-	    if (asked_to_quit) {
+-		bundle_terminating = 1;
+-		if (phase == PHASE_MASTER)
+-		    mp_bundle_terminated();
+-	    }
+-	    if (open_ccp_flag) {
+-		if (phase == PHASE_NETWORK || phase == PHASE_RUNNING) {
+-		    ccp_fsm[0].flags = OPT_RESTART; /* clears OPT_SILENT */
+-		    (*ccp_protent.open)(0);
+-		}
+-	    }
+-	}
+-	/* restore FSMs to original state */
+-	lcp_close(0, "");
+-
+-	if (!persist || asked_to_quit || (maxfail > 0 && unsuccess >= maxfail))
+-	    break;
+-
+-	if (demand)
+-	    demand_discard();
+-	t = need_holdoff? holdoff: 0;
+-	if (holdoff_hook)
+-	    t = (*holdoff_hook)();
+-	if (t > 0) {
+-	    new_phase(PHASE_HOLDOFF);
+-	    TIMEOUT(holdoff_end, NULL, t);
+-	    do {
+-		handle_events();
+-		if (kill_link)
+-		    new_phase(PHASE_DORMANT); /* allow signal to end holdoff */
+-	    } while (phase == PHASE_HOLDOFF);
+-	    if (!persist)
+-		break;
++	    react_on_handle_events();
+ 	}
++	
++	rv = cleanup_connection(true);
++	if (rv != 0)
++	break;
+     }
+ 
+-    /* Wait for scripts to finish */
+-    reap_kids();
+-    if (n_children > 0) {
+-	if (child_wait > 0)
+-	    TIMEOUT(childwait_end, NULL, child_wait);
+-	if (debug) {
+-	    struct subprocess *chp;
+-	    dbglog("Waiting for %d child processes...", n_children);
+-	    for (chp = children; chp != NULL; chp = chp->next)
+-		dbglog("  script %s, pid %d", chp->prog, chp->pid);
+-	}
+-	while (n_children > 0 && !childwait_done) {
+-	    handle_events();
+-	    if (kill_link && !childwait_done)
+-		childwait_end(NULL);
+-	}
+-    }
++	cleanup_children(true);
+ 
+     die(status);
+     return 0;
+diff --git a/pppd/pppd.h b/pppd/pppd.h
+index 6caaec5..bf8084f 100644
+--- a/pppd/pppd.h
++++ b/pppd/pppd.h
+@@ -538,7 +538,16 @@ void childwait_end(void *);
+ void update_db_entry(void);
+ #endif
+ 
+-void handle_events(void);
++int init_pre_settings(struct protent* protp);
++int init_settings(struct protent* protp, bool);
++int init_connection(bool blocking);
++
++int cleanup_connection(bool);
++int cleanup_children(bool);
++
++int react_on_handle_events(void);
++
++void handle_events(bool blocking);
+ void cleanup(void);
+ 
+ struct timeval* getstarttime();
+@@ -705,7 +714,7 @@ int  get_pty(int *, int *, char *, int);	/* Get pty master/slave */
+ int  open_ppp_loopback(void); /* Open loopback for demand-dialling */
+ int  tty_establish_ppp(int);  /* Turn serial port into a ppp interface */
+ void tty_disestablish_ppp(int); /* Restore port to normal operation */
+-void generic_disestablish_ppp(int dev_fd); /* Restore device setting */
++void generic_disestablish_ppp(int); /* Restore device setting */
+ int  generic_establish_ppp(int dev_fd); /* Make a ppp interface */
+ void make_new_bundle(int, int, int, int); /* Create new bundle */
+ int  bundle_attach(int);	/* Attach link to existing bundle */
+diff --git a/pppd/shared.c b/pppd/shared.c
+index f99c5af..c8cfe5c 100644
+--- a/pppd/shared.c
++++ b/pppd/shared.c
+@@ -9,6 +9,8 @@
+ #include <sys/sysinfo.h>
+ #include <unistd.h>
+ #include <stdlib.h>
++#include <sys/types.h>
++#include <pwd.h>
+ 
+ #include "pppd.h"
+ #include "fsm.h"
+@@ -23,6 +25,9 @@
+ #include "ccp.h"
+ #include "ecp.h"
+ #include "pathnames.h"
++#include "magic.h"
++
++static int fd_loop;     /* fd for getting demand-dial packets */
+ 
+ /* interface vars */
+ char ifname[MAXIFNAMELEN];	/* Interface name */
+@@ -154,23 +159,26 @@ getstarttime()
+  * handle_events - wait for something to happen and respond to it.
+  */
+ void
+-handle_events(void)
++handle_events(bool blocking)
+ {
+-    struct timeval timo;
+-    unsigned char buf[16];
+ 
+     kill_link = open_ccp_flag = 0;
+ 
+-    /* alert via signal pipe */
+-    waiting = 1;
+-    /* flush signal pipe */
+-    for (; read(sigpipe[0], buf, sizeof(buf)) > 0; );
+-    add_fd(sigpipe[0]);
+-    /* wait if necessary */
+-    if (!(got_sighup || got_sigterm || got_sigusr2 || got_sigchld))
+-	wait_input(timeleft(&timo));
+-    waiting = 0;
+-    remove_fd(sigpipe[0]);
++    if (blocking) {
++        unsigned char buf[16];
++        struct timeval timo;
++
++        /* alert via signal pipe */
++        waiting = 1;
++        /* flush signal pipe */
++        for (; read(sigpipe[0], buf, sizeof(buf)) > 0; );
++        add_fd(sigpipe[0]);
++        /* wait if necessary */
++        if (!(got_sighup || got_sigterm || got_sigusr2 || got_sigchld))
++        wait_input(timeleft(&timo));
++        waiting = 0;
++        remove_fd(sigpipe[0]);
++    }
+ 
+     calltimeout();
+     if (got_sighup) {
+@@ -1681,4 +1689,304 @@ update_db_entry(void)
+         free(vbuf);
+ 
+ }
+-#endif
+\ No newline at end of file
++#endif
++
++int init_pre_settings(struct protent* protp) {
++    int i;
++    char numbuf[16];
++
++    strlcpy(path_ipup, _PATH_IPUP, sizeof(path_ipup));
++    strlcpy(path_ipdown, _PATH_IPDOWN, sizeof(path_ipdown));
++    strlcpy(path_ipv6up, _PATH_IPV6UP, sizeof(path_ipv6up));
++    strlcpy(path_ipv6down, _PATH_IPV6DOWN, sizeof(path_ipv6down));
++
++    link_stats_valid = 0;
++    new_phase(PHASE_INITIALIZE);
++
++    script_env = NULL;
++
++    /* Initialize syslog facilities */
++    reopen_log();
++
++    if (gethostname(hostname, MAXNAMELEN) < 0 ) {
++	    option_error("Couldn't get hostname: %m");
++	    return 1;
++    }
++    hostname[MAXNAMELEN-1] = 0;
++
++    /* make sure we don't create world or group writable files. */
++    umask(umask(0777) | 022);
++
++    uid = getuid();
++    privileged = uid == 0;
++    slprintf(numbuf, sizeof(numbuf), "%d", uid);
++    script_setenv("ORIG_UID", numbuf, 0);
++
++    ngroups = getgroups(NGROUPS_MAX, groups);
++
++    /*
++     * Initialize magic number generator now so that protocols may
++     * use magic numbers in initialization.
++     */
++    magic_init();
++
++    /*
++     * Initialize each protocol.
++     */
++    for (i = 0; (protp = protocols[i]) != NULL; ++i)
++        (*protp->init)(0);
++
++    /*
++     * Initialize the default channel.
++     */
++    tty_init();
++
++    return 0; 
++}
++
++int init_settings(struct protent* protp, bool enable_signals) {
++    int i;
++    char* p;
++    struct passwd* pw;
++    char numbuf[16];
++
++    devnam_fixed = 1;      /* can no longer change device name */
++
++    /*
++     * Work out the device name, if it hasn't already been specified,
++     * and parse the tty's options file.
++     */
++    if (the_channel->process_extra_options)
++	(*the_channel->process_extra_options)();
++
++    if (debug)
++	setlogmask(LOG_UPTO(LOG_DEBUG));
++
++    /*
++     * Check that we are running as root.
++     */
++    if (geteuid() != 0) {
++	    option_error("must be root to run, since it is not setuid-root");
++	    return EXIT_NOT_ROOT;
++    }
++
++    if (!ppp_available()) {
++	    option_error("%s", no_ppp_msg);
++	    return EXIT_NO_KERNEL_SUPPORT;
++    }
++
++    /*
++     * Check that the options given are valid and consistent.
++     */
++    check_options();
++    if (!sys_check_options())
++	return EXIT_OPTION_ERROR;
++    auth_check_options();
++#ifdef HAVE_MULTILINK
++    mp_check_options();
++#endif
++    for (i = 0; (protp = protocols[i]) != NULL; ++i)
++	if (protp->check_options != NULL)
++	(*protp->check_options)();
++    if (the_channel->check_options)
++	(*the_channel->check_options)();
++
++
++    if (dump_options || dryrun) {
++	    init_pr_log(NULL, LOG_INFO);
++	    print_options(pr_log, NULL);
++	    end_pr_log();
++    }
++
++    if (dryrun)
++	die(0);
++
++    /* Make sure fds 0, 1, 2 are open to somewhere. */
++    fd_devnull = open(_PATH_DEVNULL, O_RDWR);
++    if (fd_devnull < 0)
++	fatal("Couldn't open %s: %m", _PATH_DEVNULL);
++    while (fd_devnull <= 2) {
++	    i = dup(fd_devnull);
++	    if (i < 0)
++	    fatal("Critical shortage of file descriptors: dup failed: %m");
++	    fd_devnull = i;
++    }
++
++    /*
++     * Initialize system-dependent stuff.
++     */
++    sys_init();
++ 
++#ifdef USE_TDB
++    pppdb = tdb_open(_PATH_PPPDB, 0, 0, O_RDWR|O_CREAT, 0644);
++    if (pppdb != NULL) {
++	    slprintf(db_key, sizeof(db_key), "pppd%d", getpid());
++	    update_db_entry();
++    } else {
++	    warn("Warning: couldn't open ppp database %s", _PATH_PPPDB);
++	    if (multilink) {
++	        warn("Warning: disabling multilink");
++	        multilink = 0;
++	    }
++    }
++#endif
++
++    /*
++     * Detach ourselves from the terminal, if required,
++     * and identify who is running us.
++     */
++    if (!nodetach && !updetach)
++	detach();
++    p = getlogin();
++    if (p == NULL) {
++	    pw = getpwuid(uid);
++	    if (pw != NULL && pw->pw_name != NULL)
++	    p = pw->pw_name;
++	    else
++	    p = "(unknown)";
++    }
++    syslog(LOG_NOTICE, "pppd %s started by %s, uid %d", VERSION, p, uid);
++    script_setenv("PPPLOGNAME", p, 0);
++
++    if (devnam[0])
++	script_setenv("DEVICE", devnam, 1);
++    slprintf(numbuf, sizeof(numbuf), "%d", getpid());
++    script_setenv("PPPD_PID", numbuf, 1);
++
++    setup_signals();
++
++    create_linkpidfile(getpid());
++
++    waiting = 0;
++
++    /*
++     * If we're doing dial-on-demand, set up the interface now.
++     */
++    if (demand) {
++    	/*
++	     * Open the loopback channel and set it up to be the ppp interface.
++	     */
++	    fd_loop = open_ppp_loopback();
++	    set_ifunit(1);
++	    /*
++	     * Configure the interface and mark it up, etc.
++	     */
++	    demand_conf();
++    }
++
++    do_callback = 0;
++
++    return 0;
++}
++
++int init_connection(bool blocking) {
++	bundle_eof = 0;
++	bundle_terminating = 0;
++	listen_time = 0;
++	need_holdoff = 1;
++	devfd = -1;
++	status = EXIT_OK;
++	++unsuccess;
++	doing_callback = do_callback;
++	do_callback = 0;
++
++	if (demand && !doing_callback) {
++	    /*
++	     * Don't do anything until we see some activity.
++	     */
++	    new_phase(PHASE_DORMANT);
++	    demand_unblock();
++	    add_fd(fd_loop);
++	    for (;;) {
++    		handle_events(blocking);
++    		if (asked_to_quit)
++		    break;
++    		if (get_loop_output())
++		    break;
++	    }
++	    remove_fd(fd_loop);
++	    if (asked_to_quit)
++		return 1;
++
++	    /*
++	     * Now we want to bring up the link.
++	     */
++	    demand_block();
++	    info("Starting link");
++	}
++
++	get_time(getstarttime());
++	script_unsetenv("CONNECT_TIME");
++	script_unsetenv("BYTES_SENT");
++	script_unsetenv("BYTES_RCVD");
++
++	lcp_open(0);		/* Start protocol */
++	start_link(0);
++    return 0;
++}
++
++int cleanup_connection(bool blocking) {
++    int t;
++
++	/* restore FSMs to original state */
++	lcp_close(0, "");
++
++	if (!persist || asked_to_quit || (maxfail > 0 && unsuccess >= maxfail))
++	return 1;
++
++	if (demand)
++	demand_discard();
++	t = need_holdoff? holdoff: 0;
++	if (holdoff_hook)
++	t = (*holdoff_hook)();
++	if (t > 0) {
++	    new_phase(PHASE_HOLDOFF);
++	    TIMEOUT(holdoff_end, NULL, t);
++	    do {
++		    handle_events(blocking);
++		    if (kill_link)
++		    new_phase(PHASE_DORMANT); /* allow signal to end holdoff */
++	    } while (phase == PHASE_HOLDOFF);
++	    if (!persist)
++		return 2;
++    }
++    return 0;
++}
++
++int cleanup_children(bool blocking) {
++    /* Wait for scripts to finish */
++    reap_kids();
++    if (n_children > 0) {
++	    if (child_wait > 0)
++	    TIMEOUT(childwait_end, NULL, child_wait);
++	    if (debug) {
++	        struct subprocess *chp;
++	        dbglog("Waiting for %d child processes...", n_children);
++	        for (chp = children; chp != NULL; chp = chp->next)
++		    dbglog("  script %s, pid %d", chp->prog, chp->pid);
++	    }
++	    while (n_children > 0 && !childwait_done) {
++	        handle_events(blocking);
++	        if (kill_link && !childwait_done)
++		    childwait_end(NULL);
++	    }
++    }
++    return 0;
++}
++
++int react_on_handle_events() {
++    if (kill_link)
++    lcp_close(0, "User request");
++    if (asked_to_quit) {
++        bundle_terminating = 1;
++        if (phase == PHASE_MASTER)
++        mp_bundle_terminated();
++    }
++    if (open_ccp_flag) {
++        if (phase == PHASE_NETWORK || phase == PHASE_RUNNING) {
++            ccp_fsm[0].flags = OPT_RESTART; /* clears OPT_SILENT */
++            (*ccp_protent.open)(0);
++        }
++    }
++    return 0;
++}
+\ No newline at end of file
+-- 
+2.39.2
+

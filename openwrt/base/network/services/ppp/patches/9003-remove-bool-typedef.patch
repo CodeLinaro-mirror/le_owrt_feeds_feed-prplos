@@ -1,0 +1,18 @@
+--- a/pppd/pppd.h
++++ b/pppd/pppd.h
+@@ -49,6 +49,7 @@
+ #ifndef __PPPD_H__
+ #define __PPPD_H__
+ 
++#include <stdbool.h>
+ #include <stdio.h>		/* for FILE */
+ #include <stdlib.h>		/* for encrypt */
+ #include <unistd.h>		/* for setkey */
+@@ -97,7 +98,6 @@
+  * Option descriptor structure.
+  */
+ 
+-typedef unsigned char	bool;
+ 
+ enum opt_type {
+ 	o_special_noarg = 0,

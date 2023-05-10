@@ -1,0 +1,116 @@
+From ca53c6cf0ba74366a59b3704689e223c417d6047 Mon Sep 17 00:00:00 2001
+From: alexandre fiset <alexandre.fiset_ext@softathome.com>
+Date: Mon, 8 May 2023 10:43:26 +0200
+Subject: [PATCH] fix patch 9002
+
+---
+ linux/Makefile.top                |  6 +++---
+ pppd/Makefile.linux               | 20 ++++++++++++++++----
+ pppd/plugins/pppoe/Makefile.linux |  2 +-
+ 3 files changed, 20 insertions(+), 8 deletions(-)
+
+diff --git a/linux/Makefile.top b/linux/Makefile.top
+index 894f8f3..635e22e 100644
+--- a/linux/Makefile.top
++++ b/linux/Makefile.top
+@@ -11,8 +11,8 @@ INSTALL= install
+ 
+ all:
+ 	cd chat; $(MAKE) $(MFLAGS) all
+-	cd pppd/plugins; $(MAKE) $(MFLAGS) all
+ 	cd pppd; $(MAKE) $(MFLAGS) all
++	cd pppd/plugins; $(MAKE) $(MFLAGS) all
+ 	cd pppstats; $(MAKE) $(MFLAGS) all
+ 	cd pppdump; $(MAKE) $(MFLAGS) all
+ 
+@@ -20,8 +20,8 @@ install: $(BINDIR) $(MANDIR)/man8 install-progs install-devel
+ 
+ install-progs:
+ 	cd chat; $(MAKE) $(MFLAGS) install
+-	cd pppd/plugins; $(MAKE) $(MFLAGS) install
+ 	cd pppd; $(MAKE) $(MFLAGS) install
++	cd pppd/plugins; $(MAKE) $(MFLAGS) install
+ 	cd pppstats; $(MAKE) $(MFLAGS) install
+ 	cd pppdump; $(MAKE) $(MFLAGS) install
+ 
+@@ -54,8 +54,8 @@ clean:
+ 	rm -f `find . -name 'core' -print`
+ 	rm -f `find . -name '*~' -print`
+ 	cd chat; $(MAKE) clean
+-	cd pppd/plugins; $(MAKE) clean
+ 	cd pppd; $(MAKE) clean
++	cd pppd/plugins; $(MAKE) clean
+ 	cd pppstats; $(MAKE) clean
+ 	cd pppdump; $(MAKE) clean
+ 
+diff --git a/pppd/Makefile.linux b/pppd/Makefile.linux
+index ba5372d..f0bc9f8 100644
+--- a/pppd/Makefile.linux
++++ b/pppd/Makefile.linux
+@@ -12,8 +12,11 @@ DESTDIR = $(INSTROOT)@DESTDIR@
+ BINDIR = $(DESTDIR)/sbin
+ MANDIR = $(DESTDIR)/share/man/man8
+ INCDIR = $(DESTDIR)/include
++LIBDIR = $(DESTDIR)/lib
+ 
+-TARGETS = pppd
++VERSION = $(shell awk -F '"' '/VERSION/ { print $$2; }' patchlevel.h)
++
++TARGETS = pppd lib_pppd
+ 
+ PPPDSRCS = main.c magic.c fsm.c lcp.c ipcp.c upap.c chap-new.c md5.c ccp.c \
+ 	   ecp.c ipxcp.c auth.c options.c sys-linux.c md4.c chap_ms.c \
+@@ -95,7 +98,7 @@ MAXOCTETS=y
+ 
+ INCLUDE_DIRS= -I../include
+ 
+-COMPILE_FLAGS= -DHAVE_PATHS_H -DHAVE_MMAP -pipe
++COMPILE_FLAGS= -DHAVE_PATHS_H -DHAVE_MMAP -pipe -fPIC
+ 
+ CFLAGS= $(COPTS) $(COMPILE_FLAGS) $(INCLUDE_DIRS) '-DDESTDIR="@DESTDIR@"'
+ 
+@@ -248,10 +251,11 @@ INSTALL= install
+ 
+ all: $(TARGETS)
+ 
+-install: pppd
+-	mkdir -p $(BINDIR) $(MANDIR)
++install: pppd lib_pppd
++	mkdir -p $(BINDIR) $(MANDIR) $(LIBDIR)
+ 	$(EXTRAINSTALL)
+ 	$(INSTALL) -c -m 555 pppd $(BINDIR)/pppd
++	$(INSTALL) -c -m 555 libpppd.so $(LIBDIR)/libpppd.so
+ 	if chgrp pppusers $(BINDIR)/pppd 2>/dev/null; then \
+ 	  chmod o-rx,u+s $(BINDIR)/pppd; fi
+ 	$(INSTALL) -c -m 444 pppd.8 $(MANDIR)
+@@ -259,6 +263,14 @@ install: pppd
+ pppd: $(PPPDOBJS)
+ 	$(CC) $(CFLAGS) $(LDFLAGS) $(LDFLAGS_PLUGIN) -o pppd $(PPPDOBJS) $(LIBS)
+ 
++lib_pppd: $(PPPDOBJS)
++	$(eval PPPDOBJS := $(filter-out main.o, $(PPPDOBJS)))
++	$(eval LDFLAGS += -shared -fPIC -Wl,-soname,libpppd.so)
++	$(CC) $(LDFLAGS) $(LDFLAGS_PLUGIN) -o libpppd.so $(PPPDOBJS) $(LIBS)
++
++	$(INSTALL) -c -m 555 libpppd.so $(STAGING_DIR)/usr/lib/libpppd.so.$(VERSION)
++	ln -sfr $(STAGING_DIR)/usr/lib/libpppd.so.$(VERSION) $(STAGING_DIR)/usr/lib/libpppd.so
++
+ srp-entry:	srp-entry.c
+ 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ srp-entry.c $(LIBS)
+ 
+diff --git a/pppd/plugins/pppoe/Makefile.linux b/pppd/plugins/pppoe/Makefile.linux
+index cae7196..2f450cc 100644
+--- a/pppd/plugins/pppoe/Makefile.linux
++++ b/pppd/plugins/pppoe/Makefile.linux
+@@ -38,7 +38,7 @@ debug.o: debug.c
+ 	$(CC) $(CFLAGS) -I../../.. -c -o debug.o debug.c
+ 
+ pppoe.so: plugin.o discovery.o if.o common.o
+-	$(CC) $(LDFLAGS) -fPIC -o pppoe.so -shared plugin.o discovery.o if.o common.o
++	$(CC) $(LDFLAGS) -lpppd -fPIC -o pppoe.so -shared plugin.o discovery.o if.o common.o
+ 
+ install: all
+ 	$(INSTALL) -d -m 755 $(LIBDIR)
+-- 
+2.39.2
+

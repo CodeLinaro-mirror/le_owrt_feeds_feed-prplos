@@ -1,0 +1,65 @@
+From 31a3274675934e6d971593bc4774a4746fa1ba64 Mon Sep 17 00:00:00 2001
+From: alexandre fiset <alexandre.fiset_ext@softathome.com>
+Date: Thu, 4 May 2023 08:39:26 +0200
+Subject: [PATCH] fix patch 9007
+
+---
+ pppd/auth.c | 9 +++++++++
+ pppd/pppd.h | 7 +++++++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/pppd/auth.c b/pppd/auth.c
+index b1271c4..a21477b 100644
+--- a/pppd/auth.c
++++ b/pppd/auth.c
+@@ -202,6 +202,9 @@ int (*null_auth_hook)(struct wordlist **paddrs,
+ 
+ int (*allowed_address_hook)(u_int32_t addr) = NULL;
+ 
++void (*encryption_protocol_hook)(char *proto) = NULL;
++void (*authentication_protocol_hook)(char *proto) = NULL;
++
+ #ifdef HAVE_MULTILINK
+ /* Hook for plugin to hear when an interface joins a multilink bundle */
+ void (*multilink_join_hook)(void) = NULL;
+@@ -943,6 +946,10 @@ start_networks(int unit)
+      */
+     ecp_required = ecp_gotoptions[unit].required;
+     mppe_required = ccp_gotoptions[unit].mppe;
++
++    if (encryption_protocol_hook)
++    encryption_protocol_hook(mppe_required ? "MPPE" : "None");
++
+     if (!ecp_required && !mppe_required)
+ 	continue_networks(unit);
+ }
+@@ -1100,6 +1107,8 @@ auth_withpeer_success(int unit, int protocol, int prot_flavor)
+     }
+ 
+     notice("%s authentication succeeded", prot);
++    if (authentication_protocol_hook)
++    authentication_protocol_hook(prot);
+ 
+     /* Save the authentication method for later. */
+     auth_done[unit] |= bit;
+diff --git a/pppd/pppd.h b/pppd/pppd.h
+index 52da87c..214f7b7 100644
+--- a/pppd/pppd.h
++++ b/pppd/pppd.h
+@@ -843,6 +843,13 @@ extern void (*multilink_join_hook)(void);
+ extern int (*eaptls_passwd_hook)(char *user, char *passwd);
+ #endif
+ 
++/*
++ * Added hooks to work with mod-ppp-daemon
++ */
++extern void (*encryption_protocol_hook)(char *);
++//extern void (*compression_protocol_hook)(char *);
++extern void (*authentication_protocol_hook)(char *);
++
+ /* Let a plugin snoop sent and received packets.  Useful for L2TP */
+ extern void (*snoop_recv_hook)(unsigned char *p, int len);
+ extern void (*snoop_send_hook)(unsigned char *p, int len);
+-- 
+2.39.2
+
