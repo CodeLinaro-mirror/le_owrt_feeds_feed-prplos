@@ -1,0 +1,451 @@
+From 15c52b1086ec601c456db88b3a8e448a558a3df2 Mon Sep 17 00:00:00 2001
+From: alexandre fiset <alexandre.fiset_ext@softathome.com>
+Date: Tue, 9 May 2023 13:02:00 +0200
+Subject: [PATCH] fix patch 9010
+
+---
+ pppd/auth.c                    |  20 ++++-
+ pppd/lcp.c                     |   3 +-
+ pppd/main.c                    |   1 +
+ pppd/plugins/pppoe/discovery.c | 140 +++++++++++++++++++++++++++++++++
+ pppd/plugins/pppoe/plugin.c    |  68 +++++++++++++---
+ pppd/plugins/pppoe/pppoe.h     |   5 ++
+ pppd/pppd.h                    |  10 ++-
+ pppd/shared.c                  |   1 -
+ 8 files changed, 230 insertions(+), 18 deletions(-)
+
+diff --git a/pppd/auth.c b/pppd/auth.c
+index a5d337b..bea8f54 100644
+--- a/pppd/auth.c
++++ b/pppd/auth.c
+@@ -204,6 +204,7 @@ int (*allowed_address_hook)(u_int32_t addr) = NULL;
+ 
+ void (*encryption_protocol_hook)(char *proto) = NULL;
+ void (*authentication_protocol_hook)(char *proto) = NULL;
++void (*discovery_succeeded_hook)(void) = NULL;
+ 
+ #ifdef HAVE_MULTILINK
+ /* Hook for plugin to hear when an interface joins a multilink bundle */
+@@ -599,13 +600,24 @@ link_required(int unit)
+ /*
+  * Bring the link up to the point of being able to do ppp.
+  */
+-void start_link(int unit)
++int start_link(int unit, bool blocking)
+ {
++	int fd;
+     status = EXIT_CONNECT_FAILED;
+     new_phase(PHASE_SERIALCONN);
+ 
+     hungup = 0;
+-    devfd = the_channel->connect();
++    fd = the_channel->connect(blocking);
++	if(blocking) {
++		devfd = fd;
++		start_ppp_link(unit);
++		return 0;
++	} else {
++		return fd;
++	}
++}
++
++void start_ppp_link(int unit) {
+     if (devfd < 0)
+ 	goto fail;
+ 
+@@ -640,6 +652,8 @@ void start_link(int unit)
+     new_phase(PHASE_ESTABLISH);
+ 
+     lcp_lowerup(0);
++    if (discovery_succeeded_hook)
++       discovery_succeeded_hook();
+     return;
+ 
+  disconnect:
+@@ -705,7 +719,7 @@ link_terminated(int unit)
+      * Run disconnector script, if requested.
+      * XXX we may not be able to do this if the line has hung up!
+      */
+-    if (devfd >= 0 && the_channel->disconnect) {
++    if (the_channel->disconnect) {
+ 	the_channel->disconnect();
+ 	devfd = -1;
+     }
+diff --git a/pppd/lcp.c b/pppd/lcp.c
+index 71074d2..c9753ef 100644
+--- a/pppd/lcp.c
++++ b/pppd/lcp.c
+@@ -383,6 +383,7 @@ lcp_close(int unit, char *reason)
+ {
+     fsm *f = &lcp_fsm[unit];
+     int oldstate;
++    int oldphase = phase;
+ 
+     if (phase != PHASE_DEAD && phase != PHASE_MASTER)
+ 	new_phase(PHASE_TERMINATE);
+@@ -394,7 +395,7 @@ lcp_close(int unit, char *reason)
+     oldstate = f->state;
+ 
+     fsm_close(f, reason);
+-    if (oldstate == STOPPED && f->flags & (OPT_PASSIVE|OPT_SILENT|DELAYED_UP)) {
++    if ((oldstate == STOPPED && f->flags & (OPT_PASSIVE|OPT_SILENT|DELAYED_UP)) || (oldphase > PHASE_DEAD && oldphase < PHASE_ESTABLISH)) {
+ 	/*
+ 	 * This action is not strictly according to the FSM in RFC1548,
+ 	 * but it does mean that the program terminates if you do a
+diff --git a/pppd/main.c b/pppd/main.c
+index 30f8449..e308cc9 100644
+--- a/pppd/main.c
++++ b/pppd/main.c
+@@ -165,6 +165,7 @@ main(int argc, char *argv[])
+     for (;;) {
+ 
+ 	rv = init_connection(true);
++	start_link(0, true);
+ 	if (rv != 0)
+ 	break;
+ 
+diff --git a/pppd/plugins/pppoe/discovery.c b/pppd/plugins/pppoe/discovery.c
+index 6012fa6..6f61c1c 100644
+--- a/pppd/plugins/pppoe/discovery.c
++++ b/pppd/plugins/pppoe/discovery.c
+@@ -668,3 +668,143 @@ discovery(PPPoEConnection *conn)
+     conn->discoveryState = STATE_SESSION;
+     return;
+ }
++
++/*
++ * Timeout waiting for PADO.
++ */
++void
++send_padi_timeout(void *arg)
++{
++   PPPoEConnection *conn = (PPPoEConnection *)arg;
++
++   sendPADI(conn);
++   timeout(send_padi_timeout, (void *)conn, conn->discoveryTimeout, 0);
++}
++
++/*
++ * Timeout waiting for PADS.
++ */
++void
++send_padr_timeout(void *arg)
++{
++   PPPoEConnection *conn = (PPPoEConnection *)arg;
++
++   sendPADR(conn);
++   timeout(send_padr_timeout, (void *)conn, conn->discoveryTimeout, 0);
++}
++
++void
++discovery_unblocked(PPPoEConnection *conn)
++{
++    sendPADI(conn);
++    conn->discoveryState = STATE_SENT_PADI;
++    conn->seenMaxPayload = 0;
++    conn->error = 0;
++
++    timeout(send_padi_timeout, (void *)conn, conn->discoveryTimeout, 0);
++}
++
++void
++handleDiscoveryPackets(PPPoEConnection *conn)
++{
++    PPPoEPacket packet;
++    int len;
++
++       if (conn->discoveryState == STATE_SESSION) {
++               return;
++       }
++
++       /* Get the packet */
++       receivePacket(conn->discoverySocket, &packet, &len);
++
++       /* Check length */
++       if (ntohs(packet.length) + HDR_SIZE > len) {
++           my_error("Bogus PPPoE length field (%u)",
++                  (unsigned int) ntohs(packet.length));
++           return;
++       }
++
++#ifdef USE_BPF
++       /* If it's not a Discovery packet, loop again */
++       if (etherType(&packet) != Eth_PPPOE_Discovery) return;
++#endif
++
++       /* If it's not from the AC, it's not for me */
++       if (packet.code == CODE_PADS && memcmp(packet.ethHdr.h_source, conn->peerEth, ETH_ALEN)) return;
++
++       /* If it's not for us, loop again */
++       if (!packetIsForMe(conn, &packet)) return;
++
++       if (conn->discoveryState == STATE_SENT_PADI && packet.code == CODE_PADO) {
++               struct PacketCriteria pc;
++               pc.conn          = conn;
++               pc.acNameOK      = (conn->acName)      ? 0 : 1;
++               pc.serviceNameOK = (conn->serviceName) ? 0 : 1;
++               pc.seenACName    = 0;
++               pc.seenServiceName = 0;
++
++           if (NOT_UNICAST(packet.ethHdr.h_source)) {
++               my_error("Ignoring PADO packet from non-unicast MAC address");
++               return;
++           }
++           if (conn->req_peer
++               && memcmp(packet.ethHdr.h_source, conn->req_peer_mac, ETH_ALEN) != 0) {
++               warn("Ignoring PADO packet from wrong MAC address");
++               return;
++           }
++           if (parsePacket(&packet, parsePADOTags, &pc) < 0)
++               return;
++           if (conn->error)
++               return;
++           if (!pc.seenACName) {
++               my_error("Ignoring PADO packet with no AC-Name tag");
++               return;
++           }
++           if (!pc.seenServiceName) {
++               my_error("Ignoring PADO packet with no Service-Name tag");
++               return;
++           }
++           conn->numPADOs++;
++           if (pc.acNameOK && pc.serviceNameOK) {
++               memcpy(conn->peerEth, packet.ethHdr.h_source, ETH_ALEN);
++               conn->discoveryState = STATE_RECEIVED_PADO;
++               untimeout(send_padi_timeout, (void *)conn);  /* Cancel timeout */
++
++               sendPADR(conn);
++               conn->discoveryState = STATE_SENT_PADR;
++               timeout(send_padr_timeout, (void *)conn, conn->discoveryTimeout, 0);
++               return;
++           }
++       } else if (conn->discoveryState == STATE_SENT_PADR && packet.code == CODE_PADS) {
++           /* Parse for goodies */
++           if (parsePacket(&packet, parsePADSTags, conn) < 0)
++               return;
++           if (conn->error)
++               return;
++           untimeout(send_padr_timeout, (void *)conn);  /* Cancel timeout */
++           conn->discoveryState = STATE_SESSION;
++
++           /* Don't bother with ntohs; we'll just end up converting it back... */
++           conn->session = packet.session;
++
++           info("PPP session is %d", (int) ntohs(conn->session));
++
++           /* RFC 2516 says session id MUST NOT be zero or 0xFFFF */
++           if (ntohs(conn->session) == 0 || ntohs(conn->session) == 0xFFFF) {
++               my_error("Access concentrator used a session value of %x -- the AC is violating RFC 2516", (unsigned int) ntohs(conn->session));
++           }
++
++           if (!conn->seenMaxPayload) {
++           /* RFC 4638: MUST limit MTU/MRU to 1492 */
++           if (lcp_allowoptions[0].mru > ETH_PPPOE_MTU)
++               lcp_allowoptions[0].mru = ETH_PPPOE_MTU;
++           if (lcp_wantoptions[0].mru > ETH_PPPOE_MTU)
++               lcp_wantoptions[0].mru = ETH_PPPOE_MTU;
++           }
++
++           /* We're done. */
++           conn->discoveryState = STATE_SESSION;
++           devfd = PPPOEConnectDiscoveredDevice();
++           start_ppp_link(0);
++       }
++}
+\ No newline at end of file
+diff --git a/pppd/plugins/pppoe/plugin.c b/pppd/plugins/pppoe/plugin.c
+index 31a45f1..2b529c4 100644
+--- a/pppd/plugins/pppoe/plugin.c
++++ b/pppd/plugins/pppoe/plugin.c
+@@ -69,6 +69,7 @@ static int pppoe_padi_timeout = PADI_TIMEOUT;
+ static int pppoe_padi_attempts = MAX_PADI_ATTEMPTS;
+ 
+ static int PPPoEDevnameHook(char *cmd, char **argv, int doit);
++static void PPPOEDisconnectDevice(void);
+ static option_t Options[] = {
+     { "device name", o_wild, (void *) &PPPoEDevnameHook,
+       "PPPoE device name",
+@@ -105,6 +106,18 @@ static option_t Options[] = {
+ int (*OldDevnameHook)(char *cmd, char **argv, int doit) = NULL;
+ static PPPoEConnection *conn = NULL;
+ 
++void
++PPPOEDiscoveryWrap(void)
++{
++    discovery_unblocked(conn);
++}
++
++void
++PPPOEHandleDiscoveryPacketsWrap(void)
++{
++    handleDiscoveryPackets(conn);
++}
++
+ /**********************************************************************
+  * %FUNCTION: PPPOEInitDevice
+  * %ARGUMENTS:
+@@ -141,9 +154,8 @@ PPPOEInitDevice(void)
+  * Connects PPPoE device.
+  ***********************************************************************/
+ static int
+-PPPOEConnectDevice(void)
++PPPOEConnectDevice(bool blocking)
+ {
+-    struct sockaddr_pppox sp;
+     struct ifreq ifr;
+     int s;
+ 
+@@ -214,12 +226,34 @@ PPPOEConnectDevice(void)
+ 	    my_error("Failed to create PPPoE discovery socket: %m");
+ 	    goto errout;
+ 	}
+-	discovery(conn);
+-	if (conn->discoveryState != STATE_SESSION) {
++    }
++
++    if(blocking) {
++        discovery(conn);
++        return PPPOEConnectDiscoveredDevice();
++    } else {
++        return conn->discoverySocket;
++    }
++
++errout:
++    if(conn->discoverySocket >= 0) {
++        sendPADT(conn, NULL);
++        close(conn->discoverySocket);
++        conn->discoverySocket = -1;
++    }
++    close(conn->sessionSocket);
++    return -1;
++}
++
++int
++PPPOEConnectDiscoveredDevice(void)
++{
++    struct sockaddr_pppox sp;
++
++	if (!existingSession && conn->discoveryState != STATE_SESSION) {
+ 	    my_error("Unable to complete PPPoE Discovery");
+ 	    goto errout;
+ 	}
+-    }
+ 
+     /* Set PPPoE session-number for further consumption */
+     ppp_session_number = ntohs(conn->session);
+@@ -265,7 +299,8 @@ PPPOEConnectDevice(void)
+ 	conn->discoverySocket = -1;
+     }
+     close(conn->sessionSocket);
+-    return -1;
++    conn->sessionSocket =-1;
++    return conn->sessionSocket;
+ }
+ 
+ static void
+@@ -299,10 +334,19 @@ PPPOEDisconnectDevice(void)
+     sp.sa_addr.pppoe.sid = 0;
+     memcpy(sp.sa_addr.pppoe.dev, conn->ifName, IFNAMSIZ);
+     memcpy(sp.sa_addr.pppoe.remote, conn->peerEth, ETH_ALEN);
+-    if (connect(conn->sessionSocket, (struct sockaddr *) &sp,
+-		sizeof(struct sockaddr_pppox)) < 0 && errno != EALREADY)
+-	my_error("Failed to disconnect PPPoE socket: %d %m", errno);
+-    close(conn->sessionSocket);
++
++    if(!existingSession && conn->discoveryState == STATE_SENT_PADI) {
++        untimeout(send_padi_timeout, (void*)conn);  /* Cancel timeout */
++    } else if (conn->discoveryState == STATE_SENT_PADR) {
++        untimeout(send_padr_timeout, (void*)conn);  /* Cancel timeout */
++    }else if(conn->sessionSocket >= 0) {
++        if (connect(conn->sessionSocket, (struct sockaddr *) &sp,
++		    sizeof(struct sockaddr_pppox)) < 0 && errno != EALREADY){
++            my_error("Failed to disconnect PPPoE socket: %d %m", errno);
++        }
++        close(conn->sessionSocket);
++    }
++
+     if (conn->discoverySocket >= 0) {
+         sendPADT(conn, NULL);
+ 	close(conn->discoverySocket);
+@@ -465,5 +509,7 @@ struct channel pppoe_channel = {
+     .send_config = NULL,
+     .recv_config = &PPPOERecvConfig,
+     .close = NULL,
+-    .cleanup = NULL
++    .cleanup = NULL,
++    .discovery = &PPPOEDiscoveryWrap,
++    .handle_discovery = &PPPOEHandleDiscoveryPacketsWrap
+ };
+diff --git a/pppd/plugins/pppoe/pppoe.h b/pppd/plugins/pppoe/pppoe.h
+index 3a67119..896ab26 100644
+--- a/pppd/plugins/pppoe/pppoe.h
++++ b/pppd/plugins/pppoe/pppoe.h
+@@ -279,6 +279,11 @@ void clampMSS(PPPoEPacket *packet, char const *dir, int clampMss);
+ UINT16_t computeTCPChecksum(unsigned char *ipHdr, unsigned char *tcpHdr);
+ UINT16_t pppFCS16(UINT16_t fcs, unsigned char *cp, int len);
+ void discovery(PPPoEConnection *conn);
++void discovery_unblocked(PPPoEConnection *conn);
++void handleDiscoveryPackets(PPPoEConnection *conn);
++int PPPOEConnectDiscoveredDevice(void);
++void send_padi_timeout(void *arg);
++void send_padr_timeout(void *arg);
+ unsigned char *findTag(PPPoEPacket *packet, UINT16_t tagType,
+ 		       PPPoETag *tag);
+ 
+diff --git a/pppd/pppd.h b/pppd/pppd.h
+index c1e4771..3971910 100644
+--- a/pppd/pppd.h
++++ b/pppd/pppd.h
+@@ -463,7 +463,7 @@ struct channel {
+ 	/* check all the options that have been given */
+ 	void (*check_options)(void);
+ 	/* get the channel ready to do PPP, return a file descriptor */
+-	int  (*connect)(void);
++	int  (*connect)(bool);
+ 	/* we're finished with the channel */
+ 	void (*disconnect)(void);
+ 	/* put the channel into PPP `mode' */
+@@ -478,6 +478,10 @@ struct channel {
+ 	void (*cleanup)(void);
+ 	/* close the device, called in children after fork */
+ 	void (*close)(void);
++	/* alternative function to handle discovery packets */
++	void (*handle_discovery)(void);
++	/* alternative function to start the discovery process */
++	void (*discovery)(void);
+ };
+ 
+ extern struct channel *the_channel;
+@@ -648,7 +652,8 @@ ssize_t complete_read(int, void *, size_t);
+ 
+ /* Procedures exported from auth.c */
+ void link_required(int);	  /* we are starting to use the link */
+-void start_link(int);	  /* bring the link up now */
++int start_link(int, bool);	  /* bring the link up now */
++void start_ppp_link(int);	  /* bring the link up now */
+ void link_terminated(int);  /* we are finished with the link */
+ void link_down(int);	  /* the LCP layer has left the Opened state */
+ void upper_layers_down(int);/* take all NCPs down */
+@@ -861,6 +866,7 @@ extern int (*eaptls_passwd_hook)(char *user, char *passwd);
+ extern void (*encryption_protocol_hook)(char *);
+ //extern void (*compression_protocol_hook)(char *);
+ extern void (*authentication_protocol_hook)(char *);
++extern void (*discovery_succeeded_hook)(void);
+ 
+ /* Let a plugin snoop sent and received packets.  Useful for L2TP */
+ extern void (*snoop_recv_hook)(unsigned char *p, int len);
+diff --git a/pppd/shared.c b/pppd/shared.c
+index c8cfe5c..77317d3 100644
+--- a/pppd/shared.c
++++ b/pppd/shared.c
+@@ -1921,7 +1921,6 @@ int init_connection(bool blocking) {
+ 	script_unsetenv("BYTES_RCVD");
+ 
+ 	lcp_open(0);		/* Start protocol */
+-	start_link(0);
+     return 0;
+ }
+ 
+-- 
+2.39.2
+
