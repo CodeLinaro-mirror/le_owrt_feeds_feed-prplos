@@ -1,0 +1,95 @@
+From 32a512f80887bae8de2a083c43124ffc2871cbec Mon Sep 17 00:00:00 2001
+From: alexandre fiset <alexandre.fiset_ext@softathome.com>
+Date: Fri, 5 May 2023 10:12:00 +0200
+Subject: [PATCH] Fix patch 9014
+
+---
+ pppd/auth.c   | 32 ++++++++++++++++++++++----------
+ pppd/pppd.h   |  1 +
+ pppd/shared.c |  1 +
+ 3 files changed, 24 insertions(+), 10 deletions(-)
+
+diff --git a/pppd/auth.c b/pppd/auth.c
+index a9db666..634ebbd 100644
+--- a/pppd/auth.c
++++ b/pppd/auth.c
+@@ -237,16 +237,14 @@ static pid_t auth_script_pid = 0;
+ bool uselogin = 0;		/* Use /etc/passwd for checking PAP */
+ bool session_mgmt = 0;		/* Do session management (login records) */
+ bool cryptpap = 0;		/* Passwords in pap-secrets are encrypted */
+-bool refuse_pap = 0;		/* Don't wanna auth. ourselves with PAP */
+-bool refuse_chap = 0;		/* Don't wanna auth. ourselves with CHAP */
+-bool refuse_eap = 0;		/* Don't wanna auth. ourselves with EAP */
+-#ifdef CHAPMS
+-bool refuse_mschap = 0;		/* Don't wanna auth. ourselves with MS-CHAP */
+-bool refuse_mschap_v2 = 0;	/* Don't wanna auth. ourselves with MS-CHAPv2 */
+-#else
+-bool refuse_mschap = 1;		/* Don't wanna auth. ourselves with MS-CHAP */
+-bool refuse_mschap_v2 = 1;	/* Don't wanna auth. ourselves with MS-CHAPv2 */
+-#endif
++
++/* refuse values are set in reset_auth_protocol_settings */
++bool refuse_pap;		/* Don't wanna auth. ourselves with PAP */
++bool refuse_chap;		/* Don't wanna auth. ourselves with CHAP */
++bool refuse_eap;		/* Don't wanna auth. ourselves with EAP */
++bool refuse_mschap;	/* Don't wanna auth. ourselves with MS-CHAP */
++bool refuse_mschap_v2;	/* Don't wanna auth. ourselves with MS-CHAPv2 */
++
+ bool usehostname = 0;		/* Use hostname for our_name */
+ bool auth_required = 0;		/* Always require authentication from peer */
+ bool allow_any_ip = 0;		/* Allow peer to use any IP address */
+@@ -1102,6 +1100,7 @@ auth_withpeer_success(int unit, int protocol, int prot_flavor)
+ #ifdef CHAPMS
+ 	case CHAP_MICROSOFT:
+ 	    bit |= CHAP_MS_WITHPEER;
++	    prot = "MS-CHAP";
+ 	    break;
+ 	case CHAP_MICROSOFT_V2:
+ 	    bit |= CHAP_MS2_WITHPEER;
+@@ -2345,6 +2344,19 @@ wordlist_count(struct wordlist *wp)
+     return n;
+ }
+ 
++void reset_auth_protocol_settings(void) {
++    refuse_pap = 0;
++    refuse_chap = 0;
++    refuse_eap = 0;
++#ifdef CHAPMS
++    refuse_mschap = 0;
++    refuse_mschap_v2 = 0;
++#else
++    refuse_mschap = 1;
++    refuse_mschap_v2 = 1;
++#endif
++}
++
+ /*
+  * free_wordlist - release memory allocated for a wordlist.
+  */
+diff --git a/pppd/pppd.h b/pppd/pppd.h
+index 0c4c860..991763e 100644
+--- a/pppd/pppd.h
++++ b/pppd/pppd.h
+@@ -543,6 +543,7 @@ void update_db_entry(void);
+ #endif
+ 
+ int init_pre_settings(struct protent* protp);
++void reset_auth_protocol_settings(void);
+ int init_settings(struct protent* protp, bool);
+ int init_connection(bool blocking);
+ 
+diff --git a/pppd/shared.c b/pppd/shared.c
+index e6b6750..553a94b 100644
+--- a/pppd/shared.c
++++ b/pppd/shared.c
+@@ -1695,6 +1695,7 @@ int init_pre_settings(struct protent* protp) {
+     int i;
+     char numbuf[16];
+     asked_to_quit = 0;
++    reset_auth_protocol_settings();
+ 
+     strlcpy(path_ipup, _PATH_IPUP, sizeof(path_ipup));
+     strlcpy(path_ipdown, _PATH_IPDOWN, sizeof(path_ipdown));
+-- 
+2.39.2
+
