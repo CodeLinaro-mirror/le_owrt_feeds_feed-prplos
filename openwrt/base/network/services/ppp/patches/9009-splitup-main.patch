@@ -1,6 +1,6 @@
-From a6d1dd47f33d39ed901d54cc893917cb8933b620 Mon Sep 17 00:00:00 2001
+From ac3d1fdfd5689b2dc77486447a8a4d8beb83325d Mon Sep 17 00:00:00 2001
 From: alexandre fiset <alexandre.fiset_ext@softathome.com>
-Date: Fri, 5 May 2023 08:13:19 +0200
+Date: Thu, 11 May 2023 10:34:24 +0200
 Subject: [PATCH] fix patch 9009
 
 ---
@@ -10,7 +10,7 @@ Subject: [PATCH] fix patch 9009
  3 files changed, 353 insertions(+), 288 deletions(-)
 
 diff --git a/pppd/main.c b/pppd/main.c
-index 0a35d05..30f8449 100644
+index 0a35d05..b6dce54 100644
 --- a/pppd/main.c
 +++ b/pppd/main.c
 @@ -122,10 +122,6 @@
@@ -309,7 +309,7 @@ index 0a35d05..30f8449 100644
 -	    } while (phase == PHASE_HOLDOFF);
 -	    if (!persist)
 -		break;
-+	    react_on_handle_events();
++	    react_on_handled_events();
  	}
 +	
 +	rv = cleanup_connection(true);
@@ -339,10 +339,10 @@ index 0a35d05..30f8449 100644
      die(status);
      return 0;
 diff --git a/pppd/pppd.h b/pppd/pppd.h
-index 6caaec5..bf8084f 100644
+index 17ad264..af57ad9 100644
 --- a/pppd/pppd.h
 +++ b/pppd/pppd.h
-@@ -538,7 +538,16 @@ void childwait_end(void *);
+@@ -539,7 +539,16 @@ void childwait_end(void *);
  void update_db_entry(void);
  #endif
  
@@ -354,13 +354,13 @@ index 6caaec5..bf8084f 100644
 +int cleanup_connection(bool);
 +int cleanup_children(bool);
 +
-+int react_on_handle_events(void);
++int react_on_handled_events(void);
 +
 +void handle_events(bool blocking);
  void cleanup(void);
  
  struct timeval* getstarttime();
-@@ -705,7 +714,7 @@ int  get_pty(int *, int *, char *, int);	/* Get pty master/slave */
+@@ -706,7 +715,7 @@ int  get_pty(int *, int *, char *, int);	/* Get pty master/slave */
  int  open_ppp_loopback(void); /* Open loopback for demand-dialling */
  int  tty_establish_ppp(int);  /* Turn serial port into a ppp interface */
  void tty_disestablish_ppp(int); /* Restore port to normal operation */
@@ -370,7 +370,7 @@ index 6caaec5..bf8084f 100644
  void make_new_bundle(int, int, int, int); /* Create new bundle */
  int  bundle_attach(int);	/* Attach link to existing bundle */
 diff --git a/pppd/shared.c b/pppd/shared.c
-index f99c5af..c8cfe5c 100644
+index f99c5af..ece024c 100644
 --- a/pppd/shared.c
 +++ b/pppd/shared.c
 @@ -9,6 +9,8 @@
@@ -723,7 +723,7 @@ index f99c5af..c8cfe5c 100644
 +    return 0;
 +}
 +
-+int react_on_handle_events() {
++int react_on_handled_events() {
 +    if (kill_link)
 +    lcp_close(0, "User request");
 +    if (asked_to_quit) {
