@@ -1,6 +1,6 @@
-From c44495be82145b01a3292fa3368f44a222591256 Mon Sep 17 00:00:00 2001
+From 39b5c2db05497f52bc0a77e5b93fc42811c85c31 Mon Sep 17 00:00:00 2001
 From: alexandre fiset <alexandre.fiset_ext@softathome.com>
-Date: Mon, 8 May 2023 10:50:55 +0200
+Date: Thu, 11 May 2023 10:25:09 +0200
 Subject: [PATCH] fix patch 9004
 
 ---
@@ -13,7 +13,7 @@ Subject: [PATCH] fix patch 9004
  create mode 100644 pppd/shared.c
 
 diff --git a/pppd/Makefile.linux b/pppd/Makefile.linux
-index f0bc9f8..57f6922 100644
+index d151482..e0201f6 100644
 --- a/pppd/Makefile.linux
 +++ b/pppd/Makefile.linux
 @@ -20,7 +20,7 @@ TARGETS = pppd lib_pppd
@@ -1866,7 +1866,7 @@ index 1fe7daa..7cfad11 100644
      char fname[512];
  
 diff --git a/pppd/pppd.h b/pppd/pppd.h
-index b3deb58..b325344 100644
+index b3deb58..8aed798 100644
 --- a/pppd/pppd.h
 +++ b/pppd/pppd.h
 @@ -217,7 +217,7 @@ struct notifier {
@@ -1946,13 +1946,13 @@ index b3deb58..b325344 100644
 +};
 +
 +bool add_script_env(int pos, char *newstring);
-+static void hup(int);
-+static void term(int);
-+static void chld(int);
-+static void toggle_debug(int);
-+static void open_ccp(int);
-+static void kill_my_pg(int);
-+static void calltimeout(void);
++void hup(int);
++void term(int);
++void chld(int);
++void toggle_debug(int);
++void open_ccp(int);
++void kill_my_pg(int);
++void calltimeout(void);
 +
  /*
   * Prototypes.
