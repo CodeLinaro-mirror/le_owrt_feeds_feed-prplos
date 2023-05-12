@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v6.2.0 - 2023-05-12(11:20:52 +0000)
+
+### New
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] It must be possible to use protected methods
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] It must be possible to use protected methods
+
+### Fixes
+
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): [USP] Controllers with are added with an invalid EndpointID
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): HGWKPN-2285 [USP][Set Message] Error code not as expected
+
 ## Release v6.1.1 - 2023-05-10(14:24:12 +0000)
 
 ### Fixes
