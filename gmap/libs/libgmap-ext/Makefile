@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libgmap-ext
-PKG_VERSION:=v0.3.1
+PKG_VERSION:=v0.3.2
 SHORT_DESCRIPTION:=Functionality common for gmap clients (not server)
 
-PKG_SOURCE:=libgmap-ext-v0.3.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-ext/-/archive/v0.3.1
-PKG_HASH:=9dc7ff968e591ea9d2bdb347cbf86e64b2e4724aeb30c14d778d39bdb2ffe087
-PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-ext-v0.3.1
+PKG_SOURCE:=libgmap-ext-v0.3.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-ext/-/archive/v0.3.2
+PKG_HASH:=b8aaca1880ecffa14d7469245eb5b3ca183ee60f6501b038862f264d57bac2e2
+PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-ext-v0.3.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
