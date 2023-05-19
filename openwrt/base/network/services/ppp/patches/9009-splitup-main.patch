@@ -432,7 +432,7 @@ index f99c5af..ece024c 100644
  
      calltimeout();
      if (got_sighup) {
-@@ -1681,4 +1689,304 @@ update_db_entry(void)
+@@ -1681,4 +1689,306 @@ update_db_entry(void)
          free(vbuf);
  
  }
@@ -602,7 +602,9 @@ index f99c5af..ece024c 100644
 +    slprintf(numbuf, sizeof(numbuf), "%d", getpid());
 +    script_setenv("PPPD_PID", numbuf, 1);
 +
-+    setup_signals();
++    if(enable_signals) {
++	setup_signals();
++    }
 +
 +    create_linkpidfile(getpid());
 +
