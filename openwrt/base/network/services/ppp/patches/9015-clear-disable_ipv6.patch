@@ -1,0 +1,37 @@
+--- a/pppd/sys-linux.c
++++ b/pppd/sys-linux.c
+@@ -120,6 +120,7 @@
+ 
+ #include <linux/ppp_defs.h>
+ #include <linux/if_ppp.h>
++#include <linux/limits.h>
+ 
+ #ifdef INET6
+ #include <linux/netlink.h>
+@@ -2639,10 +2640,26 @@
+ int sif6up(int u)
+ {
+     int ret;
++    char path[PATH_MAX];
++    char *disable_ipv6_path;
+ 
+     if ((ret = setifstate(u, 1)))
+ 	if6_is_up = 1;
+ 
++    /*
++     * Clear disable_ipv6 flag
++     */
++    sprintf(path, "/sys/net/ipv6/conf/%s/disable_ipv6", ifname);
++    disable_ipv6_path = path_to_procfs(path);
++    if (disable_ipv6_path != NULL) {
++       int fd = open(disable_ipv6_path, O_WRONLY);
++       if (fd >= 0) {
++           notice("Clearing disable_ipv6 for interface %s", ifname);
++           if (write(fd, "0", 1) != 1)
++               my_error("Couldn't clear disable_ipv6: %m");
++           close(fd);
++       }
++    }
+     return ret;
+ }
+ 
