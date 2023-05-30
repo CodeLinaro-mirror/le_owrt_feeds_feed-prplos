@@ -1,3 +1,15 @@
+From 1b6f5168e143c1a971dc8b665a9bfc21ec03efd8 Mon Sep 17 00:00:00 2001
+From: alexandre fiset <alexandre.fiset_ext@softathome.com>
+Date: Wed, 24 May 2023 11:36:36 +0200
+Subject: [PATCH] fix segfault when NAK is send
+
+---
+ src/dnsmasq.h |  23 +++++-
+ src/lease.c   |  11 +++
+ src/rfc2131.c |  76 ++++++++++-------
+ src/ubus.c    | 224 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 304 insertions(+), 30 deletions(-)
+
 diff --git a/src/dnsmasq.h b/src/dnsmasq.h
 index 2135ef2..5cd7c94 100644
 --- a/src/dnsmasq.h
@@ -93,7 +105,7 @@ index 8a7b975..7b227ec 100644
  	  kill_name(lease);
  #ifdef HAVE_SCRIPT
 diff --git a/src/rfc2131.c b/src/rfc2131.c
-index 2056cba..0d40df3 100644
+index 2056cba..937afb4 100644
 --- a/src/rfc2131.c
 +++ b/src/rfc2131.c
 @@ -18,9 +18,6 @@
@@ -255,7 +267,7 @@ index 2056cba..0d40df3 100644
 -      return dhcp_packet_size(mess, agent_id, real_end); 
 +       size_t result = dhcp_packet_size(mess, agent_id, real_end);
 +#ifdef HAVE_UBUS
-+       if (lease && lease->ubus_extra_info) {
++       if (lease && lease->ubus_extra_info && lease->ubus_extra_info->net) {
 +         lease->ubus_extra_info->net = context->netid.net;
 +       }
 +#endif
@@ -579,3 +591,6 @@ index 09071cf..6c9d9ae 100644
  #ifdef HAVE_CONNTRACK
  void ubus_event_bcast_connmark_allowlist_refused(u32 mark, const char *name)
  {
+-- 
+2.39.2
+
