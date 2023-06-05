@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.18.0 - 2023-06-05(12:24:12 +0000)
+
+### New
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager):  Add support for ManageableDevices
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): ManagementServer.Subscription not BBF compliant
+
 ## Release v0.17.4 - 2023-04-27(05:50:11 +0000)
 
 ### Fixes
