@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v7.0.0 - 2023-06-08(16:00:18 +0000)
+
+### Removed
+
+- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt): Component removed
+
 ## Release v6.2.0 - 2023-05-12(11:20:52 +0000)
 
 ### New
