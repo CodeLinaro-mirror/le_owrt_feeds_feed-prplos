@@ -1,16 +1,17 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libpacket-interception
-PKG_VERSION:=v0.0.3
+PKG_VERSION:=v1.0.0
 SHORT_DESCRIPTION:=Packet Interception library
 
-PKG_SOURCE:=libpacket-interception-v0.0.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libpacket-interception/-/archive/v0.0.3
-PKG_HASH:=702e35ce8da3f1a06a412b207b66471c74f06a788a8effa93e5de61a4ad85755
-PKG_BUILD_DIR:=$(BUILD_DIR)/libpacket-interception-v0.0.3
+PKG_SOURCE:=libpacket-interception-v1.0.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libpacket-interception/-/archive/v1.0.0
+PKG_HASH:=29834a519e11390911bc68b3990e19b0b4f025bc132f6d14b0b3b37340759587
+PKG_BUILD_DIR:=$(BUILD_DIR)/libpacket-interception-v1.0.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
+
 
 PKG_RELEASE:=1
 
@@ -33,7 +34,7 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Compile
-	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include)
+	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include)
 endef
 
 define Build/Install
