@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=packet-interception
-PKG_VERSION:=v0.0.6
+PKG_VERSION:=v0.0.9
 SHORT_DESCRIPTION:=Packet Interception component
 
-PKG_SOURCE:=packet-interception-v0.0.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/packet-interception/-/archive/v0.0.6
-PKG_HASH:=c56d77b8e25d7d5fad5910c022bb421c5ca492f804f5b373f4e935916f2eff7b
-PKG_BUILD_DIR:=$(BUILD_DIR)/packet-interception-v0.0.6
+PKG_SOURCE:=packet-interception-v0.0.9.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/packet-interception/-/archive/v0.0.9
+PKG_HASH:=4555a689079e00c6d8e8b6fb3e9dcdff5822b538e4528804f199a70abec99709
+PKG_BUILD_DIR:=$(BUILD_DIR)/packet-interception-v0.0.9
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -47,6 +47,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libnetlink-utils
   DEPENDS += +libpacket-interception
   DEPENDS += +iptables-mod-nfqueue
+  DEPENDS += +iptables-mod-skiplog
   MENU:=1
 endef
 
@@ -59,7 +60,7 @@ define Build/Compile
 endef
 
 define Build/Install
-	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_PACKET_INTERCEPTION_ORDER=$(CONFIG_SAH_AMX_PACKET_INTERCEPTION_ORDER))
+	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_PACKET_INTERCEPTION_ORDER=$(CONFIG_SAH_AMX_PACKET_INTERCEPTION_ORDER))
 	find $(PKG_INSTALL_DIR) -name *.a -exec rm {} +;
 	find $(PKG_INSTALL_DIR) -name *.h -exec rm {} +;
 	find $(PKG_INSTALL_DIR) -name *.pc -exec rm {} +;
@@ -68,7 +69,7 @@ define Build/Install
 endef
 
 define Build/InstallDev
-	$(call Build/Install/Default, install INSTALL=install D=$(STAGING_DIR) DEST=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_PACKET_INTERCEPTION_ORDER=$(CONFIG_SAH_AMX_PACKET_INTERCEPTION_ORDER))
+	$(call Build/Install/Default, install INSTALL=install D=$(STAGING_DIR) DEST=$(STAGING_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_PACKET_INTERCEPTION_ORDER=$(CONFIG_SAH_AMX_PACKET_INTERCEPTION_ORDER))
 endef
 
 define Package/$(PKG_NAME)/install
