@@ -1,0 +1,20 @@
+config PACKAGE_amx-faultmonitor
+    tristate
+    select SAH_AMX_FAULTMONITOR
+
+if PACKAGE_amx-faultmonitor
+
+menu "Select amx-faultmonitor build options"
+    depends on PACKAGE_amx-faultmonitor
+
+config SAH_AMX_FAULTMONITOR
+    bool "Build faultmonitor plugin"
+    default y
+
+config SAH_AMX_FAULTMONITOR_ORDER
+    int "Start up order"
+    default 15
+
+endmenu
+
+endif
