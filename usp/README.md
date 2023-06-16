@@ -12,10 +12,6 @@ Feed_usp includes the following components:
 - [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint) - Mini USP agent or controller
 - [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent) - USP agent as specified by TR-369
 
-### Plugins
-
-- [tr181-mqtt](https://gitlab.com/soft.at.home/plugins/tr181-mqtt) - TR-181 compatible MQTT client
-
 ### Libraries
 
 - [libimtp](https://gitlab.com/soft.at.home/usp/libraries/libimtp) - libimtp is a library which provides functionality to set up a connection between two internal USP endpoints using a unix domain socket.
