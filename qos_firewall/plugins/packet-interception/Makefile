@@ -47,7 +47,6 @@ define Package/$(PKG_NAME)
   DEPENDS += +libnetlink-utils
   DEPENDS += +libpacket-interception
   DEPENDS += +iptables-mod-nfqueue
-  DEPENDS += +iptables-mod-skiplog
   MENU:=1
 endef
 
