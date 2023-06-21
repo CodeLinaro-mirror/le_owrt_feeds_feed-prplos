@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v0.19.0 - 2023-06-21(16:14:38 +0000)
+
+### New
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): InstanceAlias mode add support for mixed paths
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): ManagementServer DM add specific params
+
+### Fixes
+
+- [tr069-manager](https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager): Split cwmp_plugin/cwmpd config
+
 ## Release v0.18.0 - 2023-06-05(12:24:12 +0000)
 
 ### New
