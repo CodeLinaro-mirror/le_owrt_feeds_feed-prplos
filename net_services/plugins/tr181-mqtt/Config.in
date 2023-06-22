@@ -1,0 +1,20 @@
+config PACKAGE_tr181-mqtt
+    tristate
+    select SAH_AMX_TR181_MQTT
+
+if PACKAGE_tr181-mqtt
+
+menu "Select tr181-mqtt build options"
+    depends on PACKAGE_tr181-mqtt
+
+config SAH_AMX_TR181_MQTT
+    bool "TR-181 compatible MQTT client"
+    default y
+
+config SAH_AMX_TR181_MQTT_ORDER
+    int "TR-181 MQTT client plugin start up order"
+    default 49
+
+endmenu
+
+endif
