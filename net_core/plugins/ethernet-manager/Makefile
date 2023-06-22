@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ethernet-manager
-PKG_VERSION:=v1.6.4
+PKG_VERSION:=v1.10.2
 SHORT_DESCRIPTION:=Ethernet plugin
 
-PKG_SOURCE:=tr181-ethernet-v1.6.4.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ethernet/-/archive/v1.6.4
-PKG_HASH:=d7794ba274dfa8c0546d80a825e167f86c8575aaa5026cb019fc7c22cd165b5b
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ethernet-v1.6.4
+PKG_SOURCE:=tr181-ethernet-v1.10.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ethernet/-/archive/v1.10.2
+PKG_HASH:=fa11517f10a21f632c045d64a48ad24a70c98745eb52fa9cd493f58229ecdc09
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ethernet-v1.10.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -19,12 +19,13 @@ PKG_RELEASE:=1
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
 	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_ETHERNET_ORDER)$(COMPONENT)
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_ETHERNET_ORDER)$(COMPONENT)
 endef
 
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=ambiorix
+  CATEGORY:=amx
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ethernet
@@ -35,6 +36,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxm
   DEPENDS += +libamxo
   DEPENDS += +libsahtrace
+  DEPENDS += +libnetmodel
   DEPENDS += +amxrt
   DEPENDS += +mod-dmstats
   DEPENDS += +mod-vlan-ioctl
@@ -48,7 +50,7 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Compile
-	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_TR181_ETHERNET_ORDER=$(CONFIG_SAH_AMX_TR181_ETHERNET_ORDER))
+	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_TR181_ETHERNET_ORDER=$(CONFIG_SAH_AMX_TR181_ETHERNET_ORDER))
 endef
 
 define Build/Install
@@ -66,6 +68,9 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
+	fi
 endef
 
 define Package/$(PKG_NAME)/config
