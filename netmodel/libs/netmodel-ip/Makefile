@@ -1,23 +1,24 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-ip
-PKG_VERSION:=v1.1.1
+PKG_VERSION:=v1.3.0
 SHORT_DESCRIPTION:=Network Model IP client
 
-PKG_SOURCE:=netmodel-ip-v1.1.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip/-/archive/v1.1.1
-PKG_HASH:=322bb08adf3a8033ea7aaf57c3e0a7c41fb2fc4ca3ec2adc016ef47d45556372
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-ip-v1.1.1
+PKG_SOURCE:=netmodel-ip-v1.3.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip/-/archive/v1.3.0
+PKG_HASH:=894635822adce0621cae5a3b2c664ee3ab56f41ef8c48298fedaf078a1948f4d
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-ip-v1.3.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
+
 
 PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=ambiorix
+  CATEGORY:=amx
   SUBMENU:=Libraries
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip
@@ -38,7 +39,7 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Compile
-	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include)
+	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include)
 endef
 
 define Build/Install
@@ -54,6 +55,9 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
+	fi
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))

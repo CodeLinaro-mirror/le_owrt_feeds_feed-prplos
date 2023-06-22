@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=netmodel-bridge
-PKG_VERSION:=v1.0.3
-SHORT_DESCRIPTION:=Network Model bridge client
+PKG_NAME:=netmodel-ssid
+PKG_VERSION:=v0.1.2
+SHORT_DESCRIPTION:=Network Model ssid client
 
-PKG_SOURCE:=netmodel-bridge-v1.0.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge/-/archive/v1.0.3
-PKG_HASH:=bb7fcca331d9833d14c485fa890203a0d168f639241d2a9e28225e2ddc97b9ad
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-bridge-v1.0.3
+PKG_SOURCE:=netmodel-ssid-v0.1.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ssid/-/archive/v0.1.2
+PKG_HASH:=2fdbce7b95527bbf0615b91a02da6aad06e23c578e1d09cf9aba9b372a53ee1d
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-ssid-v0.1.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -20,7 +20,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=amx
   SUBMENU:=Libraries
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge
+  URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ssid
   DEPENDS += +libamxc
   DEPENDS += +libamxp
   DEPENDS += +libamxd
@@ -34,7 +34,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-	Network Model bridge client
+	Network Model ssid client
 endef
 
 define Build/Compile

@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel
-PKG_VERSION:=v1.16.0
+PKG_VERSION:=v2.10.0
 SHORT_DESCRIPTION:=Network Model plugin
 
-PKG_SOURCE:=netmodel-v1.16.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/netmodel/-/archive/v1.16.0
-PKG_HASH:=b921ed821e001cfaae27845c8f0f718172210bbf9be29830a9e7a20ee94f0d03
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-v1.16.0
+PKG_SOURCE:=netmodel-v2.10.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/netmodel/-/archive/v2.10.0
+PKG_HASH:=b4ac6d82f9f4a68c3c223cba41dd6b2b6db98a2c2f0f2e92d5114811af55b516
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-v2.10.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -19,12 +19,13 @@ PKG_RELEASE:=1
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
 	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_SAH_AMX_NETMODEL_ORDER)$(COMPONENT)
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/K$(CONFIG_SAH_AMX_NETMODEL_ORDER)$(COMPONENT)
 endef
 
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=ambiorix
+  CATEGORY:=amx
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/netmodel
@@ -45,7 +46,7 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Compile
-	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_NETMODEL_ORDER=$(CONFIG_SAH_AMX_NETMODEL_ORDER))
+	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_NETMODEL_ORDER=$(CONFIG_SAH_AMX_NETMODEL_ORDER))
 endef
 
 define Build/Install
@@ -63,6 +64,9 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
+	fi
 endef
 
 define Package/$(PKG_NAME)/config
