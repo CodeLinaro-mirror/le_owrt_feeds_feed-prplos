@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-dhcpv4c
-PKG_VERSION:=v0.11.0
+PKG_VERSION:=v0.11.1
 SHORT_DESCRIPTION:=Implementation of a DHCPv4 client as ambiorix module
 
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
