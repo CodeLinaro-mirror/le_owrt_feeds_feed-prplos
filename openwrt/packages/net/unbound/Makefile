@@ -157,7 +157,7 @@ define Package/libunbound/config
 		default n
 	config PACKAGE_libunbound_dnstap
 		bool "Build with dnstap support."
-		default y
+		default n
 	endif
 endef
 
