@@ -87,7 +87,8 @@ CONFIGURE_ARGS = \
 	--leasefile \
 	--portinuse \
 	$(if $(CONFIG_MINIUPNP_TR181-FIREWALL),--firewall=amx,--firewall=$(BUILD_VARIANT)) \
-	--disable-fork
+	--disable-fork \
+	--strict
 
 TARGET_CFLAGS += $(FPIC)
 TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
