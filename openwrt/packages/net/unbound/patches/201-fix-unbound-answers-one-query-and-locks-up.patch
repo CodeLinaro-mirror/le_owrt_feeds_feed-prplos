@@ -1,0 +1,60 @@
+From 677196e2e05f4c73e4e9ad80323d75dc3943aa3f Mon Sep 17 00:00:00 2001
+From: Boris VANHOOF <boris.vanhoof@softathome.com>
+Date: Fri, 7 Jul 2023 09:06:21 +0200
+Subject: [PATCH] Unbound only answers one query and lock up
+ for few seconds [fix]
+
+---
+ daemon/remote.c | 2 +-
+ util/amx.c      | 9 ++++++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/daemon/remote.c b/daemon/remote.c
+index dea3d22ae..fecf40084 100644
+--- a/daemon/remote.c
++++ b/daemon/remote.c
+@@ -3261,7 +3261,7 @@ handle_amx_rpc(amxc_var_t* args, amxc_var_t* ret, void* priv)
+     RES fakessl;
+     int fd[2] = {-1, -1};
+     int rbuf;
+-    char buf[100];
++    char buf[2048];
+ 
+     memset(&fakessl, 0, sizeof(RES));
+     if(pipe(fd) != 0) {
+diff --git a/util/amx.c b/util/amx.c
+index 8b1457f74..c05bcc8b4 100644
+--- a/util/amx.c
++++ b/util/amx.c
+@@ -79,6 +79,7 @@
+ #include "util/data/dname.h"
+ #include "util/regional.h"
+ #include "util/net_help.h"
++#include "sldns/sbuffer.h"
+ 
+ static amxd_object_t* root = NULL;
+ static amxo_parser_t parser;
+@@ -350,7 +351,11 @@ void send_amx_event_for_buffer(struct sockaddr_storage* addr, struct sldns_buffe
+ 
+     prs = (struct msg_parse*) regional_alloc(scratch, sizeof(struct msg_parse));
+     memset(prs, 0, sizeof(*prs));
+-    parse_packet(pkt, prs, scratch);
++    if(parse_packet(pkt, prs, scratch) != LDNS_RCODE_NOERROR) {
++        verbose(VERB_ALGO, "parse error");
++        goto exit;
++    }
++
+     rcode = FLAGS_GET_RCODE(prs->flags);
+ 
+     if(rcode == LDNS_RCODE_SERVFAIL) { // to avoid events for each query response
+@@ -371,5 +376,7 @@ void send_amx_event_for_buffer(struct sockaddr_storage* addr, struct sldns_buffe
+         amxc_var_clean(&data);
+     }
+ 
++exit:
++    sldns_buffer_set_position(pkt, 0);
+     regional_free_all(scratch);
+ }
+\ No newline at end of file
+-- 
+GitLab
