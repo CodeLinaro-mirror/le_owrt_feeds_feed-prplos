@@ -8,6 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v7.2.0 - 2023-07-07(12:16:34 +0000)
+
+### New
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] Trigger 'Sendonboardrequest()' via TR-069/TR-369 Parameter
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] Change USP EndpointId authority-scheme to "oui"
+
+### Fixes
+
+- [libusp](https://gitlab.com/soft.at.home/usp/libraries/libusp): [USP] Update log message for allow_partial=false
+
+### Other
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): - [KPN][USP] Boot! event is not as expected
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [CR9HF] - Multiple tr181-localagent sessions running
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): - [HTTPManager][WebUI] Create plugin's ACLs permissions
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): EnableMDNS is true by default in spec
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [CR9HF] - Multiple uspagent sessions running
+
 ## Release v7.1.0 - 2023-06-16(07:58:59 +0000)
 
 ### New
