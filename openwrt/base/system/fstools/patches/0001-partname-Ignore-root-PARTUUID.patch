@@ -1,0 +1,36 @@
+From e9b59f063bb333df6d58bf434554753d123a713f Mon Sep 17 00:00:00 2001
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Fri, 6 Jan 2023 18:04:22 -0800
+Subject: [PATCH] partname: Ignore root=PARTUUID...
+
+We're assuming all root= arguments are /dev/ paths, but many targets
+utilize root=PARTUUID=<xxx> strategies. At least allow them to fall back
+to scanning all block devices.
+
+Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+---
+ libfstools/partname.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libfstools/partname.c b/libfstools/partname.c
+index f59c52e..9c27015 100644
+--- a/libfstools/partname.c
++++ b/libfstools/partname.c
+@@ -128,12 +128,12 @@ static struct volume *partname_volume_find(char *name)
+ 			return NULL;
+ 	}
+ 
+-	if (get_var_from_file("/proc/cmdline", "root", rootparam, sizeof(rootparam))) {
++	if (get_var_from_file("/proc/cmdline", "root", rootparam, sizeof(rootparam)) && rootparam[0] == '/') {
+ 		rootdev = rootdevname(rootparam);
+ 		/* find partition on same device as rootfs */
+ 		snprintf(ueventgstr, sizeof(ueventgstr), "%s/%s/*/uevent", block_dir_name, rootdev);
+ 	} else {
+-		/* no 'root=' kernel cmdline parameter, find on any block device */
++		/* no useful 'root=' kernel cmdline parameter, find on any block device */
+ 		snprintf(ueventgstr, sizeof(ueventgstr), "%s/*/uevent", block_dir_name);
+ 	}
+ 
+-- 
+2.34.1
+
