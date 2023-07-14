@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.0.0 - 2023-07-14(13:24:55 +0000)
+
+### Breaking
+
+- [libimtp](https://gitlab.com/soft.at.home/usp/libraries/libimtp): [IMTP] Implement IMTP communication as specified in TR-369
+- [libuspi](https://gitlab.com/soft.at.home/usp/libraries/libuspi): [IMTP] Implement IMTP communication as specified in TR-369
+- [mod-amxb-usp](https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp): [IMTP] Implement IMTP communication as specified in TR-369
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [IMTP] Implement IMTP communication as specified in TR-369
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): [IMTP] Implement IMTP communication as specified in TR-369
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [IMTP] Implement IMTP communication as specified in TR-369
+
+### Other
+
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): [USP] Add config variables for init script of usp-endpoint
+
 ## Release v7.2.0 - 2023-07-07(12:16:34 +0000)
 
 ### New
