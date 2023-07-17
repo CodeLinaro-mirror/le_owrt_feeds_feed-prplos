@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-xpon
-PKG_VERSION:=v1.1.5
+PKG_VERSION:=v1.2.0
 SHORT_DESCRIPTION:=TR-181 XPON manager
 
-PKG_SOURCE:=tr181-xpon-v1.1.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-xpon/-/archive/v1.1.5
-PKG_HASH:=0894e12f7371372d17ea94889984b7dfddacfd0baf516451968ad997e6d27921
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-xpon-v1.1.5
+PKG_SOURCE:=tr181-xpon-v1.2.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-xpon/-/archive/v1.2.0
+PKG_HASH:=a2f5cd6ef9d8c1fa4fbc74cc07fbce6721cba43c41cd3af43122450b838d4f65
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-xpon-v1.2.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
