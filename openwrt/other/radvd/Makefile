@@ -13,7 +13,7 @@ PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://v6web.litech.org/radvd/dist
-PKG_MD5SUM:=e9c425ac48ecb96ea5ea2912c78969f9
+PKG_HASH:=c36470706fec3a9e6bed394ffea08acaff5dac647848d26b96bb9b9c65d58da0
 
 PKG_INSTALL:=1
 
