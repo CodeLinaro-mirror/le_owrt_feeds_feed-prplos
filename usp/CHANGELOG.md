@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.0.2 - 2023-07-19(13:56:39 +0000)
+
+### Fixes
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): Retry IMTP connection in case of failure
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): Prevent segmentation fault after IMTP disconnect
+
+### Other
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Add SocketStatus parameter to data model
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [KPN][USP] Boot! event is not as expected
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Bus timeout when fetching Device object on boot
+
 ## Release v8.0.1 - 2023-07-14(14:48:30 +0000)
 
 ## Release v8.0.0 - 2023-07-14(13:24:55 +0000)
