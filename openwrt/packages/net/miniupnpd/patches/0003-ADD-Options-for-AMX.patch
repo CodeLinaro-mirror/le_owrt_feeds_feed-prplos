@@ -1,0 +1,130 @@
+From 1d32c3de41bc581acee3169e64fb41f3db832f7e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Th=C3=A9o-Paul=20Bodin?=
+ <theo-paul.bodin_ext@softathome.com>
+Date: Thu, 13 Jul 2023 16:04:31 +0200
+Subject: [PATCH 2/2] [ADD] Options for AMX
+
+---
+ amx/amxrdr.c     |  8 ++++----
+ miniupnpd.c      | 10 ++++++++++
+ options.c        |  4 ++++
+ options.h        |  4 ++++
+ upnpglobalvars.c |  5 +++++
+ upnpglobalvars.h |  7 +++++++
+ 6 files changed, 34 insertions(+), 4 deletions(-)
+
+diff --git a/amx/amxrdr.c b/amx/amxrdr.c
+index 5c67729..fde8c7e 100644
+--- a/amx/amxrdr.c
++++ b/amx/amxrdr.c
+@@ -73,8 +73,8 @@
+ 
+ time_t upnp_time(void);
+ 
+-amxb_bus_ctx_t* bus_ctx = NULL;
+-bool state_add_rdr = false;
++static amxb_bus_ctx_t* bus_ctx = NULL;
++static bool state_add_rdr = false;
+ 
+ static const char* proto_itoa(int proto) {
+     const char* protocol;
+@@ -113,9 +113,9 @@ static int proto_atoi(const char* protocol) {
+ 
+ int init_redirect(void) {
+     int r = -1;
+-    r = amxb_be_load("/usr/bin/mods/amxb/mod-amxb-ubus.so");
++    r = amxb_be_load(ubus_backend_url);
+     if(r == 0) {
+-        r = amxb_connect(&bus_ctx, "ubus:/var/run/ubus.sock");
++        r = amxb_connect(&bus_ctx, ubus_sock_url);
+     }
+     return r;
+ }
+diff --git a/miniupnpd.c b/miniupnpd.c
+index 34b2eda..e433eb3 100644
+--- a/miniupnpd.c
++++ b/miniupnpd.c
+@@ -1358,6 +1358,16 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 				set_rdr_name(RDR_NAT_POSTROUTING_CHAIN_NAME, ary_options[i].value);
+ 				break;
+ #endif    /* USE_NETFILTER */
++#ifdef USE_AMX
++            case UPNPUBUS_SOCK_URL:
++                strncpy(ubus_sock_url, ary_options[i].value, UBUS_SOCK_URL_MAX_LEN);
++                ubus_sock_url[UBUS_SOCK_URL_MAX_LEN - 1] = '\0';
++                break;
++            case UPNPUBUS_BE_URL:
++                strncpy(ubus_backend_url, ary_options[i].value, UBUS_BE_URL_MAX_LEN);
++                ubus_backend_url[UBUS_BE_URL_MAX_LEN - 1] = '\0';
++                break;
++#endif  /*USE_AMX */
+ 			case UPNPNOTIFY_INTERVAL:
+ 				v->notify_interval = atoi(ary_options[i].value);
+ 				break;
+diff --git a/options.c b/options.c
+index e63f5b6..3a749d7 100644
+--- a/options.c
++++ b/options.c
+@@ -58,6 +58,10 @@ static const struct {
+ 	{ UPNPMODEL_NAME, "model_name" },
+ 	{ UPNPMODEL_DESCRIPTION, "model_description" },
+ 	{ UPNPMODEL_URL, "model_url" },
++#endif
++#ifdef USE_AMX
++    { UPNPUBUS_SOCK_URL, "ubus_sock_url" },
++    { UPNPUBUS_BE_URL, "ubus_backend_url" },
+ #endif
+ 	{ UPNPNOTIFY_INTERVAL, "notify_interval" },
+ 	{ UPNPSYSTEM_UPTIME, "system_uptime" },
+diff --git a/options.h b/options.h
+index bd193cb..237734a 100644
+--- a/options.h
++++ b/options.h
+@@ -68,6 +68,10 @@ enum upnpconfigoptions {
+ 	UPNPQUEUE,				/* queue */
+ 	UPNPTAG,				/* tag */
+ #endif
++#ifdef USE_AMX
++    UPNPUBUS_SOCK_URL,      /* ubus_sock_url*/
++    UPNPUBUS_BE_URL,        /* ubus_backend_url*/
++#endif
+ #ifdef PF_ENABLE_FILTER_RULES
+ 	UPNPQUICKRULES,			/* quickrules */
+ #endif
+diff --git a/upnpglobalvars.c b/upnpglobalvars.c
+index 2e4daa1..c4c4d7d 100644
+--- a/upnpglobalvars.c
++++ b/upnpglobalvars.c
+@@ -112,6 +112,11 @@ const char * queue = 0;
+ const char * tag = 0;
+ #endif
+ 
++#ifdef USE_AMX
++char ubus_sock_url[UBUS_SOCK_URL_MAX_LEN] = "ubus:/var/run/ubus.sock";
++char ubus_backend_url[UBUS_BE_URL_MAX_LEN] = "/usr/bin/mods/amxb/mod-amxb-ubus.so";
++#endif
++
+ #ifdef ENABLE_NFQUEUE
+ int nfqueue = -1;
+ int n_nfqix = 0;
+diff --git a/upnpglobalvars.h b/upnpglobalvars.h
+index fcdc03e..d43ba84 100644
+--- a/upnpglobalvars.h
++++ b/upnpglobalvars.h
+@@ -151,6 +151,13 @@ extern int n_nfqix;
+ extern unsigned nfqix[];
+ #endif
+ 
++#ifdef USE_AMX
++#define UBUS_SOCK_URL_MAX_LEN (1024)
++extern char ubus_sock_url[];
++#define UBUS_BE_URL_MAX_LEN (1024)
++extern char ubus_backend_url[];
++#endif
++
+ /* lan addresses to listen to SSDP traffic */
+ extern struct lan_addr_list lan_addrs;
+ 
+-- 
+2.25.1
+
