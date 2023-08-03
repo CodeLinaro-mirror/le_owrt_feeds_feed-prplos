@@ -4,10 +4,11 @@ PKG_NAME:=tr181-led
 PKG_VERSION:=v0.3.1
 SHORT_DESCRIPTION:=TR-181 compatible plugin for device LEDs management
 
-PKG_SOURCE:=tr181-led-v0.3.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.softathome.com/ext_prpl/components/plugins/tr181-led/-/archive/v0.3.1
-PKG_HASH:=156b19d2c882b8f0497d238ab03788d4a59769140fedc46e01acfe660a9d4d12
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-led-v0.3.1
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=v0.3.1
+PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/components/plugins/tr181-led.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -28,7 +29,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=amx
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.softathome.com/ext_prpl/components/plugins/tr181-led
+  URL:=https://$(SAH_GIT)/$(SAH_GIT_GROUP)/components/plugins/tr181-led
   DEPENDS += +libamxc
   DEPENDS += +libamxp
   DEPENDS += +libamxd
