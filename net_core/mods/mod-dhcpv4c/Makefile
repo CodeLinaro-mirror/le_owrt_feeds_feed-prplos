@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Implementation of a DHCPv4 client as ambiorix module
 
 PKG_SOURCE:=mod-dhcpv4c-v0.13.1.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-dhcpv4c/-/archive/v0.13.1
-PKG_HASH:=skip
+PKG_HASH:=a6108202b67be43597e6504500ea8f1b637b6de7cf9a8c0374272193371d3a17
 PKG_BUILD_DIR:=$(BUILD_DIR)/mod-dhcpv4c-v0.13.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
