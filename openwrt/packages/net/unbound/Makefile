@@ -8,7 +8,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=unbound
-PKG_VERSION:=gen_1.17.0_prpl_v0.2.0
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_VERSION:=v0.2.0
