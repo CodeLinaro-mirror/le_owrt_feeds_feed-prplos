@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libnetlink-utils
-PKG_VERSION:=v0.0.6
+PKG_VERSION:=v0.0.7
 SHORT_DESCRIPTION:=Netlink utility library
 
-PKG_SOURCE:=libnetlink-utils-v0.0.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libnetlink-utils/-/archive/v0.0.6
-PKG_HASH:=cb5307a775c895763e0d656f8ed00f9fb444aff593d3fe57b878af6d496a5ad4
-PKG_BUILD_DIR:=$(BUILD_DIR)/libnetlink-utils-v0.0.6
+PKG_SOURCE:=libnetlink-utils-v0.0.7.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libnetlink-utils/-/archive/v0.0.7
+PKG_HASH:=cea4eae9777e01b8512cd2303316adf7e8b4b01bff393cae63785d152ec00d37
+PKG_BUILD_DIR:=$(BUILD_DIR)/libnetlink-utils-v0.0.7
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -43,14 +43,14 @@ define Build/Compile
 endef
 
 define Build/Install
-	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_LIB_NETLINK_NF_QUEUE_PRPL_OS_PATH=$(CONFIG_SAH_LIB_NETLINK_NF_QUEUE_PRPL_OS_PATH))
+	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_LIB_NETLINK_NF_QUEUE_PRPL_OS_PATH=$(CONFIG_SAH_LIB_NETLINK_NF_QUEUE_PRPL_OS_PATH))
 	find $(PKG_INSTALL_DIR) -name *.a -exec rm {} +;
 	find $(PKG_INSTALL_DIR) -name *.h -exec rm {} +;
 	find $(PKG_INSTALL_DIR) -name *.pc -exec rm {} +;
 endef
 
 define Build/InstallDev
-	$(call Build/Install/Default, install INSTALL=install D=$(STAGING_DIR) DEST=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_LIB_NETLINK_NF_QUEUE_PRPL_OS_PATH=$(CONFIG_SAH_LIB_NETLINK_NF_QUEUE_PRPL_OS_PATH))
+	$(call Build/Install/Default, install INSTALL=install D=$(STAGING_DIR) DEST=$(STAGING_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_LIB_NETLINK_NF_QUEUE_PRPL_OS_PATH=$(CONFIG_SAH_LIB_NETLINK_NF_QUEUE_PRPL_OS_PATH))
 endef
 
 define Package/$(PKG_NAME)/install
