@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=unbound
-PKG_VERSION:=gen_1.17.0_prpl_v0.1.0
+PKG_VERSION:=gen_1.17.0_prpl_v0.2.0
 PKG_RELEASE:=$(AUTORELEASE)
 
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=v0.2.0
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/forks/unbound/-/archive/$(PKG_VERSION)
-PKG_HASH:=ee43c8effdd26c3db10b78fc6de6eefb15bbce5bfb3aef4c871dfd96c5d2d682
+PKG_HASH:=4d259f96c4667215e3ce27b1e628cc04d4895c944d31abd5336db462ebf5beff
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Eric Luehrsen <ericluehrsen@gmail.com>
