@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-upnp
-PKG_VERSION:=v0.3.6
+PKG_VERSION:=v0.3.7
 SHORT_DESCRIPTION:=upnp manager
 
-PKG_SOURCE:=tr181-upnp-v0.3.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-upnp/-/archive/v0.3.6
-PKG_HASH:=f972c56ef6a9901d5493ed9bf28bdfeff234acf8569eff2e5e70d7a358173d71
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-upnp-v0.3.6
+PKG_SOURCE:=tr181-upnp-v0.3.7.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-upnp/-/archive/v0.3.7
+PKG_HASH:=eb082f4c7bd45a34c4f1f9e66b81308dd9eca76a77ebe617f801024d1a08f3e4
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-upnp-v0.3.7
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -40,6 +40,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +amxrt
   DEPENDS += +mod-fw-amx
   DEPENDS += +miniupnpd
+  DEPENDS += +miniupnpd-amx
   DEPENDS += +rpcd
   MENU:=1
 endef
