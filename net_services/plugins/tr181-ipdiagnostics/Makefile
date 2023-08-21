@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-ipdiagnostics
-PKG_VERSION:=v0.4.1
+PKG_VERSION:=v0.5.0
 SHORT_DESCRIPTION:=Speedtest plugin
 
-PKG_SOURCE:=tr181-ipdiagnostics-v0.4.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ipdiagnostics/-/archive/v0.4.1
-PKG_HASH:=f9e9caedf3b2c6b8963b676e43db752bac3867926199280904e5fb4fe579e62d
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ipdiagnostics-v0.4.1
+PKG_SOURCE:=tr181-ipdiagnostics-v0.5.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ipdiagnostics/-/archive/v0.5.0
+PKG_HASH:=c87245a473fb7a5519db1a93e4bdf67831ec74aba175cc5e89166ab3cbb12e40
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ipdiagnostics-v0.5.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
