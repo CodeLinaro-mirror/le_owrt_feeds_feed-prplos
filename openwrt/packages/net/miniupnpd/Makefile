@@ -108,6 +108,10 @@ ifeq ($(BUILD_VARIANT),iptables)
 	TARGET_CFLAGS += -flto
 endif
 
+ifeq ($(ALLOW_RESERVED_ADDR),y)
+	TARGET_CFLAGS += -DALLOW_RESERVED_ADDR
+endif
+
 define Package/miniupnpd/install/Default
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/miniupnpd $(1)/usr/sbin/miniupnpd
