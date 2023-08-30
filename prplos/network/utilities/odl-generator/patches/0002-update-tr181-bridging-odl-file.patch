@@ -1,0 +1,73 @@
+From 8a3e09aef1088d97df2d402dd654de0fc476ba9c Mon Sep 17 00:00:00 2001
+From: Marouan MCHARFI <marouan.mcharfi_ext@softathome.com>
+Date: Wed, 19 Jul 2023 16:00:26 +0200
+Subject: [PATCH 2/2] update tr181 bridging odl file
+
+align change related to getInterfaceIndex management
+in process_odl_template script
+
+Signed-off-by: Marouan MCHARFI <marouan.mcharfi_ext@softathome.com>
+---
+ .../00_bridging_lan-defaults.odl.uc                 | 10 +++++++---
+ .../10_bridging_guest-defaults.odl.uc               | 13 +++++++++++--
+ 2 files changed, 18 insertions(+), 5 deletions(-)
+
+diff --git a/files/templates/tr181-bridging/tr181-bridging_defaults/00_bridging_lan-defaults.odl.uc b/files/templates/tr181-bridging/tr181-bridging_defaults/00_bridging_lan-defaults.odl.uc
+index d4aa0e6..3e57853 100644
+--- a/files/templates/tr181-bridging/tr181-bridging_defaults/00_bridging_lan-defaults.odl.uc
++++ b/files/templates/tr181-bridging/tr181-bridging_defaults/00_bridging_lan-defaults.odl.uc
+@@ -12,11 +12,15 @@
+                 instance add("{{Port.Alias}}") {
+                     parameter Enable = true;
+                     parameter Name = "{{Port.Name}}";
+-{% if (BDfn.isInterfaceWireless(Port.Name)) : %} 
++{% if (BDfn.isInterfaceWireless(Port.Name)) : %}
++{% IntfIndex = BDfn.getInterfaceIndex(Port.Name, "wireless");
++if (IntfIndex >= 0 ) : %}
++		    parameter LowerLayers = "Device.WiFi.SSID.{{IntfIndex+1}}.";
++{% endif %}
+                     parameter IsWireless = true;
+                     parameter WirelessSectionName = "{{Port.Alias}}";
+ {% else %}
+-{% IntfIndex = BDfn.getInterfaceIndex(Port.Name);
++{% IntfIndex = BDfn.getInterfaceIndex(Port.Name, "ethernet");
+ if (IntfIndex >= 0 ) : %}
+                     parameter LowerLayers = "Device.Ethernet.Interface.{{IntfIndex+1}}.";
+ {% endif;%}                    
+@@ -26,4 +30,4 @@ if (IntfIndex >= 0 ) : %}
+             }
+         }
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/files/templates/tr181-bridging/tr181-bridging_defaults/10_bridging_guest-defaults.odl.uc b/files/templates/tr181-bridging/tr181-bridging_defaults/10_bridging_guest-defaults.odl.uc
+index f42011a..6a08912 100644
+--- a/files/templates/tr181-bridging/tr181-bridging_defaults/10_bridging_guest-defaults.odl.uc
++++ b/files/templates/tr181-bridging/tr181-bridging_defaults/10_bridging_guest-defaults.odl.uc
+@@ -12,11 +12,20 @@
+                 instance add("{{Port.Alias}}") {
+                     parameter Enable = true;
+                     parameter Name = "{{Port.Name}}";
+-                }
+-{% if (BDfn.isInterfaceWireless(Port.Alias)) : %}
++{% if (BDfn.isInterfaceWireless(Port.Name)) : %}
++{% IntfIndex = BDfn.getInterfaceIndex(Port.Name, "wireless");
++if (IntfIndex >= 0 ) : %}
++                    parameter LowerLayers = "Device.WiFi.SSID.{{IntfIndex+1}}.";
++{% endif %}
+                     parameter IsWireless = true;
+                     parameter WirelessSectionName = "{{Port.Alias}}";
++{% else %}
++{% IntfIndex = BDfn.getInterfaceIndex(Port.Name, "ethernet");
++if (IntfIndex >= 0 ) : %}
++                    parameter LowerLayers = "Device.Ethernet.Interface.{{IntfIndex+1}}.";
++{% endif;%}
+ {% endif %}
++		}
+ {% endfor %}
+             }
+         }
+-- 
+2.25.1
+

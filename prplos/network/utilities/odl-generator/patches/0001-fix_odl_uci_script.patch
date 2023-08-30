@@ -1,0 +1,155 @@
+From b0320b55c34c4b86e9d4f01357fdb3df76362785 Mon Sep 17 00:00:00 2001
+From: Marouan MCHARFI <marouan.mcharfi_ext@softathome.com>
+Date: Tue, 4 Jul 2023 15:49:35 +0200
+Subject: [PATCH 1/2] fix_odl_uci_script
+
+Signed-off-by: Marouan MCHARFI <marouan.mcharfi_ext@softathome.com>
+---
+ files/build_default_odl.sh     |  6 +++++-
+ files/netlayout_from_uci.sh    | 39 +++++++++++++++++++++++++++++++++-
+ files/process_odl_templates.uc | 26 +++++++++++++++++++----
+ 3 files changed, 65 insertions(+), 6 deletions(-)
+
+diff --git a/files/build_default_odl.sh b/files/build_default_odl.sh
+index 4fd39f3..d49bd11 100755
+--- a/files/build_default_odl.sh
++++ b/files/build_default_odl.sh
+@@ -16,5 +16,9 @@ TEMPLATES=$(find $ODL_PATH -name "*.odl.uc")
+ #process all found odl.uc file and create odl resulting file jsut next to it
+ for ODLTMPL in  $TEMPLATES; do 
+ 	TARGETODL=$(echo $ODLTMPL |sed "s|\.odl\.uc|.odl|"); 
+- 	ucode -E BD=$NETLAYOUT -e '{"ODL_UC_PATH":"'${ODLTMPL}'"}' -i $UC_TEMPLATE_PROCESSOR > $TARGETODL
++	if ucode | grep -q '== Usage =='; then
++		ucode -E BD=$NETLAYOUT -e '{"ODL_UC_PATH":"'${ODLTMPL}'"}' -i $UC_TEMPLATE_PROCESSOR > $TARGETODL
++	else
++		ucode -T -F BD=$NETLAYOUT -D '{"ODL_UC_PATH":"'${ODLTMPL}'"}' $UC_TEMPLATE_PROCESSOR > $TARGETODL
++	fi
+ done
+diff --git a/files/netlayout_from_uci.sh b/files/netlayout_from_uci.sh
+index 9f24dda..abc71f1 100755
+--- a/files/netlayout_from_uci.sh
++++ b/files/netlayout_from_uci.sh
+@@ -9,7 +9,8 @@ NETLAYOUT=/etc/networklayout.json
+ 
+ netlayout_add_wan_itf()
+ {
+-	local itf_name=$(uci get network.wan.ifname)
++	local itf_name=$(uci -q get network.wan.ifname)
++	[ -z "$itf_name" ] && itf_name=$(uci -q get network.wan.device)
+ 
+ 	json_select Interfaces
+ 	json_add_object 
+@@ -75,6 +76,8 @@ netlayout_add_itf_to_bridge()
+ netlayout_add_lan_bridged_itfs()
+ {
+ 	local bridged=$(uci get network.lan.ifname)
++	local bridged=$(uci -q get network.lan.ifname)
++	[ -z "$bridged" ] && return
+ 	
+ 	#first add all lan interface description
+ 	for itf in $bridged ; do
+@@ -89,6 +92,39 @@ netlayout_add_lan_bridged_itfs()
+ 	done
+ }
+ 
++netlayout_add_lan_dsa_bridged_itfs()
++{
++	local intf=$(uci -q get network.lan.device)
++	[ -z "$intf" ] && return
++
++	. /lib/functions.sh
++
++	add_network_device()
++	{
++		local name
++		local ports
++		local cfg="$1"
++
++		config_get name "$cfg" name
++		config_get ports "$cfg" ports
++
++		[ "$intf" != "$name" ] && return
++
++		#first add all lan interface description
++		for itf in $ports; do
++			netlayout_add_itf_description "$(echo $itf | tr 'a-z' 'A-Z')"  "${itf}" "ethernet"
++		done
++
++		#then add all lan interfaces as bridge ports
++		for itf in $ports; do
++			netlayout_add_itf_to_bridge "Lan" "$(echo $itf | tr 'a-z' 'A-Z')"  "${itf}"
++		done
++	}
++
++	config_load network
++	config_foreach add_network_device device
++}
++
+ netlayout_add_wireless_itf()
+ {
+ 	local itf_name=$1 
+@@ -232,6 +268,7 @@ if [ ! -s $NETLAYOUT ]; then
+ 	netlayout_init
+ 	netlayout_add_wan_itf
+ 	netlayout_add_lan_bridged_itfs
++	netlayout_add_lan_dsa_bridged_itfs
+ 	netlayout_add_wireless_itfs
+ 
+ 	json_dump -i > $NETLAYOUT
+diff --git a/files/process_odl_templates.uc b/files/process_odl_templates.uc
+index 8fd3636..1b5ea62 100644
+--- a/files/process_odl_templates.uc
++++ b/files/process_odl_templates.uc
+@@ -17,7 +17,13 @@ helper_funcs = {
+ 		}
+ 		return false;
+ 	},
+-
++        //Returns a boolean if given interface name is in the guest bridge
++        isInterfaceGuest : function(Itf_name) {
++                for ( let Itf in BD.Bridges.Guest.Ports ) {
++                        if (Itf.Name ==  Itf_name ) { return true; }
++                }
++                return false;
++        },
+ 	//Returns the index of the upstream interface in BD.Itnerfaces array from board description file
+ 	getUpstreamInterfaceIndex: function() {
+ 		for ( let i =0; i < length(BD.Interfaces ); ++i) {
+@@ -37,13 +43,25 @@ helper_funcs = {
+ 	},
+ 
+ 	//Returns the index of any interface in BD.Itnerfaces array from board description file
+-	getInterfaceIndex: function(Itf_name) {
++	//Type is "wireless" or "ethernet"
++	getInterfaceIndex: function(Itf_name, Type) {
++		ret = -1;
+ 		for ( let i =0; i < length(BD.Interfaces ); ++i) {
++			if (BD.Interfaces[i].Type == Type)
++				ret += 1;
+ 			if (BD.Interfaces[i].Name == Itf_name) 
+-				return i;
++				return ret;
+ 		}
+ 		return -1;
+ 	},
++        //Returns the index of the radio with the given frequency
++        getRadioIndex: function(Radio_freq) {
++                for ( let i =0; i < length(BD.Radios ); ++i) {
++                        if (BD.Radios[i].OperatingFrequency == Radio_freq)
++                                return i;
++                }
++                return -1;
++        },
+ 	
+ 	//Print statement if condition is true. Mainly helps writing one liner and avoid if/endif blocks
+ 	printConditional: function(iCond,strStatement) {
+@@ -59,4 +77,4 @@ helper_funcs = {
+ //Process ODL template by including it.
+ //local scope functions doesn't seem to be shared to included files (bug?), so we pass on the array as additional global variable
+ include(ODL_UC_PATH, {BDfn : helper_funcs } );
+--%}
+\ No newline at end of file
++-%}
+-- 
+2.25.1
+
