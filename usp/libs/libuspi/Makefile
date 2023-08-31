@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libuspi
-PKG_VERSION:=v1.0.0
+PKG_VERSION:=v1.0.1
 SHORT_DESCRIPTION:=libuspi is a common library for setting up and managing IMTP connections
 
-PKG_SOURCE:=libuspi-v1.0.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/usp/libraries/libuspi/-/archive/v1.0.0
-PKG_HASH:=3af7ca94109a82b8ed0089bfad7db51bf59fcb124008d6e9fe12ddec38b3ab77
-PKG_BUILD_DIR:=$(BUILD_DIR)/libuspi-v1.0.0
+PKG_SOURCE:=libuspi-v1.0.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/usp/libraries/libuspi/-/archive/v1.0.1
+PKG_HASH:=421c3e81b7d1876727a585169e480eebe2e3ad9767cc01ad0a11f50f506fcecb
+PKG_BUILD_DIR:=$(BUILD_DIR)/libuspi-v1.0.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE

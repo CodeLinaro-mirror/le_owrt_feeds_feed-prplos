@@ -8,6 +8,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.1.0 - 2023-08-31(12:37:27 +0000)
+
+### New
+
+- [libusp](https://gitlab.com/soft.at.home/usp/libraries/libusp): [PRPL][USP][Onboarding]MTP Connector usp messages missing
+- [libusp](https://gitlab.com/soft.at.home/usp/libraries/libusp): [USP] GSDM should return whether commands are (a)sync
+- [libuspprotobuf](https://gitlab.com/soft.at.home/usp/libraries/libprotobuf): [USP] Add UDS connect record to library
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] Add OnBoardingComplete parameter
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Add config flag to ignore partial
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] GSDM should return whether commands are (a)sync
+
+### Fixes
+
+- [libuspi](https://gitlab.com/soft.at.home/usp/libraries/libuspi): [USP] messages are not published sometimes
+- [mod-amxb-usp](https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp): USP UDS connection is complete when handshake is done
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): [USP] Notify response published on wrong topic
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] messages are not published sometimes
+
+### Changes
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Limit length to 50 and use .. separators for oui_ext
+
+### Other
+
+- [mod-amxb-usp](https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp): Remove redundant line of code
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] Update LocalAgent debug script
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] LocalAgent must wait for UnixDomainSockets plugin
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): Recommend using allow_partial = true
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [AMX] Replace ubus-cli in debuginfo script
+
 ## Release v8.0.2 - 2023-07-19(13:56:39 +0000)
 
 ### Fixes
