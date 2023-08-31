@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=amx-faultmonitor
-PKG_VERSION:=v0.1.6
+PKG_VERSION:=v0.2.0
 SHORT_DESCRIPTION:=Plugin to track and log faults in userspace programs
 
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
