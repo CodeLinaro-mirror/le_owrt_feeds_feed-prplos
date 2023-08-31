@@ -15,6 +15,10 @@ config SAH_AMX_FAULTMONITOR_ORDER
     int "Start up order"
     default 15
 
+config SAH_AMX_FAULTMONITOR_STOP_ORDER
+    int "Stop order"
+    default 99
+
 endmenu
 
 endif
