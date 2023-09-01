@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.2.0 - 2023-09-01(12:17:26 +0000)
+
+### New
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): Retry onboarding in case it is not confirmed
+
+### Fixes
+
+- [mod-amxb-usp](https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp): [USP] Remove handshake from connect
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] OnBoardingComplete must be persistent
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Remove handshake from connect
+
+### Changes
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): Trigger Device.Boot! event from uspagent
+
 ## Release v8.1.0 - 2023-08-31(12:37:27 +0000)
 
 ### New
