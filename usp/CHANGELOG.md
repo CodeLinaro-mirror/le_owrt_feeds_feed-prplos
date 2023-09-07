@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.3.0 - 2023-09-07(09:18:49 +0000)
+
+### New
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Our uspagent should use the USPServices data model
+
 ## Release v8.2.0 - 2023-09-01(12:17:26 +0000)
 
 ### New

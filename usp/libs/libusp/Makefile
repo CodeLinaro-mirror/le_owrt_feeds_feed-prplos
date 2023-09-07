@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libusp
-PKG_VERSION:=v2.5.0
+PKG_VERSION:=v2.5.1
 SHORT_DESCRIPTION:=libusp can be used for converting USP protobuf messages to ambiorix variants and vice versa
 
-PKG_SOURCE:=libusp-v2.5.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/usp/libraries/libusp/-/archive/v2.5.0
-PKG_HASH:=632ec97d679dbfab35cac250269e6b8532a1594609bd3e224a8b61333d51e75e
-PKG_BUILD_DIR:=$(BUILD_DIR)/libusp-v2.5.0
+PKG_SOURCE:=libusp-v2.5.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/usp/libraries/libusp/-/archive/v2.5.1
+PKG_HASH:=920ca2f7a5c5d2d511576a8c5a33b8b1f17f01bc86f4bb90734890588a118415
+PKG_BUILD_DIR:=$(BUILD_DIR)/libusp-v2.5.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BBF BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE

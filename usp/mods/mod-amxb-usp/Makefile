@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-amxb-usp
-PKG_VERSION:=v4.0.4
+PKG_VERSION:=v4.0.5
 SHORT_DESCRIPTION:=USP backend implementation for amxb
 
-PKG_SOURCE:=amxb_usp-v4.0.4.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp/-/archive/v4.0.4
-PKG_HASH:=9fbe9dc417a7767dc9d20d5832d94b97b7a0b105ec1d9e9e3dad95188b492edc
-PKG_BUILD_DIR:=$(BUILD_DIR)/amxb_usp-v4.0.4
+PKG_SOURCE:=amxb_usp-v4.0.5.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp/-/archive/v4.0.5
+PKG_HASH:=2cd95052ecd9ca3226f422b0f9652fc731a9e52592e4acff72c0557eeaefe0a1
+PKG_BUILD_DIR:=$(BUILD_DIR)/amxb_usp-v4.0.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
