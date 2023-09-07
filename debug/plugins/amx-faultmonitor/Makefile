@@ -1,10 +1,17 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=amx-faultmonitor
-PKG_VERSION:=v0.2.0
+PKG_VERSION:=v0.2.1
 SHORT_DESCRIPTION:=Plugin to track and log faults in userspace programs
 
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=v0.2.1
+PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/components/amx-faultmonitor.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
+PKG_LICENSE:=
+PKG_LICENSE_FILES:=LICENSE
 
 COMPONENT:=amx-faultmonitor
 
@@ -22,6 +29,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=amx
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
+  URL:=https://$(SAH_GIT)/$(SAH_GIT_GROUP)/components/amx-faultmonitor
   DEPENDS += +libamxc
   DEPENDS += +libamxp
   DEPENDS += +libamxd
