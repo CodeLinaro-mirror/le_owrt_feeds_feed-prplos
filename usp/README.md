@@ -9,8 +9,13 @@ Feed_usp includes the following components:
 ### Applications
 
 - [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent) - LocalAgent data model as specified by TR-181
+- [tr181-uspservices](https://gitlab.softathome.com/ext_prpl/components/tr181-uspservices) - TR-181 USPServices application
 - [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint) - Mini USP agent or controller
 - [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent) - USP agent as specified by TR-369
+
+### Plugins
+
+- [tr181-uds](https://gitlab.softathome.com/ext_prpl/components/tr181-uds) - TR-181 UnixDomainSockets plugin
 
 ### Libraries
 
@@ -22,6 +27,7 @@ Feed_usp includes the following components:
 ### Modules
 
 - [mod-amxb-usp](https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp) - USP backend implementation for amxb
+- [mod-usp-onboarding](https://gitlab.softathome.com/ext_prpl/components/mod-usp-onboarding) - This module handles the typical onboarding procedure of a USP Controller after a first boot
 
 ## How to add feed_usp to your OpenWrt build
 

@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.3.1 - 2023-09-07(14:02:40 +0000)
+
+### New
+
+- [mod-usp-onboarding](https://gitlab.softathome.com/ext_prpl/components/mod-usp-onboarding): Component added
+- [tr181-uds](https://gitlab.softathome.com/ext_prpl/components/tr181-uds): Component added
+- [tr181-uspservices](https://gitlab.softathome.com/ext_prpl/components/tr181-uspservices): Component added
+
 ## Release v8.3.0 - 2023-09-07(09:18:49 +0000)
 
 ### New
