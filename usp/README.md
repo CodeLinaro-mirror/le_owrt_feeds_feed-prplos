@@ -27,6 +27,7 @@ Feed_usp includes the following components:
 ### Modules
 
 - [mod-amxb-usp](https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp) - USP backend implementation for amxb
+- [mod-usp-cli](https://gitlab.softathome.com/ext_prpl/components/mod-usp-cli) - CLI module to invoke USP RPCs using an available MTP
 - [mod-usp-onboarding](https://gitlab.softathome.com/ext_prpl/components/mod-usp-onboarding) - This module handles the typical onboarding procedure of a USP Controller after a first boot
 
 ## How to add feed_usp to your OpenWrt build

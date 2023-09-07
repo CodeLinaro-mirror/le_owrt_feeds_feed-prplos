@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.3.2 - 2023-09-07(15:02:05 +0000)
+
+### New
+
+- [mod-usp-cli](https://gitlab.softathome.com/ext_prpl/components/mod-usp-cli): Component added
+
 ## Release v8.3.1 - 2023-09-07(14:02:40 +0000)
 
 ### New
