@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=libusp can be used for converting USP protobuf messages to am
 
 PKG_SOURCE:=libusp-v2.5.1.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/usp/libraries/libusp/-/archive/v2.5.1
-PKG_HASH:=920ca2f7a5c5d2d511576a8c5a33b8b1f17f01bc86f4bb90734890588a118415
+PKG_HASH:=3bf4e8c56860e6c1eac3043375e00b5c7ffbd52d7cb4706aa48b6bac2c60e082
 PKG_BUILD_DIR:=$(BUILD_DIR)/libusp-v2.5.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BBF BSD-2-Clause-Patent
