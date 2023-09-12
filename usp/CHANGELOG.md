@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.4.0 - 2023-09-12(17:28:13 +0000)
+
+### Security
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP][ACL] A remote USP controller is only allowed to access TR-181 dms
+
 ## Release v8.3.2 - 2023-09-07(15:02:05 +0000)
 
 ### New
