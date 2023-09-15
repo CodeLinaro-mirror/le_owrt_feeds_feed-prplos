@@ -1,11 +1,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-led
-PKG_VERSION:=v0.3.3
+PKG_VERSION:=v0.3.4
 SHORT_DESCRIPTION:=TR-181 compatible plugin for device LEDs management
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=v0.3.3
+PKG_SOURCE_VERSION:=v0.3.4
 PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/components/tr181-led.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
