@@ -1,5 +1,5 @@
 diff --git a/netio.c b/netio.c
-index 2ed9bb1..ae3f289 100644
+index 2ed9bb1..921adf7 100644
 --- a/netio.c
 +++ b/netio.c
 @@ -464,7 +464,7 @@ int get_sock_port(int sock) {
@@ -11,12 +11,24 @@ index 2ed9bb1..ae3f289 100644
  
  	struct addrinfo hints, *res = NULL, *res0 = NULL;
  	int err;
-@@ -552,6 +552,12 @@ int dropbear_listen(const char* address, const char* port,
+@@ -495,7 +495,11 @@ int dropbear_listen(const char* address, const char* port,
+ 		TRACE(("dropbear_listen: local loopback"))
+ 	} else {
+ 		if (address[0] == '\0') {
+-			TRACE(("dropbear_listen: all interfaces"))
++			if (interface) {
++				TRACE(("dropbear_listen: %s", interface))
++			} else {
++				TRACE(("dropbear_listen: all interfaces"))
++			}
+ 			address = NULL;
+ 		}
+ 		hints.ai_flags = AI_PASSIVE;
+@@ -552,6 +556,11 @@ int dropbear_listen(const char* address, const char* port,
  		linger.l_linger = 5;
  		setsockopt(sock, SOL_SOCKET, SO_LINGER, (void*)&linger, sizeof(linger));
  
 +		if(interface && setsockopt(sock, SOL_SOCKET, SO_BINDTODEVICE, interface, strlen(interface)) < 0) {
-+			// The passed option is a variable-length null-terminated interface name string with the maximum size of IFNAMSIZ. 
 +			dropbear_log(LOG_WARNING, "Couldn't set SO_BINDTODEVICE");
 +			TRACE(("Failed setsockopt with errno failure, %d %s", errno, strerror(errno)))
 +		}
@@ -38,10 +50,10 @@ index 605512b..3fec884 100644
  struct dropbear_progress_connection;
  
 diff --git a/runopts.h b/runopts.h
-index 8c44b52..1165c05 100644
+index 50c51df..ade45b0 100644
 --- a/runopts.h
 +++ b/runopts.h
-@@ -125,6 +125,7 @@ typedef struct svr_runopts {
+@@ -126,6 +126,7 @@ typedef struct svr_runopts {
  	char * pidfile;
  
  	char * forced_command;
@@ -50,10 +62,10 @@ index 8c44b52..1165c05 100644
  #if DROPBEAR_PLUGIN 
          char *pubkey_plugin;
 diff --git a/svr-main.c b/svr-main.c
-index a9f8a57..debbd64 100644
+index be69e39..fbe9321 100644
 --- a/svr-main.c
 +++ b/svr-main.c
-@@ -483,7 +483,7 @@ static size_t listensockets(int *socks, size_t sockcount, int *maxfd) {
+@@ -484,7 +484,7 @@ static size_t listensockets(int *socks, size_t sockcount, int *maxfd) {
  
  		nsock = dropbear_listen(svr_opts.addresses[i], svr_opts.ports[i], &socks[sockpos], 
  				sockcount - sockpos,
@@ -63,7 +75,7 @@ index a9f8a57..debbd64 100644
  		if (nsock < 0) {
  			dropbear_log(LOG_WARNING, "Failed listening on '%s': %s", 
 diff --git a/svr-runopts.c b/svr-runopts.c
-index 9f40089..0c04544 100644
+index c15f23b..3ba7c50 100644
 --- a/svr-runopts.c
 +++ b/svr-runopts.c
 @@ -97,6 +97,8 @@ static void printhelp(const char * progname) {
@@ -75,7 +87,7 @@ index 9f40089..0c04544 100644
  #if INETD_MODE
  					"-i		Start for inetd\n"
  #endif
-@@ -259,6 +261,9 @@ void svr_getopts(int argc, char ** argv) {
+@@ -261,6 +263,9 @@ void svr_getopts(int argc, char ** argv) {
  				case 'P':
  					next = &svr_opts.pidfile;
  					break;
@@ -85,7 +97,7 @@ index 9f40089..0c04544 100644
  #if DO_MOTD
  				/* motd is displayed by default, -m turns it off */
  				case 'm':
-@@ -426,6 +431,10 @@ void svr_getopts(int argc, char ** argv) {
+@@ -428,6 +433,10 @@ void svr_getopts(int argc, char ** argv) {
  		dropbear_log(LOG_INFO, "Forced command set to '%s'", svr_opts.forced_command);
  	}
  
@@ -93,9 +105,9 @@ index 9f40089..0c04544 100644
 +		dropbear_log(LOG_INFO, "Binding to interface '%s'", svr_opts.interface);
 +	}
 +
- #if INETD_MODE
- 	if (svr_opts.inetdmode && (
- 		opts.usingsyslog == 0
+ 	if (reexec_fd_arg) {
+ 		if (m_str_to_uint(reexec_fd_arg, &svr_opts.reexec_childpipe) == DROPBEAR_FAILURE
+ 			|| svr_opts.reexec_childpipe < 0) {
 diff --git a/svr-tcpfwd.c b/svr-tcpfwd.c
 index 4aa3152..1fc1881 100644
 --- a/svr-tcpfwd.c
