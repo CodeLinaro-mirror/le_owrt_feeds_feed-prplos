@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-neighbordiscovery
-PKG_VERSION:=v0.7.2
+PKG_VERSION:=v0.7.3
 SHORT_DESCRIPTION:=TR-181 compatible neighbordiscovery plugin
 
-PKG_SOURCE:=tr181-neighbordiscovery-v0.7.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-neighbordiscovery/-/archive/v0.7.2
-PKG_HASH:=43213cc76389b9aaf75216b2a91423a951edbaad6dcf92573ab1fc1d018d66db
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-neighbordiscovery-v0.7.2
+PKG_SOURCE:=tr181-neighbordiscovery-v0.7.3.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-neighbordiscovery/-/archive/v0.7.3
+PKG_HASH:=44f26049f0d1aa2f8393ac7503f45a9f309ab0fe49c5424fea78dd567b0a87c9
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-neighbordiscovery-v0.7.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
