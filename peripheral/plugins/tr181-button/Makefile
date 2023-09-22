@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Implementation of the Button HL API to expose the buttons and
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=v0.0.2
-PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/components/tr181-button.git
+PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/tr181-button.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
@@ -29,7 +29,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=amx
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://$(SAH_GIT)/$(SAH_GIT_GROUP)/components/tr181-button
+  URL:=https://$(SAH_GIT)/$(SAH_GIT_GROUP)/tr181-button
   DEPENDS += +libamxc
   DEPENDS += +libamxp
   DEPENDS += +libamxd
