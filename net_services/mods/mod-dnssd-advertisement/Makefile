@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Ambiorix module to configure the tr181-dnssd advertise module
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=v0.3.4
-PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/components/mod-dnssd-advertisement.git
+PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/mod-dnssd-advertisement.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
@@ -22,7 +22,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=amx
   SUBMENU:=Modules
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://$(SAH_GIT)/$(SAH_GIT_GROUP)/components/mod-dnssd-advertisement
+  URL:=https://$(SAH_GIT)/$(SAH_GIT_GROUP)/mod-dnssd-advertisement
   DEPENDS += +libamxc
   DEPENDS += +libamxd
   DEPENDS += +libamxp

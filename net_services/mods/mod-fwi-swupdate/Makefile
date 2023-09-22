@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=FirmwareImage upgrade for wrt
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=v0.2.3
-PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/components/mod-fwi-swupdate.git
+PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/mod-fwi-swupdate.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
@@ -23,7 +23,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=amx
   SUBMENU:=Modules
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://$(SAH_GIT)/$(SAH_GIT_GROUP)/components/mod-fwi-swupdate
+  URL:=https://$(SAH_GIT)/$(SAH_GIT_GROUP)/mod-fwi-swupdate
   DEPENDS += +libamxc
   DEPENDS += +libamxp
   DEPENDS += +libamxd
