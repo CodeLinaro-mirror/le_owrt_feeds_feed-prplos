@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libuspprotobuf
-PKG_VERSION:=v0.4.0
+PKG_VERSION:=v0.5.1
 SHORT_DESCRIPTION:=This library generates C code from 
 
-PKG_SOURCE:=libprotobuf-v0.4.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/usp/libraries/libprotobuf/-/archive/v0.4.0
-PKG_HASH:=084897e09f5c54c8dc5e2480f8206b0842b771ad928c6395655794f0e5cc5841
-PKG_BUILD_DIR:=$(BUILD_DIR)/libprotobuf-v0.4.0
+PKG_SOURCE:=libprotobuf-v0.5.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/usp/libraries/libprotobuf/-/archive/v0.5.1
+PKG_HASH:=95a86cba75864ff4d543afdddf28a6d19f7e1c421a84b6160b0f34c7cd5b25f9
+PKG_BUILD_DIR:=$(BUILD_DIR)/libprotobuf-v0.5.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BBF
 PKG_LICENSE_FILES:=LICENSE

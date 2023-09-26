@@ -8,6 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.5.0 - 2023-09-26(15:27:05 +0000)
+
+### New
+
+- [libusp](https://gitlab.com/soft.at.home/usp/libraries/libusp): [USP] Use latest protobuf schema
+- [libuspprotobuf](https://gitlab.com/soft.at.home/usp/libraries/libprotobuf): [USP] Use latest protobuf schema
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): Update USP error codes for registration
+
+### Fixes
+
+- [libusp](https://gitlab.com/soft.at.home/usp/libraries/libusp): [USP] deregistered_path can be repeated
+- [libuspprotobuf](https://gitlab.com/soft.at.home/usp/libraries/libprotobuf): [USP] deregistered_path can be repeated
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): Fix license headers in files
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] onboard request not automatically sent by IB4 when MTP is re-enabled
+
+### Other
+
+- [libusp](https://gitlab.com/soft.at.home/usp/libraries/libusp): Fix license headers in files
+
 ## Release v8.4.3 - 2023-09-22(09:16:22 +0000)
 
 ## Release v8.4.2 - 2023-09-20(11:35:07 +0000)
