@@ -9,13 +9,13 @@ Feed_usp includes the following components:
 ### Applications
 
 - [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent) - LocalAgent data model as specified by TR-181
-- [tr181-uspservices](https://gitlab.softathome.com/ext_prpl/components/tr181-uspservices) - TR-181 USPServices application
+- [tr181-uspservices](https://gitlab.com/soft.at.home/usp/applications/tr181-uspservices) - TR-181 USPServices application
 - [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint) - Mini USP agent or controller
 - [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent) - USP agent as specified by TR-369
 
 ### Plugins
 
-- [tr181-uds](https://gitlab.softathome.com/ext_prpl/components/tr181-uds) - TR-181 UnixDomainSockets plugin
+- [tr181-uds](https://gitlab.com/prpl-foundation/components/core/plugins/tr181-uds) - TR-181 UnixDomainSockets plugin
 
 ### Libraries
 

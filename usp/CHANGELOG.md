@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.6.0 - 2023-09-28(15:45:03 +0000)
+
+### Other
+
+- [tr181-uds](https://gitlab.com/prpl-foundation/components/core/plugins/tr181-uds): Opensource component
+- [tr181-uspservices](https://gitlab.com/soft.at.home/usp/applications/tr181-uspservices): Opensource component
+
 ## Release v8.5.0 - 2023-09-26(15:27:05 +0000)
 
 ### New
