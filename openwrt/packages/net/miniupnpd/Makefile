@@ -10,10 +10,10 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=miniupnpd
 PKG_RELEASE:=1
 
-PKG_VERSION:=gen_miniupnpd_2_3_3_v0.1.1
+PKG_VERSION:=gen_miniupnpd_2_3_3_v0.3.1
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/forks/miniupnpd/-/archive/$(PKG_VERSION)
-PKG_HASH:=7707e2500f8c2044442229e0319c61fe5125863df090eb0a6795035aa63e9216
+PKG_HASH:=5f5d7fb7ad226a25d6857257c79ce04411d3889ace2c5ed747f1b530560df3b7
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 UNPACK_CMD=$(HOST_TAR) -xf "$(DL_DIR)/$(PKG_SOURCE)" -C $(PKG_BUILD_DIR) --strip-components=2 $(PKG_NAME)-$(PKG_VERSION)/miniupnpd
