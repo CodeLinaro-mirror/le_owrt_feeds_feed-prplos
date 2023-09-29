@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=time-manager
-PKG_VERSION:=v2.2.2
+PKG_VERSION:=v2.3.0
 SHORT_DESCRIPTION:=TR181 Time plugin
 
-PKG_SOURCE:=tr181-time-v2.2.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-time/-/archive/v2.2.2
-PKG_HASH:=6cba83ed09834809b19fc10d5b1fed8ec5e03aa9da3ead3b498f9817dd43ffe1
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-time-v2.2.2
+PKG_SOURCE:=tr181-time-v2.3.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-time/-/archive/v2.3.0
+PKG_HASH:=9484159e75054b16e2b9a20822f27c4ae0445c59c641928fed50a0b0de28867d
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-time-v2.3.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
