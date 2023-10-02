@@ -30,7 +30,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxp
   DEPENDS += +libamxm
   DEPENDS += +libsahtrace
-  DEPENDS += +unbound-daemon
+  DEPENDS += +unbound-daemon-prpl
   DEPENDS += +libfstrm
   DEPENDS += +libprotobuf-c
   MENU:=1

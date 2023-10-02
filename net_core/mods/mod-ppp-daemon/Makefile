@@ -31,7 +31,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +amxrt
   DEPENDS += +mod-netmodel
   DEPENDS += +libnetmodel
-  DEPENDS += +ppp
+  DEPENDS += +ppp-prpl
   MENU:=1
 endef
 
