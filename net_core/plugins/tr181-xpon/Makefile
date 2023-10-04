@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-xpon
-PKG_VERSION:=v1.3.4
+PKG_VERSION:=v1.3.6
 SHORT_DESCRIPTION:=TR-181 XPON manager
 
-PKG_SOURCE:=tr181-xpon-v1.3.4.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-xpon/-/archive/v1.3.4
-PKG_HASH:=d764b2204e6cfa12bc43ab5230380ffcba843e10b6b5d8811931bd8f412fedc9
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-xpon-v1.3.4
+PKG_SOURCE:=tr181-xpon-v1.3.6.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-xpon/-/archive/v1.3.6
+PKG_HASH:=9c883aabb4a484eee71d8a2568b3b13f2459aa3cc46d83745cc287dc3958e406
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-xpon-v1.3.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -52,9 +52,6 @@ endef
 
 define Build/Install
 	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_TR181_XPON_ORDER=$(CONFIG_SAH_AMX_TR181_XPON_ORDER) CONFIG_SAH_AMX_TR181_XPON_MAX_ONUS=$(CONFIG_SAH_AMX_TR181_XPON_MAX_ONUS) CONFIG_SAH_AMX_TR181_XPON_USE_NETDEV_COUNTERS=$(CONFIG_SAH_AMX_TR181_XPON_USE_NETDEV_COUNTERS))
-	find $(PKG_INSTALL_DIR) -name *.a -exec rm {} +;
-	find $(PKG_INSTALL_DIR) -name *.h -exec rm {} +;
-	find $(PKG_INSTALL_DIR) -name *.pc -exec rm {} +;
 
 	$(call SAHInit/Install)
 endef
@@ -68,6 +65,9 @@ define Package/$(PKG_NAME)/install
 	if [ -d ./files ]; then \
 		$(CP) ./files/* $(1)/; \
 	fi
+	find $(1) -name *.a -exec rm {} +;
+	find $(1) -name *.h -exec rm {} +;
+	find $(1) -name *.pc -exec rm {} +;
 endef
 
 define Package/$(PKG_NAME)/config
