@@ -1,14 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-led
-PKG_VERSION:=v0.3.4
+PKG_VERSION:=v0.3.5
 SHORT_DESCRIPTION:=TR-181 compatible plugin for device LEDs management
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=v0.3.4
-PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/tr181-led.git
-PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=tr181-led-v0.3.5.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-led/-/archive/v0.3.5
+PKG_HASH:=10487606885251fd23794bcf26cdbdb32ce2750554ab1ca90c756bd08b616fce
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-led-v0.3.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -29,7 +28,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=amx
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://$(SAH_GIT)/$(SAH_GIT_GROUP)/tr181-led
+  URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-led
   DEPENDS += +libamxc
   DEPENDS += +libamxp
   DEPENDS += +libamxd
@@ -50,9 +49,6 @@ endef
 
 define Build/Install
 	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_TR181_LED_ORDER=$(CONFIG_SAH_AMX_TR181_LED_ORDER))
-	find $(PKG_INSTALL_DIR) -name *.a -exec rm {} +;
-	find $(PKG_INSTALL_DIR) -name *.h -exec rm {} +;
-	find $(PKG_INSTALL_DIR) -name *.pc -exec rm {} +;
 
 	$(call SAHInit/Install)
 endef
@@ -66,6 +62,9 @@ define Package/$(PKG_NAME)/install
 	if [ -d ./files ]; then \
 		$(CP) ./files/* $(1)/; \
 	fi
+	find $(1) -name *.a -exec rm {} +;
+	find $(1) -name *.h -exec rm {} +;
+	find $(1) -name *.pc -exec rm {} +;
 endef
 
 define Package/$(PKG_NAME)/config
