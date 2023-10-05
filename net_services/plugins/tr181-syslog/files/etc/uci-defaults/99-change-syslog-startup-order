@@ -1,0 +1,5 @@
+#!/bin/sh
+
+sed -i 's|START=.*|START=50|' /etc/init.d/syslog-ng
+
+exit 0
