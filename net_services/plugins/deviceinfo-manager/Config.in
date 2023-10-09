@@ -39,6 +39,10 @@ config SAH_AMX_TR181_DEVICEINFO_SOFTWARE_VERSION
     string "Configure the software version"
     default "XX"
 
+config SAH_AMX_TR181_DEVICEINFO_MFG_HELPER_SCRIPT
+    bool "Add rip/mfg helper script"
+    default n
+
 endmenu
 
 endif
