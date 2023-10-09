@@ -1,6 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-dhcpv6
+PKG_VERSION:=v1.3.0
 SHORT_DESCRIPTION:=Network Model DHCPv6client client
 
 PKG_SOURCE:=netmodel-dhcpv6-v1.3.0.tar.gz

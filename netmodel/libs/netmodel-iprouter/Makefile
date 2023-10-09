@@ -1,6 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-iprouter
+PKG_VERSION:=v0.3.0
 SHORT_DESCRIPTION:=Network Model Router Advertisement client
 
 PKG_SOURCE:=netmodel-iprouter-v0.3.0.tar.gz
