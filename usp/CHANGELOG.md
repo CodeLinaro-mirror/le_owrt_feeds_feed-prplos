@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.6.1 - 2023-10-15(09:06:51 +0000)
+
+### Changes
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] LocalAgent EndpointID should be reboot persistent
+
+### Other
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Fix license headers in files
+
 ## Release v8.6.0 - 2023-09-28(15:45:03 +0000)
 
 ### Other
