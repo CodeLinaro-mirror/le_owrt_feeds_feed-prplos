@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=TR181 Time plugin
 
 PKG_SOURCE:=tr181-time-v2.4.1.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-time/-/archive/v2.4.1
-PKG_HASH:=skip
+PKG_HASH:=dc31c158dd5aae4bd1ab51e3a70fb64f2886afa70dd23d5b764cf2998750abdb
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-time-v2.4.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
