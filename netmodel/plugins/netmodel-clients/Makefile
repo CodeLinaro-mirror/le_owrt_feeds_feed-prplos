@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Network Model clients plugin
 
 PKG_SOURCE:=netmodel-clients-v0.2.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/applications/netmodel-clients/-/archive/v0.2.0
-PKG_HASH:=skip
+PKG_HASH:=fa65cdbac5c713fff57565445d57406badcc3acb9834bdd625fdcf2465172faa
 PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-clients-v0.2.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
