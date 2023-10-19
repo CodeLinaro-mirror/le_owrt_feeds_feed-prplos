@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Network Model IP client
 
 PKG_SOURCE:=netmodel-ip-v1.4.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip/-/archive/v1.4.0
-PKG_HASH:=skip
+PKG_HASH:=40c8a0238c6b0d65858be89d4cbfb9cd3ee3d6f412c745410000fdc1e8aaaff0
 PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-ip-v1.4.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
