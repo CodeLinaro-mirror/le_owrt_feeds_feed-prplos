@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-vlan-ioctl
-PKG_VERSION:=v0.1.5
+PKG_VERSION:=v0.1.6
 SHORT_DESCRIPTION:=SoC module to help handling vlans
 
-PKG_SOURCE:=mod-vlan-ioctl-v0.1.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-vlan-ioctl/-/archive/v0.1.5
-PKG_HASH:=1b62d25518ac68b791200537da0a8de85146452489a23e43e88c7d2b39cce5a3
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-vlan-ioctl-v0.1.5
+PKG_SOURCE:=mod-vlan-ioctl-v0.1.6.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-vlan-ioctl/-/archive/v0.1.6
+PKG_HASH:=976e81b96ede609b9e485881b98f1ec8db6e2e15ed7e2735b28a641dfe22ae6f
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-vlan-ioctl-v0.1.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
