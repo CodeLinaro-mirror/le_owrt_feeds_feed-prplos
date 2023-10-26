@@ -39,10 +39,6 @@ config SAH_AMX_TR181_DEVICEINFO_SOFTWARE_VERSION
     string "Configure the software version"
     default "XX"
 
-config SAH_AMX_TR181_DEVICEINFO_MFG_HELPER_SCRIPT
-    bool "Add rip/mfg helper script"
-    default n
-
 config SAH_AMX_TR181_DEVICEINFO_RUN_AS_USER
     string "User will be used for the TR181_DEVICEINFO plugin"
     default "tr181_app"
