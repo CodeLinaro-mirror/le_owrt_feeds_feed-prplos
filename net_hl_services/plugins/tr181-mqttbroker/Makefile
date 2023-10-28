@@ -2,16 +2,16 @@ include $(TOPDIR)/rules.mk
 -include $(STAGING_DIR)/components.config
 
 PKG_NAME:=tr181-mqttbroker
-PKG_VERSION:=v0.0.8
+PKG_VERSION:=v0.0.9
 SHORT_DESCRIPTION:=TR-181 compatible MQTT broker
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=v0.0.8
+PKG_SOURCE_VERSION:=v0.0.9
 PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/tr181-mqttbroker.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
-PKG_LICENSE:=SAH
+PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
 
 COMPONENT:=tr181-mqttbroker
