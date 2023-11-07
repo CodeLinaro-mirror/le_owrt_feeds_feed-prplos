@@ -10,10 +10,10 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=unbound-prpl
 PKG_RELEASE:=$(AUTORELEASE)
 
-PKG_VERSION:=v0.2.1
+PKG_VERSION:=v0.2.2
 PKG_SOURCE:=unbound-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/forks/unbound/-/archive/$(PKG_VERSION)
-PKG_HASH:=11894862d19114eea0b96571485c73b04fe0eb2118fc3caafdccfea66f09587f
+PKG_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/unbound-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Eric Luehrsen <ericluehrsen@gmail.com>
