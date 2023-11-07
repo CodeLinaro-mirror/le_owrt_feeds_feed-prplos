@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=deviceinfo-manager
-PKG_VERSION:=v2.19.0
+PKG_VERSION:=v2.20.0
 SHORT_DESCRIPTION:=TR-181 compatible DeviceInfo plugin
 
-PKG_SOURCE:=tr181-deviceinfo-v2.19.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-deviceinfo/-/archive/v2.19.0
-PKG_HASH:=8ea69a5262fc041999d530676b81764a7b0c977432c668c6ed3e54f7fde9f5b3
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-deviceinfo-v2.19.0
+PKG_SOURCE:=tr181-deviceinfo-v2.20.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-deviceinfo/-/archive/v2.20.0
+PKG_HASH:=1e97839420a81d7cf54fe993210107ec57c8403de11cf1300cbcff370cf93c60
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-deviceinfo-v2.20.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -36,6 +36,7 @@ define Package/$(PKG_NAME)
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-deviceinfo
   DEPENDS += +libamxc
+  DEPENDS += +libamxj
   DEPENDS += +libamxp
   DEPENDS += +libamxd
   DEPENDS += +libamxb
