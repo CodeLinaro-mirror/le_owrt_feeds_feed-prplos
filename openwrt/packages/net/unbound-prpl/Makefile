@@ -13,7 +13,7 @@ PKG_RELEASE:=$(AUTORELEASE)
 PKG_VERSION:=v0.2.2
 PKG_SOURCE:=unbound-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/forks/unbound/-/archive/$(PKG_VERSION)
-PKG_HASH:=skip
+PKG_HASH:=689848982bcac6a2a09929b957d11ca983a241d58d5f1d844cc009fa653f6150
 PKG_BUILD_DIR:=$(BUILD_DIR)/unbound-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Eric Luehrsen <ericluehrsen@gmail.com>
