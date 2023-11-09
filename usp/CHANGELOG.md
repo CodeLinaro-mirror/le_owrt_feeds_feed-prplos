@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.6.3 - 2023-11-09(09:02:22 +0000)
+
+### Fixes
+
+- [mod-amxb-usp](https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp): Fix license headers in files
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): LocalAgent.MTP.{i}.Status not updated properly
+
+### Changes
+
+- [mod-amxb-usp](https://gitlab.com/soft.at.home/usp/modules/amxb_backends/amxb_usp): [USP] All plugins on host connect to the USP agent socket
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Move USP backend location
+
+### Other
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Refactor libamxo - libamxp: move fd and connection management out of libamxo
+
 ## Release v8.6.2 - 2023-10-28(20:34:11 +0000)
 
 ## Release v8.6.1 - 2023-10-15(09:06:51 +0000)
