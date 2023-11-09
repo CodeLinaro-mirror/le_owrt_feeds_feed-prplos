@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-led
-PKG_VERSION:=v0.4.0
+PKG_VERSION:=v0.4.1
 SHORT_DESCRIPTION:=TR-181 compatible plugin for device LEDs management
 
-PKG_SOURCE:=tr181-led-v0.4.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-led/-/archive/v0.4.0
-PKG_HASH:=ade1a12e0120005562917abe7ad16d66b27516bda35569307d277494f005f84a
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-led-v0.4.0
+PKG_SOURCE:=tr181-led-v0.4.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-led/-/archive/v0.4.1
+PKG_HASH:=970637ba2d884c7491b96623dc8cf68eea1106ca712a7ffb68938c871a15e2d6
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-led-v0.4.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -18,8 +18,8 @@ PKG_RELEASE:=1
 
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_LED_ORDER)$(COMPONENT)
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_LED_ORDER)$(COMPONENT)
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT).json ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_LED_ORDER)$(COMPONENT).json
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT).json ${PKG_INSTALL_DIR}/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_LED_ORDER)$(COMPONENT).json
 endef
 
 include $(INCLUDE_DIR)/package.mk
