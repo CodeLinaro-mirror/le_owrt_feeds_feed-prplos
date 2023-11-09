@@ -55,10 +55,4 @@ define Package/opennds/install
 	$(CP) $(PKG_BUILD_DIR)/forward_authentication_service/libs/download_resources.sh $(1)/usr/lib/opennds/
 endef
 
-define Package/opennds/postrm
-#!/bin/sh
-uci delete firewall.opennds
-uci commit firewall
-endef
-
 $(eval $(call BuildPackage,opennds))
