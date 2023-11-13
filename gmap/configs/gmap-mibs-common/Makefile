@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-mibs-common
-PKG_VERSION:=v0.13.0
+PKG_VERSION:=v0.14.0
 SHORT_DESCRIPTION:=Generic mib files for the gmap service
 
-PKG_SOURCE:=gmap-mibs-common-v0.13.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/mibs/gmap-mibs-common/-/archive/v0.13.0
-PKG_HASH:=bd5250ebe7f531857f9e2b27d727e01f2641e480346d7947d01f6c7731aa45c8
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mibs-common-v0.13.0
+PKG_SOURCE:=gmap-mibs-common-v0.14.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/mibs/gmap-mibs-common/-/archive/v0.14.0
+PKG_HASH:=22f390e457ce5067eaf0f604a630647ea58b7285fee1a58ebe3b2a9d61a86ab1
+PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mibs-common-v0.14.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -31,6 +31,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxo
   DEPENDS += +libgmap-client
   DEPENDS += +libgmap-ext
+  DEPENDS += +mod-dmext
   MENU:=1
 endef
 
