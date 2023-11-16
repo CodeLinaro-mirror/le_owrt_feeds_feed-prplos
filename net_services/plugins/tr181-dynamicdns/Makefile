@@ -1,6 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dynamicdns
+PKG_VERSION:=v1.2.1
 SHORT_DESCRIPTION:=DynamicDNS plugin
 
 PKG_SOURCE:=tr181-dynamicdns-v1.2.1.tar.gz
