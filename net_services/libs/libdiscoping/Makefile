@@ -1,6 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libdiscoping
+PKG_VERSION:=v0.10.0
 SHORT_DESCRIPTION:=Library discovering when IPs appear and disappear
 
 PKG_SOURCE:=libdiscoping-v0.10.0.tar.gz
