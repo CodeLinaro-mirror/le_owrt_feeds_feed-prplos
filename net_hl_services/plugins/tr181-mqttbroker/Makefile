@@ -28,7 +28,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=amx
-  SUBMENU:=Plugins
+  SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://$(SAH_GIT)/$(SAH_GIT_GROUP)/tr181-mqttbroker
   DEPENDS += +libamxc
