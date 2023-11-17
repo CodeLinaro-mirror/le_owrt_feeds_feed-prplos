@@ -27,7 +27,8 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/dnsmasq-prpl
   SECTION:=net
-  CATEGORY:=Base system
+  CATEGORY:=prpl Foundation
+  SUBMENU:=Upstream Backports/Forks
   TITLE:=DNS and DHCP server
   URL:=http://www.thekelleys.org.uk/dnsmasq/
   DEPENDS:=+libubus
