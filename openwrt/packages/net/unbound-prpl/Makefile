@@ -38,8 +38,8 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/unbound-prpl/Default
   SECTION:=net
-  CATEGORY:=Network
-  SUBMENU:=IP Addresses and Names
+  CATEGORY:=prpl Foundation
+  SUBMENU:=Upstream Backports/Forks
   USERID:=unbound:unbound
   TITLE:=Recursive DNS Server
   URL:=https://nlnetlabs.nl/projects/unbound/about
