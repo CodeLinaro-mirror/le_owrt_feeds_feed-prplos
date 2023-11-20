@@ -64,8 +64,8 @@ endef
 define Package/libunbound-prpl
   $(call Package/unbound-prpl/Default)
   SECTION:=libs
-  CATEGORY:=Libraries
-  SUBMENU:=Networking
+  CATEGORY:=prpl Foundation
+  SUBMENU:=Upstream Backports/Forks
   TITLE+= (library)
   CONFLICTS:=libunbound
   DEPENDS+=+PACKAGE_libunbound_dnscrypt:libsodium \
