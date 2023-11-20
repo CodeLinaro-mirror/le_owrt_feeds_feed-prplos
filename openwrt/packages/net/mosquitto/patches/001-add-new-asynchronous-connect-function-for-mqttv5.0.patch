@@ -1,7 +1,7 @@
 From babdade1174edb9ac06eb97a6915d6df22d667b2 Mon Sep 17 00:00:00 2001
 From: Johan JACOBS <johan.jacobs_ext@softathome.com>
 Date: Thu, 16 Mar 2023 14:09:43 +0100
-Subject: [PATCH] Add new asynchronous connect function for
+Subject: [PATCH] Issue: HOP-3005 Add new asynchronous connect function for
  mqtt v5.0
 
 ---
