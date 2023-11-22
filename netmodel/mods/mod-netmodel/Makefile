@@ -19,7 +19,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=amx
-  SUBMENU:=Modules
+  SUBMENU:=Netmodel
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/netmodel/modules/mod-netmodel
   DEPENDS += +libamxb
