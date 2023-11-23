@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ip-manager
-PKG_VERSION:=v1.41.3
+PKG_VERSION:=v1.41.4
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-ip-v1.41.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ip/-/archive/v1.41.3
-PKG_HASH:=fb22d3e913d7e1cc54b276e00dd849b551795ac0f896fea08e1bbb80ad901b42
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ip-v1.41.3
+PKG_SOURCE:=tr181-ip-v1.41.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ip/-/archive/v1.41.4
+PKG_HASH:=dc42dc7838c9a1cbb6b9bffe1e57b0b680a0243c797f19a8d5141436c56c17ba
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ip-v1.41.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -34,7 +34,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ip
