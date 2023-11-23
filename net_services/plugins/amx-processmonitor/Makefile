@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=amx-processmonitor
-PKG_VERSION:=v0.1.1
+PKG_VERSION:=v0.1.2
 SHORT_DESCRIPTION:=monitor processes
 
-PKG_SOURCE:=amx-processmonitor-v0.1.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/amx-processmonitor/-/archive/v0.1.1
-PKG_HASH:=9f36a0eb147ecfbca289ec276ec930f3c3f041f528794edb285b6c1bd68aa20e
-PKG_BUILD_DIR:=$(BUILD_DIR)/amx-processmonitor-v0.1.1
+PKG_SOURCE:=amx-processmonitor-v0.1.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/amx-processmonitor/-/archive/v0.1.2
+PKG_HASH:=6159f9a7b00c65a147eae335c758a290f2f8aad1eaab91557badb74dd99fde0a
+PKG_BUILD_DIR:=$(BUILD_DIR)/amx-processmonitor-v0.1.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -25,7 +25,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/amx-processmonitor
