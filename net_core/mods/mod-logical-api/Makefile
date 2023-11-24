@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-logical-api
-PKG_VERSION:=v0.6.2
+PKG_VERSION:=v0.6.3
 SHORT_DESCRIPTION:=High Level API for configuring interface hierarchies
 
-PKG_SOURCE:=mod-logical-api-v0.6.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-logical-api/-/archive/v0.6.2
-PKG_HASH:=eb5aaa22ce238148b6fbf65158b0393dc9053c77a8062532d33db13188e5c43e
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-logical-api-v0.6.2
+PKG_SOURCE:=mod-logical-api-v0.6.3.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-logical-api/-/archive/v0.6.3
+PKG_HASH:=e05bc095e3ac1f168a303ae1dc124af4bb8ee1e76de47defa1232ef2c2a583d1
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-logical-api-v0.6.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -18,7 +18,7 @@ PKG_RELEASE:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=Modules
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-logical-api
