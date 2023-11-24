@@ -19,7 +19,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=gmap
-  SUBMENU:=Libraries
+  SUBMENU:=gMap
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-client
   DEPENDS += +libamxc
