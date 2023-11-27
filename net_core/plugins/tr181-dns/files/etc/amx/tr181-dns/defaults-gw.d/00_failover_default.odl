@@ -1,7 +1,5 @@
 %populate {
     object DNS {
-        parameter DNSController = "mod-dns-unbound";
-
         object Relay {
             object Forwarding {
                 instance add("recovery-1") {
