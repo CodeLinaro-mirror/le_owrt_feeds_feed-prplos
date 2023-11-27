@@ -1,8 +1,0 @@
-%populate {
-    object 'Bridging.Bridge.lan' {
-        parameter 'BridgeController' = "mod-bridging-ioctl";
-    }
-    object 'Bridging.Bridge.guest' {
-        parameter 'BridgeController' = "mod-bridging-ioctl";
-    }
-}
