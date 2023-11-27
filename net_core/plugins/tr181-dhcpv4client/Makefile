@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dhcpv4client
-PKG_VERSION:=v1.24.1
+PKG_VERSION:=v1.24.2
 SHORT_DESCRIPTION:=TR-181 compatible DHCPv4 client
 
-PKG_SOURCE:=tr181-dhcpv4client-v1.24.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4client/-/archive/v1.24.1
-PKG_HASH:=1e23ddbcb03b165ef86a2202ff795c292f0462420169d7bd77aab8ecbdb22aeb
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4client-v1.24.1
+PKG_SOURCE:=tr181-dhcpv4client-v1.24.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4client/-/archive/v1.24.2
+PKG_HASH:=16eb36ecd289e29df6731771325df661aaa02eb731d27385aafbb2573dde11fd
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4client-v1.24.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -34,7 +34,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4client
