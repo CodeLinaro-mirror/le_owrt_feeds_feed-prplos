@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-mqtt
-PKG_VERSION:=v3.2.1
+PKG_VERSION:=v3.2.2
 SHORT_DESCRIPTION:=TR-181 compatible MQTT client
 
-PKG_SOURCE:=tr181-mqtt-v3.2.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/plugins/tr181-mqtt/-/archive/v3.2.1
-PKG_HASH:=fca790ab55729fe0ffa2ec262eec74fe05aa5158e63ce5e1c6a2c854a11ce59a
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqtt-v3.2.1
+PKG_SOURCE:=tr181-mqtt-v3.2.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mqtt/-/archive/v3.2.2
+PKG_HASH:=a32d4d3b6a67a211c145c61823ca599fcfeeed49853fe331427e289403f8e0d7
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqtt-v3.2.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -25,10 +25,10 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/soft.at.home/plugins/tr181-mqtt
+  URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mqtt
   DEPENDS += +libamxc
   DEPENDS += +libamxj
   DEPENDS += +libamxp
