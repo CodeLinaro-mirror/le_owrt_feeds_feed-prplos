@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-device
-PKG_VERSION:=v0.17.0
+PKG_VERSION:=v0.17.1
 SHORT_DESCRIPTION:=TR-181 compatible Device plugin
 
-PKG_SOURCE:=tr181-device-v0.17.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-device/-/archive/v0.17.0
-PKG_HASH:=47f833f35d588d6c11597cfc0ae3b707a2036c33b18d26b79161e544f71b1459
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-device-v0.17.0
+PKG_SOURCE:=tr181-device-v0.17.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-device/-/archive/v0.17.1
+PKG_HASH:=32d3760c2ccc36913389871314bf7a390a030b1d8557b3d3add4dd21f9147c0a
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-device-v0.17.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -25,7 +25,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-device
