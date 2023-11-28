@@ -1,15 +1,13 @@
 include $(TOPDIR)/rules.mk
--include $(STAGING_DIR)/components.config
 
 PKG_NAME:=tr181-syslog
-PKG_VERSION:=v0.1.3
+PKG_VERSION:=v0.1.5
 SHORT_DESCRIPTION:=TR-181 compatible syslog
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=v0.1.3
-PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/tr181-syslog.git
-PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=tr181-syslog-v0.1.5.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-syslog/-/archive/v0.1.5
+PKG_HASH:=f8e031a56b384eca1b4ac658d89c60c9dd9b3adabe0e1d703bf95af8af11380d
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-syslog-v0.1.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -27,10 +25,10 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://$(SAH_GIT)/$(SAH_GIT_GROUP)/tr181-syslog
+  URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-syslog
   DEPENDS += +libamxc
   DEPENDS += +libamxp
   DEPENDS += +libamxd
