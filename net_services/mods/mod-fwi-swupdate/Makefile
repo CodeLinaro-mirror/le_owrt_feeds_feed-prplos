@@ -1,17 +1,15 @@
 include $(TOPDIR)/rules.mk
--include $(STAGING_DIR)/components.config
 
 PKG_NAME:=mod-fwi-swupdate
-PKG_VERSION:=v0.3.4
+PKG_VERSION:=v0.4.1
 SHORT_DESCRIPTION:=FirmwareImage upgrade for wrt
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=v0.3.4
-PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/mod-fwi-swupdate.git
-PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=mod-fwi-swupdate-v0.4.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-fwi-swupdate/-/archive/v0.4.1
+PKG_HASH:=d585c7c291890c09aa5be29534cc67fe6bd4cd2c32f3941aef0cadf2df36b1ef
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-fwi-swupdate-v0.4.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
-PKG_LICENSE:=SAH
+PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
 
 
@@ -21,10 +19,10 @@ PKG_BUILD_DEPENDS += libsahtrace
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=Modules
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://$(SAH_GIT)/$(SAH_GIT_GROUP)/mod-fwi-swupdate
+  URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-fwi-swupdate
   DEPENDS += +libamxc
   DEPENDS += +libamxp
   DEPENDS += +libamxd
