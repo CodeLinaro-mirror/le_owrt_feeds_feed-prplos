@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-usermanagement
-PKG_VERSION:=v0.14.1
+PKG_VERSION:=v0.14.3
 SHORT_DESCRIPTION:=tr181 user management plugin
 
-PKG_SOURCE:=tr181-usermanagement-v0.14.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usermanagement/-/archive/v0.14.1
-PKG_HASH:=b455cea7a4e5e314a21a506ff5d82f940f8d2d011987f09d60d54701dbf9a9b0
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-usermanagement-v0.14.1
+PKG_SOURCE:=tr181-usermanagement-v0.14.3.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usermanagement/-/archive/v0.14.3
+PKG_HASH:=48fb0db11e6f560820cfb44d24573519487f1565e306b03a7120b49f8fcee697
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-usermanagement-v0.14.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -25,7 +25,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usermanagement
