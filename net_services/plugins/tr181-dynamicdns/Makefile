@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dynamicdns
-PKG_VERSION:=v1.2.1
+PKG_VERSION:=v1.3.0
 SHORT_DESCRIPTION:=DynamicDNS plugin
 
-PKG_SOURCE:=tr181-dynamicdns-v1.2.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dynamicdns/-/archive/v1.2.1
-PKG_HASH:=293454d6b0fc9414c080609e0b4b9b40aff89539f4df6377d20c6e7a244cea64
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dynamicdns-v1.2.1
+PKG_SOURCE:=tr181-dynamicdns-v1.3.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dynamicdns/-/archive/v1.3.0
+PKG_HASH:=38196fdd89bc800d7fe7bdfee85e230e036b26b4a7ab205c7e3c504194de027e
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dynamicdns-v1.3.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -34,7 +34,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dynamicdns
