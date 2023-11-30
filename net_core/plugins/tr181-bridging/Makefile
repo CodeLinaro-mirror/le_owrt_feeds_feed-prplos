@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-bridging
-PKG_VERSION:=v2.3.3
+PKG_VERSION:=v2.3.4
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-bridging-v2.3.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bridging/-/archive/v2.3.3
-PKG_HASH:=dcc5a1b74108398e6c2b2023efd7cbc1b623f2b364e9085f5761e6b7f313b64a
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bridging-v2.3.3
+PKG_SOURCE:=tr181-bridging-v2.3.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bridging/-/archive/v2.3.4
+PKG_HASH:=e319d35be8b2bd96cb6c4532c1e858ba270bb6254edec124a72367c160c90103
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bridging-v2.3.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -25,7 +25,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bridging
