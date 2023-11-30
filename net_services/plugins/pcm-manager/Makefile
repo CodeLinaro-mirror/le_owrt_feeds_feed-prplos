@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pcm-manager
-PKG_VERSION:=v0.16.1
+PKG_VERSION:=v0.16.2
 SHORT_DESCRIPTION:=Upgrade Persistent Configuration Manager
 
-PKG_SOURCE:=tr181-pcm-v0.16.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcm/-/archive/v0.16.1
-PKG_HASH:=d9a87b521bdc5033147394cd84c06da2d8225c3206e9dd401958c87f1aa5ba21
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-pcm-v0.16.1
+PKG_SOURCE:=tr181-pcm-v0.16.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcm/-/archive/v0.16.2
+PKG_HASH:=ad1aca57b3ae9a433dcdb06809d7718e2f48041bcaf9d905d6ca388f441dc09c
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-pcm-v0.16.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -25,7 +25,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcm
