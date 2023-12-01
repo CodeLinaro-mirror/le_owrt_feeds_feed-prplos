@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=debug-information
-PKG_VERSION:=v0.1.17
+PKG_VERSION:=v0.1.18
 SHORT_DESCRIPTION:=Scripts to provide debug Information for a running system
 
-PKG_SOURCE:=debug-information-v0.1.17.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/debug-information/-/archive/v0.1.17
-PKG_HASH:=623a3f59543bd51e4228cbf43c008456de6fab03715a25e9695cb3ac4874e5f4
-PKG_BUILD_DIR:=$(BUILD_DIR)/debug-information-v0.1.17
+PKG_SOURCE:=debug-information-v0.1.18.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/debug-information/-/archive/v0.1.18
+PKG_HASH:=b76a7ff2aab13f8399b7a251638b06856b0a0382ba1e6f778dde978fa4225bf0
+PKG_BUILD_DIR:=$(BUILD_DIR)/debug-information-v0.1.18
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -25,7 +25,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=Utilities
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/utilities/debug-information
