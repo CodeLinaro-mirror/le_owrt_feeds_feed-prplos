@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=mcastd's user space app
 
 PKG_SOURCE:=tr181-mcastd-v0.1.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mcastd/-/archive/v0.1.0
-PKG_HASH:=skip
+PKG_HASH:=7f7c2e4d7eef8431320ef25ae874c3be04e88277af21905b00c69a710e1787d8
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mcastd-v0.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
