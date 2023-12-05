@@ -45,7 +45,7 @@ define KernelPackage/$(PKG_NAME)
   SUBMENU:=Network Support
   TITLE:=mcastd core
   FILES:=$(PKG_BUILD_DIR)/kernel/mcastd_core.ko $(PKG_BUILD_DIR)/kernel/mcastd_pc.ko
-  DEPENDS:=+iptables +mcastd_core-plugin
+  DEPENDS:=+iptables +tr181-mcastd
 endef
 
 EXTRA_CFLAGS :=
