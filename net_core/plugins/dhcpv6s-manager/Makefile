@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dhcpv6s-manager
-PKG_VERSION:=v0.16.1
+PKG_VERSION:=v0.17.0
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-dhcpv6s-v0.16.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6s/-/archive/v0.16.1
-PKG_HASH:=2cc3eac1ff798689a5d7341d1da4342a4d824a3f9a1443107cda8c7b663db063
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6s-v0.16.1
+PKG_SOURCE:=tr181-dhcpv6s-v0.17.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6s/-/archive/v0.17.0
+PKG_HASH:=b2d5c45b1baec47d0e710c2219b0e60e8534951f74a9d83e4e5ebbd7bb320259
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6s-v0.17.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -34,7 +34,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6s
