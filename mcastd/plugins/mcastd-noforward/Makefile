@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mcastd-noforward
-PKG_VERSION:=v0.1.1
+PKG_VERSION:=v0.1.2
 SHORT_DESCRIPTION:=to avoid suppression of host membership reports on bridge interfaces
 
-PKG_SOURCE:=mcastd-noforward-v0.1.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/mcastd-noforward/-/archive/v0.1.1
-PKG_HASH:=13a3aabee632b17064467150e079090be7f93359dff8deff67384f7068a55e7f
-PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-noforward-v0.1.1
+PKG_SOURCE:=mcastd-noforward-v0.1.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/mcastd-noforward/-/archive/v0.1.2
+PKG_HASH:=d502304f938c80b881df5c563b5348fe68ae128187ce7a0dc7ff79b7a74abb70
+PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-noforward-v0.1.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -30,6 +30,10 @@ define Package/$(PKG_NAME)
   DEPENDS += +libnetmodel
   DEPENDS += +libsahtrace
   DEPENDS += +tr181-mcastd
+  DEPENDS += +ebtables-legacy
+  DEPENDS += +ebtables-legacy-utils
+  DEPENDS += +kmod-ebtables-ipv4
+  DEPENDS += +kmod-ebtables-ipv6
   MENU:=1
 endef
 
