@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-httpaccess
-PKG_VERSION:=v0.10.3
+PKG_VERSION:=v0.11.0
 SHORT_DESCRIPTION:=TR-181 HTTPAccess model plugin
 
-PKG_SOURCE:=tr181-httpaccess-v0.10.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-httpaccess/-/archive/v0.10.3
-PKG_HASH:=b247817d2a40b0e8e5fb36d7960dc1f91d35c9571b8787aa790f65e5a59a5300
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-httpaccess-v0.10.3
+PKG_SOURCE:=tr181-httpaccess-v0.11.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-httpaccess/-/archive/v0.11.0
+PKG_HASH:=cdd211828637592fae79313427481590690d44401f0c43a31fb4e04aef529e63
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-httpaccess-v0.11.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -25,7 +25,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-httpaccess
