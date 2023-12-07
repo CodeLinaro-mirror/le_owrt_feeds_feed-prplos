@@ -98,6 +98,7 @@ endif
 
 APPARMOR_CFLAGS = -I$(PKG_BUILD_DIR)/libraries/libapparmor/include
 APPARMOR_LDFLAGS = -L$(PKG_BUILD_DIR)/libraries/libapparmor/src/.libs
+DISTRO =
 
 define Build/Configure
 	$(MAKE) -C $(PKG_BUILD_DIR)/libraries/libapparmor configure
