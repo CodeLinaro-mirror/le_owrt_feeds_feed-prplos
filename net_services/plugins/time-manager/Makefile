@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=time-manager
-PKG_VERSION:=v2.4.4
+PKG_VERSION:=v2.4.5
 SHORT_DESCRIPTION:=TR181 Time plugin
 
-PKG_SOURCE:=tr181-time-v2.4.4.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-time/-/archive/v2.4.4
-PKG_HASH:=6a9ad7c19ea8255a8d5ec1a59d76398c14d9541f781d93addec1ba0d35abed37
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-time-v2.4.4
+PKG_SOURCE:=tr181-time-v2.4.5.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-time/-/archive/v2.4.5
+PKG_HASH:=3e98b339808a87ccfcec622a52843f416dc6f6a2df4e86ca93ad0b33aafe28f9
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-time-v2.4.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -25,7 +25,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-time
