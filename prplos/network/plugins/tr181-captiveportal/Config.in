@@ -1,0 +1,20 @@
+config PACKAGE_tr181-captiveportal
+    tristate
+    select SAH_AMX_TR181_CAPTIVEPORTAL
+
+if PACKAGE_tr181-captiveportal
+
+menu "Select tr181-captiveportal build options"
+    depends on PACKAGE_tr181-captiveportal
+
+config SAH_AMX_TR181_CAPTIVEPORTAL
+    bool "Build the AMX Captive Portal plugin"
+    default y
+
+config SAH_AMX_TR181_CAPTIVEPORTAL_EXAMPLE
+    bool "Install the example captive portal page"
+    default y
+
+endmenu
+
+endif
