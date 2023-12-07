@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-httpaccess-lighttpd
-PKG_VERSION:=v0.1.8
+PKG_VERSION:=v0.2.0
 SHORT_DESCRIPTION:=Module to manage HTTP accesses for lighttpd server
 
-PKG_SOURCE:=mod-httpaccess-lighttpd-v0.1.8.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-httpaccess-lighttpd/-/archive/v0.1.8
-PKG_HASH:=e22f0267a6f17019596672d0be2b9501aee4c994f9c708542093b825182cb38b
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-httpaccess-lighttpd-v0.1.8
+PKG_SOURCE:=mod-httpaccess-lighttpd-v0.2.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-httpaccess-lighttpd/-/archive/v0.2.0
+PKG_HASH:=413eecdeded6d925dba40a73076930b27ef8192b6f6c3dc0fbb34da560309563
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-httpaccess-lighttpd-v0.2.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
