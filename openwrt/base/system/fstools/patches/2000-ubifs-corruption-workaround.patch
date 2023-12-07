@@ -1,0 +1,50 @@
+Index: fstools-2022-06-02-93369be0/libfstools/overlay.c
+===================================================================
+--- fstools-2022-06-02-93369be0.orig/libfstools/overlay.c
++++ fstools-2022-06-02-93369be0/libfstools/overlay.c
+@@ -373,6 +373,18 @@ static int overlay_mount_fs(struct volum
+ 	return 0;
+ }
+ 
++static int overlay_wipe_ubifs(struct volume *v)
++{
++	char wipecmd[200];
++	snprintf(wipecmd, sizeof(wipecmd) - 1, "/usr/sbin/ubiupdatevol %s -t", v->blk);
++	if (system(wipecmd)) {
++		ULOG_ERR("failed to wipe %s\n", v->blk);
++		return -1;
++	}
++
++	return 0;
++}
++
+ enum fs_state fs_state_get(const char *dir)
+ {
+ 	char *path;
+@@ -432,6 +444,26 @@ int mount_overlay(struct volume *v)
+ 	if (err)
+ 		return err;
+ 
++	if (v->type == UBIVOLUME) {
++		if (system("/usr/bin/find /tmp/overlay &> /dev/null")) {
++			ULOG_ERR("Possible ubifs corruption in %s. Attempting to clear partition\n", v->blk);
++			umount2(overlay_mp, MNT_DETACH);
++			err = overlay_wipe_ubifs(v);
++			if (err) {
++				ULOG_ERR("Could not wipe %s\n", v->blk);
++				return err;
++			}
++			err = system("rm -rf /tmp/overlay");
++			if (err) {
++				ULOG_ERR("Could not remove /tmp/overlay");
++				return err;
++			}
++			err = overlay_mount_fs(v, overlay_mp);
++			if (err)
++				return err;
++		}
++	}
++
+ 	/*
+ 	 * Check for extroot config in overlay (rootfs_data) and if present then
+ 	 * prefer it over rootfs_data.
