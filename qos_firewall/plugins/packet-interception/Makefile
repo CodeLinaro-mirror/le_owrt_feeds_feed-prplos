@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=packet-interception
-PKG_VERSION:=v0.0.14
+PKG_VERSION:=v0.0.15
 SHORT_DESCRIPTION:=Packet Interception component
 
-PKG_SOURCE:=packet-interception-v0.0.14.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/packet-interception/-/archive/v0.0.14
-PKG_HASH:=6cde1caa20eb31d5e5e3e0209b79031bc50c58299542dd707c2ab98c3f10e9b4
-PKG_BUILD_DIR:=$(BUILD_DIR)/packet-interception-v0.0.14
+PKG_SOURCE:=packet-interception-v0.0.15.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/packet-interception/-/archive/v0.0.15
+PKG_HASH:=fd2f4091155533ad44f63ac116fc3e9eae9171605e113250ee30b234fa7b0d43
+PKG_BUILD_DIR:=$(BUILD_DIR)/packet-interception-v0.0.15
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -25,7 +25,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/packet-interception
