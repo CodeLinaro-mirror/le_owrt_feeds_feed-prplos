@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libdiscoping
-PKG_VERSION:=v0.10.0
+PKG_VERSION:=v0.11.0
 SHORT_DESCRIPTION:=Library discovering when IPs appear and disappear
 
-PKG_SOURCE:=libdiscoping-v0.10.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libdiscoping/-/archive/v0.10.0
-PKG_HASH:=c5f339f96af142552fcdc9cdb8f67dc6de0cb6d3a3850c4c0442e3db954cda45
-PKG_BUILD_DIR:=$(BUILD_DIR)/libdiscoping-v0.10.0
+PKG_SOURCE:=libdiscoping-v0.11.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libdiscoping/-/archive/v0.11.0
+PKG_HASH:=6819f507f1032f63388c52f090a4334d6cb0bb9c5e0f613be1c43f9e8a900495
+PKG_BUILD_DIR:=$(BUILD_DIR)/libdiscoping-v0.11.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -18,7 +18,7 @@ PKG_RELEASE:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=Libraries
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libdiscoping
