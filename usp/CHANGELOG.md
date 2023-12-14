@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.6.11 - 2023-12-14(10:36:26 +0000)
+
+### Fixes
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): Deferred calls are cleaned up before everything is done
+
+### Changes
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): [USP] Backend must be able to handle interleaved messages
+
 ## Release v8.6.10 - 2023-12-07(16:59:22 +0000)
 
 ## Release v8.6.9 - 2023-11-28(16:54:01 +0000)
