@@ -61,6 +61,7 @@ CONFIGURE_ARGS = \
 	--portinuse \
 	--firewall=amx \
 	--disable-fork \
+	--vendorcfg \
 	--strict
 
 TARGET_CFLAGS += $(FPIC) -flto
