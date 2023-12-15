@@ -15,10 +15,6 @@ config SAH_AMX_TR181_HTTPACCESS_ORDER
     int "TR-181 HTTPAccess plugin start order"
     default 49
 
-config SAH_AMX_TR181_HTTPACCESS_FIREWALL
-    bool "Configure Firewall"
-    default y
-
 endmenu
 
 endif
