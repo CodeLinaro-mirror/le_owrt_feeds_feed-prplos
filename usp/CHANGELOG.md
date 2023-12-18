@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.6.12 - 2023-12-18(20:35:37 +0000)
+
+### Other
+
+- [libuspi](https://gitlab.com/soft.at.home/usp/libraries/libuspi): [USP] Enable documentation generation for libuspi
+
 ## Release v8.6.11 - 2023-12-14(10:36:26 +0000)
 
 ### Fixes
