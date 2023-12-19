@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-logical
-PKG_VERSION:=v0.6.1
+PKG_VERSION:=v0.6.2
 SHORT_DESCRIPTION:=logical interface plugin
 
-PKG_SOURCE:=tr181-logical-v0.6.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-logical/-/archive/v0.6.1
-PKG_HASH:=f8580107f7a94d55c4cc45ca813f282c84538bc5174e84eb6a6a644ecb8859b1
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-logical-v0.6.1
+PKG_SOURCE:=tr181-logical-v0.6.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-logical/-/archive/v0.6.2
+PKG_HASH:=3e0d4cbd469755c2cd4c92aabc1a07865e567fdfdd445217c1f32d4f39f4df32
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-logical-v0.6.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -25,7 +25,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-logical
