@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-dmproxy
-PKG_VERSION:=v1.3.7
+PKG_VERSION:=v1.3.8
 SHORT_DESCRIPTION:=Data model object proxy
 
-PKG_SOURCE:=mod-dmproxy-v1.3.7.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-dmproxy/-/archive/v1.3.7
-PKG_HASH:=8c423384961e7d4e26ef1c416350d0cffcaae227fbd93bdae6bed23c7424a328
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-dmproxy-v1.3.7
+PKG_SOURCE:=mod-dmproxy-v1.3.8.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-dmproxy/-/archive/v1.3.8
+PKG_HASH:=535fea7ac8f3200f209ac78f47f9a71a886a7bbf4932dd3ff9714f782feeeff1
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-dmproxy-v1.3.8
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -18,7 +18,7 @@ PKG_RELEASE:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=Modules
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-dmproxy
