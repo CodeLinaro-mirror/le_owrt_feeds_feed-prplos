@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libfwinterface
-PKG_VERSION:=v1.5.0
+PKG_VERSION:=v1.5.1
 SHORT_DESCRIPTION:=A library providing interfaces between lib_fwrules and netfilter
 
-PKG_SOURCE:=libfwinterface-v1.5.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfwinterface/-/archive/v1.5.0
-PKG_HASH:=c045778f267c845f83f3841b149cb7ce299aee40401584aba763f7675fe99dda
-PKG_BUILD_DIR:=$(BUILD_DIR)/libfwinterface-v1.5.0
+PKG_SOURCE:=libfwinterface-v1.5.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfwinterface/-/archive/v1.5.1
+PKG_HASH:=3c550ce85f405f740ad5c7ff3e203e7813f0ac70b79050ad3097ec44172173c1
+PKG_BUILD_DIR:=$(BUILD_DIR)/libfwinterface-v1.5.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -18,7 +18,7 @@ PKG_RELEASE:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=Libraries
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfwinterface
