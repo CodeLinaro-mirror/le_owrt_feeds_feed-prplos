@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libqoscommon
-PKG_VERSION:=v0.2.1
+PKG_VERSION:=v0.3.0
 SHORT_DESCRIPTION:=A library for the qos common api
 
-PKG_SOURCE:=libqoscommon-v0.2.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libqoscommon/-/archive/v0.2.1
-PKG_HASH:=7ee645ba2e88b0517f0e001e73513f37710f732526150f2c7a067370c331b595
-PKG_BUILD_DIR:=$(BUILD_DIR)/libqoscommon-v0.2.1
+PKG_SOURCE:=libqoscommon-v0.3.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libqoscommon/-/archive/v0.3.0
+PKG_HASH:=222f163170149c53c4b33d85751eda39e53f3603160267a7288f7dba85ba6b0a
+PKG_BUILD_DIR:=$(BUILD_DIR)/libqoscommon-v0.3.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -18,7 +18,7 @@ PKG_RELEASE:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=Libraries
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libqoscommon
