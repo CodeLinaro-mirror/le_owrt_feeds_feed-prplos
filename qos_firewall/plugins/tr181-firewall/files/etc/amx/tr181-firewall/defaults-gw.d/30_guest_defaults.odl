@@ -1,0 +1,66 @@
+%populate {
+    object Firewall {
+        object Chain {
+            instance add(Alias=Guest, Name=Guest) {
+                parameter Enable = 1;
+                object Rule {
+                    instance add(Alias=dns-udp) {
+                        parameter Protocol = 17;
+                        parameter DestPort = 53;
+                        parameter Target = "Accept";
+                        parameter SourceAllInterfaces = 1;
+                        parameter DestAllInterfaces = 1;
+                        parameter Enable = 1;
+                    }
+                    instance add(Alias=dns-tcp) {
+                        parameter Protocol = 6;
+                        parameter DestPort = 53;
+                        parameter Target = "Accept";
+                        parameter SourceAllInterfaces = 1;
+                        parameter DestAllInterfaces = 1;
+                        parameter Enable = 1;
+                    }
+                    instance add(Alias=http) {
+                        parameter Protocol = 6;
+                        parameter DestPort = 80;
+                        parameter Target = "Accept";
+                        parameter SourceAllInterfaces = 1;
+                        parameter DestAllInterfaces = 1;
+                        parameter Enable = 1;
+                    }
+                    instance add(Alias=https) {
+                        parameter Protocol = 6;
+                        parameter DestPort = 443;
+                        parameter Target = "Accept";
+                        parameter SourceAllInterfaces = 1;
+                        parameter DestAllInterfaces = 1;
+                        parameter Enable = 1;
+                    }
+                    instance add(Alias=icmp) {
+                        parameter Protocol = 1;
+                        parameter Target = "Accept";
+                        parameter SourceAllInterfaces = 1;
+                        parameter DestAllInterfaces = 1;
+                        parameter Enable = 1;
+                    }
+                }
+            }
+        }
+        object Policy {
+            instance add(Alias=WAN2GUEST) {
+                parameter SourceInterface = "${wan}";
+                parameter DestinationInterface = "${guest}";
+                parameter TargetChain = "Chain";
+                parameter Chain = "Firewall.Chain.Low.";
+                parameter ReverseTargetChain = "Chain";
+                parameter ReverseChain = "Firewall.Chain.Guest.";
+                parameter Enable = 1;
+            }
+        }
+    }
+    object 'NAT.InterfaceSetting.wan.${prefix_}NATInterface' {
+        instance add(Alias=guest) {
+            parameter Interface = "${guest}";
+        }
+    }
+}

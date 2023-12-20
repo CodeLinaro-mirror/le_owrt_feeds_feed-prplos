@@ -1,0 +1,79 @@
+%populate {
+    object Firewall {
+        object Policy {
+            instance add(Alias=WAN2LAN_low) {
+                parameter SourceInterface = "${wan}";
+                parameter DestinationInterface = "${lan}";
+                parameter TargetChain = "Chain";
+                parameter Chain = "Firewall.Chain.Low.";
+                parameter ReverseTargetChain = "Accept";
+                parameter IPVersion = 4;
+            }
+            instance add(Alias=WAN2LAN_medium) {
+                parameter SourceInterface = "${wan}";
+                parameter DestinationInterface = "${lan}";
+                parameter TargetChain = "Chain";
+                parameter Chain = "Firewall.Chain.Medium.";
+                parameter ReverseTargetChain = "Accept";
+                parameter IPVersion = 4;
+            }
+            instance add(Alias=WAN2LAN_high) {
+                parameter SourceInterface = "${wan}";
+                parameter DestinationInterface = "${lan}";
+                parameter TargetChain = "Chain";
+                parameter Chain = "Firewall.Chain.High.";
+                parameter ReverseTargetChain = "Chain";
+                parameter ReverseChain = "Firewall.Chain.High_Out.";
+                parameter IPVersion = 4;
+            }
+            instance add(Alias=IPV6_WAN2LAN_low) {
+                parameter SourceInterface = "${wan}";
+                parameter DestinationInterface = "${lan}";
+                parameter TargetChain = "Chain";
+                parameter Chain = "Firewall.Chain.IPV6_Low.";
+                parameter ReverseTargetChain = "Accept";
+                parameter IPVersion = 6;
+            }
+            instance add(Alias=IPV6_WAN2LAN_medium) {
+                parameter SourceInterface = "${wan}";
+                parameter DestinationInterface = "${lan}";
+                parameter TargetChain = "Chain";
+                parameter Chain = "Firewall.Chain.IPV6_Medium.";
+                parameter ReverseTargetChain = "Accept";
+                parameter IPVersion = 6;
+            }
+            instance add(Alias=IPV6_WAN2LAN_high) {
+                parameter SourceInterface = "${wan}";
+                parameter DestinationInterface = "${lan}";
+                parameter TargetChain = "Chain";
+                parameter Chain = "Firewall.Chain.High.";
+                parameter ReverseTargetChain = "Chain";
+                parameter ReverseChain = "Firewall.Chain.IPV6_High_Out.";
+                parameter IPVersion = 6;
+            }
+        }
+        object Service {
+            instance add(Alias=igmp-lan) {
+                parameter Protocol = "2";
+                parameter Interface = "${lan}";
+                parameter IPVersion = 4;
+                parameter Enable = 1;
+                parameter Persistent = 1;
+            }
+        }
+        object DMZ {
+            instance add(1, Alias=wanDMZ) {
+                parameter Interface = "${wan}";
+                parameter Origin = "User";
+                parameter Description = "Default instance for the UI.";
+                parameter Enable = false;
+                parameter DestIP = "";
+            }
+        }
+    }
+    object 'NAT.InterfaceSetting.wan.${prefix_}NATInterface' {
+        instance add(Alias=lan) {
+            parameter Interface = "${lan}";
+        }
+    }
+}
