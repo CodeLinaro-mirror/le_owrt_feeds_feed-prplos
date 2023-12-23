@@ -1,0 +1,6 @@
+#!/bin/sh
+
+sed -i 's/^\([^:]*:\)[^:]*:/\1x:/' /etc/passwd
+sed -i 's/^\([^:]*:\)[^:]*:/\1:/' /etc/shadow
+
+exit 0
