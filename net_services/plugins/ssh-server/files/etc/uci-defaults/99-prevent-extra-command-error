@@ -1,5 +1,0 @@
-#!/bin/sh
-
-sed -i '/extra_command "killclients"/d' /etc/init.d/dropbear
-
-exit 0
