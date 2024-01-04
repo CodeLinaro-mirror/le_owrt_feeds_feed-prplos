@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-device
-PKG_VERSION:=v0.20.3
+PKG_VERSION:=v0.20.4
 SHORT_DESCRIPTION:=TR-181 compatible Device plugin
 
-PKG_SOURCE:=tr181-device-v0.20.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-device/-/archive/v0.20.3
-PKG_HASH:=a07782ae319499c8d0835fdaca548c070acd915fb45d0da72d5e4c4c54e72fb8
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-device-v0.20.3
+PKG_SOURCE:=tr181-device-v0.20.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-device/-/archive/v0.20.4
+PKG_HASH:=4d3f1de6d5832550d6627df8d1a05cb4a41b366bd11bc2ba64fd8d52d8a2795e
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-device-v0.20.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
