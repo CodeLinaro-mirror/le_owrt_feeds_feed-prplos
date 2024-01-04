@@ -1,13 +1,13 @@
 config PACKAGE_libnetlink-utils
     tristate
-    select SAH_LIB_NETLINK_UTILS
+    select SAH_LIB_NETLINK-UTILS
 
 if PACKAGE_libnetlink-utils
 
 menu "Select libnetlink-utils build options"
     depends on PACKAGE_libnetlink-utils
 
-config SAH_LIB_NETLINK_UTILS
+config SAH_LIB_NETLINK-UTILS
     bool "Build netlink utility library"
     default y
 
