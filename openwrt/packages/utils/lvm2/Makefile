@@ -64,7 +64,7 @@ define Package/lvm2/default
   SUBMENU:=Disc
   TITLE:=The Linux Logical Volume Manager
   URL:=https://sourceware.org/lvm2/
-  DEPENDS:=+libreadline +libncurses +libaio
+  DEPENDS:=+libncurses +libaio
 endef
 
 define Package/lvm2
@@ -99,6 +99,7 @@ CONFIGURE_ARGS += \
 	--with-default-dm-run-dir=/var/run \
 	--with-default-run-dir=/var/run/lvm \
 	--with-default-locking-dir=/var/lock/lvm \
+	--disable-readline \
 	--$(if $(findstring selinux,$(BUILD_VARIANT)),en,dis)able-selinux
 
 ifneq ($(shell /bin/sh -c "echo -n 'X'"),X)
