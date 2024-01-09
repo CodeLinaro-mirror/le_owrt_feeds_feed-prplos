@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.7.0 - 2024-01-09(14:44:26 +0000)
+
+### New
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): Allow creating subscriptions via LocalAgent.Subscription dm
+
+### Other
+
+- [libuspi](https://gitlab.com/soft.at.home/usp/libraries/libuspi): Remove circular dependency
+
 ## Release v8.6.13 - 2024-01-05(16:29:06 +0000)
 
 ### Other
