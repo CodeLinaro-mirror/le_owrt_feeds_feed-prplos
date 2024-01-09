@@ -21,7 +21,7 @@ config SAH_AMX_TR181_DEVICE_RESET_HARD_ENABLE
 
 config SAH_AMX_TR181_DEVICE_OBUSPA_SUPPORT
     bool "Enable OBUSPA support"
-    default y
+    default n
 
 endmenu
 
