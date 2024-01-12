@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.7.2 - 2024-01-12(16:09:15 +0000)
+
+### Fixes
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): [USP] amxb_usp_poll_response returns with error randomly
+
 ## Release v8.7.1 - 2024-01-12(10:46:21 +0000)
 
 ### Other
