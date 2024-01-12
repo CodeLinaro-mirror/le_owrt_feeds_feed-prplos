@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.7.1 - 2024-01-12(10:46:21 +0000)
+
+### Other
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Add quick start guide to uspagent
+
 ## Release v8.7.0 - 2024-01-09(14:44:26 +0000)
 
 ### New
