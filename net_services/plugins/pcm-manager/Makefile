@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pcm-manager
-PKG_VERSION:=v0.16.2
+PKG_VERSION:=v0.16.5
 SHORT_DESCRIPTION:=Upgrade Persistent Configuration Manager
 
-PKG_SOURCE:=tr181-pcm-v0.16.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcm/-/archive/v0.16.2
-PKG_HASH:=ad1aca57b3ae9a433dcdb06809d7718e2f48041bcaf9d905d6ca388f441dc09c
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-pcm-v0.16.2
+PKG_SOURCE:=tr181-pcm-v0.16.5.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcm/-/archive/v0.16.5
+PKG_HASH:=d13eadb3a28d29bc60c2cda7b6df05c7461bc25d7b741de162a582ee77edf8c6
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-pcm-v0.16.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -41,7 +41,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +mod-dmext
   DEPENDS += +mod-pcm-svc
   DEPENDS += +libxml2
-  DEPENDS += +SAH_AMX_PCM_TARBALL:libtar
+  DEPENDS += +SAH_AMX_PCM_TARBALL:libarchive
   DEPENDS += +libopenssl
   MENU:=1
 endef
