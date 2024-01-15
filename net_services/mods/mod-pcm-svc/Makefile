@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-pcm-svc
-PKG_VERSION:=v0.9.0
+PKG_VERSION:=v0.9.2
 SHORT_DESCRIPTION:=Upgrade Persistent Configuration Manager service module
 
-PKG_SOURCE:=mod-pcm-svc-v0.9.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-pcm-svc/-/archive/v0.9.0
-PKG_HASH:=c3f858f8d5471c31f1345d7b3937641e4b3b91c699be5be6f3ee6858bb480f77
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-pcm-svc-v0.9.0
+PKG_SOURCE:=mod-pcm-svc-v0.9.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-pcm-svc/-/archive/v0.9.2
+PKG_HASH:=199c7603580ea7869c963aa20ce1d0e2c60e9b05349ee06e89616ebebbfa5572
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-pcm-svc-v0.9.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -18,7 +18,7 @@ PKG_RELEASE:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=Modules
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-pcm-svc
