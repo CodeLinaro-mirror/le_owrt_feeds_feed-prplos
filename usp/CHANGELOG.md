@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.8.0 - 2024-01-17(14:45:07 +0000)
+
+### New
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Add tr181-device proxy odl files to components
+
+### Other
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [LocalAgent] Remove default MQTT client from odl file
+
 ## Release v8.7.2 - 2024-01-12(16:09:15 +0000)
 
 ### Fixes
