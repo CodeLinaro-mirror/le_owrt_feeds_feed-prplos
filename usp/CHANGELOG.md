@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.8.1 - 2024-01-18(16:30:21 +0000)
+
+### Fixes
+
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): [USP] usp-endpoint needs to load usp backend
+
 ## Release v8.8.0 - 2024-01-17(14:45:07 +0000)
 
 ### New
