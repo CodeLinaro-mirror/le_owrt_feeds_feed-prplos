@@ -13,7 +13,7 @@ PKG_RELEASE:=$(AUTORELEASE)
 PKG_VERSION:=v0.4.1
 PKG_SOURCE:=unbound-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/unbound/-/archive/$(PKG_VERSION)
-PKG_HASH:=skip
+PKG_HASH:=f663a1b67bf739a24eed71197dd8e1cc6f35529881c695679e412aa5f6c89258
 PKG_BUILD_DIR:=$(BUILD_DIR)/unbound-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Eric Luehrsen <ericluehrsen@gmail.com>
