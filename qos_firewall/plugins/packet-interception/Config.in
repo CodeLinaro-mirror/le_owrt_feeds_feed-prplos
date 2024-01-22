@@ -15,7 +15,7 @@ config SAH_AMX_PACKET_INTERCEPTION_ORDER
     int "Start up order"
     default 50
 
-config SAH_AMX_TR181_FIREWALL_RULEPATH
+config SAH_AMX_PACKET_INTERCEPTION_TR181_FIREWALL_RULEPATH
     string "Firewall iptables rules folder location"
     default "/etc/amx/tr181-firewall"
 
