@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.8.2 - 2024-01-23(10:38:28 +0000)
+
+### Other
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [BaRt] Failed to handle multiple keys
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] Random String from EndpointId is not randomly enough
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] Random String from EndpointId is not randomly enough
+
 ## Release v8.8.1 - 2024-01-18(16:30:21 +0000)
 
 ### Fixes
