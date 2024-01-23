@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Speedtest plugin
 
 PKG_SOURCE:=tr181-ipdiagnostics-v0.7.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ipdiagnostics/-/archive/v0.7.0
-PKG_HASH:=skip
+PKG_HASH:=e4dc0c50d27d0f7f24a35403ee5ca0c1b72866bde113f0ef4ecabbc436a88dea
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ipdiagnostics-v0.7.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
