@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=wan-manager
-PKG_VERSION:=v1.2.0
+PKG_VERSION:=v1.2.1
 SHORT_DESCRIPTION:=TR-181 compatible plugin for advanced WAN mode configuration
 
-PKG_SOURCE:=wan-manager-v1.2.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/wan-manager/-/archive/v1.2.0
-PKG_HASH:=a3bf3441995a87c6f1a55fd9e530e18ef2d5dc25e73342b9d0bf947bf7bbe6d4
-PKG_BUILD_DIR:=$(BUILD_DIR)/wan-manager-v1.2.0
+PKG_SOURCE:=wan-manager-v1.2.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/wan-manager/-/archive/v1.2.1
+PKG_HASH:=9d3dbe20b74e595de99b81463a17855420d9884d209fabb6a17cd9a688ab4f2c
+PKG_BUILD_DIR:=$(BUILD_DIR)/wan-manager-v1.2.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
