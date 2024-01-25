@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.8.3 - 2024-01-25(09:26:57 +0000)
+
+### Other
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [BaRt] Failed to handle multiple keys
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] Remove sed from localagent startup script
+
 ## Release v8.8.2 - 2024-01-23(10:38:28 +0000)
 
 ### Other
