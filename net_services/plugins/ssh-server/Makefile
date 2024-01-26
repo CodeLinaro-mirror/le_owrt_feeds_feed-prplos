@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ssh-server
-PKG_VERSION:=v0.5.8
+PKG_VERSION:=v0.5.9
 SHORT_DESCRIPTION:=Process Controller Data Model - dropbear
 
-PKG_SOURCE:=ssh-server-v0.5.8.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/ssh-server/-/archive/v0.5.8
-PKG_HASH:=df10aeac2dcc9dc436a7150ca150df8cdd590b8083832103e5e7b610f8f38bf5
-PKG_BUILD_DIR:=$(BUILD_DIR)/ssh-server-v0.5.8
+PKG_SOURCE:=ssh-server-v0.5.9.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/ssh-server/-/archive/v0.5.9
+PKG_HASH:=b5a6a393a1e7b4fa4f9e37db67e15ec02f396736baf3280ca3f292b05a6bfe98
+PKG_BUILD_DIR:=$(BUILD_DIR)/ssh-server-v0.5.9
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
