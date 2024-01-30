@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.8.4 - 2024-01-30(14:36:49 +0000)
+
+### Fixes
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): [USP] Issue with asynchronous calls
+
+### Other
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP][B&R] PeriodicNotifInterval  parameter is not upgrade persistent
+
 ## Release v8.8.3 - 2024-01-25(09:26:57 +0000)
 
 ### Other
