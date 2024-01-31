@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libimtp
-PKG_VERSION:=v2.0.2
+PKG_VERSION:=v2.1.0
 SHORT_DESCRIPTION:=libimtp is a library which provides functionality to set up a connection between two internal USP endpoints using a unix domain socket
 
-PKG_SOURCE:=libimtp-v2.0.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libimtp/-/archive/v2.0.2
-PKG_HASH:=54cb7a4fc63b73098702621870b0592ceca0e90ff07d7a03ec88a4663f24647f
-PKG_BUILD_DIR:=$(BUILD_DIR)/libimtp-v2.0.2
+PKG_SOURCE:=libimtp-v2.1.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libimtp/-/archive/v2.1.0
+PKG_HASH:=4e7e9dc7b293f56370021b552415d1ef1117f872e6f26baa3117644415477edd
+PKG_BUILD_DIR:=$(BUILD_DIR)/libimtp-v2.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE

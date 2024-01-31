@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.9.0 - 2024-01-31(08:00:48 +0000)
+
+### New
+
+- [libimtp](https://gitlab.com/prpl-foundation/components/core/libraries/libimtp): [libimtp] Add file descriptor transfer functionality
+
 ## Release v8.8.4 - 2024-01-30(14:36:49 +0000)
 
 ### Fixes
