@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-ppp-daemon
-PKG_VERSION:=v0.5.5
+PKG_VERSION:=v0.5.6
 SHORT_DESCRIPTION:=Module integrating the pppd daemon as amx plugin
 
-PKG_SOURCE:=mod-ppp-daemon-v0.5.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-ppp-daemon/-/archive/v0.5.5
-PKG_HASH:=4aba98bb188fc0efc28ac05a47842827e304efce45dcb4f9b3994b755ec12295
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-ppp-daemon-v0.5.5
+PKG_SOURCE:=mod-ppp-daemon-v0.5.6.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-ppp-daemon/-/archive/v0.5.6
+PKG_HASH:=55b659dec0d7e38e733a79638eb8281c008de507191a8d0fa139111fb17f2213
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-ppp-daemon-v0.5.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -19,7 +19,7 @@ PKG_BUILD_DEPENDS += libsahtrace
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=Modules
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-ppp-daemon
