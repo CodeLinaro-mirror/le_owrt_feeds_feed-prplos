@@ -5,7 +5,7 @@ PKG_VERSION:=v2.6.5
 SHORT_DESCRIPTION:=libusp can be used for converting USP protobuf messages to ambiorix variants and vice versa
 
 PKG_SOURCE:=libusp-v2.6.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/usp/libraries/libusp/-/archive/v2.6.5
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libusp/-/archive/v2.6.5
 PKG_HASH:=04903432873a50f7bbac96fd7c00f8d6f5e34c37c0ac1b59da3547b25514fd54
 PKG_BUILD_DIR:=$(BUILD_DIR)/libusp-v2.6.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
@@ -17,10 +17,10 @@ PKG_RELEASE:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=usp
+  CATEGORY:=prpl Foundation
   SUBMENU:=Libraries
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/soft.at.home/usp/libraries/libusp
+  URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libusp
   DEPENDS += +libamxc
   DEPENDS += +libamxj
   DEPENDS += +libamxd

@@ -5,7 +5,7 @@ PKG_VERSION:=v1.0.3
 SHORT_DESCRIPTION:=libuspi is a common library for setting up and managing IMTP connections
 
 PKG_SOURCE:=libuspi-v1.0.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/usp/libraries/libuspi/-/archive/v1.0.3
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libuspi/-/archive/v1.0.3
 PKG_HASH:=6924a6be7650968e8bd9a771e535251372ca8781ae9bd22df31b7de9a41e845e
 PKG_BUILD_DIR:=$(BUILD_DIR)/libuspi-v1.0.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
@@ -18,10 +18,10 @@ PKG_RELEASE:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=usp
+  CATEGORY:=prpl Foundation
   SUBMENU:=Libraries
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/soft.at.home/usp/libraries/libuspi
+  URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libuspi
   DEPENDS += +libamxc
   DEPENDS += +libamxp
   DEPENDS += +libamxd
