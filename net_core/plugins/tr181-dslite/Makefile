@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dslite
-PKG_VERSION:=v0.8.2
+PKG_VERSION:=v0.9.0
 SHORT_DESCRIPTION:=TR-181 compatible DSLite plugin
 
-PKG_SOURCE:=tr181-dslite-v0.8.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dslite/-/archive/v0.8.2
-PKG_HASH:=0bb328033feb409823d68c8281eae4a719648cd22824fb4c3f4b26fc9e0e3212
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dslite-v0.8.2
+PKG_SOURCE:=tr181-dslite-v0.9.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dslite/-/archive/v0.9.0
+PKG_HASH:=7789e08762fdfcb81c5423f0cdd4e4a4539e230aff9de62531886375bf995d43
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dslite-v0.9.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -25,7 +25,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dslite
