@@ -13,7 +13,7 @@ PKG_RELEASE:=5
 PKG_VERSION:=gen_d45c443_v0.2.0
 PKG_SOURCE:=umdns-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/umdns/-/archive/$(PKG_VERSION)
-PKG_HASH:=skip
+PKG_HASH:=bdcde0526a60f9cab307a1074c69efafdaf66563af98101cfc249183c216bb02
 PKG_BUILD_DIR:=$(BUILD_DIR)/umdns-$(PKG_VERSION)
 
 PKG_MAINTAINER:=John Crispin <john@phrozen.org>
