@@ -7,7 +7,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=umdns
+PKG_NAME:=umdns-prpl
 PKG_RELEASE:=5
 
 PKG_SOURCE_URL=$(PROJECT_GIT)/project/mdnsd.git
@@ -23,20 +23,21 @@ include $(INCLUDE_DIR)/package-seccomp.mk
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
-define Package/umdns
+define Package/umdns-prpl
   SECTION:=net
   CATEGORY:=Network
   TITLE:=OpenWrt Multicast DNS Daemon
   DEPENDS:=+libubox +libubus +libblobmsg-json
+  PROVIDES:=umdns
 endef
 
 TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include
 
-define Package/umdns/conffiles
+define Package/umdns-prpl/conffiles
 /etc/config/umdns
 endef
 
-define Package/umdns/install
+define Package/umdns-prpl/install
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/etc/config
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/umdns $(1)/usr/sbin/
 	$(INSTALL_BIN) ./files/umdns.init $(1)/etc/init.d/umdns
@@ -44,4 +45,4 @@ define Package/umdns/install
 	$(call InstallSeccomp,$(1),./files/umdns.json)
 endef
 
-$(eval $(call BuildPackage,umdns))
+$(eval $(call BuildPackage,umdns-prpl))
