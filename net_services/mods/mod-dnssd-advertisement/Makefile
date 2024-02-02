@@ -2,11 +2,11 @@ include $(TOPDIR)/rules.mk
 -include $(STAGING_DIR)/components.config
 
 PKG_NAME:=mod-dnssd-advertisement
-PKG_VERSION:=v0.4.2
+PKG_VERSION:=v0.4.3
 SHORT_DESCRIPTION:=Ambiorix module to configure the tr181-dnssd advertise module
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=v0.4.2
+PKG_SOURCE_VERSION:=v0.4.3
 PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/mod-dnssd-advertisement.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
