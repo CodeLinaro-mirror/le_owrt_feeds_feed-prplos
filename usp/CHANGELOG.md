@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.10.0 - 2024-02-06(10:59:13 +0000)
+
+### New
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Add tr181-device proxy odl files to components
+
 ## Release v8.9.1 - 2024-02-01(10:23:09 +0000)
 
 ## Release v8.9.0 - 2024-01-31(08:00:48 +0000)
