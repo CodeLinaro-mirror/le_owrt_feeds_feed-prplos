@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-led
-PKG_VERSION:=v0.4.12
+PKG_VERSION:=v0.5.0
 SHORT_DESCRIPTION:=TR-181 compatible plugin for device LEDs management
 
-PKG_SOURCE:=tr181-led-v0.4.12.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-led/-/archive/v0.4.12
-PKG_HASH:=6836541f157832433b5c224a4c9ceff311f7c015ad8d94cff3c216f72695b151
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-led-v0.4.12
+PKG_SOURCE:=tr181-led-v0.5.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-led/-/archive/v0.5.0
+PKG_HASH:=4bbbc89324525e03325ad8d398f8183b28ceabe76b2e9b55658e021dc55f5e1b
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-led-v0.5.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
