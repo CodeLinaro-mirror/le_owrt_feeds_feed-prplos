@@ -1,0 +1,41 @@
+From 18533398d2eaff992eda2b9bd4012bedf4f4f263 Mon Sep 17 00:00:00 2001
+From: Wouter Franken <wouter.franken_ext@softathome.com>
+Date: Mon, 5 Feb 2024 15:34:23 +0100
+Subject: [PATCH] libbb/loop: fix existence check for LOOP_CONFIGURE ioctl
+
+The LOOP_CONFIGURE ioctl is supported in 5.8 kernels and up. To have
+backwards compatibility there is a config option CONFIG_TRY_LOOP_CONFIGURE
+that will check if the ioctl exists and if not fall back to old way of
+configuring loop devices.
+
+Normally errno will be set to EINVAL when this ioctl does not exist.
+However, when kernel config CONFIG_COMPAT is enabled, then compat_ioctl
+is called. In that case -ENOIOCTLCMD is returned by loop device driver
+and generic ioctl wrapper will set errno to ENOTTY. Because busybox
+does not expect this it will fail to mount loop devices in this case.
+
+This patch fixes the check for the existence of the ioctl LOOP_CONFIGURE
+by checking if errno is one of both: EINVAL or ENOTTY.
+
+Signed-off-by: Wouter Franken <wouter.franken@mind.be>
+Signed-off-by: Wouter Franken <wouter.franken_ext@softathome.com>
+---
+ libbb/loop.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libbb/loop.c b/libbb/loop.c
+index a0c5d02..b603d0d 100644
+--- a/libbb/loop.c
++++ b/libbb/loop.c
+@@ -158,7 +158,7 @@ static int set_loopdev_params(int lfd,
+ 		if (rc == 0)
+ 			return rc; /* SUCCESS! */
+ # if ENABLE_TRY_LOOP_CONFIGURE
+-		if (errno != EINVAL)
++		if (errno != EINVAL && errno != ENOTTY)
+ 			return rc; /* error other than old kernel */
+ 		/* Old kernel, fall through into old way to do it: */
+ # endif
+-- 
+2.34.1
+
