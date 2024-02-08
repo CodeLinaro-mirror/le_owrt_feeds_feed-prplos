@@ -10,10 +10,10 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=umdns-prpl
 PKG_RELEASE:=5
 
-PKG_VERSION:=gen_d45c443_v0.2.1
+PKG_VERSION:=gen_d45c443_v0.2.2
 PKG_SOURCE:=umdns-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/umdns/-/archive/$(PKG_VERSION)
-PKG_HASH:=0462cfd43f3f94d5360d157331f89fc2313e3235633b1abe14a2d328997baac5
+PKG_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/umdns-$(PKG_VERSION)
 
 PKG_MAINTAINER:=John Crispin <john@phrozen.org>
