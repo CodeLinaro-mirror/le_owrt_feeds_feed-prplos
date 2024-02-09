@@ -1,0 +1,22 @@
+config PACKAGE_mod-httpaccess-lighttpd
+    tristate
+    select SAH_MOD_HTTPACCESS_LIGHTTPD
+
+if PACKAGE_mod-httpaccess-lighttpd
+
+menu "Select mod-httpaccess-lighttpd build options"
+    depends on PACKAGE_mod-httpaccess-lighttpd
+
+config SAH_MOD_HTTPACCESS_LIGHTTPD
+    bool "Build lighttpd's module for tr181-httpaccess plugin"
+    default y
+
+config SAH_MOD_HTTPACCESS_LIGHTTPD_FORCEFUL_TIMEOUT_SHUTDOWN
+    int "Timeout in seconds before forcefully shutdown lighttpd (SIGKILL)"
+    default 10
+	help
+	  This timeout start after graceful stop has been initiated (SIGINT). Value is in seconds and should be greater than server.graceful-shutdown-timeout. See config/lighttpd.template for more details.
+
+endmenu
+
+endif
