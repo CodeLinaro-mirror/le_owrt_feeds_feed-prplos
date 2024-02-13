@@ -51,6 +51,10 @@ config SAH_AMX_TR181_DEVICEINFO_NUMBER_OF_EXTRA_MAC_ADDRESSES
     string "The number of extra mac addresses to expose in /var/etc/environment (BASEMACADDRESS_PLUS_X)"
     default "7"
 
+config SAH_AMX_TR181_DEVICEINFO_SET_HOSTNAME_WITH_SYSCALL
+    bool "Select the module that uses syscalls to set the system hostname"
+    default y
+
 endmenu
 
 endif
