@@ -1,0 +1,11 @@
+--- a/src/dhcpv6.c
++++ b/src/dhcpv6.c
+@@ -1661,7 +1661,7 @@
+ 	if (!cand_len)
+ 		return -1;
+ 
+-	if (cand->has_noaddravail && na_mode == IA_MODE_TRY) {
++	if (!cand->ia_pd_len && cand->has_noaddravail && na_mode == IA_MODE_TRY) {
+ 		na_mode = IA_MODE_NONE;
+ 
+ 		dhcpv6_retx[DHCPV6_MSG_SOLICIT].max_timeo = cand->sol_max_rt;
