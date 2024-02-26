@@ -15,14 +15,6 @@ config SAH_AMX_GMAP_SERVER_ORDER
     int "gMap server plugin startup order"
     default 71
 
-config AMX_GMAP_SERVER_NAME_ORDER
-    string "Priority list of device name sources (highest priority on the left). Source default is implicit and last (after searching alternatives for the device)."
-    default "webui,user,dil,tags,mdns,dhcp,lltd,plc,mac,upnp,usb,voice,default"
-
-config AMX_GMAP_MAX_DEVICES
-    int "The max number of gmap devices that can be present at the same time"
-    default 70
-
 endmenu
 
 endif
