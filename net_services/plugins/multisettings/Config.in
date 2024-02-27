@@ -13,7 +13,7 @@ config SAH_AMX_MULTISETTINGS
 
 config SAH_AMX_MULTISETTINGS_ORDER
     int "Start up order for the tr181 multisettings plugin"
-    default 25
+    default 19
 
 endmenu
 
