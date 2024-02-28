@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libfwrules
-PKG_VERSION:=v2.1.4
+PKG_VERSION:=v2.1.5
 SHORT_DESCRIPTION:=A library to store ordered firewall rules
 
-PKG_SOURCE:=libfwrules-v2.1.4.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfwrules/-/archive/v2.1.4
-PKG_HASH:=67bfd2f3712112ee2c4e5625e035c22cfdb35341e7a7f3829dd99735011c3cc3
-PKG_BUILD_DIR:=$(BUILD_DIR)/libfwrules-v2.1.4
+PKG_SOURCE:=libfwrules-v2.1.5.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfwrules/-/archive/v2.1.5
+PKG_HASH:=3cdacff3120257df287e84225748f03d6f835b3bb0d29c8ea2b8bf0abccf19bf
+PKG_BUILD_DIR:=$(BUILD_DIR)/libfwrules-v2.1.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
