@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.11.1 - 2024-02-29(12:00:37 +0000)
+
+### Other
+
+- [libusp](https://gitlab.com/prpl-foundation/components/core/libraries/libusp): Rename BBF license to OBUSPA license
+- [libusp](https://gitlab.com/prpl-foundation/components/core/libraries/libusp): [USP] Fix licensing issues for opensourcing USP libs
+- [libusp](https://gitlab.com/prpl-foundation/components/core/libraries/libusp): Move component to prpl-foundation gitlab
+
 ## Release v8.11.0 - 2024-02-17(08:00:24 +0000)
 
 ### New
