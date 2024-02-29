@@ -2,11 +2,11 @@ include $(TOPDIR)/rules.mk
 -include $(STAGING_DIR)/components.config
 
 PKG_NAME:=tr181-schedules
-PKG_VERSION:=v0.1.1
+PKG_VERSION:=v0.2.0
 SHORT_DESCRIPTION:=TR-181 Schedules plugin
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=v0.1.1
+PKG_SOURCE_VERSION:=v0.2.0
 PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/tr181-schedules.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
