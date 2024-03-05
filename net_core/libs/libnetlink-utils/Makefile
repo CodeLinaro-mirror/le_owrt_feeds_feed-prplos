@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libnetlink-utils
-PKG_VERSION:=v0.0.10
+PKG_VERSION:=v0.0.13
 SHORT_DESCRIPTION:=Netlink utility library
 
-PKG_SOURCE:=libnetlink-utils-v0.0.10.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libnetlink-utils/-/archive/v0.0.10
-PKG_HASH:=7d21526130210ccf6a3f9722a98192173ca0ee9ccfb1fd9907b765525da25bcf
-PKG_BUILD_DIR:=$(BUILD_DIR)/libnetlink-utils-v0.0.10
+PKG_SOURCE:=libnetlink-utils-v0.0.13.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libnetlink-utils/-/archive/v0.0.13
+PKG_HASH:=281ae635f1b9a7c6e91bc896ef5587fa6eccdf6edd2346f14685d53804ed2009
+PKG_BUILD_DIR:=$(BUILD_DIR)/libnetlink-utils-v0.0.13
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -23,14 +23,11 @@ define Package/$(PKG_NAME)
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libnetlink-utils
   DEPENDS += +libamxc
-  DEPENDS += +libamxp
-  DEPENDS += +libamxd
-  DEPENDS += +libamxo
-  DEPENDS += +libamxb
   DEPENDS += +libsahtrace
-  DEPENDS += +libnetfilter-queue
-  DEPENDS += +libnetfilter-conntrack
   DEPENDS += +libmnl
+  DEPENDS += +libnetfilter-queue
+  DEPENDS += +libnetfilter-log
+  DEPENDS += +libnetfilter-conntrack
   MENU:=1
 endef
 
