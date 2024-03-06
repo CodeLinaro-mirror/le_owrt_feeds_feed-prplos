@@ -109,6 +109,7 @@ Package/libwebsockets-openssl/install = $(Package/libwebsockets/install)
 define Package/libwebsockets-full/install
 	$(call Package/libwebsockets/install,$(1))
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libwebsockets-evlib_uv.so* $(1)/usr/lib
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libwebsockets-evlib_event.so* $(1)/usr/lib
 endef
 
 $(eval $(call BuildPackage,libwebsockets-openssl))
