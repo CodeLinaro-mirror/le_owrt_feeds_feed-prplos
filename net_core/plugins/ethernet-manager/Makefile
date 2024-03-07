@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ethernet-manager
-PKG_VERSION:=v1.20.1
+PKG_VERSION:=v1.20.2
 SHORT_DESCRIPTION:=Ethernet plugin
 
-PKG_SOURCE:=tr181-ethernet-v1.20.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ethernet/-/archive/v1.20.1
-PKG_HASH:=73eeceb02ffaf5cd38b9d5ebcd6f546a8790db4af8bd70c25580a9d7786c1cb6
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ethernet-v1.20.1
+PKG_SOURCE:=tr181-ethernet-v1.20.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ethernet/-/archive/v1.20.2
+PKG_HASH:=1a119baf11b6485d9c64e1492ada7f0d1e7f88ef89c53a6a471e2e66ff6b05dd
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ethernet-v1.20.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -42,6 +42,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +mod-vlan-ioctl
   DEPENDS += +mod-vlan-uci
   DEPENDS += +mod-netmodel
+  DEPENDS += +mod-dmext
   MENU:=1
 endef
 
