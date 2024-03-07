@@ -15,6 +15,10 @@ config SAH_AMX_TR181_QOS_ORDER
     int "TR-181 QoS plugin start order"
     default 49
 
+config SAH_AMX_TR181_QOS_DEVICE_BASED_CLASSIFICATION
+    bool "Enable device based classification"
+    default y
+
 endmenu
 
 endif
