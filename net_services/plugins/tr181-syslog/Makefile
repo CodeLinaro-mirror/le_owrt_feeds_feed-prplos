@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-syslog
-PKG_VERSION:=v1.0.1
+PKG_VERSION:=v1.1.0
 SHORT_DESCRIPTION:=TR-181 compatible syslog
 
-PKG_SOURCE:=tr181-syslog-v1.0.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-syslog/-/archive/v1.0.1
-PKG_HASH:=9a2e0087e892f569c957cf668ec619cdd3a3c9c8b01336729420bed22e22879a
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-syslog-v1.0.1
+PKG_SOURCE:=tr181-syslog-v1.1.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-syslog/-/archive/v1.1.0
+PKG_HASH:=07f7ed1952df365e423033a182b59410742788e651e305321881867761414847
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-syslog-v1.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -18,8 +18,8 @@ PKG_RELEASE:=1
 
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S12$(COMPONENT)
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/K88$(COMPONENT)
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/debug_log.sh ${PKG_INSTALL_DIR}/etc/rc.d/S12debug_log.sh
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/debug_log.sh ${PKG_INSTALL_DIR}/etc/rc.d/K88debug_log.sh
 endef
 
 include $(INCLUDE_DIR)/package.mk
