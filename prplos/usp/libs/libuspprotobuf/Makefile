@@ -9,7 +9,7 @@ PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/lib
 PKG_HASH:=95a86cba75864ff4d543afdddf28a6d19f7e1c421a84b6160b0f34c7cd5b25f9
 PKG_BUILD_DIR:=$(BUILD_DIR)/libprotobuf-v0.5.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
-PKG_LICENSE:=BBF
+PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE
 
 
