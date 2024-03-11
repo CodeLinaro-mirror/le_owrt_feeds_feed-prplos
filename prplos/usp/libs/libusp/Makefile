@@ -1,16 +1,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libusp
-PKG_VERSION:=v2.6.5
+PKG_VERSION:=v2.6.7
 SHORT_DESCRIPTION:=converts protobuf messages to amx variants
 
-PKG_SOURCE:=libusp-v2.6.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libusp/-/archive/v2.6.5
-PKG_HASH:=04903432873a50f7bbac96fd7c00f8d6f5e34c37c0ac1b59da3547b25514fd54
-PKG_BUILD_DIR:=$(BUILD_DIR)/libusp-v2.6.5
+PKG_SOURCE:=libusp-v2.6.7.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libusp/-/archive/v2.6.7
+PKG_HASH:=0b18a23f462d16603929f826aa41c4f3622e3dcd726f2b3f56dc51c32b58400f
+PKG_BUILD_DIR:=$(BUILD_DIR)/libusp-v2.6.7
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
-PKG_LICENSE:=BBF BSD-2-Clause-Patent
-PKG_LICENSE:=LICENSE.BBF LICENSE.BSD
+PKG_LICENSE:=BSD-2-Clause-Patent BSD-3-Clause
+PKG_LICENSE_FILES:=LICENSE.BSD2 LICENSE.BSD3
 
 PKG_RELEASE:=1
 
@@ -30,7 +30,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-	libusp can be used for converting USP protobuf messages to ambiorix variants and vice versa.
+	converts protobuf messages to amx variants
 endef
 
 define Build/Compile
