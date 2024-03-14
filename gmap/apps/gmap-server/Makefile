@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-server
-PKG_VERSION:=v2.7.0
+PKG_VERSION:=v2.8.0
 SHORT_DESCRIPTION:=Service implementing the gmap data model
 
-PKG_SOURCE:=gmap-server-v2.7.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-server/-/archive/v2.7.0
-PKG_HASH:=1210237842313c66e706c199163890729f46d97680c03c9027d9d020bea4b727
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-server-v2.7.0
+PKG_SOURCE:=gmap-server-v2.8.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-server/-/archive/v2.8.0
+PKG_HASH:=6b07b814e36d1d1b533f6fe03ddf3f126e697117ba139eeb4c7d11f22205883e
+PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-server-v2.8.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -47,6 +47,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libgmap-client
   DEPENDS += +libsahtrace
   DEPENDS += +libuuid
+  DEPENDS += +mod-pcm-svc
   MENU:=1
 endef
 
