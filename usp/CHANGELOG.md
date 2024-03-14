@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.11.2 - 2024-03-14(17:10:27 +0000)
+
+### Fixes
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [CDROUTER][USP] Delete Message - Allow Partial True fails
+
 ## Release v8.11.1 - 2024-02-29(12:00:37 +0000)
 
 ### Other
