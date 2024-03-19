@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dnssd
-PKG_VERSION:=v0.4.12
+PKG_VERSION:=v0.4.13
 SHORT_DESCRIPTION:=dns service discovery plugin
 
-PKG_SOURCE:=tr181-dnssd-v0.4.12.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dnssd/-/archive/v0.4.12
-PKG_HASH:=53261642f9776767b65e671dd19f66d3b6135883d27296b8f5e8508a7b71da6c
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dnssd-v0.4.12
+PKG_SOURCE:=tr181-dnssd-v0.4.13.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dnssd/-/archive/v0.4.13
+PKG_HASH:=a69e768efb944027225eb26156c10280bc89c747964d71fd23cf3d33141feb84
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dnssd-v0.4.13
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
