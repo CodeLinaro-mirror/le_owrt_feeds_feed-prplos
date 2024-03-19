@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=v1.31.17
+PKG_VERSION:=v1.31.18
 SHORT_DESCRIPTION:=TR069 Manager
 
-PKG_SOURCE:=tr069-manager-v1.31.17.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.31.17
-PKG_HASH:=c86643c89271a0dcbe354b4dc1b3e65448fdc0ade6f481f051458773f0ee60e2
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.31.17
+PKG_SOURCE:=tr069-manager-v1.31.18.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.31.18
+PKG_HASH:=8d85f361fdd887c2b65db646f922d94dba888ab4ea0ba5e0a20792e7e12b1a88
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.31.18
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
