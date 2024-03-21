@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-iprouter
-PKG_VERSION:=v0.3.0
+PKG_VERSION:=v0.3.1
 SHORT_DESCRIPTION:=Network Model Router Advertisement client
 
-PKG_SOURCE:=netmodel-iprouter-v0.3.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-iprouter/-/archive/v0.3.0
-PKG_HASH:=042d6b8d040fce7023393881bfc73090c0702744506c38f305ba7e67fec6bc5e
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-iprouter-v0.3.0
+PKG_SOURCE:=netmodel-iprouter-v0.3.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-iprouter/-/archive/v0.3.1
+PKG_HASH:=7649a86c04b22dc086ca14d7468976ddbdb6b49629f148aa9ca5b6d539845021
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-iprouter-v0.3.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -18,7 +18,7 @@ PKG_RELEASE:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=Netmodel
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-iprouter
