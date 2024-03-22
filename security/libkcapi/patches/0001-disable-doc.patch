@@ -1,0 +1,11 @@
+--- a/Makefile.am	2024-03-14 08:59:23.196330297 +0100
++++ b/Makefile.am	2024-03-14 08:59:31.448306443 +0100
+@@ -11,7 +11,7 @@
+ libtool: $(LIBTOOL_DEPS)
+ 	$(SHELL) ./config.status libtool
+ 
+-noinst_PROGRAMS = lib/doc/bin/docproc
++#noinst_PROGRAMS = lib/doc/bin/docproc
+ 
+ EXTRA_lib_doc_bin_docproc_DEPENDENCIES = libtool
+ 
