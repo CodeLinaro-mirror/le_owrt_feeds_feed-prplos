@@ -1,0 +1,246 @@
+From 6cdf95ac7e8f8adab7960339cdc34ccacafca08e Mon Sep 17 00:00:00 2001
+From: Paul HENRYS <paul.henrys_ext@softathome.com>
+Date: Wed, 6 May 2026 15:20:30 +0200
+Subject: [PATCH] Add support of ALG_SET_KEY_BY_KEY_SERIAL crypto API
+
+ALG_SET_KEY_BY_KEY_SERIAL was added to the upstream linux kernel in
+commit 7984ceb134bf, to leverage keyring to store sensitive keys, and
+then use those keys for symmetric encryption via the crypto API.
+
+Support of ALG_SET_KEY_BY_KEY_SERIAL is added to libkcapi to allow users
+to pass a key_serial_t instead of the key value to the crypto API to
+perform symmetric encryption.
+
+Signed-off-by: Paul HENRYS <paul.henrys_ext@softathome.com>
+---
+ apps/kcapi-enc.c      | 32 +++++++++++++++++++++++++++++---
+ lib/internal.h        |  1 +
+ lib/kcapi-kernel-if.c | 21 +++++++++++++++++++++
+ lib/kcapi-sym.c       |  6 ++++++
+ lib/kcapi.h           | 18 ++++++++++++++++++
+ lib/version.lds       |  5 +++++
+ 6 files changed, 80 insertions(+), 3 deletions(-)
+
+diff --git a/apps/kcapi-enc.c b/apps/kcapi-enc.c
+index 68cf2f7..2fef405 100644
+--- a/apps/kcapi-enc.c
++++ b/apps/kcapi-enc.c
+@@ -48,6 +48,7 @@ struct opt_data {
+ 	const char *pbkdf_hash;
+ 	int password_fd;
+ 	int key_fd;
++	uint32_t key_serial;
+ 	uint32_t key_len;
+ 	uint32_t pbkdf_iterations;
+ 	uint32_t taglen;
+@@ -60,6 +61,8 @@ struct opt_data {
+ 	void (*func_destroy)(struct kcapi_handle *handle);
+ 	int (*func_setkey)(struct kcapi_handle *handle,
+ 			   const uint8_t *key, uint32_t keylen);
++	int (*func_setkey_by_key_serial)(struct kcapi_handle *handle,
++			   const uint32_t keyserial);
+ 	ssize_t (*func_stream_init_enc)(struct kcapi_handle *handle,
+ 					const uint8_t *iv,
+ 					struct iovec *iov, size_t iovlen);
+@@ -847,6 +850,11 @@ static int set_key(struct kcapi_handle *handle, struct opt_data *opts)
+ 		keybuflen = (uint32_t)ret;
+ 	}
+ 
++	if(opts->key_serial != 0){
++		have_key = 1;
++		dolog(KCAPI_LOG_VERBOSE, "Use KeySerial  %d", opts->key_serial);
++	}
++
+ 	if (!have_key) {
+ 		dolog(KCAPI_LOG_ERR, "No key found in input data");
+ 		ret = -EINVAL;
+@@ -856,7 +864,12 @@ static int set_key(struct kcapi_handle *handle, struct opt_data *opts)
+ 	dolog_bin(KCAPI_LOG_DEBUG, keybuf, keybuflen, "data-encryption-key");
+ 
+ 	/* Set the key for the key handle. */
+-	ret = opts->func_setkey(handle, keybuf, keybuflen);
++	if(opts->key_serial){
++		ret = opts->func_setkey_by_key_serial(handle, opts->key_serial);
++	}
++	else {
++		ret = opts->func_setkey(handle, keybuf, keybuflen);
++	}
+ 
+ out:
+ 	kcapi_memset_secure(passwdbuf, 0, sizeof(passwdbuf));
+@@ -897,6 +910,7 @@ static void usage(void)
+ 	fprintf(stderr, "\t   --pbkdfiter <NUM>\tNumber of PBKDF2 iterations\n");
+ 	fprintf(stderr, "\t   --pbkdfmac <MAC>\tMac for PBKDF2 (default: hmac(sha256))\n");
+ 	fprintf(stderr, "\t   --keyfd <FD>\t\tKey file descriptor providing password\n");
++	fprintf(stderr, "\t   --keyserial <key serial>\t\tKey serial of the key in the keyring\n");
+ 	fprintf(stderr, "\t   --nounpad\t\tDo not unpad output file\n");
+ 	fprintf(stderr, "\t-h --help\t\tThis help information\n");
+ 	fprintf(stderr, "\t   --version\t\tPrint version\n");
+@@ -919,6 +933,7 @@ static void parse_opts(int argc, char *argv[], struct opt_data *opts)
+ 	memset(opts, 0, sizeof(*opts));
+ 	opts->password_fd = -1;
+ 	opts->key_fd = -1;
++	opts->key_serial = 0;
+ 	opts->key_len = 32;
+ 
+ 	while (1) {
+@@ -947,6 +962,7 @@ static void parse_opts(int argc, char *argv[], struct opt_data *opts)
+ 			{"help",	no_argument,		0, 'h'},
+ 			{"version",	no_argument,		0, 0},
+ 			{"key-len",	required_argument,	0, 0},
++			{"keyserial",	required_argument,	0, 0},
+ 			{0, 0, 0, 0}
+ 		};
+ 		c = getopt_long(argc, argv, "c:edi:o:s:p:vqh",
+@@ -1056,6 +1072,15 @@ static void parse_opts(int argc, char *argv[], struct opt_data *opts)
+ 				}
+ 				opts->key_len = (uint32_t)val;
+ 				break;
++			case 22:
++				val = strtoul(optarg, NULL, 10);
++				if (val == UINT_MAX) {
++					dolog(KCAPI_LOG_ERR,
++					      "Key Serial value too big");
++					usage();
++				}
++				opts->key_serial = (uint32_t)val;
++				break;
+ 			default:
+ 				usage();
+ 			}
+@@ -1105,9 +1130,9 @@ static void parse_opts(int argc, char *argv[], struct opt_data *opts)
+ 	}
+ 
+ 	if (!opts->passwd && opts->password_fd == -1 &&
+-	    opts->key_fd == -1) {
++	    opts->key_fd == -1 && opts->key_serial == 0) {
+ 		dolog(KCAPI_LOG_ERR,
+-		      "Provide at least a password, a password FD or key FD");
++		      "Provide at least a password, a password FD, key FD or a key serial");
+ 		usage();
+ 	}
+ 
+@@ -1160,6 +1185,7 @@ int main(int argc, char *argv[])
+ 		opts.func_init = kcapi_cipher_init;
+ 		opts.func_destroy = kcapi_cipher_destroy;
+ 		opts.func_setkey = kcapi_cipher_setkey;
++		opts.func_setkey_by_key_serial = kcapi_cipher_setkey_by_key_serial;
+ 		opts.func_stream_init_enc = kcapi_cipher_stream_init_enc;
+ 		opts.func_stream_init_dec = kcapi_cipher_stream_init_dec;
+ 		opts.func_stream_update = kcapi_cipher_stream_update;
+diff --git a/lib/internal.h b/lib/internal.h
+index 43c967b..e030c77 100644
+--- a/lib/internal.h
++++ b/lib/internal.h
+@@ -296,6 +296,7 @@ int _kcapi_handle_init(struct kcapi_handle **caller, const char *type,
+ void _kcapi_handle_destroy(struct kcapi_handle *handle);
+ int _kcapi_common_setkey(struct kcapi_handle *handle, const uint8_t *key,
+ 			 uint32_t keylen);
++int _kcapi_common_setkey_by_key_serial(struct kcapi_handle *handle, const uint32_t keyserial);
+ int _kcapi_common_setentropy(struct kcapi_handle *handle, const uint8_t *ent,
+ 			     uint32_t entlen);
+ ssize_t _kcapi_cipher_crypt(struct kcapi_handle *handle, const uint8_t *in,
+diff --git a/lib/kcapi-kernel-if.c b/lib/kcapi-kernel-if.c
+index 835e45a..876f315 100644
+--- a/lib/kcapi-kernel-if.c
++++ b/lib/kcapi-kernel-if.c
+@@ -36,6 +36,10 @@
+ #include "kcapi.h"
+ #include "internal.h"
+ 
++#ifndef ALG_SET_KEY_BY_KEY_SERIAL
++#define ALG_SET_KEY_BY_KEY_SERIAL 7
++#endif
++
+ /************************************************************
+  * Common helper used within the lib and as an API
+  ************************************************************/
+@@ -627,6 +631,23 @@ ssize_t _kcapi_common_read_data(struct kcapi_handle *handle,
+ 	return totallen;
+ }
+ 
++int _kcapi_common_setkey_by_key_serial(struct kcapi_handle *handle,
++			 const uint32_t keyserial)
++{
++	struct kcapi_handle_tfm *tfm = handle->tfm;
++	int ret;
++
++
++	kcapi_dolog(KCAPI_LOG_VERBOSE, "SET SERIAL KEY\n");
++	ret = setsockopt(tfm->tfmfd, SOL_ALG, ALG_SET_KEY_BY_KEY_SERIAL, &keyserial, sizeof(uint32_t));
++	if (ret < 0)
++		ret = -errno;
++	kcapi_dolog(KCAPI_LOG_DEBUG,
++		    "AF_ALG setkey by key serial: setsockopt syscall returned %d", ret);
++
++	return ret;
++}
++
+ int _kcapi_common_setkey(struct kcapi_handle *handle,
+ 			 const uint8_t *key, uint32_t keylen)
+ {
+diff --git a/lib/kcapi-sym.c b/lib/kcapi-sym.c
+index 911ec1e..dd7afcd 100644
+--- a/lib/kcapi-sym.c
++++ b/lib/kcapi-sym.c
+@@ -32,6 +32,12 @@ void kcapi_cipher_destroy(struct kcapi_handle *handle)
+ 	_kcapi_handle_destroy(handle);
+ }
+ 
++int kcapi_cipher_setkey_by_key_serial(struct kcapi_handle *handle,
++			const uint32_t keyserial)
++{
++	return _kcapi_common_setkey_by_key_serial(handle, keyserial);
++}
++
+ int kcapi_cipher_setkey(struct kcapi_handle *handle,
+ 			const uint8_t *key, uint32_t keylen)
+ {
+diff --git a/lib/kcapi.h b/lib/kcapi.h
+index 9f1db2c..54b1d6a 100644
+--- a/lib/kcapi.h
++++ b/lib/kcapi.h
+@@ -154,6 +154,24 @@ void kcapi_cipher_destroy(struct kcapi_handle *handle);
+ int kcapi_cipher_setkey(struct kcapi_handle *handle,
+ 			const uint8_t *key, uint32_t keylen);
+ 
++/**
++ * kcapi_cipher_setkey_by_key_serial() - set the key for the cipher handle
++ *
++ * @handle: [in] cipher handle
++ * @keyserial: [in] key serial
++ *
++ * With this function, the caller sets the key for subsequent encryption or
++ * decryption operations.
++ *
++ * @return 0 upon success (in case of an akcipher handle, a positive integer
++ *	   is returned that denominates the maximum output size of the
++ *	   cryptographic operation -- this value must be used as the size
++ *	   of the output buffer for one cryptographic operation);
++ *	   a negative errno-style error code if an error occurred
++ */
++int kcapi_cipher_setkey_by_key_serial(struct kcapi_handle *handle,
++			const uint32_t keyserial);
++
+ /**
+  * kcapi_cipher_encrypt() - encrypt data (synchronous one shot)
+  *
+diff --git a/lib/version.lds b/lib/version.lds
+index 2f25882..0f9fc56 100644
+--- a/lib/version.lds
++++ b/lib/version.lds
+@@ -93,6 +93,11 @@ LIBKCAPI_0.14.0 {
+ 	kcapi_rng_seedsize;
+ } LIBKCAPI_0.13.0;
+ 
++LIBKCAPI_0.15.0 {
++	global:
++	kcapi_cipher_setkey_by_key_serial;
++} LIBKCAPI_0.14.0;
++
+ LIBKCAPI_1.0.0 {
+ 	global:
+ 	kcapi_kpp_init;
+-- 
+2.43.0
+
