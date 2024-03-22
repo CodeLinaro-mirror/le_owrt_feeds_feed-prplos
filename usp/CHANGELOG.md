@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.11.3 - 2024-03-22(13:16:00 +0000)
+
+### Fixes
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] Triggered! parameters need to be in a data variant
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] PeriodicNotifInterval changes are only applied after reboot
+
 ## Release v8.11.2 - 2024-03-14(17:10:27 +0000)
 
 ### Fixes
