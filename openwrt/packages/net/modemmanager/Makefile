@@ -41,7 +41,7 @@ define Package/modemmanager
 	$(INTL_DEPENDS) \
 	+glib2 \
 	+dbus \
-	+ppp \
+	+ppp-prpl \
 	+MODEMMANAGER_WITH_MBIM:libmbim \
 	+MODEMMANAGER_WITH_QMI:libqmi \
 	+MODEMMANAGER_WITH_QRTR:libqrtr-glib
