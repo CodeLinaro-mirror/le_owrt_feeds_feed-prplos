@@ -1,0 +1,28 @@
+Index: libkcapi-1.5.0/Makefile.am
+===================================================================
+--- libkcapi-1.5.0.orig/Makefile.am
++++ libkcapi-1.5.0/Makefile.am
+@@ -11,7 +11,7 @@ COMMON_LDFLAGS =  -Wl,-z,relro,-z,now
+ libtool: $(LIBTOOL_DEPS)
+ 	$(SHELL) ./config.status libtool
+ 
+-noinst_PROGRAMS = lib/doc/bin/docproc
++#noinst_PROGRAMS = lib/doc/bin/docproc
+ 
+ EXTRA_lib_doc_bin_docproc_DEPENDENCIES = libtool
+ 
+@@ -296,12 +296,12 @@ man-stamp: lib/doc/libkcapi.xml
+ 	$(TOUCH) $@
+ 
+ devel_manpages = lib/doc/man/*.3
+-man_MANS += $(devel_manpages)
++#man_MANS += $(devel_manpages)
+ 
+ $(devel_manpages): man
+ endif
+ 
+-doc: $(sort $(DOC_TARGETS))
++#doc: $(sort $(DOC_TARGETS))
+ 
+ clean-local:
+ 	-rm -f $(DOCPROC_TEMP)
