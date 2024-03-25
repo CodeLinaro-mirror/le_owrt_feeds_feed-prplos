@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.12.0 - 2024-03-25(18:16:06 +0000)
+
+### New
+
+- [tr181-uds](https://gitlab.com/prpl-foundation/components/core/plugins/tr181-uds): Add tr181-device proxy odl files to components
+
 ## Release v8.11.3 - 2024-03-22(13:16:00 +0000)
 
 ### Fixes
