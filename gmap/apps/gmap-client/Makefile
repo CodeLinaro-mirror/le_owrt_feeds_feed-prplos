@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-client
-PKG_VERSION:=v1.2.1
+PKG_VERSION:=v1.3.0
 SHORT_DESCRIPTION:=gMap client plugin
 
-PKG_SOURCE:=gmap-client-v1.2.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-client/-/archive/v1.2.1
-PKG_HASH:=04f1fa5d8a9ddbcaba519dbd2f8d193cd596a321cc84b3132fde6f3a09627720
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-client-v1.2.1
+PKG_SOURCE:=gmap-client-v1.3.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-client/-/archive/v1.3.0
+PKG_HASH:=9f13554f7af2efe3409778a2aeab52dffbaf01b0193df9e1d61efea2e2aea2f9
+PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-client-v1.3.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -25,7 +25,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=gmap
+  CATEGORY:=prpl Foundation
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-client
