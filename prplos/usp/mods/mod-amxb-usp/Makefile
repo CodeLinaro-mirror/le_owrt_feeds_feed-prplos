@@ -1,14 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-amxb-usp
-PKG_VERSION:=dev_obuspa_debug
+PKG_VERSION:=v4.2.2
 SHORT_DESCRIPTION:=USP backend implementation for amxb
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=dev_obuspa_debug
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp.git
-PKG_MIRROR_HASH:=6cefc6bd886fc1d09e1b9c43d44bb8b3b3354d658c95ddcc4244b453c3929fc3
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=amxb_usp-v4.2.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp/-/archive/v4.2.2
+PKG_HASH:=7e68f5fda7962e880bd6e4a7a2d0a4083ccfa59c5aea20c574eccf66386f4e8f
+PKG_BUILD_DIR:=$(BUILD_DIR)/amxb_usp-v4.2.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -30,7 +29,6 @@ define Package/$(PKG_NAME)
   DEPENDS += +libimtp
   DEPENDS += +libusp
   DEPENDS += +libuspi
-  DEPENDS += +libsahtrace
   MENU:=1
 endef
 
