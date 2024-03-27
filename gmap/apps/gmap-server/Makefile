@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-server
-PKG_VERSION:=v2.9.0
+PKG_VERSION:=v2.9.1
 SHORT_DESCRIPTION:=Service implementing the gmap data model
 
-PKG_SOURCE:=gmap-server-v2.9.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-server/-/archive/v2.9.0
-PKG_HASH:=1cacf627e2dcc136c43ebef8868291f62b47e74cb354746ab42b19c2090354c7
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-server-v2.9.0
+PKG_SOURCE:=gmap-server-v2.9.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-server/-/archive/v2.9.1
+PKG_HASH:=06f7aa3644d0fb3457ebb319263b3c93a32764efadaa8bc167c00bcf7330b8d0
+PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-server-v2.9.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -15,7 +15,6 @@ PKG_LICENSE_FILES:=LICENSE
 COMPONENT:=gmap-server
 
 PKG_RELEASE:=1
-PKG_BUILD_DEPENDS += util-linux
 
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
