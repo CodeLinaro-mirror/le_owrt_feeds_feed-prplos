@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.14.0 - 2024-03-27(13:25:22 +0000)
+
+### New
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): [USP] Add register retry mechanism
+
 ## Release v8.13.0 - 2024-03-26(20:28:02 +0000)
 
 ### New
