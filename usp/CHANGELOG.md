@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.14.1 - 2024-03-27(19:57:49 +0000)
+
+### Other
+
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): [USP] Extend documentation
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Extend documentation
+
 ## Release v8.14.0 - 2024-03-27(13:25:22 +0000)
 
 ### New
