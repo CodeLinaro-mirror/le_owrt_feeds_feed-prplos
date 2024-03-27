@@ -1,0 +1,50 @@
+From 753ead3415712791625f93e08460f1b61651f034 Mon Sep 17 00:00:00 2001
+From: Marvin Lu <marvin.lu@wnc.com.tw>
+Date: Wed, 27 Mar 2024 10:22:02 +0800
+Subject: [PATCH] netlayout_from_uci.sh: add the support of uci options to
+ dynamically define static phy number and phy detection timeout
+
+Retrieve UCI wireless.vendor.min_phy and
+wireless.vendor.phy_detect_timeout. If these two settings are available,
+use them as static phy number and the timeout value for phy detection.
+
+This is to handle the case that wireless phy is created after phy
+detection is done here on some boards, causing some phy missing.
+
+Signed-off-by: Marvin Lu <marvin.lu@wnc.com.tw>
+GitOrigin-RevId: 792f13f716e3834b1302a65c1cfd2bbd5cf1e3f1
+---
+ files/netlayout_from_uci.sh | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/files/netlayout_from_uci.sh b/files/netlayout_from_uci.sh
+index 8ddf032687d2..ccabd549f49d 100755
+--- a/files/netlayout_from_uci.sh
++++ b/files/netlayout_from_uci.sh
+@@ -5,6 +5,7 @@
+ NETLAYOUT=/etc/networklayout.json
+ 
+ . /usr/share/libubox/jshn.sh
++. /lib/functions.sh
+ 
+ 
+ netlayout_add_wan_itf()
+@@ -266,11 +267,17 @@ wait_for_uci_wireless() {
+ 	local uci_count
+ 	local timeout=3
+ 	local elapsed=0
++	local min_phy=0
++	local timeout_uci=$(uci -q get wireless.vendor.phy_detect_timeout)
++	local min_phy_uci=$(uci -q get wireless.vendor.min_phy)
++
++	[ -n "$timeout_uci" ] && timeout=$timeout_uci
++	[ -n "$min_phy_uci" ] && min_phy=$min_phy_uci
+ 
+ 	phy_count=$(iw phy | grep -c Wiphy)
+ 	uci_count=$(grep -c 'wifi-device.*radio' /etc/config/wireless 2>/dev/null || echo 0)
+ 
+-	while [ "$phy_count" -ne "$uci_count" ] && [ $elapsed -lt $timeout ]; do
++	while ([ "$phy_count" -lt "$min_phy" ] || [ "$phy_count" -ne "$uci_count" ]) && [ $elapsed -lt $timeout ]; do
+ 		phy_count=$(iw phy | grep -c Wiphy)
+ 		uci_count=$(grep -c 'wifi-device.*radio' /etc/config/wireless 2>/dev/null || echo 0)
+ 		elapsed=$((elapsed + 1))
