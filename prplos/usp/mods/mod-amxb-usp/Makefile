@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-amxb-usp
-PKG_VERSION:=master_v4.3.0
+PKG_VERSION:=v4.3.0
 SHORT_DESCRIPTION:=USP backend implementation for amxb
 
 PKG_SOURCE:=amxb_usp-v4.3.0.tar.gz
@@ -13,7 +13,7 @@ PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
 
 
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
 
