@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=mod-dmproxy
-PKG_VERSION:=v1.4.0
-SHORT_DESCRIPTION:=Data model object proxy
+PKG_NAME:=mod-usp-registration
+PKG_VERSION:=v0.1.1
+SHORT_DESCRIPTION:=Registers available data models
 
-PKG_SOURCE:=mod-dmproxy-v1.4.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-dmproxy/-/archive/v1.4.0
-PKG_HASH:=187e1117b279a3b6457f3eb64bb2b6944185ce9d54c27fc10cd13f082658b888
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-dmproxy-v1.4.0
+PKG_SOURCE:=mod-usp_registration-v0.1.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-usp_registration/-/archive/v0.1.1
+PKG_HASH:=9ee4af4e37a019487c316c5dbdd47cc3921f2d6bf40b244834d9481d7273b2cb
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-usp_registration-v0.1.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -21,18 +21,18 @@ define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
   SUBMENU:=Modules
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-dmproxy
+  URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-usp_registration
   DEPENDS += +libamxc
   DEPENDS += +libamxp
   DEPENDS += +libamxd
-  DEPENDS += +libamxo
   DEPENDS += +libamxb
+  DEPENDS += +libamxo
   DEPENDS += +libsahtrace
   MENU:=1
 endef
 
 define Package/$(PKG_NAME)/description
-	Data model object proxy
+	This module helps registering data models when they are actually available
 endef
 
 define Build/Compile
