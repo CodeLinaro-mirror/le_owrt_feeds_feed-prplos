@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dhcpv6s-manager
-PKG_VERSION:=v0.20.2
+PKG_VERSION:=v0.20.3
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-dhcpv6s-v0.20.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6s/-/archive/v0.20.2
-PKG_HASH:=59ba447532dedf9599d52bf9c4cc728e39f8f1048c64993f55c18b5542306081
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6s-v0.20.2
+PKG_SOURCE:=tr181-dhcpv6s-v0.20.3.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6s/-/archive/v0.20.3
+PKG_HASH:=6cefd518ba9efc433cd22bfaedb17ec40500666cba3518bbcf5afacdeb2d5612
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6s-v0.20.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
