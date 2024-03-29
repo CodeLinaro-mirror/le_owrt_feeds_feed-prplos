@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.15.0 - 2024-03-29(13:02:56 +0000)
+
+### New
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [USP] Support all kind of "Cause" for Boot! Event
+
 ## Release v8.14.1 - 2024-03-27(19:57:49 +0000)
 
 ### Other
