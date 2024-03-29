@@ -16,8 +16,6 @@ PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/forks/miniupnpd/-/archive/$(PKG_
 PKG_HASH:=322258dce4dff0aef25e35f56754e7fbc1709dcf9efe3438281b7b348b225dfd
 PKG_BUILD_DIR:=$(BUILD_DIR)/miniupnpd-$(PKG_VERSION)
 
-UNPACK_CMD=$(HOST_TAR) -xf "$(DL_DIR)/$(PKG_SOURCE)" -C $(PKG_BUILD_DIR) --strip-components=2 miniupnpd-$(PKG_VERSION)/miniupnpd
-
 PKG_MAINTAINER:=
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE
@@ -54,6 +52,7 @@ define Build/Prepare
 	echo "$(VERSION_NUMBER)" | tr '() ' '_' >$(PKG_BUILD_DIR)/os.openwrt
 endef
 
+CONFIGURE_PATH = miniupnpd
 CONFIGURE_ARGS = \
 	$(if $(CONFIG_IPV6),--ipv6) \
 	--igd2 \
@@ -63,6 +62,8 @@ CONFIGURE_ARGS = \
 	--disable-fork \
 	--vendorcfg \
 	--strict
+
+MAKE_PATH = $(CONFIGURE_PATH)
 
 TARGET_CFLAGS += $(FPIC) -flto
 TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
