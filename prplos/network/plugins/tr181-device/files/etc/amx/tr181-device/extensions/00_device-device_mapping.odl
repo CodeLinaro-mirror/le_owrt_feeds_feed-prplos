@@ -23,7 +23,6 @@
         "'Device.IP.Diagnostics.'" = "IPDiagnostics.",
         "'Device.LANConfigSecurity.'" = "LANConfigSecurity.",
         "'Device.LEDs.'" = "LEDs.",
-        "'Device.LocalAgent.'" = "LocalAgent.",
         "'Device.Logical.'" = "Logical.",
         "'Device.MQTT.'" = "MQTT.",
         "'Device.CWMPManagementServer.'" = "ManagementServer.",
