@@ -23,6 +23,10 @@ config SAH_AMX_OOPSMONITOR_RUN_AS_GROUP
     string "Group will be used for the OOPSMONITOR plugin"
     default "tr181_app"
 
+config SAH_AMX_OOPSMONITOR_DEFAULT_PARSING
+    bool "Enable default parsing"
+    default y
+
 endmenu
 
 endif
