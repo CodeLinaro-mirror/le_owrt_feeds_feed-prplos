@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-clients
-PKG_VERSION:=v0.2.0
+PKG_VERSION:=v0.2.1
 SHORT_DESCRIPTION:=Network Model clients plugin
 
-PKG_SOURCE:=netmodel-clients-v0.2.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/applications/netmodel-clients/-/archive/v0.2.0
-PKG_HASH:=fa65cdbac5c713fff57565445d57406badcc3acb9834bdd625fdcf2465172faa
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-clients-v0.2.0
+PKG_SOURCE:=netmodel-clients-v0.2.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/applications/netmodel-clients/-/archive/v0.2.1
+PKG_HASH:=1191c15c67e2358e4403751ddaa8725648e34a1e4356ad9537b14b3cf5fd995e
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-clients-v0.2.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -25,7 +25,7 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=Netmodel
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/netmodel/applications/netmodel-clients
