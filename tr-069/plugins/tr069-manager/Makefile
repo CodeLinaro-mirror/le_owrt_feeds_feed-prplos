@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=v1.31.29
+PKG_VERSION:=v1.31.30
 SHORT_DESCRIPTION:=TR069 Manager
 
-PKG_SOURCE:=tr069-manager-v1.31.29.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.31.29
-PKG_HASH:=6e3745e44afc2d18953c83bc4cb662fd2ddb3c7f9a2454e6d3667da855a267f5
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.31.29
+PKG_SOURCE:=tr069-manager-v1.31.30.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.31.30
+PKG_HASH:=a967e5d494df001c61c4ab2b6b9bf344aa873a08c78b6e979efde7e5dfd16f86
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.31.30
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -46,7 +46,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libcares
   DEPENDS += +libnetmodel
   DEPENDS += +libfiletransfer
-  DEPENDS += +libdhcpoptions
+  DEPENDS += +libgmap-client
   MENU:=1
 endef
 
