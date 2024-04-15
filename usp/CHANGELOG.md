@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.15.1 - 2024-04-15(13:37:41 +0000)
+
+### Fixes
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Set or Delete response does not return error codes
+
+### Changes
+
+- [tr181-uds](https://gitlab.com/prpl-foundation/components/core/plugins/tr181-uds): Make amxb timeouts configurable
+- [tr181-uspservices](https://gitlab.com/soft.at.home/usp/applications/tr181-uspservices): Make amxb timeouts configurable
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): Make amxb timeouts configurable
+
 ## Release v8.15.0 - 2024-03-29(13:02:56 +0000)
 
 ### New
