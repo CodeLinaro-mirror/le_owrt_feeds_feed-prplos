@@ -1,0 +1,17 @@
+diff --git a/libfstools/common.c b/libfstools/common.c
+index 41418c6..6e33be8 100644
+--- a/libfstools/common.c
++++ b/libfstools/common.c
+@@ -99,6 +99,12 @@ static bool use_f2fs(struct volume *v, uint64_t offset, const char *bdev)
+ 	bool ret = false;
+ 	int fd;
+ 
++	// Check if mkfs.f2fs is present
++	if (access("/usr/sbin/mkfs.f2fs", F_OK) != 0) {
++		ULOG_WARN("mkfs.f2fs not present, not using f2fs\n");
++		return false;
++	}
++
+ 	fd = open(bdev, O_RDONLY);
+ 	if (fd < 0)
+ 		return false;
