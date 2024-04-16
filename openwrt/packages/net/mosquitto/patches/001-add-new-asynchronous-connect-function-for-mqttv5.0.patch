@@ -1,0 +1,301 @@
+diff --git a/include/mosquitto.h b/include/mosquitto.h
+index 5633b407..c60e941b 100644
+--- a/include/mosquitto.h
++++ b/include/mosquitto.h
+@@ -122,6 +122,7 @@ enum mosq_err_t {
+ 	MOSQ_ERR_TOPIC_ALIAS_INVALID = 29,
+ 	MOSQ_ERR_ADMINISTRATIVE_ACTION = 30,
+ 	MOSQ_ERR_ALREADY_EXISTS = 31,
++	MOSQ_ERR_CONN_INPROGRESS = 32,
+ };
+ 
+ /* Enum: mosq_opt_t
+@@ -631,6 +632,97 @@ libmosq_EXPORT int mosquitto_connect_bind_v5(struct mosquitto *mosq, const char
+  */
+ libmosq_EXPORT int mosquitto_connect_async(struct mosquitto *mosq, const char *host, int port, int keepalive);
+ 
++/*
++ * Function: mosquitto_connect_bind_async_v5
++ *
++ * Connect to an MQTT broker. This is a non-blocking call. This will work with
++ * both the threaded and event loop interface of mosquitto.
++ *
++ * This extends the functionality of <mosquitto_connect_async> by adding the
++ * bind_address parameter. Use this function if you need to restrict network
++ * communication over a particular interface.
++ *
++ * May be called before or after <mosquitto_loop_start>.
++ *
++ * Use e.g. <mosquitto_property_add_string> and similar to create a list of
++ * properties, then attach them to this publish. Properties need freeing with
++ * <mosquitto_property_free_all>.
++ *
++ * If the mosquitto instance `mosq` is using MQTT v5, the `properties` argument
++ * will be applied to the CONNECT message. For MQTT v3.1.1 and below, the
++ * `properties` argument will be ignored.
++ *
++ * Set your client to use MQTT v5 immediately after it is created:
++ *
++ * mosquitto_int_option(mosq, MOSQ_OPT_PROTOCOL_VERSION, MQTT_PROTOCOL_V5);
++ *
++ * Parameters:
++ * 	mosq -         a valid mosquitto instance.
++ * 	host -         the hostname or ip address of the broker to connect to.
++ * 	port -         the network port to connect to. Usually 1883.
++ * 	keepalive -    the number of seconds after which the broker should send a PING
++ *                 message to the client if no other messages have been exchanged
++ *                 in that time.
++ *  bind_address - the hostname or ip address of the local network interface to
++ *                 bind to. If you do not want to bind to a specific interface,
++ *                 set this to NULL.
++ *  properties -   the MQTT 5 properties for the connect (not for the Will).
++ *
++ * Returns:
++ * 	MOSQ_ERR_SUCCESS - on success.
++ * 	MOSQ_ERR_INVAL -   if the input parameters were invalid, which could be any of:
++ * 	                   * mosq == NULL
++ * 	                   * host == NULL
++ * 	                   * port < 0
++ * 	                   * keepalive < 5
++ * 	MOSQ_ERR_ERRNO -   if a system call returned an error. The variable errno
++ *                     contains the error code, even on Windows.
++ *                     Use strerror_r() where available or FormatMessage() on
++ *                     Windows.
++ *	MOSQ_ERR_DUPLICATE_PROPERTY - if a property is duplicated where it is forbidden.
++ *	MOSQ_ERR_PROTOCOL - if any property is invalid for use with CONNECT.
++ *  MOSQ_ERR_CONN_INPROGRESS - if the socket connection is in progress. Call
++ * 							   mosquitto_send_connect when the socket fd is
++ * 							   ready for writing
++ *
++ * See Also:
++ * 	<mosquitto_connect_bind_async>, <mosquitto_connect_bind_v5>
++ */
++libmosq_EXPORT int mosquitto_connect_bind_async_v5(struct mosquitto *mosq, const char *host, int port, int keepalive, const char *bind_address, const mosquitto_property *properties);
++
++/*
++ * Function: mosquitto_send_connect
++ *
++ * This function can be used to send the actual MQTT CONNECT message to the
++ * broker. It is intended to be used in combination with
++ * mosquitto_connect_bind_async_v5, when it returns MOSQ_ERR_CONN_INPROGRESS.
++ * This indicates that the socket connection between client and broker is still
++ * being set up and the CONNECT message cannot be sent yet. Once the socket is
++ * ready for writing, use mosquitto_send_connect to finish the connection setup.
++ *
++ * Parameters:
++ * 	mosq -         a valid mosquitto instance that was previously used with
++ * 				   mosquitto_connect_bind_async_v5.
++ *
++ * Returns:
++ * 	MOSQ_ERR_SUCCESS - on success.
++ * 	MOSQ_ERR_INVAL -   if the input parameters were invalid, which could be any of:
++ * 	                   * mosq == NULL
++ * 	                   * mosq->host == NULL
++ * 	MOSQ_ERR_ERRNO -   if a system call returned an error. The variable errno
++ *                     contains the error code, even on Windows.
++ *                     Use strerror_r() where available or FormatMessage() on
++ *                     Windows.
++ *	MOSQ_ERR_DUPLICATE_PROPERTY - if a property is duplicated where it is forbidden.
++ *	MOSQ_ERR_PROTOCOL - if any property is invalid for use with CONNECT.
++ *
++ * See also:
++ *  <mosquitto_connect_bind_async_v5>
++ */
++libmosq_EXPORT int mosquitto_send_connect(struct mosquitto *mosq);
++
++libmosq_EXPORT int mosquitto_send_connect_retry(struct mosquitto *mosq);
++
+ /*
+  * Function: mosquitto_connect_bind_async
+  *
+diff --git a/lib/connect.c b/lib/connect.c
+index dfc57fa2..b428e554 100644
+--- a/lib/connect.c
++++ b/lib/connect.c
+@@ -81,6 +81,57 @@ static int mosquitto__connect_init(struct mosquitto *mosq, const char *host, int
+ 	return MOSQ_ERR_SUCCESS;
+ }
+ 
++static int mosquitto_send_connect_helper(struct mosquitto *mosq, bool retry)
++{
++    const mosquitto_property *outgoing_properties = NULL;
++    mosquitto_property local_property;
++    int rc;
++
++    if(!mosq) return MOSQ_ERR_INVAL;
++    if(!mosq->host) return MOSQ_ERR_INVAL;
++
++    if(mosq->connect_properties){
++            if(mosq->protocol != mosq_p_mqtt5) return MOSQ_ERR_NOT_SUPPORTED;
++
++            if(mosq->connect_properties->client_generated){
++                    outgoing_properties = mosq->connect_properties;
++            }else{
++                    memcpy(&local_property, mosq->connect_properties, sizeof(mosquitto_property));
++                    local_property.client_generated = true;
++                    local_property.next = NULL;
++                    outgoing_properties = &local_property;
++            }
++            rc = mosquitto_property_check_all(CMD_CONNECT, outgoing_properties);
++            if(rc) return rc;
++    }
++
++    if(retry){
++        log__printf(mosq, MOSQ_LOG_DEBUG, "socket connect tls");
++        rc = net__socket_connect_tls(mosq);
++    }else
++    {
++        log__printf(mosq, MOSQ_LOG_DEBUG, "finish connect tls");
++        rc = net__finish_connect(mosq, mosq->host);
++    }
++    if(rc) return rc;
++
++#ifdef WITH_SOCKS
++    if(mosq->socks5_host){
++        mosquitto__set_state(mosq, mosq_cs_socks5_new);
++        return socks5__send(mosq);
++    }else
++#endif
++    {
++        mosquitto__set_state(mosq, mosq_cs_connected);
++        rc = send__connect(mosq, mosq->keepalive, mosq->clean_start, outgoing_properties);
++        if(rc){
++            packet__cleanup_all(mosq);
++            net__socket_close(mosq);
++            mosquitto__set_state(mosq, mosq_cs_new);
++        }
++        return rc;
++    }
++}
+ 
+ int mosquitto_connect(struct mosquitto *mosq, const char *host, int port, int keepalive)
+ {
+@@ -142,6 +193,42 @@ int mosquitto_connect_bind_async(struct mosquitto *mosq, const char *host, int p
+ 	return mosquitto__reconnect(mosq, false);
+ }
+ 
++int mosquitto_connect_bind_async_v5(struct mosquitto *mosq, const char *host, int port, int keepalive, const char *bind_address, const mosquitto_property *properties)
++{
++    int rc;
++
++       if(bind_address){
++               rc = mosquitto_string_option(mosq, MOSQ_OPT_BIND_ADDRESS, bind_address);
++               if(rc) return rc;
++       }
++
++       mosquitto_property_free_all(&mosq->connect_properties);
++       if(properties){
++               rc = mosquitto_property_check_all(CMD_CONNECT, properties);
++               if(rc) return rc;
++
++               rc = mosquitto_property_copy_all(&mosq->connect_properties, properties);
++               if(rc) return rc;
++               mosq->connect_properties->client_generated = true;
++       }
++
++    rc = mosquitto__connect_init(mosq, host, port, keepalive);
++    if(rc) return rc;
++
++       mosquitto__set_state(mosq, mosq_cs_new);
++
++       return mosquitto__reconnect(mosq, false);
++}
++
++int mosquitto_send_connect_retry(struct mosquitto *mosq)
++{
++	return(mosquitto_send_connect_helper(mosq, true));
++}
++
++int mosquitto_send_connect(struct mosquitto *mosq)
++{
++	return(mosquitto_send_connect_helper(mosq, false));
++}
+ 
+ int mosquitto_reconnect_async(struct mosquitto *mosq)
+ {
+diff --git a/lib/linker.version b/lib/linker.version
+index a846505f..6b0476dc 100644
+--- a/lib/linker.version
++++ b/lib/linker.version
+@@ -141,3 +141,9 @@ MOSQ_1.7 {
+ 		mosquitto_property_next;
+ 		mosquitto_ssl_get;
+ } MOSQ_1.6;
++
++MOSQ_2.0 {
++    global:
++        mosquitto_connect_bind_async_v5;
++        mosquitto_send_connect;
++} MOSQ_1.7;
+diff --git a/lib/net_mosq.c b/lib/net_mosq.c
+index b8d14a02..f198805a 100644
+--- a/lib/net_mosq.c
++++ b/lib/net_mosq.c
+@@ -457,7 +457,7 @@ static int net__try_connect_tcp(const char *host, uint16_t port, mosq_sock_t *so
+ #endif
+ 		if(rc == 0 || errno == EINPROGRESS || errno == COMPAT_EWOULDBLOCK){
+ 			if(rc < 0 && (errno == EINPROGRESS || errno == COMPAT_EWOULDBLOCK)){
+-				rc = MOSQ_ERR_CONN_PENDING;
++				rc = MOSQ_ERR_CONN_INPROGRESS;
+ 			}
+ 
+ 			if(blocking){
+@@ -906,15 +906,8 @@ int net__socket_connect_step3(struct mosquitto *mosq, const char *host)
+ 	return MOSQ_ERR_SUCCESS;
+ }
+ 
+-/* Create a socket and connect it to 'ip' on port 'port'.  */
+-int net__socket_connect(struct mosquitto *mosq, const char *host, uint16_t port, const char *bind_address, bool blocking)
+-{
+-	int rc, rc2;
+-
+-	if(!mosq || !host) return MOSQ_ERR_INVAL;
+-
+-	rc = net__try_connect(host, port, &mosq->sock, bind_address, blocking);
+-	if(rc > 0) return rc;
++int net__finish_connect(struct mosquitto *mosq, const char *host) {
++	int rc;
+ 
+ 	if(mosq->tcp_nodelay){
+ 		int flag = 1;
+@@ -927,13 +920,25 @@ int net__socket_connect(struct mosquitto *mosq, const char *host, uint16_t port,
+ 	if(!mosq->socks5_host)
+ #endif
+ 	{
+-		rc2 = net__socket_connect_step3(mosq, host);
+-		if(rc2) return rc2;
++		rc = net__socket_connect_step3(mosq, host);
++		if(rc) return rc;
+ 	}
+ 
+-	return rc;
++	return MOSQ_ERR_SUCCESS;
+ }
+ 
++/* Create a socket and connect it to 'ip' on port 'port'.  */
++int net__socket_connect(struct mosquitto *mosq, const char *host, uint16_t port, const char *bind_address, bool blocking)
++{
++	int rc;
++
++	if(!mosq || !host) return MOSQ_ERR_INVAL;
++
++	rc = net__try_connect(host, port, &mosq->sock, bind_address, blocking);
++	if(rc > 0) return rc;
++
++	return net__finish_connect(mosq, host);
++}
+ 
+ #ifdef WITH_TLS
+ static int net__handle_ssl(struct mosquitto* mosq, int ret)
+diff --git a/lib/net_mosq.h b/lib/net_mosq.h
+index ded98760..8da3fa94 100644
+--- a/lib/net_mosq.h
++++ b/lib/net_mosq.h
+@@ -67,6 +67,7 @@ void net__cleanup(void);
+ void net__init_tls(void);
+ #endif
+ 
++int net__finish_connect(struct mosquitto *mosq, const char *host);
+ int net__socket_connect(struct mosquitto *mosq, const char *host, uint16_t port, const char *bind_address, bool blocking);
+ int net__socket_close(struct mosquitto *mosq);
+ int net__try_connect(const char *host, uint16_t port, mosq_sock_t *sock, const char *bind_address, bool blocking);
