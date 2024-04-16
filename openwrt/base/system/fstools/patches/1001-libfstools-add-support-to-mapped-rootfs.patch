@@ -1,0 +1,95 @@
+diff --git a/libfstools/common.c b/libfstools/common.c
+index e5b7bc3..07cf39d 100644
+--- a/libfstools/common.c
++++ b/libfstools/common.c
+@@ -176,3 +176,39 @@ do_format:
+ 
+ 	return ret;
+ }
++
++char *block_get_slave(const char *bdev)
++{
++	int fd = -1;
++	DIR *dirp = NULL;
++	struct dirent *d;
++	char path[256] = {0};
++	static char slave[256];
++	int slaves = 0;
++
++	if (!bdev)
++		goto out;
++
++	snprintf(path, sizeof(path), "/sys/class/block/%s/slaves", bdev);
++	fd = open(path, O_RDONLY|O_CLOEXEC);
++	if (fd < 0)
++		goto out;
++
++	dirp = fdopendir(fd);
++	if (!dirp)
++		goto out;
++
++	while ((d = xreaddir(dirp))) {
++		if (++slaves > 1)
++			goto out;	/* more than one slave */
++		strncpy(slave, d->d_name, sizeof(slave));
++		slave[sizeof(slave) - 1] = '\0'; /* make sure slave is always NULL terminated */
++	}
++
++ out:
++	if (dirp)
++		closedir(dirp);
++	if  (fd >= 0)
++		close(fd);
++	return slaves == 1 ? slave : NULL;
++}
+diff --git a/libfstools/common.h b/libfstools/common.h
+index b5cc692..4330ecd 100644
+--- a/libfstools/common.h
++++ b/libfstools/common.h
+@@ -21,7 +21,20 @@
+ 
+ #define F2FS_MINSIZE		(100ULL * 1024ULL * 1024ULL)
+ 
++/* Look for directories but skip "." and ".." */
++static inline struct dirent *xreaddir(DIR *dirp)
++{
++	struct dirent *d;
++
++	while ((d = readdir(dirp)) &&
++	       (!strcmp(d->d_name, ".") || !strcmp(d->d_name, "..")))
++		;
++
++	return d;
++}
++
+ int read_uint_from_file(char *dirname, char *filename, unsigned int *i);
+ char *read_string_from_file(const char *dirname, const char *filename, char *buf, size_t bufsz);
+ int block_file_identify(FILE *f, uint64_t offset);
+ int block_volume_format(struct volume *v, uint64_t offset, const char *bdev);
++char *block_get_slave(const char *bdev);
+diff --git a/libfstools/rootdisk.c b/libfstools/rootdisk.c
+index 9f2317f..ef6f29e 100644
+--- a/libfstools/rootdisk.c
++++ b/libfstools/rootdisk.c
+@@ -97,6 +97,8 @@ static struct volume *rootdisk_volume_find(char *name)
+ {
+ 	struct squashfs_super_block sb;
+ 	struct rootdev_volume *p;
++	static char slave[256] = {0};
++	char *tmp = NULL;
+ 
+ 	if (strcmp(name, "rootfs_data") != 0)
+ 		return NULL;
+@@ -108,6 +110,12 @@ static struct volume *rootdisk_volume_find(char *name)
+ 	if (!rootdev)
+ 		return NULL;
+ 
++	/* Check for slaves to reach the initial block device */
++	while ((tmp = block_get_slave(basename((char *)rootdev)))) {
++		strncpy(slave, tmp, sizeof(slave));
++		rootdev = slave;
++	}
++
+ 	if (strstr(rootdev, "mtdblock") ||
+ 	    strstr(rootdev, "ubiblock"))
+ 		return NULL;
