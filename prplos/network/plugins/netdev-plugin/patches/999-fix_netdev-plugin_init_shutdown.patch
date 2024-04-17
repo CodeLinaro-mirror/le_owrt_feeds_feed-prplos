@@ -1,7 +1,5 @@
-Index: netdev-v1.11.2/scripts/netdev-plugin.sh
-===================================================================
---- netdev-v1.11.2.orig/scripts/netdev-plugin.sh
-+++ netdev-v1.11.2/scripts/netdev-plugin.sh
+--- a/scripts/netdev-plugin.sh
++++ b/scripts/netdev-plugin.sh
 @@ -1,4 +1,6 @@
  #!/bin/sh
 +
