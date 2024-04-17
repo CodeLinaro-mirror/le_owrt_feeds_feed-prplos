@@ -1,0 +1,48 @@
+From d6478bc3bb96b01a6911c0a84f9fb3cef7781f34 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20=C5=A0tetiar?= <petr.stetiar@prplfoundation.org>
+Date: Wed, 17 Apr 2024 13:04:21 +0000
+Subject: [PATCH] dm_link: create_transaction_from_link: fix wrong null check
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+GCC 12.3.0 rightfully complains about following:
+
+      dm_link.c: In function 'create_transaction_from_link':
+      dm_link.c:313:22: error: the comparison will always evaluate as 'true' for the address of 'name' will never be NULL [-Werror=address]
+        313 |     if(((link->name) != NULL) && (*(link->name) != 0)) {
+            |                      ^~
+      In file included from dm_link.c:79:
+      ../include_priv/dm_link.h:94:10: note: 'name' declared here
+         94 |     char name[LINKNAMESPACE];
+            |          ^~~~
+
+This commit simplifies the condition checking whether the 'name' field
+in the 'link' structure is non-empty. The original code erroneously
+included a NULL check for 'name', which is not necessary and incorrect
+because 'name' is an array, not a pointer, and thus cannot be NULL. The
+corrected condition now directly checks if the first character of the
+'name' array is not the null character, ensuring it's a non-empty
+string. This change removes the compiler warning about the address
+comparison that would always evaluate as true and makes the intent of
+the check clearer.
+
+References: PCF-1011
+Signed-off-by: Petr Štetiar <petr.stetiar@prplfoundation.org>
+---
+ src/dm_link.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/dm_link.c b/src/dm_link.c
+index b5c5ece5725e..b4021fd68cab 100644
+--- a/src/dm_link.c
++++ b/src/dm_link.c
+@@ -322,7 +322,7 @@ amxd_trans_t* create_transaction_from_link(link_t* link, bool new_inst) {
+         amxd_trans_select_pathf(trans, "NetDev.Link.%d", link->index);
+     }
+ 
+-    if(((link->name) != NULL) && (*(link->name) != 0)) {
++    if(link->name[0] != '\0') {
+         amxd_trans_set_value(cstring_t, trans, "Name", link->name);
+         if(new_inst) {
+             amxd_trans_set_value(cstring_t, trans, "Alias", link->name);
