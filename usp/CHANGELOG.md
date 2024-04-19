@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.15.2 - 2024-04-19(10:50:27 +0000)
+
+### Changes
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): Allow multiple registrations for the same bus context
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): Make amxb timeouts configurable
+
 ## Release v8.15.1 - 2024-04-15(13:37:41 +0000)
 
 ### Fixes
