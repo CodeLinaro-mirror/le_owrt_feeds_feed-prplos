@@ -1,66 +1,73 @@
-# Copyright (C) 2023 Soft At Home
-
 include $(TOPDIR)/rules.mk
-include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=mcastd-routing
-PKG_VERSION:=v0.1.1
-PKG_RELEASE:=1
-SHORT_DESCRIPTION:=mcastd routing
+SHORT_DESCRIPTION:=Kernel module to manage linux's multicast forwading cache entries
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=v0.1.1
-PKG_SOURCE_URL:=git@gitlab.com:soft.at.home/multicast/kmodules/mcastd-routing.git
+PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/mcastd-routing.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE:=mcastd-routing-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-routing/-/archive/$(PKG_VERSION)
-PKG_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-routing-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
 
-EXTRA_CFLAGS := -I$(STAGING_DIR)/include
 
-ifeq ($(CONFIG_MCASTD_DEBUG),y)
-EXTRA_CFLAGS += -DMCASTD_DEBUG
-endif
+PKG_RELEASE:=1
+PKG_BUILD_DEPENDS += kernel
 
+include $(INCLUDE_DIR)/kernel.mk
 include $(INCLUDE_DIR)/package.mk
 
-define Package/$(PKG_NAME)
-  CATEGORY:=prpl Foundation
-  SUBMENU:=kmodules
-  TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-routing
-  DEPENDS:=+kmod-mcastd-routing
-endef
-
 define KernelPackage/$(PKG_NAME)
-  SECTION:=kernel
-  CATEGORY:=Kernel modules
-  SUBMENU:=Network Support
-  TITLE:=kmcd mrt kernel module
-  FILES:=$(PKG_BUILD_DIR)/kernel/mcastd_mrt.ko
-  DEPENDS:=+kmod-mcastd-core
+  CATEGORY:=prpl Foundation
+  SUBMENU:=Kernel Modules
+  TITLE:=$(SHORT_DESCRIPTION)
+  FILES+=$(PKG_BUILD_DIR)/src/mcastd-routing.$(LINUX_KMOD_SUFFIX)
+  URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-routing
+  DEPENDS += +kmod-mcastd-core
+  MENU:=1
 endef
 
-include $(INCLUDE_DIR)/kernel-defaults.mk
+define KernelPackage/$(PKG_NAME)/description
+	Kernel module to manage linux's multicast forwading cache entries
+endef
 
 define Build/Compile
-		$(KERNEL_MAKE) \
-			M=$(PKG_BUILD_DIR)/kernel \
-			KCFLAGS="$(EXTRA_CFLAGS)" \
-			KBUILD_EXTRA_SYMBOLS=$(PKG_SYMVERS_DIR)/kmcd-core.symvers \
-			modules
+	$(MAKE) -C $(PKG_BUILD_DIR) compile \
+		COMPONENT=$(PKG_NAME) \
+		COMPONENT_TOPDIR=$(PKG_BUILD_DIR) \
+		STAGINGDIR=$(STAGING_DIR) \
+		CONFIGDIR=$(STAGING_DIR) \
+		LINUX_DIR=$(LINUX_DIR) \
+		BUILD_DIR=$(PKG_BUILD_DIR) \
+		$(KERNEL_MAKE_FLAGS)
 endef
 
 define Build/Install
-	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include)
+	$(MAKE) -C $(PKG_BUILD_DIR) install \
+		COMPONENT=$(PKG_NAME) \
+		COMPONENT_TOPDIR=$(PKG_BUILD_DIR) \
+		STAGINGDIR=$(STAGING_DIR) \
+		CONFIGDIR=$(STAGING_DIR) \
+		KMOD_INSTALL_PATH_PREFIX=$(PKG_INSTALL_DIR) \
+		HARDCO_KERNEL_DIR=$(LINUX_DIR) \
+		D=$(PKG_INSTALL_DIR) \
+		DEST=$(PKG_INSTALL_DIR)
 endef
 
-define Package/$(PKG_NAME)/install
+define Build/InstallDev
+	$(MAKE) -C $(PKG_BUILD_DIR) install \
+		COMPONENT=$(PKG_NAME) \
+		COMPONENT_TOPDIR=$(PKG_BUILD_DIR) \
+		STAGINGDIR=$(STAGING_DIR) \
+		CONFIGDIR=$(STAGING_DIR) \
+		KMOD_INSTALL_PATH_PREFIX=$(STAGING_DIR) \
+		HARDCO_KERNEL_DIR=$(LINUX_DIR) \
+		D=$(STAGING_DIR) \
+		DEST=$(STAGING_DIR)
+endef
+
+define KernelPackage/$(PKG_NAME)/install
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 	if [ -d ./files ]; then \
 		$(CP) ./files/* $(1)/; \
@@ -70,5 +77,4 @@ define Package/$(PKG_NAME)/install
 	find $(1) -name *.pc -exec rm {} +;
 endef
 
-$(eval $(call BuildPackage,mcastd-routing))
-$(eval $(call KernelPackage,mcastd-routing))
+$(eval $(call KernelPackage,$(PKG_NAME)))

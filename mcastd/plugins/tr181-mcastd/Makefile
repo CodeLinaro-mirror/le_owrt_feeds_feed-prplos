@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-mcastd
-PKG_VERSION:=v0.1.0
-SHORT_DESCRIPTION:=mcastd's user space app
+SHORT_DESCRIPTION:=mcastd main user space app
 
-PKG_SOURCE:=tr181-mcastd-v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mcastd/-/archive/v0.1.0
-PKG_HASH:=7f7c2e4d7eef8431320ef25ae874c3be04e88277af21905b00c69a710e1787d8
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mcastd-v0.1.0
+
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/tr181-mcastd.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -15,12 +15,11 @@ PKG_LICENSE_FILES:=LICENSE
 COMPONENT:=tr181-mcastd
 
 PKG_RELEASE:=1
-PKG_BUILD_DEPENDS += kernel
 
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_MCASTD_CORE_PLUGIN_ORDER)$(COMPONENT)
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/K78$(COMPONENT)
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/libxt_SNOOP.so ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_MCASTD_CORE_PLUGIN_ORDER)libxt_SNOOP.so
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/libxt_SNOOP.so ${PKG_INSTALL_DIR}/etc/rc.d/K78libxt_SNOOP.so
 endef
 
 include $(INCLUDE_DIR)/package.mk
@@ -38,11 +37,14 @@ define Package/$(PKG_NAME)
   DEPENDS += +libsahtrace
   DEPENDS += +amxrt
   DEPENDS += +libnetmodel
+  DEPENDS += +libxtables
+  DEPENDS += +iptables
+  DEPENDS += +kmod-mcastd-core
   MENU:=1
 endef
 
 define Package/$(PKG_NAME)/description
-	mcastd's user space app
+	mcastd main user space app
 endef
 
 define Build/Compile
@@ -51,6 +53,7 @@ endef
 
 define Build/Install
 	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_TR181_MCASTD_CORE_PLUGIN_ORDER=$(CONFIG_SAH_AMX_TR181_MCASTD_CORE_PLUGIN_ORDER) CONFIG_SAH_AMX_TR181_MCASTD_CORE_PLUGIN_QUERY_MCAST_IPTV_INTF=$(CONFIG_SAH_AMX_TR181_MCASTD_CORE_PLUGIN_QUERY_MCAST_IPTV_INTF))
+
 	$(call SAHInit/Install)
 endef
 

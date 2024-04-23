@@ -1,87 +1,87 @@
-# Copyright (C) 2023 Soft At Home
-
 include $(TOPDIR)/rules.mk
-include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=mcastd-core
-PKG_VERSION:=v0.1.1
-PKG_RELEASE:=1
-SHORT_DESCRIPTION:=mcastd core
+SHORT_DESCRIPTION:=Kernel module for multicast support
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=v0.1.1
-PKG_SOURCE_URL:=git@gitlab.com:soft.at.home/multicast/kmodules/mcastd-core.git
+PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/mcastd-core.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE:=mcastd-core-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-core/-/archive/$(PKG_VERSION)
-PKG_HASH:=450135ea640cd6eed40a180fbbd473ddedc9d7bc5705e6bc9b24133ae4abb4b3
-PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-core-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
 
 
-PKG_EXTMOD_SUBDIRS:=kernel
+PKG_RELEASE:=1
+PKG_BUILD_DEPENDS += kernel
 
+PKG_EXTMOD_SUBDIRS := src/kernel_core
+PKG_EXTMOD_SUBDIRS += src/kernel_proxy
+
+include $(INCLUDE_DIR)/kernel.mk
 include $(INCLUDE_DIR)/package.mk
 
-define Package/$(PKG_NAME)
-  CATEGORY:=prpl Foundation
-  SUBMENU:=kmodules
-  TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-core
-  MENU:=1
-  DEPENDS:=+kmod-mcastd-core +libxtables
-endef
-
-define Package/$(PKG_NAME)/config
-  source "$(SOURCE)/Config.in"
-endef
-
 define KernelPackage/$(PKG_NAME)
-  SECTION:=kernel
-  CATEGORY:=Kernel modules
-  SUBMENU:=Network Support
-  TITLE:=mcastd core
-  FILES:=$(PKG_BUILD_DIR)/kernel/mcastd_core.ko $(PKG_BUILD_DIR)/kernel/mcastd_pc.ko
-  DEPENDS:=+iptables +tr181-mcastd
+  CATEGORY:=prpl Foundation
+  SUBMENU:=Kernel Modules
+  TITLE:=$(SHORT_DESCRIPTION)
+  FILES+=$(PKG_BUILD_DIR)/src/kernel_core/mcastd-core.$(LINUX_KMOD_SUFFIX)
+  FILES+=$(PKG_BUILD_DIR)/src/kernel_proxy/mcastd-proxy.$(LINUX_KMOD_SUFFIX)
+  URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-core
+  DEPENDS += +libxtables
+  DEPENDS += +iptables
+  MENU:=1
 endef
 
-EXTRA_CFLAGS :=
-
-ifeq ($(CONFIG_MCASTD_DEBUG),y)
-EXTRA_CFLAGS += -DMCASTD_DEBUG
-endif
-
-ifdef CONFIG_MCASTD_NICE
-EXTRA_CFLAGS += -DMCASTD_NICE=$(CONFIG_MCASTD_NICE)
-endif
-
-ifeq ($(CONFIG_MCASTD_ACCESS_CONTROL),y)
-EXTRA_CFLAGS += -DACCESS_CONTROL
-endif
-
-include $(INCLUDE_DIR)/kernel-defaults.mk
+define KernelPackage/$(PKG_NAME)/description
+	Kernel module for multicast support
+endef
 
 define Build/Compile
-		$(KERNEL_MAKE) \
-    	M="$(PKG_BUILD_DIR)/kernel" \
-			KCFLAGS="$(EXTRA_CFLAGS)" \
-			modules
-		$(call Build/Compile/Default)
+	$(MAKE) -C $(PKG_BUILD_DIR) compile \
+		COMPONENT=$(PKG_NAME) \
+		COMPONENT_TOPDIR=$(PKG_BUILD_DIR) \
+		STAGINGDIR=$(STAGING_DIR) \
+		CONFIGDIR=$(STAGING_DIR) \
+		LINUX_DIR=$(LINUX_DIR) \
+		CONFIG_MCASTD_CORE_DEBUG=$(CONFIG_MCASTD_CORE_DEBUG) \
+		CONFIG_MCASTD_CORE_NICE=$(CONFIG_MCASTD_CORE_NICE) \
+		CONFIG_MCASTD_CORE_ACCESS_CONTROL=$(CONFIG_MCASTD_CORE_ACCESS_CONTROL) \
+		BUILD_DIR=$(PKG_BUILD_DIR) \
+		$(KERNEL_MAKE_FLAGS)
 endef
 
 define Build/Install
-	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include)
+	$(MAKE) -C $(PKG_BUILD_DIR) install \
+		COMPONENT=$(PKG_NAME) \
+		COMPONENT_TOPDIR=$(PKG_BUILD_DIR) \
+		STAGINGDIR=$(STAGING_DIR) \
+		CONFIGDIR=$(STAGING_DIR) \
+		KMOD_INSTALL_PATH_PREFIX=$(PKG_INSTALL_DIR) \
+		HARDCO_KERNEL_DIR=$(LINUX_DIR) \
+		CONFIG_MCASTD_CORE_DEBUG=$(CONFIG_MCASTD_CORE_DEBUG) \
+		CONFIG_MCASTD_CORE_NICE=$(CONFIG_MCASTD_CORE_NICE) \
+		CONFIG_MCASTD_CORE_ACCESS_CONTROL=$(CONFIG_MCASTD_CORE_ACCESS_CONTROL) \
+		D=$(PKG_INSTALL_DIR) \
+		DEST=$(PKG_INSTALL_DIR)
 endef
 
 define Build/InstallDev
-	$(INSTALL_DIR) $(1)/include/
-	$(CP) $(PKG_BUILD_DIR)/include/mcastd $(1)/include/
+	$(MAKE) -C $(PKG_BUILD_DIR) install \
+		COMPONENT=$(PKG_NAME) \
+		COMPONENT_TOPDIR=$(PKG_BUILD_DIR) \
+		STAGINGDIR=$(STAGING_DIR) \
+		CONFIGDIR=$(STAGING_DIR) \
+		KMOD_INSTALL_PATH_PREFIX=$(STAGING_DIR) \
+		HARDCO_KERNEL_DIR=$(LINUX_DIR) \
+		CONFIG_MCASTD_CORE_DEBUG=$(CONFIG_MCASTD_CORE_DEBUG) \
+		CONFIG_MCASTD_CORE_NICE=$(CONFIG_MCASTD_CORE_NICE) \
+		CONFIG_MCASTD_CORE_ACCESS_CONTROL=$(CONFIG_MCASTD_CORE_ACCESS_CONTROL) \
+		D=$(STAGING_DIR) \
+		DEST=$(STAGING_DIR)
 endef
 
-define Package/$(PKG_NAME)/install
+define KernelPackage/$(PKG_NAME)/install
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 	if [ -d ./files ]; then \
 		$(CP) ./files/* $(1)/; \
@@ -91,5 +91,8 @@ define Package/$(PKG_NAME)/install
 	find $(1) -name *.pc -exec rm {} +;
 endef
 
-$(eval $(call BuildPackage,mcastd-core))
-$(eval $(call KernelPackage,mcastd-core))
+define KernelPackage/$(PKG_NAME)/config
+	source "$(SOURCE)/Config.in"
+endef
+
+$(eval $(call KernelPackage,$(PKG_NAME)))
