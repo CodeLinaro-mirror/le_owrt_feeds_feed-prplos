@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-mcastd
+PKG_VERSION:=v0.1.1
 SHORT_DESCRIPTION:=mcastd main user space app
 
-
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/tr181-mcastd.git
-PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=tr181-mcastd-v0.1.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mcastd/-/archive/v0.1.1
+PKG_HASH:=aff77a8138b8b513e0dc80d82027ea7400e406fbd6858d1e4c69efa1462e7cec
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mcastd-v0.1.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -39,7 +39,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libnetmodel
   DEPENDS += +libxtables
   DEPENDS += +iptables
-  DEPENDS += +kmod-mcastd-core
+  DEPENDS += +mcastd-core
   MENU:=1
 endef
 
