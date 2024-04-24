@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=This module helps registering data models when they are actua
 
 PKG_SOURCE:=mod-usp_registration-v0.1.1.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-usp_registration/-/archive/v0.1.1
-PKG_HASH:=skip
+PKG_HASH:=9ee4af4e37a019487c316c5dbdd47cc3921f2d6bf40b244834d9481d7273b2cb
 PKG_BUILD_DIR:=$(BUILD_DIR)/mod-usp_registration-v0.1.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
