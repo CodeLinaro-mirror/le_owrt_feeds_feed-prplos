@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-mcastd
-PKG_VERSION:=v0.1.1
+PKG_VERSION:=v0.1.2
 SHORT_DESCRIPTION:=mcastd main user space app
 
-PKG_SOURCE:=tr181-mcastd-v0.1.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mcastd/-/archive/v0.1.1
-PKG_HASH:=aff77a8138b8b513e0dc80d82027ea7400e406fbd6858d1e4c69efa1462e7cec
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mcastd-v0.1.1
+PKG_SOURCE:=tr181-mcastd-v0.1.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mcastd/-/archive/v0.1.2
+PKG_HASH:=ac1939441603082d6d7c9927cbea1b62698173d384be9ce0edbf79a1e96d35c4
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mcastd-v0.1.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -18,8 +18,8 @@ PKG_RELEASE:=1
 
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/libxt_SNOOP.so ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_MCASTD_CORE_PLUGIN_ORDER)libxt_SNOOP.so
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/libxt_SNOOP.so ${PKG_INSTALL_DIR}/etc/rc.d/K78libxt_SNOOP.so
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_MCASTD_CORE_PLUGIN_ORDER)$(COMPONENT)
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/K78$(COMPONENT)
 endef
 
 include $(INCLUDE_DIR)/package.mk
