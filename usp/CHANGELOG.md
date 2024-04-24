@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.16.0 - 2024-04-24(09:38:02 +0000)
+
+### New
+
+- [mod-usp-registration](https://gitlab.com/prpl-foundation/components/core/modules/mod-usp_registration): Component added
+
 ## Release v8.15.2 - 2024-04-19(10:50:27 +0000)
 
 ### Changes
