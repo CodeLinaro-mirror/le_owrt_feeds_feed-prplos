@@ -27,6 +27,10 @@ config SAH_AMX_TR181_FIREWALL_WITH_GMAP
     bool "Compile tr181-firewall with gmap to support hostname translation."
     default y
 
+config SAH_AMX_TR181_FIREWALL_LOGS
+    bool "Compile tr181-firewall with netfilter log support. The logs might affect performance."
+    default y
+
 config SAH_AMX_TR181_FIREWALL_DEBUG_PROFILING
     bool "Compile tr181-firewall with profiling logs."
     default n
