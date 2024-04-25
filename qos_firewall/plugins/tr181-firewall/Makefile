@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-firewall
-PKG_VERSION:=v8.3.3
+PKG_VERSION:=v8.4.0
 SHORT_DESCRIPTION:=TR181 firewall manager
 
-PKG_SOURCE:=tr181-firewall-v8.3.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-firewall/-/archive/v8.3.3
-PKG_HASH:=6521bf3f9b4338957313e5d55459ab5e058093a49ec0c17c9592b33c88723a74
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-firewall-v8.3.3
+PKG_SOURCE:=tr181-firewall-v8.4.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-firewall/-/archive/v8.4.0
+PKG_HASH:=3f6023e87c2ff1a1981f1cc26ccd20ad28b99f19731d0b3c3141fbb86c16c66a
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-firewall-v8.4.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -50,6 +50,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +SAH_AMX_TR181_FIREWALL_WITH_GMAP:gmap-mod-name-selector
   DEPENDS += +SAH_AMX_TR181_FIREWALL_WITH_GMAP:gmap-mod-self
   DEPENDS += +SAH_AMX_TR181_FIREWALL_WITH_GMAP:gmap-server
+  DEPENDS += +libtr181-schedules
   MENU:=1
 endef
 
