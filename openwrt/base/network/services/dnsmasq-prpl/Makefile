@@ -54,7 +54,7 @@ MAKE_FLAGS := \
 	COPTS="$(COPTS)" \
 	PREFIX="/usr"
 
-define Package/dnsmasq-PKG_BUILD_PARALLEL/install
+define Package/dnsmasq-prpl/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(CP) $(PKG_INSTALL_DIR)/usr/sbin/dnsmasq $(1)/usr/sbin/
 	$(INSTALL_DIR) $(1)/etc/config
