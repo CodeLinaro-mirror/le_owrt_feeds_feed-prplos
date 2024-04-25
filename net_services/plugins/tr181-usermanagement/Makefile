@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-usermanagement
-PKG_VERSION:=v0.23.1
+PKG_VERSION:=v0.23.2
 SHORT_DESCRIPTION:=tr181 user management plugin
 
-PKG_SOURCE:=tr181-usermanagement-v0.23.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usermanagement/-/archive/v0.23.1
-PKG_HASH:=23706256f106c504d1b578f47ced46d07879b580757355cd24b147dac0b2b473
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-usermanagement-v0.23.1
+PKG_SOURCE:=tr181-usermanagement-v0.23.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usermanagement/-/archive/v0.23.2
+PKG_HASH:=9b3776db8f8736db2f8d4b52b4586dcc8425470dbc164b27be42f940fc39daa2
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-usermanagement-v0.23.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -35,7 +35,6 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxb
   DEPENDS += +libsahtrace
   DEPENDS += +lua-amx
-  DEPENDS += +libubox
   MENU:=1
 endef
 
