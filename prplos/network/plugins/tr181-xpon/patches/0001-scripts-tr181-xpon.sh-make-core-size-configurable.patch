@@ -1,0 +1,46 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20=C5=A0tetiar?= <petr.stetiar@prplfoundation.org>
+Date: Fri, 26 Apr 2024 06:41:53 +0000
+Subject: [PATCH] scripts: tr181-xpon.sh: make core size configurable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+CI currently reports, that component has unlimited core size enabled:
+
+ ERROR: unlimited core size detected: tr181-xpon -D
+
+So lets fix it by making it disabled by default and configurable via
+/etc/environment and thus keep in sync with other prplWare components.
+
+Fixes: PCF-1188
+References: PCF-663
+References: https://gitlab.com/prpl-foundation/prplos/prplos/-/jobs/6719417516#L133
+Signed-off-by: Petr Štetiar <petr.stetiar@prplfoundation.org>
+---
+ scripts/tr181-xpon.sh | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/tr181-xpon.sh b/scripts/tr181-xpon.sh
+index 20ff26edd604..691e8fd4b768 100644
+--- a/scripts/tr181-xpon.sh
++++ b/scripts/tr181-xpon.sh
+@@ -1,5 +1,8 @@
+ #!/bin/sh
+-ulimit -c unlimited
++
++[ -f /etc/environment ] && . /etc/environment
++# shellcheck disable=SC3045
++ulimit -c "${ULIMIT_CONFIGURATION:-0}"
+ name="tr181-xpon"
+ 
+ proxypath="Device.XPON."
+@@ -12,7 +15,7 @@ function tr181_mapping () {
+ 
+ case $1 in
+     start|boot)
+-        source /etc/environment
++        . /etc/environment
+         tr181_mapping &
+         ${name} -D
+         ;;

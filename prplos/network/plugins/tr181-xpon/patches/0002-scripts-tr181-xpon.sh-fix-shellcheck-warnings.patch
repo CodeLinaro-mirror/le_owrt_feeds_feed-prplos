@@ -1,0 +1,47 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20=C5=A0tetiar?= <petr.stetiar@prplfoundation.org>
+Date: Fri, 26 Apr 2024 06:50:38 +0000
+Subject: [PATCH] scripts: tr181-xpon.sh: fix shellcheck warnings
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fix following shellcheck warnings:
+
+ In scripts/tr181-xpon.sh line 11:
+
+  function tr181_mapping () {
+  ^-- SC2112 (warning): 'function' keyword is non-standard. Delete it.
+
+ In scripts/tr181-xpon.sh line 29:
+            kill `cat /var/run/${name}.pid`
+                 ^------------------------^ SC2046 (warning): Quote this to prevent word splitting.
+                 ^------------------------^ SC2006 (style): Use $(...) notation instead of legacy backticks `...`.
+
+Signed-off-by: Petr Štetiar <petr.stetiar@prplfoundation.org>
+---
+ scripts/tr181-xpon.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/tr181-xpon.sh b/scripts/tr181-xpon.sh
+index 691e8fd4b768..3290c57affd2 100644
+--- a/scripts/tr181-xpon.sh
++++ b/scripts/tr181-xpon.sh
+@@ -8,7 +8,7 @@ name="tr181-xpon"
+ proxypath="Device.XPON."
+ realpath="XPON."
+ 
+-function tr181_mapping () {
++tr181_mapping (){
+         ubus -t 60 wait_for ProxyManager
+         ubus call ProxyManager register "{'proxy' : '$proxypath','real' : '$realpath'}"
+ }
+@@ -21,7 +21,7 @@ case $1 in
+         ;;
+     stop|shutdown)
+         if [ -f /var/run/${name}.pid ]; then
+-            kill `cat /var/run/${name}.pid`
++            kill "$(cat /var/run/${name}.pid)"
+         else
+             killall ${name}
+         fi
