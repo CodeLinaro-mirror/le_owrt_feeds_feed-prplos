@@ -51,6 +51,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +iperf3
   DEPENDS += +iputils-ping
   DEPENDS += +curl
+  DEPENDS += +openssl
   MENU:=1
 endef
 
