@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.16.2 - 2024-04-26(11:28:02 +0000)
+
+### Fixes
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [CDROUTER][USP][REGRESSION] Cannot run USP tests on cdrouter due to the EndpointID new value
+
 ## Release v8.16.1 - 2024-04-24(10:55:17 +0000)
 
 ## Release v8.16.0 - 2024-04-24(09:38:02 +0000)
