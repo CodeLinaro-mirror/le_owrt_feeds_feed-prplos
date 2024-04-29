@@ -39,7 +39,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +mod-dmext
   DEPENDS += +amxrt
   DEPENDS += +libsahtrace
-  DEPENDS += +libwebsockets-full
+  DEPENDS += +libwebsockets4-full
   DEPENDS += +libevent2
   DEPENDS += +libtr69-engine
   DEPENDS += +uriparser
