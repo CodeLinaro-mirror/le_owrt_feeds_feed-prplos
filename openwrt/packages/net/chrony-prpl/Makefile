@@ -52,7 +52,7 @@ CONFIGURE_ARGS+= \
 	--sysconfdir=/etc/chrony \
 	--prefix=/usr \
 	--chronyrundir=/var/run/chrony \
-	$(if $(findstring normal,$(BUILD_VARIANT)),--disable-nts,--enable,nts) \
+	--disable-nts \
 	--disable-readline \
 	--disable-rtc \
 	--disable-sechash \
