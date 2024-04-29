@@ -7,16 +7,18 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=libwebsockets
+PKG_NAME:=libwebsockets4
 PKG_VERSION:=4.3.2
 PKG_RELEASE:=2
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=libwebsockets-$(PKG_VERSION).tar.gz
+PKG_SOURCE_SUBDIR:=libwebsockets-$(PKG_VERSION)
 PKG_SOURCE_URL:=https://codeload.github.com/warmcat/libwebsockets/tar.gz/v$(PKG_VERSION)?
 PKG_HASH:=6a85a1bccf25acc7e8e5383e4934c9b32a102880d1e4c37c70b27ae2a42406e1
 
 PKG_SOURCE_VERSION:=v$(PKG_VERSION)
+
+UNPACK_CMD=tar -xf "$(DL_DIR)/$(PKG_SOURCE)" -C $(PKG_BUILD_DIR) --strip-components=1
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -41,38 +43,38 @@ CMAKE_OPTIONS += -DLWS_WITHOUT_TEST_SERVER_EXTPOLL=ON
 CMAKE_OPTIONS += -DLWS_WITHOUT_TEST_PING=ON
 CMAKE_OPTIONS += -DLWS_WITHOUT_TEST_CLIENT=ON
 
-define Package/libwebsockets/Default
+define Package/libwebsockets4/Default
 	SECTION:=libs
 	CATEGORY:=Libraries
-	TITLE:=libwebsockets
+	TITLE:=libwebsockets4
 	DEPENDS:=+zlib +libcap +libubox
 	URL:=https://libwebsockets.org
 	MAINTAINER:=Karl Palsson <karlp@etactica.com>
 endef
 
-define Package/libwebsockets-openssl
-	$(call Package/libwebsockets/Default)
+define Package/libwebsockets4-openssl
+	$(call Package/libwebsockets4/Default)
 	TITLE += (OpenSSL)
 	DEPENDS += +libopenssl
 	VARIANT:=openssl
-	CONFLICTS:=libwebsockets-full
+	CONFLICTS:=libwebsockets4-full
 endef
 
-define Package/libwebsockets-mbedtls
+define Package/libwebsockets4-mbedtls
 	$(call Package/$(PKG_NAME)/Default)
 	TITLE += (mbedTLS)
 	DEPENDS += +libmbedtls
 	VARIANT:=mbedtls
-	PROVIDES:=libwebsockets
-	CONFLICTS:=libwebsockets-openssl
+	PROVIDES:=libwebsockets4
+	CONFLICTS:=libwebsockets4-openssl
 endef
 
-define Package/libwebsockets-full
-	$(call Package/libwebsockets/Default)
+define Package/libwebsockets4-full
+	$(call Package/libwebsockets4/Default)
 	TITLE += (Full - OpenSSL, libuv, plugins, CGI)
 	DEPENDS += +libopenssl +libuv +libevent2
 	VARIANT:=full
-	PROVIDES:=libwebsockets libwebsockets-openssl
+	PROVIDES:=libwebsockets4 libwebsockets4-openssl
 endef
 
 ifeq ($(BUILD_VARIANT),openssl)
@@ -98,20 +100,20 @@ ifeq ($(BUILD_VARIANT),full)
     CMAKE_OPTIONS += -DLWS_MAX_SMP=10
 endif
 
-define Package/libwebsockets/install
+define Package/libwebsockets4/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libwebsockets*.so* $(1)/usr/lib/
 endef
 
-Package/libwebsockets-mbedtls/install = $(Package/libwebsockets/install)
-Package/libwebsockets-openssl/install = $(Package/libwebsockets/install)
+Package/libwebsockets4-mbedtls/install = $(Package/libwebsockets4/install)
+Package/libwebsockets4-openssl/install = $(Package/libwebsockets4/install)
 
-define Package/libwebsockets-full/install
-	$(call Package/libwebsockets/install,$(1))
+define Package/libwebsockets4-full/install
+	$(call Package/libwebsockets4/install,$(1))
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libwebsockets-evlib_uv.so* $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libwebsockets-evlib_event.so* $(1)/usr/lib
 endef
 
-$(eval $(call BuildPackage,libwebsockets-openssl))
-$(eval $(call BuildPackage,libwebsockets-mbedtls))
-$(eval $(call BuildPackage,libwebsockets-full))
+$(eval $(call BuildPackage,libwebsockets4-openssl))
+$(eval $(call BuildPackage,libwebsockets4-mbedtls))
+$(eval $(call BuildPackage,libwebsockets4-full))
