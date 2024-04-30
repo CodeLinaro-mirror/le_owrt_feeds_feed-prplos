@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libimtp
-PKG_VERSION:=v2.1.0
-SHORT_DESCRIPTION:=libimtp is a library which provides functionality to set up a connection between two internal USP endpoints using a unix domain socket
+PKG_VERSION:=v2.1.1
+SHORT_DESCRIPTION:=connects two USP endpoints over Unix domain socket
 
-PKG_SOURCE:=libimtp-v2.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libimtp/-/archive/v2.1.0
-PKG_HASH:=4e7e9dc7b293f56370021b552415d1ef1117f872e6f26baa3117644415477edd
-PKG_BUILD_DIR:=$(BUILD_DIR)/libimtp-v2.1.0
+PKG_SOURCE:=libimtp-v2.1.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libimtp/-/archive/v2.1.1
+PKG_HASH:=e6834ab7abd718cb2b0364dc1e53fa347ed58899083d75c4d890be0964b3c2c1
+PKG_BUILD_DIR:=$(BUILD_DIR)/libimtp-v2.1.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -29,7 +29,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-	libimtp is a library which provides functionality to set up a connection between two internal USP endpoints using a unix domain socket.
+	connects two USP endpoints over Unix domain socket
 endef
 
 define Build/Compile

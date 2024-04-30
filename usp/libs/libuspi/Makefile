@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libuspi
-PKG_VERSION:=v1.0.3
-SHORT_DESCRIPTION:=libuspi is a common library for setting up and managing IMTP connections
+PKG_VERSION:=v1.0.4
+SHORT_DESCRIPTION:=setting up and managing IMTP connections
 
-PKG_SOURCE:=libuspi-v1.0.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libuspi/-/archive/v1.0.3
-PKG_HASH:=6924a6be7650968e8bd9a771e535251372ca8781ae9bd22df31b7de9a41e845e
-PKG_BUILD_DIR:=$(BUILD_DIR)/libuspi-v1.0.3
+PKG_SOURCE:=libuspi-v1.0.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libuspi/-/archive/v1.0.4
+PKG_HASH:=08f4e65e7cf86a2805aaee8948a4f770ed63aa35518dbc6b442817285c047b06
+PKG_BUILD_DIR:=$(BUILD_DIR)/libuspi-v1.0.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -33,7 +33,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-	libuspi is a common library for setting up and managing IMTP connections
+	setting up and managing IMTP connections
 endef
 
 define Build/Compile

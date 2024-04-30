@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.16.3 - 2024-04-30(18:16:23 +0000)
+
+### Other
+
+- [libuspi](https://gitlab.com/prpl-foundation/components/core/libraries/libuspi): Move component to prpl-foundation gitlab
+- [libuspprotobuf](https://gitlab.com/prpl-foundation/components/core/libraries/libprotobuf): Move component to prpl-foundation gitlab
+
 ## Release v8.16.2 - 2024-04-26(11:28:02 +0000)
 
 ### Fixes
