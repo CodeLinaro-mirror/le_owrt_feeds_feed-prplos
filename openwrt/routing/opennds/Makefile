@@ -6,13 +6,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=opennds
-PKG_VERSION:=10.2.0
 PKG_RELEASE:=1
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/opennds/opennds/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=c2da51e3051e390fc1ddae2a4fa751f7b62919eb8e5526710067ca4622331017
-PKG_BUILD_DIR:=$(BUILD_DIR)/openNDS-$(PKG_VERSION)
+PKG_VERSION:=gen_10.2.0_v0.1.0
+PKG_SOURCE:=opennds-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/opennds/-/archive/$(PKG_VERSION)
+PKG_HASH:=589a2a1cf5b82c4a72f1e6a0bac088c55b5aab08cfb231e40ea5d5ef220ecc83
+PKG_BUILD_DIR:=$(BUILD_DIR)/opennds-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Rob White <rob@blue-wave.net>
 PKG_LICENSE:=GPL-2.0-or-later
@@ -29,7 +29,7 @@ define Package/opennds
   CATEGORY:=Network
   DEPENDS:=+libmicrohttpd-no-ssl
   TITLE:=open Network Demarcation Service
-  URL:=https://github.com/opennds/opennds
+  URL:=https://gitlab.com/prpl-foundation/mirrors/opennds
   CONFLICTS:=nodogsplash
 endef
 
