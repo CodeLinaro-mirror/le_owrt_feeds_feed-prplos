@@ -5,7 +5,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=opennds
+PKG_NAME:=opennds-prpl
 PKG_RELEASE:=1
 
 PKG_VERSION:=gen_10.2.0_v0.1.0
@@ -23,17 +23,17 @@ PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/opennds
+define Package/opennds-prpl
   SUBMENU:=Captive Portals
   SECTION:=net
   CATEGORY:=Network
   DEPENDS:=+libmicrohttpd-no-ssl
   TITLE:=open Network Demarcation Service
   URL:=https://gitlab.com/prpl-foundation/mirrors/opennds
-  CONFLICTS:=nodogsplash
+  CONFLICTS:=nodogsplash opennds
 endef
 
-define Package/opennds/description
+define Package/opennds-prpl/description
   openNDS (open Network Demarcation Service) is a high performance, small footprint, Captive Portal.
   It provides a border control gateway between a public local area network and the Internet.
   It supports all scenarios ranging from small stand alone venues through to large mesh networks with multiple portal entry points.
@@ -41,7 +41,7 @@ define Package/opennds/description
   This version uses nftables.
 endef
 
-define Package/opennds/install
+define Package/opennds-prpl/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/opennds $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ndsctl $(1)/usr/bin/
@@ -76,14 +76,14 @@ define Package/opennds/install
 	$(CP) $(PKG_BUILD_DIR)/forward_authentication_service/fas-aes/fas-aes-https.php $(1)/etc/opennds/
 endef
 
-define Package/opennds/postrm
+define Package/opennds-prpl/postrm
 #!/bin/sh
 uci delete firewall.opennds
 uci commit firewall
 endef
 
-define Package/opennds/conffiles
+define Package/opennds-prpl/conffiles
 /etc/config/opennds
 endef
 
-$(eval $(call BuildPackage,opennds))
+$(eval $(call BuildPackage,opennds-prpl))
