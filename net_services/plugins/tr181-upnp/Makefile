@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-upnp
-PKG_VERSION:=v0.10.2
+PKG_VERSION:=v0.10.3
 SHORT_DESCRIPTION:=upnp manager
 
-PKG_SOURCE:=tr181-upnp-v0.10.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-upnp/-/archive/v0.10.2
-PKG_HASH:=d8928de202d472896c217307ae46b1abcc2c5411e852d087012e5caef424c199
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-upnp-v0.10.2
+PKG_SOURCE:=tr181-upnp-v0.10.3.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-upnp/-/archive/v0.10.3
+PKG_HASH:=23e1ab75ad3eecb99aba3abcb1be60a7b7a681455780ebe9fffdd8c623674c18
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-upnp-v0.10.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
