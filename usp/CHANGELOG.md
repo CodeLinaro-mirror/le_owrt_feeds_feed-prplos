@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.16.4 - 2024-05-02(13:41:43 +0000)
+
+### Other
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): CLONE - LocalAgent doesn't start
+
 ## Release v8.16.3 - 2024-04-30(18:16:23 +0000)
 
 ### Other
