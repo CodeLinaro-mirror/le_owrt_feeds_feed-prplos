@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-usp-registration
 PKG_VERSION:=v0.1.1
-SHORT_DESCRIPTION:=This module helps registering data models when they are actually available
+SHORT_DESCRIPTION:=Registers available data models
 
 PKG_SOURCE:=mod-usp_registration-v0.1.1.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-usp_registration/-/archive/v0.1.1
