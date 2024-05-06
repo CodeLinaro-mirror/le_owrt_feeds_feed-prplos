@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-mcastd
-PKG_VERSION:=v0.1.2
+PKG_VERSION:=v0.1.3
 SHORT_DESCRIPTION:=mcastd main user space app
 
-PKG_SOURCE:=tr181-mcastd-v0.1.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mcastd/-/archive/v0.1.2
-PKG_HASH:=ac1939441603082d6d7c9927cbea1b62698173d384be9ce0edbf79a1e96d35c4
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mcastd-v0.1.2
+PKG_SOURCE:=tr181-mcastd-v0.1.3.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mcastd/-/archive/v0.1.3
+PKG_HASH:=3f0b85c26224b9db5b811322d82f6480938a147c059f7d34ede585ae0060d927
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mcastd-v0.1.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -15,6 +15,7 @@ PKG_LICENSE_FILES:=LICENSE
 COMPONENT:=tr181-mcastd
 
 PKG_RELEASE:=1
+PKG_BUILD_DEPENDS += mcastd-core
 
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
@@ -39,7 +40,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libnetmodel
   DEPENDS += +libxtables
   DEPENDS += +iptables
-  DEPENDS += +mcastd-core
+  DEPENDS += +kmod-mcastd-core
   MENU:=1
 endef
 
