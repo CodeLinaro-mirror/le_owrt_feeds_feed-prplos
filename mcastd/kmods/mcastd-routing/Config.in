@@ -1,0 +1,20 @@
+config PACKAGE_kmod-mcastd-routing
+    tristate
+    select MCASTD_ROUTING
+
+if PACKAGE_kmod-mcastd-routing
+
+menu "Select kmod-mcastd-routing build options"
+    depends on PACKAGE_kmod-mcastd-routing
+
+config MCASTD_ROUTING
+    bool "Build mcastd routing kernel module"
+    default y
+
+config MCASTD_ROUTING_DEBUG
+    bool "Build mcastd routing with debug loggings"
+    default n
+
+endmenu
+
+endif

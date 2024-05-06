@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mcastd-routing
-PKG_VERSION:=v0.1.3
+PKG_VERSION:=v0.1.4
 SHORT_DESCRIPTION:=Kernel module to manage linux's multicast forwading cache entries
 
-PKG_SOURCE:=mcastd-routing-v0.1.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-routing/-/archive/v0.1.3
+PKG_SOURCE:=mcastd-routing-v0.1.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-routing/-/archive/v0.1.4
 PKG_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-routing-v0.1.3
+PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-routing-v0.1.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -40,7 +40,9 @@ define Build/Compile
 		STAGINGDIR=$(STAGING_DIR) \
 		CONFIGDIR=$(STAGING_DIR) \
 		LINUX_DIR=$(LINUX_DIR) \
+		CONFIG_MCASTD_ROUTING_DEBUG=$(CONFIG_MCASTD_ROUTING_DEBUG) \
 		BUILD_DIR=$(PKG_BUILD_DIR) \
+		$(MAKE_FLAGS) \
 		$(KERNEL_MAKE_FLAGS)
 endef
 
@@ -52,6 +54,7 @@ define Build/Install
 		CONFIGDIR=$(STAGING_DIR) \
 		KMOD_INSTALL_PATH_PREFIX=$(PKG_INSTALL_DIR) \
 		HARDCO_KERNEL_DIR=$(LINUX_DIR) \
+		CONFIG_MCASTD_ROUTING_DEBUG=$(CONFIG_MCASTD_ROUTING_DEBUG) \
 		D=$(PKG_INSTALL_DIR) \
 		DEST=$(PKG_INSTALL_DIR)
 endef
@@ -64,6 +67,7 @@ define Build/InstallDev
 		CONFIGDIR=$(STAGING_DIR) \
 		KMOD_INSTALL_PATH_PREFIX=$(STAGING_DIR) \
 		HARDCO_KERNEL_DIR=$(LINUX_DIR) \
+		CONFIG_MCASTD_ROUTING_DEBUG=$(CONFIG_MCASTD_ROUTING_DEBUG) \
 		D=$(STAGING_DIR) \
 		DEST=$(STAGING_DIR)
 endef
@@ -76,6 +80,10 @@ define KernelPackage/$(PKG_NAME)/install
 	find $(1) -name *.a -exec rm {} +;
 	find $(1) -name *.h -exec rm {} +;
 	find $(1) -name *.pc -exec rm {} +;
+endef
+
+define KernelPackage/$(PKG_NAME)/config
+	source "$(SOURCE)/Config.in"
 endef
 
 $(eval $(call KernelPackage,$(PKG_NAME)))
