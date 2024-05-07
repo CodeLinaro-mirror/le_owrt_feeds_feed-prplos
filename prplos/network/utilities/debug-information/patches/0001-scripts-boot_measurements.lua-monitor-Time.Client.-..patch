@@ -1,0 +1,47 @@
+From 143576d7c7266f708da3f3b019aaeb0b5f9b559c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20=C5=A0tetiar?= <petr.stetiar@prplfoundation.org>
+Date: Tue, 7 May 2024 14:05:07 +0000
+Subject: [PATCH] scripts: boot_measurements.lua: monitor Time.Client.*.Status
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+CPE time status after the boot seems to become a critical KPI, so lets
+make the diagnosting easier by including the NTP client status in the
+boot measurement log.
+
+References: PCF-1168
+Signed-off-by: Petr Štetiar <petr.stetiar@prplfoundation.org>
+---
+ scripts/boot_measurements.lua | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/scripts/boot_measurements.lua b/scripts/boot_measurements.lua
+index 5fc00926c7d4..b348a0cb73bb 100644
+--- a/scripts/boot_measurements.lua
++++ b/scripts/boot_measurements.lua
+@@ -20,6 +20,11 @@ local log_ssh_server = function(path)
+   return "SSH Server " .. ssh_server_obj[path].Alias .. " is " .. ssh_server_obj[path].Status
+ end
+ 
++local log_time_client = function(path)
++  local time_client_obj = lamx.bus.get(path, 0)
++  return "Time Client " .. time_client_obj[path].Alias .. " is " .. time_client_obj[path].Status
++end
++
+ return {
+   log_file = "/tmp/amx_mon_objects.log",
+   objects = {
+@@ -35,6 +40,12 @@ return {
+         value = "Running",
+         comment = log_ssh_server
+     },
++    {
++        path = "Time.Client.*.",
++        param = "Status",
++        filter = "contains('parameters.Status')",
++        comment = log_time_client
++    },
+     {
+         path = "Routing.Router.*.IPv4Forwarding.*.",
+         param = "GatewayIPAddress",
