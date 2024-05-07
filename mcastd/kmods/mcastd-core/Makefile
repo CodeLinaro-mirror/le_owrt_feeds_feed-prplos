@@ -15,6 +15,8 @@ PKG_LICENSE_FILES:=LICENSE
 
 PKG_RELEASE:=1
 PKG_BUILD_DEPENDS += kernel
+PKG_EXTMOD_SUBDIRS+=src/kernel_core
+PKG_EXTMOD_SUBDIRS+=src/kernel_proxy
 
 include $(INCLUDE_DIR)/kernel.mk
 include $(INCLUDE_DIR)/package.mk
