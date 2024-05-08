@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.17.0 - 2024-05-08(17:24:05 +0000)
+
+### New
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): Implement custom has function
+
+### Changes
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): Methods must be called with braces
+
 ## Release v8.16.5 - 2024-05-07(08:44:23 +0000)
 
 ## Release v8.16.4 - 2024-05-02(13:41:43 +0000)
