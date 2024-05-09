@@ -1,7 +1,5 @@
 #!/bin/sh
 
-if [ -f "/usr/lib/amx/modules/mod-hostname-syscall.so" ]; then
-    sed -i 's|echo "$hostname" > /proc/sys/kernel/hostname|#echo "$hostname" > /proc/sys/kernel/hostname|g' /etc/init.d/system
-fi
+sed -i 's|echo "$hostname" > /proc/sys/kernel/hostname|#echo "$hostname" > /proc/sys/kernel/hostname|g' /etc/init.d/system
 
 exit 0
