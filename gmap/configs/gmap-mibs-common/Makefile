@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-mibs-common
-PKG_VERSION:=v0.22.1
+PKG_VERSION:=v0.23.0
 SHORT_DESCRIPTION:=Generic mib files for the gmap service
 
-PKG_SOURCE:=gmap-mibs-common-v0.22.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/mibs/gmap-mibs-common/-/archive/v0.22.1
-PKG_HASH:=a7a6c3551db0ead6faf538b4a56fae445a949e17ccf9e65e35558665e2e33efc
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mibs-common-v0.22.1
+PKG_SOURCE:=gmap-mibs-common-v0.23.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/mibs/gmap-mibs-common/-/archive/v0.23.0
+PKG_HASH:=b18e117d3b2ca0bbfc11b65f82f98583f8ee91b27c65ed68c8aeb3fcb0beda9b
+PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mibs-common-v0.23.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -28,11 +28,13 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxd
   DEPENDS += +libamxb
   DEPENDS += +libamxj
+  DEPENDS += +libamxm
   DEPENDS += +libsahtrace
   DEPENDS += +libamxo
   DEPENDS += +libgmap-client
   DEPENDS += +libgmap-ext
   DEPENDS += +mod-dmext
+  DEPENDS += +libipat
   MENU:=1
 endef
 
