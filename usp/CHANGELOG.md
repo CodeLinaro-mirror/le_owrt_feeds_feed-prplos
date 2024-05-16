@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.17.2 - 2024-05-16(20:59:54 +0000)
+
+### Other
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [LocalAgent] define all key parameters as upc
+
+## Release v8.17.1 - 2024-05-14(06:08:54 +0000)
+
+### Fixes
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): AMX USP backend must remove braces from operate name when received
+
 ## Release v8.17.0 - 2024-05-08(17:24:05 +0000)
 
 ### New
