@@ -1,0 +1,115 @@
+From e18a46b491a92f9389da897a7c17978b7e44eeb4 Mon Sep 17 00:00:00 2001
+From: Cedric DOURLENT <cedric.dourlent@softathome.com>
+Date: Tue, 21 May 2024 15:07:18 +0200
+Subject: [PATCH] mod_openssl: add support for pkcs11 uri for using engine or
+ provider
+
+---
+ src/mod_openssl.c | 65 ++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 62 insertions(+), 3 deletions(-)
+
+diff --git a/src/mod_openssl.c b/src/mod_openssl.c
+index 69d6145..c5c135e 100644
+--- a/src/mod_openssl.c
++++ b/src/mod_openssl.c
+@@ -75,6 +75,12 @@
+ #include <openssl/pem.h>
+ #include <openssl/rand.h>
+ #include <openssl/tls1.h>
++#if !defined(OPENSSL_NO_ENGINE)
++#include <openssl/engine.h>
++#endif
++#if OPENSSL_VERSION_NUMBER >= 0x30000000L
++#include <openssl/provider.h>
++#endif
+ #ifndef OPENSSL_NO_DH
+ #include <openssl/dh.h>
+ #endif
+@@ -536,14 +542,19 @@ static int mod_openssl_init_once_openssl (server *srv)
+     SSL_library_init();
+     OpenSSL_add_all_algorithms();
+   #endif
++
++#if !defined(OPENSSL_NO_ENGINE)
++    ENGINE_load_builtin_engines();
++#endif
++
+     ssl_is_init = 1;
+ 
+     if (0 == RAND_status()) {
+         log_error(srv->errh, __FILE__, __LINE__,
+           "SSL: not enough entropy in the pool");
+         return 0;
+     }
+
+     local_send_buffer = ck_malloc(LOCAL_SEND_BUFSIZE);
+     return 1;
+ }
+@@ -1702,6 +1714,7 @@ mod_openssl_crt_must_staple (const X509 *crt)
+ static plugin_cert *
+ network_openssl_load_pemfile (server *srv, const buffer *pemfile, const buffer *privkey, const buffer *ssl_stapling_file)
+ {
++    EVP_PKEY *ssl_pemfile_pkey = NULL;
+     if (!mod_openssl_init_once_openssl(srv)) return NULL;
+ 
+     STACK_OF(X509) *ssl_pemfile_chain = NULL;
+@@ -1710,8 +1723,54 @@ network_openssl_load_pemfile (server *srv, const buffer *pemfile, const buffer *
+     if (NULL == ssl_pemfile_x509)
+         return NULL;
+ 
+-    EVP_PKEY *ssl_pemfile_pkey =
+-      mod_openssl_evp_pkey_load_pem_file(privkey->ptr, srv->errh);
++#if !defined(OPENSSL_NO_ENGINE)
++    if(strncmp(privkey->ptr, "org.openssl.engine:", 7)==0){
++	    ENGINE *e = NULL;
++	    char *tmpBuf = strdup(privkey->ptr);
++	    char *magic = strtok(tmpBuf, ":");
++	    char *engine = strtok(NULL, ":");
++	    char *uri = strtok(NULL, "");
++
++	    e = ENGINE_by_id(engine);
++	    if(!e){
++	    	    log_error(srv->errh, __FILE__, __LINE__, "get engine error");
++		    free(tmpBuf);
++		    return NULL;
++	    }
++
++	    ssl_pemfile_pkey = ENGINE_load_private_key(e, uri, NULL, NULL);
++
++	    free(tmpBuf);
++    }
++    else 
++#endif
++    if(strncmp(privkey->ptr, "pkcs11:", 7)==0){
++	    OSSL_STORE_CTX *store;
++	    OSSL_STORE_INFO *info;
++
++	    store = OSSL_STORE_open(privkey->ptr, NULL, NULL, NULL, NULL);
++	    if (store == NULL) {
++		    log_error(srv->errh, __FILE__, __LINE__, "Failed to open pkcs11 store %s", privkey->ptr);
++		    return NULL;
++	    }
++
++	    for (info = OSSL_STORE_load(store); info != NULL;
++			    info = OSSL_STORE_load(store)) {
++		    int type = OSSL_STORE_INFO_get_type(info);
++
++		    switch (type) {
++			    case OSSL_STORE_INFO_PKEY:
++				    ssl_pemfile_pkey = OSSL_STORE_INFO_get1_PKEY(info);
++				    break;
++		    }
++		    OSSL_STORE_INFO_free(info);
++	    }
++    }
++    else{
++	    ssl_pemfile_pkey =
++		    mod_openssl_evp_pkey_load_pem_file(privkey->ptr, srv->errh);
++    }
++
+     if (NULL == ssl_pemfile_pkey) {
+         X509_free(ssl_pemfile_x509);
+         sk_X509_pop_free(ssl_pemfile_chain, X509_free);
+-- 
+2.25.1
+
