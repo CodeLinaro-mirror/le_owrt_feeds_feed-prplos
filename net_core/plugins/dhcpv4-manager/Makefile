@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dhcpv4-manager
-PKG_VERSION:=v2.12.5
+PKG_VERSION:=v2.12.6
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-dhcpv4-v2.12.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4/-/archive/v2.12.5
-PKG_HASH:=b43d09365246ff1066e330c8cccf03e64c6da87b8d0d5bd594f711bb6cdd338c
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4-v2.12.5
+PKG_SOURCE:=tr181-dhcpv4-v2.12.6.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4/-/archive/v2.12.6
+PKG_HASH:=93b898f85c2ce5fd329ef84fe8a277c0f77c4e8c3ac02da3be94e9fbf8e954ca
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4-v2.12.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -53,6 +53,10 @@ define Package/$(PKG_NAME)
   DEPENDS += +mod-fw-amx
   DEPENDS += +libdhcpoptions
   DEPENDS += +rpcd
+  DEPENDS += +ip-manager
+  DEPENDS += +netmodel
+  DEPENDS += +tr181-firewall
+  DEPENDS += +time-manager
   MENU:=1
 endef
 
