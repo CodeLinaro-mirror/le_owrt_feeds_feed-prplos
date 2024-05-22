@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mcastd-core
-PKG_VERSION:=v0.1.3
+PKG_VERSION:=v0.1.4
 SHORT_DESCRIPTION:=Kernel module for multicast support
 
-PKG_SOURCE:=mcastd-core-v0.1.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-core/-/archive/v0.1.3
+PKG_SOURCE:=mcastd-core-v0.1.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-core/-/archive/v0.1.4
 PKG_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-core-v0.1.3
+PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-core-v0.1.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
