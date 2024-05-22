@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.17.3 - 2024-05-22(20:29:48 +0000)
+
+### Other
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): [Security][ambiorix]Some libraries are not compiled with Fortify-Source
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [Security][ambiorix] Some libraries are not compiled with Fortify-Source
+
 ## Release v8.17.2 - 2024-05-16(20:59:54 +0000)
 
 ### Other
