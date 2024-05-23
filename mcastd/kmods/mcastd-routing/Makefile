@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mcastd-routing
-PKG_VERSION:=v0.1.4
+PKG_VERSION:=v0.1.5
 SHORT_DESCRIPTION:=Kernel module to manage linux's multicast forwading cache entries
 
-PKG_SOURCE:=mcastd-routing-v0.1.4.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-routing/-/archive/v0.1.4
+PKG_SOURCE:=mcastd-routing-v0.1.5.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-routing/-/archive/v0.1.5
 PKG_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-routing-v0.1.4
+PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-routing-v0.1.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -15,6 +15,7 @@ PKG_LICENSE_FILES:=LICENSE
 
 PKG_RELEASE:=1
 PKG_BUILD_DEPENDS += kernel
+PKG_EXTMOD_SUBDIRS+=src
 
 include $(INCLUDE_DIR)/kernel.mk
 include $(INCLUDE_DIR)/package.mk
