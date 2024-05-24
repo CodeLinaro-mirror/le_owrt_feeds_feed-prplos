@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Kernel module for multicast support
 
 PKG_SOURCE:=mcastd-core-v0.1.4.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-core/-/archive/v0.1.4
-PKG_HASH:=skip
+PKG_HASH:=1472a9456e1245a74f583977c9c1f6777b405b437511a52768becd3a526b5ccd
 PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-core-v0.1.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent

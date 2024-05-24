@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Kernel module to manage linux's multicast forwading cache ent
 
 PKG_SOURCE:=mcastd-routing-v0.1.5.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-routing/-/archive/v0.1.5
-PKG_HASH:=skip
+PKG_HASH:=88407c9ff3123cfa3ac1dadc50c57de2a32eaa9cf47a3697c110255ec1db9c44
 PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-routing-v0.1.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
