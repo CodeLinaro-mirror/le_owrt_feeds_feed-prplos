@@ -1,10 +1,4 @@
 ---
-variables:
-  PC_AUTO_OPENSOURCE: "on"
-  PC_SQUASH_COMMITS_OPENSOURCE: "off"
-  PC_CHECK_SAHOSS: "off"
 
 include:
-  - project: 'sofa/gitlab-ci/yml-templates'
-    ref: master
-    file: '.sah-wrt-feed-build-test.yml'
+  - remote: 'https://gitlab.com/prpl-foundation/tooling/yml-templates/raw/main/.feed-pipeline.yml'
