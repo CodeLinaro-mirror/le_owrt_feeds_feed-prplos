@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-syslog
-PKG_VERSION:=v0.1.5
+PKG_VERSION:=v1.5.4
 SHORT_DESCRIPTION:=TR-181 compatible syslog
 
-PKG_SOURCE:=tr181-syslog-v0.1.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-syslog/-/archive/v0.1.5
-PKG_HASH:=f8e031a56b384eca1b4ac658d89c60c9dd9b3adabe0e1d703bf95af8af11380d
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-syslog-v0.1.5
+PKG_SOURCE:=tr181-syslog-v1.5.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-syslog/-/archive/v1.5.4
+PKG_HASH:=c4e4765f89eb8bb77cbf8b688538129f4d0295cf8870de366953f3b4e24e6147
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-syslog-v1.5.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -36,7 +36,9 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxm
   DEPENDS += +libamxb
   DEPENDS += +libsahtrace
+  DEPENDS += +libnetmodel
   DEPENDS += +amxrt
+  DEPENDS += +mod-dmext
   MENU:=1
 endef
 
