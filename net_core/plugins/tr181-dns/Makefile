@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dns
-PKG_VERSION:=v3.1.0
+PKG_VERSION:=v3.1.1
 SHORT_DESCRIPTION:=dns plugin
 
-PKG_SOURCE:=tr181-dns-v3.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dns/-/archive/v3.1.0
-PKG_HASH:=af2cb6e26e48a37a37c84ed08677aab88efac4f48c577a312025ae3658dacc4c
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dns-v3.1.0
+PKG_SOURCE:=tr181-dns-v3.1.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dns/-/archive/v3.1.1
+PKG_HASH:=5ccd393d53dae13750b7972b5c7714f57bac4f62cae621fbccd375ef9db66874
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dns-v3.1.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
