@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libipat
-PKG_VERSION:=v1.7.0
+PKG_VERSION:=v1.7.1
 SHORT_DESCRIPTION:=IP Address Tools
 
-PKG_SOURCE:=libipat-v1.7.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libipat/-/archive/v1.7.0
-PKG_HASH:=1e7f5b271d1914eab22066f89f4aa1a5e632771e4e6a6f287883fd9d6f0c4deb
-PKG_BUILD_DIR:=$(BUILD_DIR)/libipat-v1.7.0
+PKG_SOURCE:=libipat-v1.7.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libipat/-/archive/v1.7.1
+PKG_HASH:=9f4ce4429cb48548171e7d0de32a83984d2ceb8897b4c41245fa339e4e361cde
+PKG_BUILD_DIR:=$(BUILD_DIR)/libipat-v1.7.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
