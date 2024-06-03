@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=USP backend implementation for amxb
 
 PKG_SOURCE:=amxb_usp-v4.5.3.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp/-/archive/v4.5.3
-PKG_HASH:=skip
+PKG_HASH:=8dd5b22492b576ba95a207f01575f95aaa73b5353759932f726af66964315f46
 PKG_BUILD_DIR:=$(BUILD_DIR)/amxb_usp-v4.5.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
