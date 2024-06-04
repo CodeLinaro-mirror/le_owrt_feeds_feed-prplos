@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=TR181 firewall manager
 
 PKG_SOURCE:=tr181-firewall-v8.7.6.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-firewall/-/archive/v8.7.6
-PKG_HASH:=skip
+PKG_HASH:=683746d4160c0c3fd253f591c40011fce609a1459ab5c5042f75448fb2a86655
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-firewall-v8.7.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
