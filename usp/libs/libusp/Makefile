@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libusp
-PKG_VERSION:=v2.6.8
+PKG_VERSION:=v2.7.0
 SHORT_DESCRIPTION:=converts protobuf messages to amx variants
 
-PKG_SOURCE:=libusp-v2.6.8.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libusp/-/archive/v2.6.8
-PKG_HASH:=6b52f14d292328e8d2e8c037de79f502763b595893ce7d0bc112bad14d66d7bf
-PKG_BUILD_DIR:=$(BUILD_DIR)/libusp-v2.6.8
+PKG_SOURCE:=libusp-v2.7.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libusp/-/archive/v2.7.0
+PKG_HASH:=992974873a8b5989ed5615456c4144afb5debc08724b950f2a174e12212bf6ef
+PKG_BUILD_DIR:=$(BUILD_DIR)/libusp-v2.7.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE.BSD2 LICENSE.BSD3
