@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.18.0 - 2024-06-07(07:26:53 +0000)
+
+### New
+
+- [libusp](https://gitlab.com/prpl-foundation/components/core/libraries/libusp): Add generic function to try to convert USP error to amxd status
+
+### Fixes
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): Detection of bus context (USP) requires path to be dotted
+
 ## Release v8.17.5 - 2024-06-04(06:53:30 +0000)
 
 ## Release v8.17.4 - 2024-06-03(09:44:16 +0000)
