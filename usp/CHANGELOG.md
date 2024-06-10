@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.19.0 - 2024-06-10(12:46:06 +0000)
+
+### New
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): Allow data model translations in USP backend
+
 ## Release v8.18.0 - 2024-06-07(07:26:53 +0000)
 
 ### New
