@@ -19,6 +19,10 @@ config SAH_AMX_TR181_DEVICEINFO_SYSTEM_ORDER
     int "tr181 deviceinfo system Plugin start up order"
     default 12
 
+config SAH_AMX_TR181_DEVICEINFO_SERVICES_ORDER
+    int "tr181 deviceinfo Services Plugin start up order"
+    default 12
+
 config SAH_AMX_TR181_ENVIRONMENT_ORDER
     int "Configure env variables order"
     default 12
