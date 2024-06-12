@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hosts-manager
-PKG_VERSION:=v0.8.0
+PKG_VERSION:=v0.8.1
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-hosts-v0.8.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-hosts/-/archive/v0.8.0
-PKG_HASH:=7f2aa2b7749f1c8687e240eb2d1725da9e33867e06b56c6abd579498ef1d3508
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-hosts-v0.8.0
+PKG_SOURCE:=tr181-hosts-v0.8.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-hosts/-/archive/v0.8.1
+PKG_HASH:=9403b6b066d70e6681f61ef580b84a6855f811a10ce600a9f3a5686f506d89da
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-hosts-v0.8.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
