@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-httpaccess-lighttpd
-PKG_VERSION:=v0.3.8
+PKG_VERSION:=v0.3.9
 SHORT_DESCRIPTION:=Module to manage HTTP accesses for lighttpd server
 
-PKG_SOURCE:=mod-httpaccess-lighttpd-v0.3.8.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-httpaccess-lighttpd/-/archive/v0.3.8
-PKG_HASH:=a3618e35d4157a766a365ba219b079ce0696cf92d05c4d83f369f632809fd01a
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-httpaccess-lighttpd-v0.3.8
+PKG_SOURCE:=mod-httpaccess-lighttpd-v0.3.9.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-httpaccess-lighttpd/-/archive/v0.3.9
+PKG_HASH:=d210055d2e74cd238f429973880f4bea84a7971058b0c8ae8651558fde08ef85
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-httpaccess-lighttpd-v0.3.9
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -26,6 +26,14 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxp
   DEPENDS += +libamxm
   DEPENDS += +libsahtrace
+  DEPENDS += +lighttpd
+  DEPENDS += +lighttpd-mod-access
+  DEPENDS += +lighttpd-mod-setenv
+  DEPENDS += +lighttpd-mod-proxy
+  DEPENDS += +lighttpd-mod-auth
+  DEPENDS += +lighttpd-mod-authn_file
+  DEPENDS += +lighttpd-mod-fastcgi
+  DEPENDS += +tr181-httpaccess
   MENU:=1
 endef
 
