@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-ppp-daemon
-PKG_VERSION:=v0.5.10
+PKG_VERSION:=v0.5.11
 SHORT_DESCRIPTION:=Module integrating the pppd daemon as amx plugin
 
-PKG_SOURCE:=mod-ppp-daemon-v0.5.10.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-ppp-daemon/-/archive/v0.5.10
-PKG_HASH:=ac62ceebb70794ddaf571616ff18bfc9fd4616b3221748c7b558aac7beec1b28
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-ppp-daemon-v0.5.10
+PKG_SOURCE:=mod-ppp-daemon-v0.5.11.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-ppp-daemon/-/archive/v0.5.11
+PKG_HASH:=b3a1521946fcb219e4b8d5e35a49b622eab743afb17215fab1138c8e12f1a0ac
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-ppp-daemon-v0.5.11
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
