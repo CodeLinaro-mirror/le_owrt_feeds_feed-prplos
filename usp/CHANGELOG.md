@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.19.1 - 2024-06-15(07:04:30 +0000)
+
+### Other
+
+- [libimtp](https://gitlab.com/prpl-foundation/components/core/libraries/libimtp): [CI] add wnc-lvr5 compiler
+
 ## Release v8.19.0 - 2024-06-10(12:46:06 +0000)
 
 ### New
