@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-logical-api
-PKG_VERSION:=v0.8.3
+PKG_VERSION:=v0.8.4
 SHORT_DESCRIPTION:=High Level API for configuring interface hierarchies
 
-PKG_SOURCE:=mod-logical-api-v0.8.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-logical-api/-/archive/v0.8.3
-PKG_HASH:=71e4b2b1c51b02516a36607eab90e6e131426af2f156d91447d60dac7bfebe7a
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-logical-api-v0.8.3
+PKG_SOURCE:=mod-logical-api-v0.8.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-logical-api/-/archive/v0.8.4
+PKG_HASH:=3e17415337fb4fbd566a702a3913169489544b9c8b865520265e4ee98a31fd27
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-logical-api-v0.8.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
