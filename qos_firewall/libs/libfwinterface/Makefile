@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libfwinterface
-PKG_VERSION:=v1.6.6
+PKG_VERSION:=v1.6.7
 SHORT_DESCRIPTION:=A library providing interfaces between lib_fwrules and netfilter
 
-PKG_SOURCE:=libfwinterface-v1.6.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfwinterface/-/archive/v1.6.6
-PKG_HASH:=c0d868f533bb4e8a002f15505a7cd013bbdc0d80ec10cee03748d8d708c8a4db
-PKG_BUILD_DIR:=$(BUILD_DIR)/libfwinterface-v1.6.6
+PKG_SOURCE:=libfwinterface-v1.6.7.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfwinterface/-/archive/v1.6.7
+PKG_HASH:=0c121b8c09826b01cb68089fa781e95f45575696f99b35775b44c219275ef8e3
+PKG_BUILD_DIR:=$(BUILD_DIR)/libfwinterface-v1.6.7
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -23,7 +23,6 @@ define Package/$(PKG_NAME)
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfwinterface
   DEPENDS += +libamxc
-  DEPENDS += +libamxp
   DEPENDS += +libsahtrace
   DEPENDS += +libfwrules
   DEPENDS += +!DEFAULT_firewall4:libiptc
