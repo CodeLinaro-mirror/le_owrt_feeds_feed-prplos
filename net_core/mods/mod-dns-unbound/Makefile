@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-dns-unbound
-PKG_VERSION:=v1.6.8
+PKG_VERSION:=v1.6.9
 SHORT_DESCRIPTION:=Ambiorix module to manage Unbound as DNS forwarder
 
-PKG_SOURCE:=mod-dns-unbound-v1.6.8.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-dns-unbound/-/archive/v1.6.8
-PKG_HASH:=197c3931e93e47201625beb094d26af95c62aa7a06589e73ab9705323b176e77
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-dns-unbound-v1.6.8
+PKG_SOURCE:=mod-dns-unbound-v1.6.9.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-dns-unbound/-/archive/v1.6.9
+PKG_HASH:=72f08ed4f33ca2aacd20b5a22b32d67130b4a029c1aa9fee824f2edd905cda62
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-dns-unbound-v1.6.9
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
