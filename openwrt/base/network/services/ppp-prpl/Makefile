@@ -12,10 +12,10 @@ PKG_NAME:=ppp-prpl
 PKG_RELEASE:=3
 
 
-PKG_VERSION:=gen_2.4.9_v0.1.4
+PKG_VERSION:=gen_2.4.9_v0.1.5
 PKG_SOURCE:=ppp-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/ppp/-/archive/$(PKG_VERSION)
-PKG_HASH:=d5c454df3badb456a9296a665a711fc33b2d3a72746251038f07ff93170fc4cc
+PKG_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/ppp-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
