@@ -1,22 +1,47 @@
---- a/scripts/packet-interception.sh
-+++ b/scripts/packet-interception.sh
-@@ -1,5 +1,6 @@
+Index: packet-interception-v0.0.14/scripts/packet-interception.sh
+===================================================================
+--- packet-interception-v0.0.14.orig/scripts/packet-interception.sh
++++ packet-interception-v0.0.14/scripts/packet-interception.sh
+@@ -1,26 +1,33 @@
  #!/bin/sh
  
 +source /usr/lib/amx/scripts/amx_init_functions.sh
  FW_DEFAULTS=/etc/amx/packet-interception/packet-interception.defaults
  FW6_DEFAULTS=/etc/amx/packet-interception/packet-interception_ipv6.defaults
  
-@@ -10,11 +11,7 @@ case $1 in
-         ${name} -D /etc/amx/packet-interception/packet-interception.odl
+ name="packet-interception"
++datamodel_root="PacketInterception"
+ 
+ case $1 in
+-    start|boot)
+-        ${name} -D /etc/amx/packet-interception/packet-interception.odl
++    boot)
++        process_boot ${name} -D
          ;;
-     stop|shutdown)
+-    stop|shutdown)
 -        if [ -f /var/run/${name}.pid ]; then
 -            kill `cat /var/run/${name}.pid`
 -        else
 -            killall ${name}
 -        fi
-+        process_stop_shutdown ${name} 5
++    start)
++        process_start ${name} -D
++        ;;
++    stop)
++        process_stop ${name}
++        ;;
++    shutdown)
++        process_shutdown ${name}
          ;;
      restart)
          $0 stop
+         $0 start
+         ;;
++    debuginfo)
++        process_debug_info ${datamodel_root}
++        ;;
+     *)
+-        echo "Usage : $0 [start|boot|stop|log]"
++        echo "Usage : $0 [start|boot|stop|shutdown|debuginfo|restart]"
+         ;;
+ esac

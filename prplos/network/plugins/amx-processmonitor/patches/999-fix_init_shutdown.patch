@@ -1,0 +1,41 @@
+Index: amx-processmonitor-v0.2.0/scripts/amx-processmonitor.sh
+===================================================================
+--- amx-processmonitor-v0.2.0.orig/scripts/amx-processmonitor.sh
++++ amx-processmonitor-v0.2.0/scripts/amx-processmonitor.sh
+@@ -1,21 +1,29 @@
+ #!/bin/sh
+ 
+-source /usr/lib/amx/scripts/amx_init_functions.sh
+-name="amx-processmonitor"
++. /usr/lib/amx/scripts/amx_init_functions.sh
++
++name="amx-processmonitor"
++datamodel_root="ProcessMonitor"
+ 
+ case $1 in
+-    start|boot)
+-        ${name} -D
++    boot)
++        process_boot ${name} -D
++        ;;
++    start)
++        process_start ${name} -D
++        ;;
++    stop)
++        process_stop ${name}
+         ;;
+-    stop|shutdown)
+-        process_stop_shutdown ${name} 5
++    shutdown)
++        process_shutdown ${name}
+         ;;
+     restart)
+         $0 stop
+         $0 start
+         ;;
+     debuginfo)
+-        ubus-cli "ProcessMonitor.?"
++        process_debug_info ${datamodel_root}
+         ;;
+     *)
+         echo "Usage : $0 [start|boot|stop|shutdown|debuginfo|restart]"

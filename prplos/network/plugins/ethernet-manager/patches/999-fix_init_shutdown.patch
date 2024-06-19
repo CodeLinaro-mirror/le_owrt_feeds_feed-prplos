@@ -1,34 +1,36 @@
-Index: tr181-dslite-v0.8.2/scripts/tr181-dslite.sh
+Index: tr181-ethernet-v1.20.1/scripts/ethernet-manager.sh
 ===================================================================
---- tr181-dslite-v0.8.2.orig/scripts/tr181-dslite.sh
-+++ tr181-dslite-v0.8.2/scripts/tr181-dslite.sh
-@@ -1,28 +1,31 @@
+--- tr181-ethernet-v1.20.1.orig/scripts/ethernet-manager.sh
++++ tr181-ethernet-v1.20.1/scripts/ethernet-manager.sh
+@@ -1,29 +1,31 @@
  #!/bin/sh
 -[ -f /etc/environment ] && source /etc/environment
 -ulimit -c ${ULIMIT_CONFIGURATION:-0}
 +
 +. /usr/lib/amx/scripts/amx_init_functions.sh
 +
- name="tr181-dslite"
-+datamodel_root="DSLite"
+ name="ethernet-manager"
++datamodel_root="Ethernet"
  
  case $1 in
 -    start|boot)
+-        source /etc/environment
 -        ${name} -D
+-        ;;
+-    stop|shutdown)
+-        if [ -f /var/run/${name}.pid ]; then
+-            kill `cat /var/run/${name}.pid`
+-        else
+-            killall ${name}
+-	fi
 +    boot)
 +        process_boot ${name} -D
          ;;
--    stop|shutdown)
--        if [ -f /var/run/${name}.pid ]; then
--            kill "$(cat /var/run/${name}.pid)"
--        else
--            killall ${name}
--        fi
+-    debuginfo)
+-        ubus-cli "Ethernet.?"
 +    start)
 +        process_start ${name} -D
-         ;;
--    debuginfo)
--        ubus-cli "DSLite.?"
++        ;;
 +    stop)
 +        process_stop ${name}
 +        ;;
@@ -37,14 +39,13 @@ Index: tr181-dslite-v0.8.2/scripts/tr181-dslite.sh
          ;;
      restart)
          $0 stop
--        sleep 1
          $0 start
          ;;
 +    debuginfo)
 +        process_debug_info ${datamodel_root}
 +        ;;
      *)
--        echo "Usage : $0 [start|boot|stop|debuginfo|restart]"
-+        echo "Usage : $0 [start|boot|stop|shutdown|debuginfo|restart]"
+         echo "Usage : $0 [start|boot|stop|shutdown|debuginfo|restart]"
          ;;
  esac
+-

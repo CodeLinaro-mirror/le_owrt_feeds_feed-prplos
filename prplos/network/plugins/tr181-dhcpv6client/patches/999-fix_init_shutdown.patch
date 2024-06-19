@@ -1,16 +1,16 @@
-Index: tr181-dslite-v0.8.2/scripts/tr181-dslite.sh
+Index: tr181-dhcpv6client-v1.2.1/scripts/tr181-dhcpv6client.sh
 ===================================================================
---- tr181-dslite-v0.8.2.orig/scripts/tr181-dslite.sh
-+++ tr181-dslite-v0.8.2/scripts/tr181-dslite.sh
-@@ -1,28 +1,31 @@
+--- tr181-dhcpv6client-v1.2.1.orig/scripts/tr181-dhcpv6client.sh
++++ tr181-dhcpv6client-v1.2.1/scripts/tr181-dhcpv6client.sh
+@@ -1,25 +1,30 @@
  #!/bin/sh
 -[ -f /etc/environment ] && source /etc/environment
 -ulimit -c ${ULIMIT_CONFIGURATION:-0}
 +
 +. /usr/lib/amx/scripts/amx_init_functions.sh
 +
- name="tr181-dslite"
-+datamodel_root="DSLite"
+ name="tr181-dhcpv6client"
++datamodel_root="DHCPv6Client"
  
  case $1 in
 -    start|boot)
@@ -19,16 +19,14 @@ Index: tr181-dslite-v0.8.2/scripts/tr181-dslite.sh
 +        process_boot ${name} -D
          ;;
 -    stop|shutdown)
--        if [ -f /var/run/${name}.pid ]; then
--            kill "$(cat /var/run/${name}.pid)"
--        else
--            killall ${name}
+-        if [ -f "/var/run/${name}.pid" ]; then
+-            kill $(cat "/var/run/${name}.pid")
 -        fi
 +    start)
 +        process_start ${name} -D
          ;;
 -    debuginfo)
--        ubus-cli "DSLite.?"
+-        ubus-cli "DHCPv6Client.?"
 +    stop)
 +        process_stop ${name}
 +        ;;
@@ -44,7 +42,5 @@ Index: tr181-dslite-v0.8.2/scripts/tr181-dslite.sh
 +        process_debug_info ${datamodel_root}
 +        ;;
      *)
--        echo "Usage : $0 [start|boot|stop|debuginfo|restart]"
-+        echo "Usage : $0 [start|boot|stop|shutdown|debuginfo|restart]"
+         echo "Usage : $0 [start|boot|stop|shutdown|debuginfo|restart]"
          ;;
- esac

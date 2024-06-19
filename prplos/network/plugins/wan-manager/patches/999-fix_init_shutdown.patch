@@ -1,22 +1,48 @@
---- a/scripts/wan-manager.sh
-+++ b/scripts/wan-manager.sh
-@@ -1,4 +1,6 @@
+Index: wan-manager-v1.1.0/scripts/wan-manager.sh
+===================================================================
+--- wan-manager-v1.1.0.orig/scripts/wan-manager.sh
++++ wan-manager-v1.1.0/scripts/wan-manager.sh
+@@ -1,27 +1,30 @@
  #!/bin/sh
+-[ -f /etc/environment ] && source /etc/environment
+-ulimit -c ${ULIMIT_CONFIGURATION:-0}
 +
-+source /usr/lib/amx/scripts/amx_init_functions.sh
- [ -f /etc/environment ] && source /etc/environment
- ulimit -c ${ULIMIT_CONFIGURATION:-0}
++. /usr/lib/amx/scripts/amx_init_functions.sh
++
  name="wan-manager"
-@@ -8,11 +10,7 @@ case $1 in
-         ${name} -D
++datamodel_root="WANManager"
+ 
+ case $1 in
+-    start|boot)
+-        ${name} -D
++    boot)
++        process_boot ${name} -D
          ;;
-     stop|shutdown)
+-    stop|shutdown)
 -        if [ -f /var/run/${name}.pid ]; then
 -            kill `cat /var/run/${name}.pid`
 -        else
 -            killall ${name}
 -        fi
-+        process_stop_shutdown ${name} 5
++    start)
++        process_start ${name} -D
          ;;
-     debuginfo)
-         ubus-cli "WANManager.?"
+-    debuginfo)
+-        ubus-cli "WANManager.?"
++    stop)
++        process_stop ${name}
++        ;;
++    shutdown)
++        process_shutdown ${name}
+         ;;
+     restart)
+         $0 stop
+-        sleep 1s
+         $0 start
+         ;;
++    debuginfo)
++        process_debug_info ${datamodel_root}
++        ;;
+     *)
+         echo "Usage : $0 [start|boot|stop|shutdown|debuginfo|restart]"
+         ;;
