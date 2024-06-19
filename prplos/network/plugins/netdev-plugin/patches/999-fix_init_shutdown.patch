@@ -1,25 +1,22 @@
-Index: tr181-usermanagement-v0.14.1/scripts/tr181-usermanagement.sh
+Index: netdev-v1.11.2/scripts/netdev-plugin.sh
 ===================================================================
---- tr181-usermanagement-v0.14.1.orig/scripts/tr181-usermanagement.sh
-+++ tr181-usermanagement-v0.14.1/scripts/tr181-usermanagement.sh
-@@ -1,31 +1,34 @@
+--- netdev-v1.11.2.orig/scripts/netdev-plugin.sh
++++ netdev-v1.11.2/scripts/netdev-plugin.sh
+@@ -1,27 +1,31 @@
  #!/bin/sh
 -[ -f /etc/environment ] && source /etc/environment
 -ulimit -c ${ULIMIT_CONFIGURATION:-0}
--name="tr181-usermanagement"
 +
 +. /usr/lib/amx/scripts/amx_init_functions.sh
- [ -z ${DEFAULT_ADMIN_PASSWORD} ] && export DEFAULT_ADMIN_PASSWORD="admin"
- 
-+name="tr181-usermanagement"
-+datamodel_root="Users"
 +
+ name="netdev-plugin"
++datamodel_root="NetDev"
+ 
  case $1 in
 -    start|boot)
--        tr181-usermanagement -D
+-        ${name} -D
 +    boot)
 +        process_boot ${name} -D
-         amx_wait_for Users.
          ;;
 -    stop|shutdown)
 -        if [ -f /var/run/${name}.pid ]; then
@@ -29,10 +26,9 @@ Index: tr181-usermanagement-v0.14.1/scripts/tr181-usermanagement.sh
 -        fi
 +    start)
 +        process_start ${name} -D
-+        amx_wait_for Users.
          ;;
 -    debuginfo)
--        ubus-cli "Users.?"
+-        ubus-cli "NetDev.?"
 +    stop)
 +        process_stop ${name}
 +        ;;
@@ -43,12 +39,11 @@ Index: tr181-usermanagement-v0.14.1/scripts/tr181-usermanagement.sh
          $0 stop
          $0 start
          ;;
--    log)
 +    debuginfo)
 +        process_debug_info ${datamodel_root}
-         ;;
++        ;;
      *)
--        echo "Usage: $0 [start|boot|stop|restart|debuginfo|log]"
+-        echo "Usage : $0 [start|boot|stop|debuginfo|restart]"
 +        echo "Usage : $0 [start|boot|stop|shutdown|debuginfo|restart]"
          ;;
  esac

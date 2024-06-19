@@ -1,23 +1,119 @@
---- a/scripts/tr181-firewall.sh
-+++ b/scripts/tr181-firewall.sh
-@@ -1,4 +1,6 @@
+Index: tr181-firewall-v6.13.5/scripts/tr181-firewall.sh
+===================================================================
+--- tr181-firewall-v6.13.5.orig/scripts/tr181-firewall.sh
++++ tr181-firewall-v6.13.5/scripts/tr181-firewall.sh
+@@ -1,60 +1,68 @@
  #!/bin/sh
+-[ -f /etc/environment ] && source /etc/environment
+-ulimit -c ${ULIMIT_CONFIGURATION:-0}
 +
-+source /usr/lib/amx/scripts/amx_init_functions.sh
- [ -f /etc/environment ] && source /etc/environment
- ulimit -c ${ULIMIT_CONFIGURATION:-0}
++. /usr/lib/amx/scripts/amx_init_functions.sh
++
++name="tr181-firewall"
++datamodel_root="Firewall"
++
  FW_DEFAULTS=/etc/amx/tr181-firewall/iptables/firewall.defaults
-@@ -23,11 +25,8 @@ case $1 in
-         tr181-firewall -D
-         ;;
-     stop|shutdown)
+ FW6_DEFAULTS=/etc/amx/tr181-firewall/iptables/firewall_ipv6.defaults
+-name="tr181-firewall"
++
++firewall_load_defaults(){
++    iptables-restore < ${FW_DEFAULTS}
++    ip6tables-restore < ${FW6_DEFAULTS}
++    if [ -d /etc/amx/tr181-firewall/rules4 ]; then
++        for f in /etc/amx/tr181-firewall/rules4/* ; do
++            iptables-restore -n < $f
++        done
++    fi
++    if [ -d /etc/amx/tr181-firewall/rules6 ]; then
++        for f in /etc/amx/tr181-firewall/rules6/* ; do
++            ip6tables-restore -n < $f
++        done
++    fi
++}
++
++firewall_clear(){
++    iptables -P INPUT ACCEPT
++    iptables -P FORWARD ACCEPT
++    iptables -F
++    iptables -X
++    iptables -t nat -F
++    iptables -t nat -X
++
++    ip6tables -P INPUT ACCEPT
++    ip6tables -P FORWARD ACCEPT
++    ip6tables -F
++    ip6tables -X
++}
+ 
+ case $1 in
+-    start|boot)
+-        iptables-restore < ${FW_DEFAULTS}
+-        ip6tables-restore < ${FW6_DEFAULTS}
+-        if [ -d /etc/amx/tr181-firewall/rules4 ]; then
+-            for f in /etc/amx/tr181-firewall/rules4/* ; do
+-                iptables-restore -n < $f
+-            done
+-        fi
+-        if [ -d /etc/amx/tr181-firewall/rules6 ]; then
+-            for f in /etc/amx/tr181-firewall/rules6/* ; do
+-                ip6tables-restore -n < $f
+-            done
+-        fi
+-
+-        tr181-firewall -D
+-        ;;
+-    stop|shutdown)
 -        if [ -f /var/run/${name}.pid ]; then
 -            kill `cat /var/run/${name}.pid`
 -        else
 -            killall ${name}
 -        fi
-+        process_stop_shutdown ${name} 5
-+
-         # give the plugin time to shutdown properly.
-         sleep 1
- 
+-        # give the plugin time to shutdown properly.
+-        sleep 1
+-
+-        iptables -P INPUT ACCEPT
+-        iptables -P FORWARD ACCEPT
+-        iptables -F
+-        iptables -X
+-        iptables -t nat -F
+-        iptables -t nat -X
+-
+-        ip6tables -P INPUT ACCEPT
+-        ip6tables -P FORWARD ACCEPT
+-        ip6tables -F
+-        ip6tables -X
+-        ;;
+-    debuginfo)
+-        ubus-cli "Firewall.?"
+-        ubus-cli "NAT.?"
++    boot)
++        firewall_load_defaults
++        process_boot ${name} -D
++        ;;
++    start)
++        firewall_load_defaults
++        process_start ${name} -D
++        ;;
++    stop)
++        process_stop ${name}
++        firewall_clear
++        ;;
++    shutdown)
++        process_shutdown ${name}
++        firewall_clear
+         ;;
+     restart)
+         $0 stop
+         $0 start
+         ;;
+-    log)
+-        echo "TODO log tr181 firewall"
++    debuginfo)
++        process_debug_info ${datamodel_root}
++        process_debug_info "NAT"
+         ;;
+     *)
+-        echo "Usage : $0 [start|boot|stop|debuginfo|log]"
++        echo "Usage : $0 [start|boot|stop|shutdown|debuginfo|restart]"
+         ;;
+ esac

@@ -1,22 +1,93 @@
---- a/scripts/ssh-server.sh
-+++ b/scripts/ssh-server.sh
-@@ -1,4 +1,6 @@
+Index: ssh-server-v0.5.4/scripts/ssh-server.sh
+===================================================================
+--- ssh-server-v0.5.4.orig/scripts/ssh-server.sh
++++ ssh-server-v0.5.4/scripts/ssh-server.sh
+@@ -1,46 +1,54 @@
  #!/bin/sh
 +
-+source /usr/lib/amx/scripts/amx_init_functions.sh
++. /usr/lib/amx/scripts/amx_init_functions.sh
++
  name="ssh_server"
++datamodel_root="SSH"
  
- case $1 in
-@@ -24,11 +26,7 @@ case $1 in
-         ssh_server -D /etc/amx/ssh_server/ssh_server.odl
-         ;;
-     stop|shutdown)
+-case $1 in
+-    start|boot)
+-        #########################################################################
+-        # Temporary to mitigate migration issues due to changes in DM.          #
+-        # This should be removed once BaRT or another mechanism is implemented. #
+-        #########################################################################
+-        configuration_odl="/etc/config/ssh_server/odl/ssh_server.odl";
+-        if [ -f $configuration_odl ]; then
+-            logger -t "sshserver" "WARNING: Configuration migration workaround"
+-            sed -i 's/Ipv6AllowedSourcePrefix/IPv6AllowedSourcePrefix/g' $configuration_odl
+-            sed -i 's/ActivationDuration/AutoDisableDuration/g' $configuration_odl
+-            sed -i 's/IPv4AllowEmptySourcePrefix/AllowAllIPv4/g' $configuration_odl
+-            sed -i 's/IPv6AllowEmptySourcePrefix/AllowAllIPv6/g' $configuration_odl
+-        fi
+-        #########################################################################
++key_init(){
++    #########################################################################
++    # Temporary to mitigate migration issues due to changes in DM.          #
++    # This should be removed once BaRT or another mechanism is implemented. #
++    #########################################################################
++    configuration_odl="/etc/config/ssh_server/odl/ssh_server.odl";
++    if [ -f $configuration_odl ]; then
++        logger -t "sshserver" "WARNING: Configuration migration workaround"
++        sed -i 's/Ipv6AllowedSourcePrefix/IPv6AllowedSourcePrefix/g' $configuration_odl
++        sed -i 's/ActivationDuration/AutoDisableDuration/g' $configuration_odl
++        sed -i 's/IPv4AllowEmptySourcePrefix/AllowAllIPv4/g' $configuration_odl
++        sed -i 's/IPv6AllowEmptySourcePrefix/AllowAllIPv6/g' $configuration_odl
++    fi
++    #########################################################################
++
++    if [ ! -d /etc/config/ssh_server ]; then
++        mkdir -p /etc/config/ssh_server/odl
++    fi
++    $(. /etc/init.d/dropbear 2>/dev/null && hk_generate_as_needed)
++}
+ 
+-        if [ ! -d /etc/config/ssh_server ]; then
+-            mkdir -p /etc/config/ssh_server/odl
+-        fi
+-        $(. /etc/init.d/dropbear 2>/dev/null && hk_generate_as_needed)
+-        ssh_server -D /etc/amx/ssh_server/ssh_server.odl
+-        ;;
+-    stop|shutdown)
 -        if [ -f /var/run/${name}.pid ]; then
 -            kill `cat /var/run/${name}.pid`
 -        else
 -            killall ${name}
 -        fi
-+        process_stop_shutdown ${name} 5
++case $1 in
++    boot)
++        key_init
++        process_boot ${name} -D
++        ;;
++    start)
++        key_init
++        process_start ${name} -D
          ;;
-     debuginfo)
-         echo "debuginfo for SSH server"
+-    debuginfo)
+-        echo "debuginfo for SSH server"
++    stop)
++        process_stop ${name}
++        ;;
++    shutdown)
++        process_shutdown ${name}
+         ;;
+     restart)
+         $0 stop
+         $0 start
+         ;;
+-    log)
+-        echo "TODO log ssh_server plugin"
++    debuginfo)
++        process_debug_info ${datamodel_root}
+         ;;
+     *)
+-        echo "Usage : $0 [start|boot|stop|debuginfo|log]"
++        echo "Usage : $0 [start|boot|stop|shutdown|debuginfo|restart]"
+         ;;
+-esac
++esac
+\ No newline at end of file

@@ -1,22 +1,50 @@
---- a/scripts/tr181-routeradvertisement.sh
-+++ b/scripts/tr181-routeradvertisement.sh
-@@ -1,4 +1,6 @@
+Index: tr181-routeradvertisement-v0.14.6/scripts/tr181-routeradvertisement.sh
+===================================================================
+--- tr181-routeradvertisement-v0.14.6.orig/scripts/tr181-routeradvertisement.sh
++++ tr181-routeradvertisement-v0.14.6/scripts/tr181-routeradvertisement.sh
+@@ -1,28 +1,31 @@
  #!/bin/sh
+-[ -f /etc/environment ] && source /etc/environment
+-ulimit -c ${ULIMIT_CONFIGURATION:-0}
 +
-+source /usr/lib/amx/scripts/amx_init_functions.sh
- [ -f /etc/environment ] && source /etc/environment
- ulimit -c ${ULIMIT_CONFIGURATION:-0}
++. /usr/lib/amx/scripts/amx_init_functions.sh
++
  name="tr181-routeradvertisement"
-@@ -8,11 +10,7 @@ case $1 in
-         ${name} -D
++datamodel_root="RouterAdvertisement"
+ 
+ case $1 in
+-    start|boot)
+-        ${name} -D
++    boot)
++        process_boot ${name} -D
          ;;
-     stop|shutdown)
+-    stop|shutdown)
 -        if [ -f /var/run/${name}.pid ]; then
 -            kill `cat /var/run/${name}.pid`
 -        else
 -            killall ${name}
 -        fi
-+        process_stop_shutdown ${name} 5
++    start)
++        process_start ${name} -D
          ;;
-     debuginfo)
-         ubus-cli "RouterAdvertisement.?"
+-    debuginfo)
+-        ubus-cli "RouterAdvertisement.?"
++    stop)
++        process_stop ${name}
++        ;;
++    shutdown)
++        process_shutdown ${name}
+         ;;
+     restart)
+         $0 stop
+-        sleep 1
+         $0 start
+         ;;
++    debuginfo)
++        process_debug_info ${datamodel_root}
++        ;;
+     *)
+-        echo "Usage : $0 [start|boot|stop|debuginfo|restart]"
++        echo "Usage : $0 [start|boot|stop|shutdown|debuginfo|restart]"
+         ;;
+ esac

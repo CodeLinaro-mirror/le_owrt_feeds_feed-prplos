@@ -1,22 +1,51 @@
---- a/scripts/tr181-pcm.sh
-+++ b/scripts/tr181-pcm.sh
-@@ -1,4 +1,6 @@
+Index: tr181-pcm-v0.16.1/scripts/tr181-pcm.sh
+===================================================================
+--- tr181-pcm-v0.16.1.orig/scripts/tr181-pcm.sh
++++ tr181-pcm-v0.16.1/scripts/tr181-pcm.sh
+@@ -1,30 +1,31 @@
  #!/bin/sh
+-[ -f /etc/environment ] && source /etc/environment
+-ulimit -c ${ULIMIT_CONFIGURATION:-0}
 +
-+source /usr/lib/amx/scripts/amx_init_functions.sh
- [ -f /etc/environment ] && source /etc/environment
- ulimit -c ${ULIMIT_CONFIGURATION:-0}
++. /usr/lib/amx/scripts/amx_init_functions.sh
++
  name="pcm-manager"
-@@ -8,11 +10,7 @@ case $1 in
-         pcm-manager -D
++datamodel_root="PersistentConfiguration"
+ 
+ case $1 in
+-    start|boot)
+-        pcm-manager -D
++    boot)
++        process_boot ${name} -D
          ;;
-     stop|shutdown)
+-    stop|shutdown)
 -        if [ -f /var/run/${name}.pid ]; then
 -            kill `cat /var/run/${name}.pid`
 -        else
 -            killall ${name}
 -        fi
-+        process_stop_shutdown ${name} 5
++    start)
++        process_start ${name} -D
          ;;
-     debuginfo)
-         ubus-cli "PersistentConfiguration.?"
+-    debuginfo)
+-        ubus-cli "PersistentConfiguration.?"
++    stop)
++        process_stop ${name}
++        ;;
++    shutdown)
++        process_shutdown ${name}
+         ;;
+     restart)
+         $0 stop
+         $0 start
+         ;;
+-    log)
+-        echo "TODO log pcm-manager"
++    debuginfo)
++        process_debug_info ${datamodel_root}
+         ;;
+     *)
+-        echo "Usage : $0 [start|boot|stop|debuginfo|log]"
++        echo "Usage : $0 [start|boot|stop|shutdown|debuginfo|restart]"
+         ;;
+ esac

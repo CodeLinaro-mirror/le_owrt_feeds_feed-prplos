@@ -1,22 +1,47 @@
---- a/scripts/hosts-manager.sh
-+++ b/scripts/hosts-manager.sh
-@@ -1,4 +1,6 @@
+Index: tr181-hosts-v0.3.3/scripts/hosts-manager.sh
+===================================================================
+--- tr181-hosts-v0.3.3.orig/scripts/hosts-manager.sh
++++ tr181-hosts-v0.3.3/scripts/hosts-manager.sh
+@@ -1,26 +1,30 @@
  #!/bin/sh
+-[ -f /etc/environment ] && source /etc/environment
+-ulimit -c ${ULIMIT_CONFIGURATION:-0}
 +
 +source /usr/lib/amx/scripts/amx_init_functions.sh
- [ -f /etc/environment ] && source /etc/environment
- ulimit -c ${ULIMIT_CONFIGURATION:-0}
++
  name="hosts-manager"
-@@ -8,11 +10,7 @@ case $1 in
-         ${name} -D
++datamodel_root="Hosts"
+ 
+ case $1 in
+-    start|boot)
+-        ${name} -D
++    boot)
++        process_boot ${name} -D
          ;;
-     stop|shutdown)
+-    stop|shutdown)
 -        if [ -f /var/run/${name}.pid ]; then
 -            kill `cat /var/run/${name}.pid`
 -        else
 -            killall ${name}
 -	fi
-+        process_stop_shutdown ${name} 5
++    start)
++        process_start ${name} -D
          ;;
-     debuginfo)
-         ubus-cli "Hosts.?"
+-    debuginfo)
+-        ubus-cli "Hosts.?"
++    stop)
++        process_stop ${name}
++        ;;
++    shutdown)
++        process_shutdown ${name}
+         ;;
+     restart)
+         $0 stop
+         $0 start
+         ;;
++    debuginfo)
++        process_debug_info ${datamodel_root}
++        ;;
+     *)
+         echo "Usage : $0 [start|boot|stop|shutdown|debuginfo|restart]"
+         ;;

@@ -1,16 +1,14 @@
-Index: tr181-ipdiagnostics-v0.6.0/scripts/tr181-ipdiagnostics.sh
+Index: tr181-neighbordiscovery-v0.8.2/scripts/tr181-neighbordiscovery.sh
 ===================================================================
---- tr181-ipdiagnostics-v0.6.0.orig/scripts/tr181-ipdiagnostics.sh
-+++ tr181-ipdiagnostics-v0.6.0/scripts/tr181-ipdiagnostics.sh
-@@ -1,27 +1,30 @@
+--- tr181-neighbordiscovery-v0.8.2.orig/scripts/tr181-neighbordiscovery.sh
++++ tr181-neighbordiscovery-v0.8.2/scripts/tr181-neighbordiscovery.sh
+@@ -1,23 +1,30 @@
  #!/bin/sh
--[ -f /etc/environment ] && source /etc/environment
--ulimit -c ${ULIMIT_CONFIGURATION:-0}
-+
+ 
 +. /usr/lib/amx/scripts/amx_init_functions.sh
 +
- name="tr181-ipdiagnostics"
-+datamodel_root="IPDiagnostics"
+ name="tr181-neighbordiscovery"
++datamodel_root="NeighborDiscovery"
  
  case $1 in
 -    start|boot)
@@ -19,25 +17,23 @@ Index: tr181-ipdiagnostics-v0.6.0/scripts/tr181-ipdiagnostics.sh
 +        process_boot ${name} -D
          ;;
 -    stop|shutdown)
--        if [ -f /var/run/${name}.pid ]; then
--            kill `cat /var/run/${name}.pid`
--        else
--            killall ${name}
+-        if [ -f "/var/run/${name}.pid" ]; then
+-            kill $(cat "/var/run/${name}.pid")
 -        fi
 +    start)
 +        process_start ${name} -D
          ;;
 -    debuginfo)
--        ubus-cli "IPDiagnostics.?"
+-        ubus-cli "NeighborDiscovery.?"
 +    stop)
 +        process_stop ${name}
 +        ;;
 +    shutdown)
 +        process_shutdown ${name}
          ;;
-     restart)
+-    restart|reboot)
++    restart)
          $0 stop
--        sleep 1s
          $0 start
          ;;
 +    debuginfo)
