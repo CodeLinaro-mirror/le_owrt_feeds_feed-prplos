@@ -1,15 +1,13 @@
 include $(TOPDIR)/rules.mk
--include $(STAGING_DIR)/components.config
 
 PKG_NAME:=tr181-mqttbroker
-PKG_VERSION:=v0.0.26
+PKG_VERSION:=v0.0.27
 SHORT_DESCRIPTION:=TR-181 compatible MQTT broker
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=v0.0.26
-PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/tr181-mqttbroker.git
-PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=tr181-mqttbroker-v0.0.27.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mqttbroker/-/archive/v0.0.27
+PKG_HASH:=19daeabd6a37bd91485eec4e654313f89289391ab2db1159414e55ee29a73c8d
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqttbroker-v0.0.27
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -27,10 +25,10 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://$(SAH_GIT)/$(SAH_GIT_GROUP)/tr181-mqttbroker
+  URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mqttbroker
   DEPENDS += +libamxc
   DEPENDS += +libamxj
   DEPENDS += +libamxp
