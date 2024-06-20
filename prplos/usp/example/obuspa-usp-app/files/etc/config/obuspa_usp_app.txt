@@ -1,0 +1,7 @@
+Device.LocalAgent.EndpointID "proto::obuspa_usp_app"
+
+# For USP service
+Device.UnixDomainSockets.UnixDomainSocket.1.Alias "cpe-1"
+Device.UnixDomainSockets.UnixDomainSocket.1.Mode "Connect"
+Device.UnixDomainSockets.UnixDomainSocket.1.Path "/var/run/usp/broker_controller_path"
+
