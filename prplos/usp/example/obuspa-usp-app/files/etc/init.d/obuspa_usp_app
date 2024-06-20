@@ -1,0 +1,53 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+STOP=02
+USE_PROCD=1
+
+PROG=/usr/bin/obuspa
+CONFIGURATION=obuspa_usp_app
+
+RESET_FILE="/etc/config/obuspa_usp_app.txt"
+SQL_DB_FILE="/etc/obuspa_usp_app.db"
+
+register_service()
+{
+	procd_open_instance ${CONFIGURATION}
+	procd_set_param command ${PROG}
+
+	procd_set_param stdout 1
+	procd_set_param stderr 1
+
+	# -p Enables trace logging of the USP protocol messages. Enable setting -p option to utilize prototracing
+	# procd_append_param command -p
+
+	# -v Sets the debug verbosity log level: 0=Off, 1=Error(default), 2=Warning, 3=Info
+	procd_append_param command -v 3
+	if [ -f "${CERT}" ]; then
+		procd_append_param command -t ${CERT}
+	fi
+	procd_append_param command -r ${RESET_FILE} -f ${SQL_DB_FILE}
+	procd_set_param respawn \
+			"${respawn_threshold:-10}" \
+			"${respawn_timeout:-10}" "${respawn_retry:-5}"
+
+	procd_append_param command -x /usr/lib/obuspa_usp_app.so
+	procd_append_param command -s /tmp/obuspa_usp_app.cli
+	procd_append_param command -R "Device.X_VANTIVA-COM_USP_app."
+
+	procd_close_instance
+}
+
+start_service() {
+	mkdir -p /var/run/usp/
+	register_service
+}
+
+stop_service() {
+	${PROG} -s /tmp/obuspa_usp_app.cli -c stop
+}
+
+reload_service() {
+	stop
+	start update
+}
