@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libnetlink-utils
-PKG_VERSION:=v0.1.1
+PKG_VERSION:=v0.1.2
 SHORT_DESCRIPTION:=Netlink utility library
 
-PKG_SOURCE:=libnetlink-utils-v0.1.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libnetlink-utils/-/archive/v0.1.1
-PKG_HASH:=bf89d7fa41e637c4d1b4ab70cd153f3d769dff725fdf31fecabe0598245949b9
-PKG_BUILD_DIR:=$(BUILD_DIR)/libnetlink-utils-v0.1.1
+PKG_SOURCE:=libnetlink-utils-v0.1.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libnetlink-utils/-/archive/v0.1.2
+PKG_HASH:=cb0db904ff57da4333e72134214ec3c73a6fcece0d6ff294b23b79d7af7f207e
+PKG_BUILD_DIR:=$(BUILD_DIR)/libnetlink-utils-v0.1.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
