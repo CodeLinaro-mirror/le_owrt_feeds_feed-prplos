@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v8.20.0 - 2024-06-21(09:09:59 +0000)
+
+### New
+
+- [libimtp](https://gitlab.com/prpl-foundation/components/core/libraries/libimtp): Add new function to get connection flags
+
 ## Release v8.19.1 - 2024-06-15(07:04:30 +0000)
 
 ### Other
