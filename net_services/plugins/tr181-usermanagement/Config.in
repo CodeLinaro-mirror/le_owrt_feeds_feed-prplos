@@ -19,6 +19,10 @@ config SAH_AMX_USERMANAGEMENT_DISABLE_SHA512
     bool "Disable SHA512 and use the insecure MD5 instead for hashing passwords"
     default n
 
+config SAH_AMX_USERMANAGEMENT_DISABLE_PASSWORD_HASHED_FORMAT_STORAGE
+    bool "Disable storage of passwords in hashed format within the data model"
+    default n
+
 endmenu
 
 endif
