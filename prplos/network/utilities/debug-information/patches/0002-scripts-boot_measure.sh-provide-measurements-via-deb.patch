@@ -1,0 +1,38 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20=C5=A0tetiar?= <petr.stetiar@prplfoundation.org>
+Date: Thu, 27 Jun 2024 14:27:28 +0000
+Subject: [PATCH] scripts: boot_measure.sh: provide measurements via debuginfo
+ command
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Currently the Lua script `boot_measurements.lua` collects quite handy boot
+time metrics, but unfortunatelly those metrics are not available via
+getDebugInformation script, thus missing in most bug reports. So lets
+fix it by hooking in the standard init script `debuginfo` command which
+would dump the `/tmp/amx_mon_objects.log` into the output.
+
+References: PCF-1168, PCF-1242, PCF-1257
+Signed-off-by: Petr Å tetiar <petr.stetiar@prplfoundation.org>
+Signed-off-by: Petr Štetiar <petr.stetiar@prplfoundation.org>
+---
+ scripts/boot_measure.sh | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/boot_measure.sh b/scripts/boot_measure.sh
+index 14519484549b..0e95b7d478df 100644
+--- a/scripts/boot_measure.sh
++++ b/scripts/boot_measure.sh
+@@ -10,7 +10,10 @@ case $1 in
+         $0 stop
+         $0 start
+         ;;
++    debuginfo)
++        cat /tmp/amx_mon_objects.log
++        ;;
+     *)
+-        echo "Usage : $0 [start|boot|stop]"
++        echo "Usage : $0 [start|boot|stop|debuginfo]"
+         ;;
+ esac
