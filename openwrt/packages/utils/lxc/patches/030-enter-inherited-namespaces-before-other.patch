@@ -1,0 +1,62 @@
+diff --git a/src/lxc/attach.c b/src/lxc/attach.c
+index 8f2f7a37c..e452cf3b5 100644
+--- a/src/lxc/attach.c
++++ b/src/lxc/attach.c
+@@ -650,28 +650,42 @@ static int __attach_namespaces_pidfd(struct attach_context *ctx,
+ 	return log_trace(0, "Attached to container namespaces via pidfd");
+ }
+ 
++static int __attach_one_nsfd(struct attach_context *ctx, lxc_namespace_t ns){
++		int ret = 0;
++
++		if (ctx->ns_fd[ns] < 0)
++			return ret;
++
++		ret = setns(ctx->ns_fd[ns], ns_info[ns].clone_flag);
++		if (ret)
++			return syserror("Failed to attach to %s namespace of %d",
++					ns_info[ns].proc_name, ctx->init_pid);
++
++		if (close(ctx->ns_fd[ns])) {
++			ret = -errno;
++			SYSERROR("Failed to close file descriptor for %s namespace",
++				 ns_info[ns].proc_name);
++		}
++		ctx->ns_fd[ns] = -EBADF;
++		return ret;
++}
++
+ static int __attach_namespaces_nsfd(struct attach_context *ctx,
+ 				    lxc_attach_options_t *options)
+ {
+ 	int fret = 0;
+ 
+ 	for (lxc_namespace_t i = 0; i < LXC_NS_MAX; i++) {
+-		int ret;
+-
+-		if (ctx->ns_fd[i] < 0)
++		if (!(ns_info[i].clone_flag & ctx->ns_inherited))
+ 			continue;
+-
+-		ret = setns(ctx->ns_fd[i], ns_info[i].clone_flag);
+-		if (ret)
+-			return syserror("Failed to attach to %s namespace of %d",
+-					ns_info[i].proc_name, ctx->init_pid);
+-
+-		if (close(ctx->ns_fd[i])) {
+-			fret = -errno;
+-			SYSERROR("Failed to close file descriptor for %s namespace",
+-				 ns_info[i].proc_name);
+-		}
+-		ctx->ns_fd[i] = -EBADF;
++		if (__attach_one_nsfd(ctx, i))
++			fret = -1;
++	}
++	for (lxc_namespace_t i = 0; i < LXC_NS_MAX; i++) {
++		if (ns_info[i].clone_flag & ctx->ns_inherited)
++			continue;
++		if (__attach_one_nsfd(ctx, i))
++			fret = -1;
+ 	}
+ 
+ 	return fret;
