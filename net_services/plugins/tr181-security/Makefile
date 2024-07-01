@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-security
-PKG_VERSION:=v0.4.1
+PKG_VERSION:=v0.4.2
 SHORT_DESCRIPTION:=TR-181 compatible security plugin
 
-PKG_SOURCE:=tr181-security-v0.4.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-security/-/archive/v0.4.1
-PKG_HASH:=270ead4cb637237a4623347a3cb3d31c2b93cf2f0fafb0f15c1c4abeefcc993b
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-security-v0.4.1
+PKG_SOURCE:=tr181-security-v0.4.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-security/-/archive/v0.4.2
+PKG_HASH:=293f151b192ea2d33fbd5f8ac861db83c30cdf0b85e4c8dc5b3e15adbcf24431
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-security-v0.4.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
