@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-led
-PKG_VERSION:=v0.7.1
+PKG_VERSION:=v0.8.0
 SHORT_DESCRIPTION:=TR-181 compatible plugin for device LEDs management
 
-PKG_SOURCE:=tr181-led-v0.7.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-led/-/archive/v0.7.1
-PKG_HASH:=459cbf1ba775f3a892d93dcba95ff12307a6c42999631c80a379c86145122bde
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-led-v0.7.1
+PKG_SOURCE:=tr181-led-v0.8.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-led/-/archive/v0.8.0
+PKG_HASH:=45aade308997e6c8236b57e5a3379b7cd8c348b024c1491160972351da98bc2b
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-led-v0.8.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -33,6 +33,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxp
   DEPENDS += +libamxd
   DEPENDS += +libamxo
+  DEPENDS += +libamxm
   DEPENDS += +libsahtrace
   DEPENDS += +amxrt
   DEPENDS += +mod-dmext
