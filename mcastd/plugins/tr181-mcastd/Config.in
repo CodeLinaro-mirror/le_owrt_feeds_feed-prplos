@@ -32,6 +32,14 @@ config SAH_AMX_TR181_MCASTD_CORE_PLUGIN_QUERY_MCAST_IPTV_INTF
 	  which is unicast. So there's no reason to create a MC acceleration
 	  rule for the vod-iptv interface.
 
+config SAH_AMX_TR181_MCASTD_CORE_PLUGIN_RUN_AS_USER
+    string "User will be used for the tr181-mcastd plugin"
+    default "tr181_app"
+
+config SAH_AMX_TR181_MCASTD_CORE_PLUGIN_RUN_AS_GROUP
+    string "Group will be used for the tr181-mcastd plugin"
+    default "tr181_app"
+
 endmenu
 
 endif
