@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dslite
-PKG_VERSION:=v0.10.2
+PKG_VERSION:=v0.10.3
 SHORT_DESCRIPTION:=TR-181 compatible DSLite plugin
 
-PKG_SOURCE:=tr181-dslite-v0.10.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dslite/-/archive/v0.10.2
-PKG_HASH:=c260f7965ea37f54bd22004ffb3dfe7b41e54fbd80670913e2420879fb26846e
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dslite-v0.10.2
+PKG_SOURCE:=tr181-dslite-v0.10.3.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dslite/-/archive/v0.10.3
+PKG_HASH:=17cee49f683c6dfd055990a35a4e6b6bae37ddf80cce860e21fe24dfc30d4709
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dslite-v0.10.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
