@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-captiveportal
-PKG_VERSION:=v0.5.2
+PKG_VERSION:=v0.5.3
 SHORT_DESCRIPTION:=AMX Captive Portal plugin
 
-PKG_SOURCE:=tr181-captiveportal-v0.5.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-captiveportal/-/archive/v0.5.2
-PKG_HASH:=78fca72fcc535943380674a899df901368291f93842085defdfe9804fe313763
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-captiveportal-v0.5.2
+PKG_SOURCE:=tr181-captiveportal-v0.5.3.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-captiveportal/-/archive/v0.5.3
+PKG_HASH:=e844392641db5cfa1e2ba8de4c3661f0cf9a71a525b2839bdc8860103814e2aa
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-captiveportal-v0.5.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
