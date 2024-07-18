@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v9.0.0 - 2024-07-18(08:51:16 +0000)
+
+### New
+
+- [libusp](https://gitlab.com/prpl-foundation/components/core/libraries/libusp): [USP] libusp library improvements
+- [libuspi](https://gitlab.com/prpl-foundation/components/core/libraries/libuspi): [TR181-Device]Bidirectional communication support between UBUS and IMTP
+
+### Other
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): Make USP backend more compliant with USP specification
+
 ## Release v8.20.1 - 2024-07-04(20:24:15 +0000)
 
 ### Other
