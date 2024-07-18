@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-mqttbroker
-PKG_VERSION:=v0.0.27
+PKG_VERSION:=v0.0.28
 SHORT_DESCRIPTION:=TR-181 compatible MQTT broker
 
-PKG_SOURCE:=tr181-mqttbroker-v0.0.27.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mqttbroker/-/archive/v0.0.27
-PKG_HASH:=19daeabd6a37bd91485eec4e654313f89289391ab2db1159414e55ee29a73c8d
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqttbroker-v0.0.27
+PKG_SOURCE:=tr181-mqttbroker-v0.0.28.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mqttbroker/-/archive/v0.0.28
+PKG_HASH:=689f4b97645cd34fd9a70089f40385512a55efafdad58f1d5c36b54568c45943
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqttbroker-v0.0.28
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -41,6 +41,8 @@ define Package/$(PKG_NAME)
   DEPENDS += +mod-fw-amx
   DEPENDS += +libmosquitto
   DEPENDS += +libnetmodel
+  DEPENDS += +mosquitto-client-ssl
+  DEPENDS += +mosquitto-ssl
   MENU:=1
 endef
 
