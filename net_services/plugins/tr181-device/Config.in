@@ -19,10 +19,6 @@ config SAH_AMX_TR181_DEVICE_RESET_HARD_ENABLE
     bool "Custom using FactoryReset() rpc call reset_hard or firstboot -y"
     default y
 
-config SAH_AMX_TR181_DEVICE_OBUSPA_SUPPORT
-    bool "Enable OBUSPA support"
-    default n
-
 endmenu
 
 endif
