@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v9.0.2 - 2024-07-24(06:41:46 +0000)
+
+### Other
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [AMXB] Introduce depth parameter for subscriptions
+
 ## Release v9.0.1 - 2024-07-19(09:19:38 +0000)
 
 ### Other
