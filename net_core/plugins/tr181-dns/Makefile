@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dns
-PKG_VERSION:=v3.2.8
+PKG_VERSION:=v3.3.0
 SHORT_DESCRIPTION:=dns plugin
 
-PKG_SOURCE:=tr181-dns-v3.2.8.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dns/-/archive/v3.2.8
-PKG_HASH:=1faf59240997fcd969401118ea74ea477dd7b95096ec55b20059633202ace32a
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dns-v3.2.8
+PKG_SOURCE:=tr181-dns-v3.3.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dns/-/archive/v3.3.0
+PKG_HASH:=3f9ef4a19ce1799957263cc1f8bb03822cafc17d064e8428966c4c3f571a5ce5
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dns-v3.3.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -42,6 +42,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +mod-dmext
   DEPENDS += +mod-fw-amx
   DEPENDS += +rpcd
+  DEPENDS += +libcares
   MENU:=1
 endef
 
