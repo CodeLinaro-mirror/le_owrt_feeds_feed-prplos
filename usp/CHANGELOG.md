@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v9.0.3 - 2024-07-25(10:55:11 +0000)
+
+### Fixes
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): Remove legacy subscribe interface function in favor of subscribe_v2
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): [USP] Double operation complete notifications
+
+### Changes
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): Make requires-device-prefix default value configurable
+
 ## Release v9.0.2 - 2024-07-24(06:41:46 +0000)
 
 ### Other
