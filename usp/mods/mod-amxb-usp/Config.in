@@ -15,6 +15,10 @@ config SAH_MOD_AMXB_USP_INSTALL_DIR
     string "Installation directory for the USP backend"
     default "/usr/bin/mods/usp"
 
+config SAH_MOD_AMXB_USP_REQUIRES_DEVICE_PREFIX
+    bool "System wide default value for requires-device-prefix, which can be overwritten at odl level"
+    default n
+
 endmenu
 
 endif
