@@ -15,6 +15,9 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://v6web.litech.org/radvd/dist
 PKG_HASH:=c36470706fec3a9e6bed394ffea08acaff5dac647848d26b96bb9b9c65d58da0
 
+PKG_LICENSE:=radvd
+PKG_LICENSE_FILES:=COPYRIGHT
+
 PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
