@@ -155,6 +155,17 @@ define Build/Install
 		$(MAKE_FLAGS) DESTDIR="$(PKG_INSTALL_DIR)-profiles" install
 endef
 
+define Build/InstallDev
+	$(INSTALL_DIR) $(1)/usr/include/sys/
+	$(CP) $(PKG_INSTALL_DIR)-libapparmor/usr/include/sys/*.h $(1)/usr/include/sys/
+	$(INSTALL_DIR) $(1)/usr/include/aalogparse/
+	$(CP) $(PKG_INSTALL_DIR)-libapparmor/usr/include/aalogparse/*.h $(1)/usr/include/aalogparse/
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(CP) $(PKG_INSTALL_DIR)-libapparmor/usr/lib/libapparmor.{so*,a} $(1)/usr/lib/
+	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
+	$(INSTALL_DATA) $(PKG_INSTALL_DIR)-libapparmor/usr/lib/pkgconfig/libapparmor.pc $(1)/usr/lib/pkgconfig/
+endef
+
 define Package/libapparmor/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)-libapparmor/usr/lib/libapparmor.so.1 $(1)/usr/lib/
