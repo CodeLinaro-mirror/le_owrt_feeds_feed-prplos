@@ -1,0 +1,13 @@
+Index: obuspa-v8.0.4-prpl-integration3/src/vendor/vendor_defs.h
+===================================================================
+--- obuspa-v8.0.4-prpl-integration3.orig/src/vendor/vendor_defs.h
++++ obuspa-v8.0.4-prpl-integration3/src/vendor/vendor_defs.h
+@@ -82,7 +82,7 @@
+ // Maximum number of bytes allowed in a USP protobuf message.
+ // This is not used to size any arrays, just used as a security measure to prevent rogue controllers crashing
+ // the agent process with out of memory
+-#define MAX_USP_MSG_LEN (64*1024)
++#define MAX_USP_MSG_LEN (192*1024)
+ 
+ // Maximum number of bytes allowed in a UDS MTP frame payload
+ // This limits the UDS payload length as a security measure to prevent rogue controllers crashing the agent process by consuming too much memory
