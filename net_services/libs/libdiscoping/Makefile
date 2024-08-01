@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libdiscoping
-PKG_VERSION:=v0.11.0
+PKG_VERSION:=v0.11.1
 SHORT_DESCRIPTION:=Library discovering when IPs appear and disappear
 
-PKG_SOURCE:=libdiscoping-v0.11.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libdiscoping/-/archive/v0.11.0
-PKG_HASH:=6819f507f1032f63388c52f090a4334d6cb0bb9c5e0f613be1c43f9e8a900495
-PKG_BUILD_DIR:=$(BUILD_DIR)/libdiscoping-v0.11.0
+PKG_SOURCE:=libdiscoping-v0.11.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libdiscoping/-/archive/v0.11.1
+PKG_HASH:=b25ba2d9ccd41ab308d8cf38786116e3817e3b2d2cb0f987ced6bd2701c66ecb
+PKG_BUILD_DIR:=$(BUILD_DIR)/libdiscoping-v0.11.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
