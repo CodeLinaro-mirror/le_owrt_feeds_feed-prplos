@@ -51,6 +51,10 @@ config SAH_AMX_TR181_DEVICEINFO_NUMBER_OF_EXTRA_MAC_ADDRESSES
     string "The number of extra mac addresses to expose in /var/etc/environment (BASEMACADDRESS_PLUS_X)"
     default "7"
 
+config SAH_AMX_TR181_DEVICEINFO_REQUIRES_USERS
+    bool "Add a dependency on Users.User that is required on prpl OS"
+    default y
+
 endmenu
 
 endif
