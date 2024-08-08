@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v9.0.6 - 2024-08-08(11:31:36 +0000)
+
+### Fixes
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): [AMX][USP] Avoid double USP connections
+
+### Other
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): - [amx] Failing to restart processes with init scripts
+
 ## Release v9.0.5 - 2024-08-02(09:39:52 +0000)
 
 ## Release v9.0.4 - 2024-07-30(06:56:32 +0000)
