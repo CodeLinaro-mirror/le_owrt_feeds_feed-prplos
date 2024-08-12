@@ -8,14 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lighttpd
-PKG_VERSION:=1.4.76
 PKG_RELEASE:=1
-# release candidate ~rcX testing; remove for release
-#PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
-PKG_SOURCE_URL:=https://download.lighttpd.net/lighttpd/releases-1.4.x
-PKG_HASH:=8cbf4296e373cfd0cedfe9d978760b5b05c58fdc4048b4e2bcaf0a61ac8f5011
+PKG_VERSION:=gen_1.4.76_v0.2.1
+PKG_SOURCE:=lighttpd-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/lighttpd/-/archive/$(PKG_VERSION)
+PKG_HASH:=9d67ca2bc8b28cd6b0358a5b7eed49dc5642fd44c8c70c23573c36b2b83ffbb7
+PKG_BUILD_DIR:=$(BUILD_DIR)/lighttpd-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Glenn Strauss <gstrauss@gluelogic.com>
 PKG_LICENSE:=BSD-3-Clause
