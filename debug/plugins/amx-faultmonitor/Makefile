@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=amx-faultmonitor
-PKG_VERSION:=v1.0.12
+PKG_VERSION:=v1.0.13
 SHORT_DESCRIPTION:=Plugin to track and log faults in userspace programs
 
-PKG_SOURCE:=faultmonitor-v1.0.12.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/faultmonitor/-/archive/v1.0.12
-PKG_HASH:=472c0ce07cdb6c498eb69c91c0bceedd1e1748b88ea01f89ac5f3d707ef3c17f
-PKG_BUILD_DIR:=$(BUILD_DIR)/faultmonitor-v1.0.12
+PKG_SOURCE:=faultmonitor-v1.0.13.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/faultmonitor/-/archive/v1.0.13
+PKG_HASH:=78f4e0f5d2c30670701d9d5b007aa4c26008d763b18237aa4748b5a76d90b929
+PKG_BUILD_DIR:=$(BUILD_DIR)/faultmonitor-v1.0.13
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
