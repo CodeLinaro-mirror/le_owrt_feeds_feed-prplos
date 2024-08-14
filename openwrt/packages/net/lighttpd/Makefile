@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lighttpd
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_VERSION:=gen_1.4.76_v0.2.2
 PKG_SOURCE:=lighttpd-$(PKG_VERSION).tar.gz
@@ -175,25 +175,25 @@ MESON_ARGS += \
 	-Dwith_bzip=disabled \
 	-Dwith_dbi=$(if $(CONFIG_PACKAGE_lighttpd-mod-authn_dbi)$(CONFIG_PACKAGE_lighttpd-mod-vhostdb_dbi),enabled,disabled) \
 	-Dwith_fam=disabled \
-	-Dwith_gnutls=$(if $(CONFIG_PACKAGE_lighttpd-mod-gnutls),true,false) \
+	-Dwith_gnutls=$(if $(CONFIG_PACKAGE_lighttpd-mod-gnutls)$(CONFIG_LIGHTTPD_CRYPTOLIB_GNUTLS),true,false) \
 	-Dwith_krb5=$(if $(CONFIG_PACKAGE_lighttpd-mod-authn_gssapi),enabled,disabled) \
 	-Dwith_ldap=$(if $(CONFIG_PACKAGE_lighttpd-mod-authn_ldap)$(CONFIG_PACKAGE_lighttpd-mod-vhostdb_ldap),enabled,disabled) \
 	-Dwith_libunwind=disabled \
 	-Dwith_lua=$(if $(CONFIG_PACKAGE_lighttpd-mod-magnet),true,false) \
 	-Dlua_version=lua \
 	-Dwith_maxminddb=$(if $(CONFIG_PACKAGE_lighttpd-mod-maxminddb),enabled,disabled) \
-	-Dwith_mbedtls=$(if $(CONFIG_PACKAGE_lighttpd-mod-mbedtls),true,false) \
+	-Dwith_mbedtls=$(if $(CONFIG_PACKAGE_lighttpd-mod-mbedtls)$(CONFIG_LIGHTTPD_CRYPTOLIB_MBEDTLS),true,false) \
 	-Dwith_mysql=$(if $(CONFIG_PACKAGE_lighttpd-mod-vhostdb_mysql),enabled,disabled) \
 	-Dwith_nettle=$(if $(CONFIG_LIGHTTPD_CRYPTOLIB_NETTLE),true,false) \
 	-Dwith_nss=$(if $(CONFIG_PACKAGE_lighttpd-mod-nss),true,false) \
-	-Dwith_openssl=$(if $(CONFIG_PACKAGE_lighttpd-mod-openssl),true,false) \
+	-Dwith_openssl=$(if $(CONFIG_PACKAGE_lighttpd-mod-openssl)$(CONFIG_LIGHTTPD_CRYPTOLIB_OPENSSL),true,false) \
 	-Dwith_pam=$(if $(CONFIG_PACKAGE_lighttpd-mod-authn_pam),enabled,disabled) \
 	-Dwith_pcre2=$(if $(CONFIG_LIGHTTPD_PCRE2),true,false) \
 	-Dwith_pgsql=$(if $(CONFIG_PACKAGE_lighttpd-mod-vhostdb_pgsql),enabled,disabled) \
 	-Dwith_sasl=$(if $(CONFIG_PACKAGE_lighttpd-mod-authn_sasl),enabled,disabled) \
 	-Dwith_webdav_locks=$(if $(CONFIG_PACKAGE_lighttpd-mod-webdav),enabled,disabled) \
 	-Dwith_webdav_props=$(if $(CONFIG_PACKAGE_lighttpd-mod-webdav),enabled,disabled) \
-	-Dwith_wolfssl=$(if $(CONFIG_PACKAGE_lighttpd-mod-wolfssl),true,false) \
+	-Dwith_wolfssl=$(if $(CONFIG_PACKAGE_lighttpd-mod-wolfssl)$(CONFIG_LIGHTTPD_CRYPTOLIB_WOLFSSL),true,false) \
 	-Dwith_xattr=false \
 	-Dwith_zlib=$(if $(CONFIG_PACKAGE_lighttpd-mod-deflate),enabled,disabled) \
 	-Dwith_zstd=disabled \
