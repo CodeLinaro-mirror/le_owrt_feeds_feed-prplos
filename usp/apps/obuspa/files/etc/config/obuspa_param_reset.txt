@@ -56,6 +56,7 @@ Device.STOMP.Connection.1.IncomingHeartbeat "300000"
 Device.STOMP.Connection.1.ServerRetryInitialInterval "60"
 Device.STOMP.Connection.1.ServerRetryIntervalMultiplier "1000"
 Device.STOMP.Connection.1.ServerRetryMaxInterval "30720"
+Device.LocalAgent.X_VANTIVA-COM_PreConnectTimeout "600"
 
 # For USP service
 Device.UnixDomainSockets.UnixDomainSocket.1.Alias "cpe-1"
