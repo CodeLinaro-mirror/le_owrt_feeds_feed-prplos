@@ -1,5 +1,0 @@
-#!/bin/sh
-
-rm -f /etc/hotplug.d/ntp/25-dnsmasqsec
-
-exit 0

@@ -1,8 +1,0 @@
-#!/bin/sh
-
-uci delete network.lan 
-uci delete network.wan 
-uci delete network.wan6
-uci commit
-
-exit 0

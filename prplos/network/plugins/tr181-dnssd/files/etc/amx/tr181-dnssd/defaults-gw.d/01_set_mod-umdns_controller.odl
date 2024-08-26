@@ -1,5 +1,0 @@
-%populate {
-    object DNSSD {
-        parameter Controller = "mod-umdns";
-    }
-}

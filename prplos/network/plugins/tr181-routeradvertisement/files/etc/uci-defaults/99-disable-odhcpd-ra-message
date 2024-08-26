@@ -1,6 +1,0 @@
-#!/bin/sh
-
-uci set dhcp.lan.ra=disable
-uci commit
-
-exit 0

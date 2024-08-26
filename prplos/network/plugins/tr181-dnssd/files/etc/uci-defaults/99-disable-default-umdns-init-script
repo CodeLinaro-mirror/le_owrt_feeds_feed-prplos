@@ -1,6 +1,0 @@
-#!/bin/sh
-
-/etc/init.d/umdns disable
-rm -f /etc/init.d/umdns
-
-exit 0

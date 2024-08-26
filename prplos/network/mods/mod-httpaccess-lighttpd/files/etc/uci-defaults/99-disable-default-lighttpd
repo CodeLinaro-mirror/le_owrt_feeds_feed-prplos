@@ -1,5 +1,0 @@
-#!/bin/sh
-
-/etc/init.d/lighttpd disable
-
-exit 0

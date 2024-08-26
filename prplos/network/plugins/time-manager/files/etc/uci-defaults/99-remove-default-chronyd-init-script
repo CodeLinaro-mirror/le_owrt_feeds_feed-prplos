@@ -1,6 +1,0 @@
-#!/bin/sh
-
-/etc/init.d/chronyd disable
-rm /etc/init.d/chronyd
-
-exit 0
