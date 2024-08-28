@@ -19,7 +19,7 @@ PKG_BUILD_DEPENDS:=swig/host python-setuptools-scm/host
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
-include ../../lang/python/python3-package.mk
+include $(TOPDIR)/feeds/packages/lang/python/python3-package.mk
 
 define Package/apparmor/Default
   SECTION:=utils
