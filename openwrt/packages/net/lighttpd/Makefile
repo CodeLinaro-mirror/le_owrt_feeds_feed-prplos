@@ -41,6 +41,7 @@ REBUILD_MODULES:= \
   vhostdb_pgsql \
   webdav \
   wolfssl \
+  csrf\
 
 PKG_CONFIG_DEPENDS:= \
   $(patsubst %,CONFIG_PACKAGE_lighttpd-mod-%,$(REBUILD_MODULES)) \
@@ -164,6 +165,7 @@ config LIGHTTPD_LOGROTATE
 config LIGHTTPD_CSRF_PROTECTION
 	bool "Cross site request forgery protection support"
 	depends on PACKAGE_lighttpd && (LIGHTTPD_CRYPTOLIB_MBEDTLS || LIGHTTPD_CRYPTOLIB_NETTLE || LIGHTTPD_CRYPTOLIB_MBEDTLS || LIGHTTPD_CRYPTOLIB_WOLFSSL)
+	select PACKAGE_lighttpd-mod-csrf
 	default n
 	help
 	  It adds support of cross site request forgery protection.
@@ -197,7 +199,7 @@ MESON_ARGS += \
 	-Dwith_xattr=false \
 	-Dwith_zlib=$(if $(CONFIG_PACKAGE_lighttpd-mod-deflate),enabled,disabled) \
 	-Dwith_zstd=disabled \
-	-Dwith_csrf_protection=$(if $(CONFIG_LIGHTTPD_CSRF_PROTECTION),true,false)
+	-Dwith_csrf_protection=$(if $(CONFIG_PACKAGE_lighttpd-mod-csrf),true,false)
 
 BASE_MODULES:=dirlisting h2
 
@@ -295,6 +297,7 @@ $(eval $(call BuildPlugin,webdav,WebDAV,+PACKAGE_lighttpd-mod-webdav:libsqlite3 
 $(eval $(call BuildPlugin,webdav_min,WebDAV,,30))
 $(eval $(call BuildPlugin,wolfssl,TLS using wolfssl,@LIGHTTPD_SSL +PACKAGE_lighttpd-mod-wolfssl:libwolfssl,30))
 $(eval $(call BuildPlugin,wstunnel,Websocket tunneling,$(cryptolibdep),30))
+$(eval $(call BuildPlugin,csrf,Cross site request forgery protection,+PACKAGE_lighttpd-mod-csrf:,30))
 
 
 # (similar to BuildPlugin, but without associated .so)
