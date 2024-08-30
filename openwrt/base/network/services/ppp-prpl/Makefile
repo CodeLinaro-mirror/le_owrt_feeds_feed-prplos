@@ -15,7 +15,7 @@ PKG_RELEASE:=3
 PKG_VERSION:=gen_2.4.9_v0.1.6
 PKG_SOURCE:=ppp-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/ppp/-/archive/$(PKG_VERSION)
-PKG_HASH:=skip
+PKG_HASH:=62cf4fbd8a041200e945aca6199a3fe5967b5c272d8a07e37ab8f6f823021e27
 PKG_BUILD_DIR:=$(BUILD_DIR)/ppp-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
