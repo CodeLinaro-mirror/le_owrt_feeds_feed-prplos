@@ -1,0 +1,20 @@
+config PACKAGE_odl-generator
+    tristate
+    select SAH_ODLGEN
+
+if PACKAGE_odl-generator
+
+menu "Select odl-generator build options"
+    depends on PACKAGE_odl-generator
+
+config SAH_ODLGEN
+    bool "Build odlgen"
+    default y
+
+config SAH_ODLGEN_MULTIPLE_RUNLEVELS
+    bool "Excecute runlevel specific scripts under /etc/runlevel.d at firstboot"
+    default n
+
+endmenu
+
+endif
