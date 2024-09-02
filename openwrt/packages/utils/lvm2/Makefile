@@ -144,7 +144,7 @@ define Package/lvm2/install
 	$(INSTALL_DIR) $(1)/etc/lvm/profile
 	$(INSTALL_CONF) $(PKG_INSTALL_DIR)/etc/lvm/profile/* $(1)/etc/lvm/profile/
 	$(INSTALL_DIR) $(1)/lib/preinit
-	$(INSTALL_DATA) ./files/lvm2.preinit $(1)/lib/preinit/80_lvm2
+	$(INSTALL_DATA) ./files/lvm2.preinit $(1)/lib/preinit/78_lvm2
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/lvm2.init $(1)/etc/init.d/lvm2
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/block
