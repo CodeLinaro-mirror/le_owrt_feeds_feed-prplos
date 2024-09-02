@@ -28,6 +28,7 @@ define Package/mstpd
   CATEGORY:=Network
   TITLE:=Multiple Spanning Tree Protocol daemon
   URL:=https://github.com/mstpd/mstpd
+  DEPENDS:=+libamxb +libamxp +libamxo +libamxd +libamxc
 endef
 
 define Package/mstpd/description
