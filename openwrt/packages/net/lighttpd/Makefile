@@ -10,10 +10,10 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=lighttpd
 PKG_RELEASE:=2
 
-PKG_VERSION:=gen_1.4.76_v0.2.2
+PKG_VERSION:=gen_1.4.76_v0.2.3
 PKG_SOURCE:=lighttpd-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/lighttpd/-/archive/$(PKG_VERSION)
-PKG_HASH:=e25fe83e8534098e02aaf4b035dd637fe4ac1313937e08b71a4d5b7c6ed89e07
+PKG_HASH:=61c5d31b4ae5ecdbdd8264d9358c0770b0a251fb9bbdbdcac568d5bd93481811
 PKG_BUILD_DIR:=$(BUILD_DIR)/lighttpd-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Glenn Strauss <gstrauss@gluelogic.com>
