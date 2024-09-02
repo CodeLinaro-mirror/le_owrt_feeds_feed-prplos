@@ -162,14 +162,6 @@ config LIGHTTPD_LOGROTATE
 	help
 	  It adds support for logrotate functionality.
 
-config LIGHTTPD_CSRF_PROTECTION
-	bool "Cross site request forgery protection support"
-	depends on PACKAGE_lighttpd && (LIGHTTPD_CRYPTOLIB_MBEDTLS || LIGHTTPD_CRYPTOLIB_NETTLE || LIGHTTPD_CRYPTOLIB_MBEDTLS || LIGHTTPD_CRYPTOLIB_WOLFSSL)
-	select PACKAGE_lighttpd-mod-csrf
-	default n
-	help
-	  It adds support of cross site request forgery protection.
-
 endef
 
 MESON_ARGS += \
@@ -199,7 +191,7 @@ MESON_ARGS += \
 	-Dwith_xattr=false \
 	-Dwith_zlib=$(if $(CONFIG_PACKAGE_lighttpd-mod-deflate),enabled,disabled) \
 	-Dwith_zstd=disabled \
-	-Dwith_csrf_protection=$(if $(CONFIG_PACKAGE_lighttpd-mod-csrf),true,false)
+	-Dwith_csrf_protection=$(if $(CONFIG_PACKAGE_lighttpd-mod-csrf),enabled,disabled)
 
 BASE_MODULES:=dirlisting h2
 
