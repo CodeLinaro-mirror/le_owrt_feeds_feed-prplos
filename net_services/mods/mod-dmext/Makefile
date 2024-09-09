@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-dmext
-PKG_VERSION:=v0.11.5
+PKG_VERSION:=v0.11.6
 SHORT_DESCRIPTION:=Data model extension module
 
-PKG_SOURCE:=mod-dmext-v0.11.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-dmext/-/archive/v0.11.5
-PKG_HASH:=0512f63ed40c1d8e0f250c9a218bbef65d4107b69bda5feab75619228537dd3b
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-dmext-v0.11.5
+PKG_SOURCE:=mod-dmext-v0.11.6.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-dmext/-/archive/v0.11.6
+PKG_HASH:=636af87799a117260f210b0bdacdb03d22b77744bb3005c5c66e7c75feb86698
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-dmext-v0.11.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
