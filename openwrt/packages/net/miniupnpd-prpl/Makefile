@@ -13,7 +13,7 @@ PKG_RELEASE:=1
 PKG_VERSION:=gen_miniupnpd_2_3_3_v0.3.10
 PKG_SOURCE:=miniupnpd-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/forks/miniupnpd/-/archive/$(PKG_VERSION)
-PKG_HASH:=skip
+PKG_HASH:=7de70d2ca13655f9f789f577a6d85fd1b4c8aa93bf904dd4b170b6fcf81d22f6
 PKG_BUILD_DIR:=$(BUILD_DIR)/miniupnpd-$(PKG_VERSION)
 
 PKG_MAINTAINER:=
