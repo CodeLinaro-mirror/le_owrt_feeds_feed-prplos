@@ -15,6 +15,14 @@ config SAH_AMX_TR181_MQTTBROKER_ORDER
     int "TR-181 MQTT broker plugin start up order"
     default 49
 
+config SAH_AMX_TR181_MQTTBROKER_RUN_AS_USER
+    string "User that will be used for the tr181-mqttbroker plugin"
+    default "tr181_app"
+
+config SAH_AMX_TR181_MQTTBROKER_RUN_AS_GROUP
+    string "Group that will be used for the tr181-mqttbroker plugin"
+    default "tr181_app"
+
 endmenu
 
 endif
