@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-mcastd
-PKG_VERSION:=v0.1.6
+PKG_VERSION:=v0.1.7
 SHORT_DESCRIPTION:=mcastd main user space app
 
-PKG_SOURCE:=tr181-mcastd-v0.1.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mcastd/-/archive/v0.1.6
-PKG_HASH:=d76be40433683880c9a5d5d0fba40169bc7d7b094610dd7f16352932b8090cfe
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mcastd-v0.1.6
+PKG_SOURCE:=tr181-mcastd-v0.1.7.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mcastd/-/archive/v0.1.7
+PKG_HASH:=1d30310a18211cce3e31a792f1199794a5638d9c354134c590755601953bb315
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mcastd-v0.1.7
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
