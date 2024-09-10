@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=reboot-service
-PKG_VERSION:=v0.2.5
+PKG_VERSION:=v0.2.6
 SHORT_DESCRIPTION:=Plugin to count and log the reason of each reboot
 
-PKG_SOURCE:=reboot-service-v0.2.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/reboot-service/-/archive/v0.2.5
-PKG_HASH:=c1e2b18d18975c42861e0fbe9b985ba9bfcc369bfffa18d4a87e82cad72ab529
-PKG_BUILD_DIR:=$(BUILD_DIR)/reboot-service-v0.2.5
+PKG_SOURCE:=reboot-service-v0.2.6.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/reboot-service/-/archive/v0.2.6
+PKG_HASH:=dd2d5a46b09f1e2ff4b81a022b19493870a52f94db5da5559a9842fc56ef041d
+PKG_BUILD_DIR:=$(BUILD_DIR)/reboot-service-v0.2.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
