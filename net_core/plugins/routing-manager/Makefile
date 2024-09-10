@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=routing-manager
-PKG_VERSION:=v1.20.3
+PKG_VERSION:=v1.20.4
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-routing-v1.20.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routing/-/archive/v1.20.3
-PKG_HASH:=485f7d3cb4782bb749842681c73c784ccad8c58e2146db72024f8125de0cfa30
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routing-v1.20.3
+PKG_SOURCE:=tr181-routing-v1.20.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routing/-/archive/v1.20.4
+PKG_HASH:=6accd403a8b844aa3cfe2727f1df146e1c590846e0f7f80aeee301e9e1af8761
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routing-v1.20.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
