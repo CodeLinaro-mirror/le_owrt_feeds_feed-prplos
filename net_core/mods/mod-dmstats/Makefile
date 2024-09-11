@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-dmstats
-PKG_VERSION:=v0.1.4
+PKG_VERSION:=v0.1.5
 SHORT_DESCRIPTION:=Reusable stats module
 
-PKG_SOURCE:=mod-dmstats-v0.1.4.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-dmstats/-/archive/v0.1.4
-PKG_HASH:=5e54e0e1c4d7f6899b71d90761306470c3e03bfed091ba6dee307f55f1e749ac
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-dmstats-v0.1.4
+PKG_SOURCE:=mod-dmstats-v0.1.5.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-dmstats/-/archive/v0.1.5
+PKG_HASH:=5f3c0b85a48d4fa8c1a71a648cb5f48e56c3d577b7f2b932383d7298a57b89a6
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-dmstats-v0.1.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
