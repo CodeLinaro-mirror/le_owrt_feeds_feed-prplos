@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-logical
-PKG_VERSION:=v1.0.1
+PKG_VERSION:=v1.0.2
 SHORT_DESCRIPTION:=logical interface plugin
 
-PKG_SOURCE:=tr181-logical-v1.0.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-logical/-/archive/v1.0.1
-PKG_HASH:=7defc04bfeefbfba8ecbb52a09e29ab3e481cc4fdff07b8817c6f497e80dd333
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-logical-v1.0.1
+PKG_SOURCE:=tr181-logical-v1.0.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-logical/-/archive/v1.0.2
+PKG_HASH:=428afb701a5775e4f858edb8ed1cc83700aec3be9d536634e94be9a24b23590f
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-logical-v1.0.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -35,6 +35,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxo
   DEPENDS += +libamxp
   DEPENDS += +libsahtrace
+  DEPENDS += +libnetmodel
   DEPENDS += +amxrt
   DEPENDS += +mod-dmstats
   DEPENDS += +mod-netmodel
