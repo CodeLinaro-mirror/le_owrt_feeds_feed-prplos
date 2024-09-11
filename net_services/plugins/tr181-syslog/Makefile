@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-syslog
-PKG_VERSION:=v1.6.9
+PKG_VERSION:=v1.6.10
 SHORT_DESCRIPTION:=TR-181 compatible syslog
 
-PKG_SOURCE:=tr181-syslog-v1.6.9.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-syslog/-/archive/v1.6.9
-PKG_HASH:=456c9be015c2480d290de11754c8f5c2af2c9c22341381add0bf8983742bff21
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-syslog-v1.6.9
+PKG_SOURCE:=tr181-syslog-v1.6.10.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-syslog/-/archive/v1.6.10
+PKG_HASH:=3dfd5c61cd1c57d9c7e050dc090139188934d04184bc1fb4cb54cef76004fb06
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-syslog-v1.6.10
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
