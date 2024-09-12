@@ -2,11 +2,11 @@ include $(TOPDIR)/rules.mk
 -include $(STAGING_DIR)/components.config
 
 PKG_NAME:=oopsmonitor
-PKG_VERSION:=v1.0.5
+PKG_VERSION:=v1.0.7
 SHORT_DESCRIPTION:=Plugin to track kernel oopses
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=v1.0.5
+PKG_SOURCE_VERSION:=v1.0.7
 PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/oopsmonitor.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
@@ -39,6 +39,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxm
   DEPENDS += +libsahtrace
   DEPENDS += +amxrt
+  DEPENDS += +libfiletransfer
   MENU:=1
 endef
 
