@@ -37,7 +37,7 @@ config SAH_AMX_TR181_FIREWALL_DEBUG_PROFILING
 
 config SAH_AMX_TR181_FIREWALL_PORTMAPPING_CONNTRACK_INACTIVITY_CHECK
     bool "Compile tr181-firewall with portmapping inactivity check using conntrack."
-    default y
+    default n
 
 endmenu
 
