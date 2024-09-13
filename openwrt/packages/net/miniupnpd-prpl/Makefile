@@ -68,7 +68,9 @@ MAKE_PATH = $(CONFIGURE_PATH)
 TARGET_CFLAGS += $(FPIC) -flto
 TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
 
-TARGET_CFLAGS += -DALLOW_RESERVED_ADDR
+ifeq ($(ALLOW_RESERVED_ADDR),y)
+	TARGET_CFLAGS += -DALLOW_RESERVED_ADDR
+endif
 
 define Package/miniupnpd-prpl/install
 	$(INSTALL_DIR) $(1)/usr/sbin
