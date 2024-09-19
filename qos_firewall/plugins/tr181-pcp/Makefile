@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-pcp
-PKG_VERSION:=v0.10.6
+PKG_VERSION:=v0.10.7
 SHORT_DESCRIPTION:=Port control protocol
 
-PKG_SOURCE:=tr181-pcp-v0.10.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcp/-/archive/v0.10.6
-PKG_HASH:=188c013b5c699c3579354aa241140418411359e9a5449137e7fda8dcea3b56f4
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-pcp-v0.10.6
+PKG_SOURCE:=tr181-pcp-v0.10.7.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcp/-/archive/v0.10.7
+PKG_HASH:=3520b88e286c22ff40ebe96265279d88d705dfb966ad8125ac1db9fc15223e20
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-pcp-v0.10.7
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -36,6 +36,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxo
   DEPENDS += +libamxm
   DEPENDS += +libsahtrace
+  DEPENDS += +libipat
   DEPENDS += +amxrt
   DEPENDS += +libpcp
   DEPENDS += +libnetmodel
