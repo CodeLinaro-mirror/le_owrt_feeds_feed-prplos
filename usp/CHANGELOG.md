@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v9.0.10 - 2024-09-20(07:24:44 +0000)
+
+### Other
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): - [USP][CDRouter][Random] Some datamodel path are missing in USP hl-api tests
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): - [USP][CDRouter][Random] Some datamodel path are missing in USP hl-api tests
+
 ## Release v9.0.9 - 2024-09-10(18:01:13 +0000)
 
 ### Fixes
