@@ -1,4 +1,22 @@
----
+stages:
+  - integrate
 
 include:
-  - remote: 'https://gitlab.com/prpl-foundation/tooling/yml-templates/raw/main/.feed-pipeline.yml'
+  - project: 'sofa/gitlab-ci/yml-templates'
+    ref: master
+    file: '/.sah-integration-default-templates.yml'
+
+restore-original-ci:
+  image: $SAH_INTEGRATION_IMAGE
+  stage: integrate
+  interruptible: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
+  tags: [docker]
+  script:
+    - printenv
+    - echo "Restoring original CI"
+    - git config --global user.name "sahbot"
+    - git config --global user.email "sahbot@softathome.com"
+    - sah-import-merge-request -v --url "$CI_PROJECT_URL" --mr-iid "$CI_MERGE_REQUEST_IID" --internal-branch "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" --restore
