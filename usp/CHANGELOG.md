@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v9.0.11 - 2024-09-21(07:29:01 +0000)
+
+### Other
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): CI: Disable squashing of open source commits
+
 ## Release v9.0.10 - 2024-09-20(07:24:44 +0000)
 
 ### Other
