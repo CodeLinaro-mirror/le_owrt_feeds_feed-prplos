@@ -17,6 +17,7 @@ boot() {
     fi
 
     base_mac=$(awk 'BEGIN{RS=" ";FS="="} $1 == "ethaddr" {print $2}' /proc/cmdline)
+    set_if_mac eth0_0 $base_mac
     set_if_mac eth0_1 $base_mac
     set_if_mac eth0_2 $base_mac
     set_if_mac eth0_3 $base_mac
