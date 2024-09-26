@@ -1,7 +1,15 @@
 %config {
     %global usp.translate = {
-        "'DNS.'" = "Device.DNS."
+       "'DNS.'" = "Device.DNS."
     };
+
+    %global usp.registrations = [
+       "Device.DNS.Client.",
+       "Device.DNS.Relay.",
+       "Device.DNS.X_PRPL-COM_Host.",
+       "Device.DNS.SupportedRecordTypes",
+       "Device.DNS.X_PRPL-COM_ForwardZoneNumberOfEntries"
+    ];
 
     %global backend-dir = [ "/usr/bin/mods/usp", "/usr/bin/mods/amxb" ];
 
