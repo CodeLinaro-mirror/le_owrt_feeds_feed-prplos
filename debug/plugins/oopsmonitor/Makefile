@@ -1,15 +1,13 @@
 include $(TOPDIR)/rules.mk
--include $(STAGING_DIR)/components.config
 
 PKG_NAME:=oopsmonitor
-PKG_VERSION:=v1.0.7
+PKG_VERSION:=v1.0.8
 SHORT_DESCRIPTION:=Plugin to track kernel oopses
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=v1.0.7
-PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/oopsmonitor.git
-PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=oopsmonitor-v1.0.8.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/oopsmonitor/-/archive/v1.0.8
+PKG_HASH:=ff63ab24e92dd73dc9a3e3ae039673938bebad56adbbb09a8306a133d799df7c
+PKG_BUILD_DIR:=$(BUILD_DIR)/oopsmonitor-v1.0.8
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -27,10 +25,10 @@ endef
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://$(SAH_GIT)/$(SAH_GIT_GROUP)/oopsmonitor
+  URL:=https://gitlab.com/prpl-foundation/components/core/plugins/oopsmonitor
   DEPENDS += +libamxb
   DEPENDS += +libamxc
   DEPENDS += +libamxp
