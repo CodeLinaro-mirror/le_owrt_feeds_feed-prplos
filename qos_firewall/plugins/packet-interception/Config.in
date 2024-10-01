@@ -19,6 +19,10 @@ config SAH_AMX_PACKET_INTERCEPTION_TR181_FIREWALL_RULEPATH
     string "Firewall iptables rules folder location"
     default "/etc/amx/tr181-firewall"
 
+config SAH_AMX_PACKET_INTERCEPTION_SOCKET_PATH
+    string "Socket folder location"
+    default "/tmp/run"
+
 endmenu
 
 endif
