@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v9.0.13 - 2024-10-01(08:30:52 +0000)
+
+### Other
+
+- [libusp](https://gitlab.com/prpl-foundation/components/core/libraries/libusp): CI: Disable squashing of open source commits
+- [libusp](https://gitlab.com/prpl-foundation/components/core/libraries/libusp): [AMX] Disable commit squashing
+- [libuspi](https://gitlab.com/prpl-foundation/components/core/libraries/libuspi): CI: Disable squashing of open source commits
+- [libuspi](https://gitlab.com/prpl-foundation/components/core/libraries/libuspi): [AMX] Disable commit squashing
+- [libuspprotobuf](https://gitlab.com/prpl-foundation/components/core/libraries/libprotobuf): CI: Disable squashing of open source commits
+- [libuspprotobuf](https://gitlab.com/prpl-foundation/components/core/libraries/libprotobuf): [AMX] Disable commit squashing
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): CI: Disable squashing of open source commits
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): [AMX] Disable commit squashing
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): CI: Disable squashing of open source commits
+- [usp-endpoint](https://gitlab.com/soft.at.home/usp/applications/usp-endpoint): [AMX] Disable commit squashing
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): CI: Disable squashing of open source commits
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [AMX] Disable commit squashing
+
 ## Release v9.0.12 - 2024-09-26(14:26:57 +0000)
 
 ## Release v9.0.11 - 2024-09-21(07:29:01 +0000)
