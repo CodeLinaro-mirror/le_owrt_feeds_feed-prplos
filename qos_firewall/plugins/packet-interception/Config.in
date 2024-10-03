@@ -23,6 +23,10 @@ config SAH_AMX_PACKET_INTERCEPTION_SOCKET_PATH
     string "Socket folder location"
     default "/tmp/run"
 
+config SAH_AMX_PACKET_INTERCEPTION_SUPPORT_SKIPLOG
+    bool "Support skiplog"
+    default n
+
 endmenu
 
 endif
