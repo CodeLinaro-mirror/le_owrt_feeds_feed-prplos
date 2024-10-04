@@ -1,0 +1,28 @@
+config PACKAGE_tr181-temperature
+    tristate
+    select SAH_AMX_TR181_TEMPERATURE
+
+if PACKAGE_tr181-temperature
+
+menu "Select tr181-temperature build options"
+    depends on PACKAGE_tr181-temperature
+
+config SAH_AMX_TR181_TEMPERATURE
+    bool "Build a tr181 compatible temperature manager"
+    default y
+
+config SAH_AMX_TR181_TEMPERATURE_ORDER
+    int "Start up order"
+    default 15
+
+config SAH_AMX_TR181_TEMPERATURE_RUN_AS_USER
+    string "User will be used for the tr181-temperature plugin"
+    default "tr181_app"
+
+config SAH_AMX_TR181_TEMPERATURE_RUN_AS_GROUP
+    string "Group will be used for the tr181-temperature plugin"
+    default "tr181_app"
+
+endmenu
+
+endif
