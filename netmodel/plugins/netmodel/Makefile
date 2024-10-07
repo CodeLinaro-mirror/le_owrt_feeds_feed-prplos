@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel
-PKG_VERSION:=v2.17.5
+PKG_VERSION:=v2.17.6
 SHORT_DESCRIPTION:=Network Model plugin
 
-PKG_SOURCE:=netmodel-v2.17.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/netmodel/-/archive/v2.17.5
-PKG_HASH:=1155766e7a2f00a23590a761b319c117112f3745abbbdabee00390ded8f852c2
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-v2.17.5
+PKG_SOURCE:=netmodel-v2.17.6.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/netmodel/-/archive/v2.17.6
+PKG_HASH:=02e7c753007ebece9ebcc01b0948a6c24bd8f8c3f5bca81f024c19d58e4b1603
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-v2.17.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
