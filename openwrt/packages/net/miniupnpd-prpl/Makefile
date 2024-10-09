@@ -56,7 +56,6 @@ CONFIGURE_PATH = miniupnpd
 CONFIGURE_ARGS = \
 	$(if $(CONFIG_IPV6),--ipv6) \
 	--igd2 \
-	--leasefile \
 	--portinuse \
 	--firewall=amx \
 	--disable-fork \
