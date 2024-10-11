@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v9.0.14 - 2024-10-11(09:10:53 +0000)
+
+### Other
+
+- [libimtp](https://gitlab.com/prpl-foundation/components/core/libraries/libimtp): USP broker socket should be accessible to non-root users
+- [libimtp](https://gitlab.com/prpl-foundation/components/core/libraries/libimtp): USP broker socket should be accessible to non-root users
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): USP broker socket should be accessible to non-root users
+
 ## Release v9.0.13 - 2024-10-01(08:30:52 +0000)
 
 ### Other
