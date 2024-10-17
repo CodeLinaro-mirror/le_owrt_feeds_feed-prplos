@@ -3,7 +3,7 @@
 . /lib/functions.sh
 board=$(board_name)
 
-if [ $board != "mxl,lgm" ]; then
+if [ $board != "mxl,lgm" && [ "$board" != "mxl,osp-tb341" ] && [ "$board" != "mxl,osp-tb341-v2" ]; then
     exit 0
 fi
 
