@@ -55,6 +55,10 @@ config SAH_AMX_TR181_DEVICEINFO_REQUIRES_USERS
     bool "Add a dependency on Users.User that is required on prpl OS"
     default y
 
+config SAH_AMX_TR181_DEVICEINFO_LOGROTATION
+    bool "Enables the logrotate feature"
+    default y
+
 endmenu
 
 endif
