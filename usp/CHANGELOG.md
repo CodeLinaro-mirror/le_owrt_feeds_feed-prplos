@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v9.0.15 - 2024-10-24(20:08:00 +0000)
+
+### Other
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): - Ambiorix USP-BE threshold support
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): - Ambiorix USP-BE threshold support
+
 ## Release v9.0.14 - 2024-10-11(09:10:53 +0000)
 
 ### Other
