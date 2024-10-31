@@ -1,15 +1,5 @@
-From b9f47cd7c79397965f204701eae30a35f938e7ef Mon Sep 17 00:00:00 2001
-From: Alexandre Besnard <alexandre.besnard@softathome.com>
-Date: Thu, 27 Jun 2024 11:21:10 +0200
-Subject: [PATCH 2/2] lib: net: add openssl3 providers support for private key
-
----
- lib/net_mosq.c | 50 ++++++++++++++++++++++++++++++++++++++++++++++++++
- src/net.c      | 50 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 100 insertions(+)
-
 diff --git a/lib/net_mosq.c b/lib/net_mosq.c
-index 0192dc5b..1d899739 100644
+index 0192dc5b..7320b32c 100644
 --- a/lib/net_mosq.c
 +++ b/lib/net_mosq.c
 @@ -58,6 +58,9 @@ Contributors:
@@ -83,8 +73,44 @@ index 0192dc5b..1d899739 100644
  				}
  				ret = SSL_CTX_check_private_key(mosq->ssl_ctx);
  				if(ret != 1){
+diff --git a/lib/options.c b/lib/options.c
+index bf102112..e6e86593 100644
+--- a/lib/options.c
++++ b/lib/options.c
+@@ -159,6 +159,7 @@ int mosquitto_tls_set(struct mosquitto *mosq, const char *cafile, const char *ca
+ 	mosquitto__free(mosq->tls_certfile);
+ 	mosq->tls_certfile = NULL;
+ 	if(certfile){
++#if OPENSSL_VERSION_NUMBER < 0x30000000L
+ 		fptr = mosquitto__fopen(certfile, "rt", false);
+ 		if(fptr){
+ 			fclose(fptr);
+@@ -170,6 +171,7 @@ int mosquitto_tls_set(struct mosquitto *mosq, const char *cafile, const char *ca
+ 			mosq->tls_capath = NULL;
+ 			return MOSQ_ERR_INVAL;
+ 		}
++#endif
+ 		mosq->tls_certfile = mosquitto__strdup(certfile);
+ 		if(!mosq->tls_certfile){
+ 			return MOSQ_ERR_NOMEM;
+@@ -179,6 +181,7 @@ int mosquitto_tls_set(struct mosquitto *mosq, const char *cafile, const char *ca
+ 	mosquitto__free(mosq->tls_keyfile);
+ 	mosq->tls_keyfile = NULL;
+ 	if(keyfile){
++#if OPENSSL_VERSION_NUMBER < 0x30000000L
+ 		if(mosq->tls_keyform == mosq_k_pem){
+ 			fptr = mosquitto__fopen(keyfile, "rt", false);
+ 			if(fptr){
+@@ -195,6 +198,7 @@ int mosquitto_tls_set(struct mosquitto *mosq, const char *cafile, const char *ca
+ 				return MOSQ_ERR_INVAL;
+ 			}
+ 		}
++#endif
+ 		mosq->tls_keyfile = mosquitto__strdup(keyfile);
+ 		if(!mosq->tls_keyfile){
+ 			return MOSQ_ERR_NOMEM;
 diff --git a/src/net.c b/src/net.c
-index 8fab9b3d..9ead0616 100644
+index 8fab9b3d..07341732 100644
 --- a/src/net.c
 +++ b/src/net.c
 @@ -63,6 +63,9 @@ Contributors:
@@ -157,6 +183,3 @@ index 8fab9b3d..9ead0616 100644
  	}
  	rc = SSL_CTX_check_private_key(listener->ssl_ctx);
  	if(rc != 1){
--- 
-2.45.2
-
