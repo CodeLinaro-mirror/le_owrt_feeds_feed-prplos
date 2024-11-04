@@ -1,0 +1,22 @@
+--- a/tests/helpers/test_enosys.c
++++ b/tests/helpers/test_enosys.c
+@@ -24,6 +24,7 @@
+ #include <linux/filter.h>
+ #include <linux/seccomp.h>
+ #include <linux/audit.h>
++#include <linux/version.h>
+ #include <sys/prctl.h>
+ 
+ #include "c.h"
+@@ -79,9 +80,11 @@
+ };
+ 
+ const struct syscall syscalls[] = {
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,2,0)
+ 	{ "move_mount", __NR_move_mount },
+ 	{ "open_tree", __NR_open_tree },
+ 	{ "fsopen", __NR_fsopen },
++#endif
+ };
+ 
+ int main(int argc, char **argv)
