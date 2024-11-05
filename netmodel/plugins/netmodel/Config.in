@@ -23,6 +23,10 @@ config SAH_AMX_NETMODEL_RUN_AS_GROUP
     string "Group will be used for the NETMODEL plugin"
     default "tr181_app"
 
+config SAH_AMX_NETMODEL_DIRECT_SOCKET
+    bool "Enable the usage of direct socket communication via PCB"
+    default n
+
 endmenu
 
 endif
