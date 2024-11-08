@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=oopsmonitor
-PKG_VERSION:=v1.0.9
+PKG_VERSION:=v1.0.8
 SHORT_DESCRIPTION:=Plugin to track kernel oopses
 
-PKG_SOURCE:=oopsmonitor-v1.0.9.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/oopsmonitor/-/archive/v1.0.9
-PKG_HASH:=9e11bcb0a204297bcc58679e276117e414ccbbfe4d0eed6dafac3b9b08e60b08
-PKG_BUILD_DIR:=$(BUILD_DIR)/oopsmonitor-v1.0.9
+PKG_SOURCE:=oopsmonitor-v1.0.8.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/oopsmonitor/-/archive/v1.0.8
+PKG_HASH:=ff63ab24e92dd73dc9a3e3ae039673938bebad56adbbb09a8306a133d799df7c
+PKG_BUILD_DIR:=$(BUILD_DIR)/oopsmonitor-v1.0.8
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
