@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=amx-faultmonitor
-PKG_VERSION:=v1.0.19
+PKG_VERSION:=v1.0.18
 SHORT_DESCRIPTION:=Plugin to track and log faults in userspace programs
 
-PKG_SOURCE:=faultmonitor-v1.0.19.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/faultmonitor/-/archive/v1.0.19
-PKG_HASH:=c895c169f2bd0d72aaf41f4089903457ac031737757e690cbea20a4ad81a99d0
-PKG_BUILD_DIR:=$(BUILD_DIR)/faultmonitor-v1.0.19
+PKG_SOURCE:=faultmonitor-v1.0.18.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/faultmonitor/-/archive/v1.0.18
+PKG_HASH:=37ea02a460d48bf4b93696dbf96bc64b93f8ffcbfc71d8935e67c959c0c6579c
+PKG_BUILD_DIR:=$(BUILD_DIR)/faultmonitor-v1.0.18
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -20,7 +20,7 @@ define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
 	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_SAH_AMX_FAULTMONITOR_ORDER)$(COMPONENT)
 	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/K$(CONFIG_SAH_AMX_FAULTMONITOR_STOP_ORDER)$(COMPONENT)
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT)_core_pattern ${PKG_INSTALL_DIR}/etc/rc.d/S12$(COMPONENT)_core_pattern
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT)_core_pattern ${PKG_INSTALL_DIR}/etc/rc.d/S0$(COMPONENT)_core_pattern
 	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT)_core_pattern ${PKG_INSTALL_DIR}/etc/rc.d/K$(CONFIG_SAH_AMX_FAULTMONITOR_STOP_ORDER)$(COMPONENT)_core_pattern
 endef
 
