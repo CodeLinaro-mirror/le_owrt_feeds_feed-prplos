@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-dhcpv4
-PKG_VERSION:=v1.3.0
+PKG_VERSION:=v1.3.1
 SHORT_DESCRIPTION:=Network Model DHCPv4client client
 
-PKG_SOURCE:=netmodel-dhcpv4-v1.3.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv4/-/archive/v1.3.0
-PKG_HASH:=06b9c8cfd720879e19157b7dfaa1782b310571993e2a7e3072e40a3fac2a37a5
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-dhcpv4-v1.3.0
+PKG_SOURCE:=netmodel-dhcpv4-v1.3.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv4/-/archive/v1.3.1
+PKG_HASH:=2ea48966bdf8506aa501972b892019482b023601baf29aae53e6330d081a1b1f
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-dhcpv4-v1.3.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -18,7 +18,7 @@ PKG_RELEASE:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=Netmodel
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv4
