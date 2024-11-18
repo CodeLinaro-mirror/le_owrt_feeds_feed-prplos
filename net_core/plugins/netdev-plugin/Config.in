@@ -13,7 +13,7 @@ config SAH_AMX_NETDEV
 
 config SAH_AMX_NETDEV_64_BITS_NETWORK_STATISTICS
     bool "Use 64 bit network statistics instead of 32 bit"
-    default n
+    default y
 
 config SAH_AMX_NETDEV_RUN_AS_USER
     string "User will be used for the NETDEV plugin"
