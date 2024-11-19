@@ -8,12 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
-## Release v9.0.16 - 2024-11-19(12:07:23 +0000)
+## Release v10.0.0 - 2024-11-19(13:07:23 +0000)
+
+### Break
+
+- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): - Vendor prefix non standard parameters
 
 ### Other
 
 - [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): USP bus get_instances return
-- [tr181-localagent](https://gitlab.com/soft.at.home/usp/applications/tr181-localagent): - Vendor prefix non standard parameters
 - [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Crash if PeriodicNotifInterval/PeriodicNotifTime changes
 
 ## Release v9.0.15 - 2024-10-24(20:08:00 +0000)
