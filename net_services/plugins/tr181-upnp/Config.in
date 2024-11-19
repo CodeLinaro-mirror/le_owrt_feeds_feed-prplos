@@ -23,6 +23,10 @@ config SAH_AMX_TR181_UPNP_RUN_AS_GROUP
     string "Group will be used for the tr181-upnp plugin"
     default "tr181_app"
 
+config SAH_AMX_TR181_UPNP_MOD_UPNPADVERTISE_LIBUPNP
+    bool "Build the upnp advertise module for tr181-upnp using libupnp"
+    default y
+
 endmenu
 
 endif
