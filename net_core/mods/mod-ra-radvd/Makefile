@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-ra-radvd
-PKG_VERSION:=v0.6.0
+PKG_VERSION:=v0.6.1
 SHORT_DESCRIPTION:=SoC module to manage the radvd process
 
-PKG_SOURCE:=mod-ra-radvd-v0.6.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-ra-radvd/-/archive/v0.6.0
-PKG_HASH:=0381c9726fd439e3d248a02fce6b61f410ddb783aea18283ac896b15e1df54e7
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-ra-radvd-v0.6.0
+PKG_SOURCE:=mod-ra-radvd-v0.6.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-ra-radvd/-/archive/v0.6.1
+PKG_HASH:=62cf0acd88d1d6fff48b7e2fd2e5ca15a25a13362dd4095143a910cd12228642
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-ra-radvd-v0.6.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
