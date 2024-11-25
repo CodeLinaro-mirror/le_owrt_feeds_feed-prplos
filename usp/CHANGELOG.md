@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v10.0.1 - 2024-11-25(10:50:48 +0000)
+
+### Fixes
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] The correct backend ctx must be used
+
 ## Release v10.0.0 - 2024-11-19(13:07:23 +0000)
 
 ### Break
