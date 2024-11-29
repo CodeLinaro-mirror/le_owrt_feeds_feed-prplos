@@ -14,7 +14,7 @@ PKG_LICENSE_FILES:=LICENSE
 
 COMPONENT:=dhcpv4-manager
 
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
@@ -57,6 +57,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +netmodel
   DEPENDS += +tr181-firewall
   DEPENDS += +time-manager
+  DEPENDS += +dnsmasq-prpl
   MENU:=1
 endef
 
