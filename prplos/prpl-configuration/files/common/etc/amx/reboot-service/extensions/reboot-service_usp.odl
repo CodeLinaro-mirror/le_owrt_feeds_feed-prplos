@@ -1,0 +1,13 @@
+%config {
+    %global usp.translate = {
+        "'Reboot.'" = "Device.DeviceInfo.Reboots."
+    };
+
+    %global usp.registrations = [
+        "Device.DeviceInfo.Reboots."
+    ];
+
+    %global backend-dir = [ "/usr/bin/mods/usp", "/usr/bin/mods/amxb" ];
+
+    %global usp.connect-retry = true;
+}
