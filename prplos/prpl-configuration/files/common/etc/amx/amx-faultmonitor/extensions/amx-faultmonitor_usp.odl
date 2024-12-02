@@ -1,0 +1,13 @@
+%config {
+    %global usp.translate = {
+        "'ProcessFaults.'" = "Device.DeviceInfo.ProcessFaults."
+    };
+
+    %global usp.registrations = [
+        "Device.DeviceInfo.ProcessFaults."
+    ];
+
+    %global backend-dir = [ "/usr/bin/mods/usp", "/usr/bin/mods/amxb" ];
+
+    %global usp.connect-retry = true;
+}
