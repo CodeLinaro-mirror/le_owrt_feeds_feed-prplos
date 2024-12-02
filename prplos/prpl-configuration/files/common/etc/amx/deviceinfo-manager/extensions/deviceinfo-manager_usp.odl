@@ -3,6 +3,52 @@
         "'DeviceInfo.'" = "Device.DeviceInfo."
     };
 
+    %global usp.registrations = [
+        "Device.DeviceInfo.LogRotate.",
+        "Device.DeviceInfo.DeviceImageFile.",
+        "Device.DeviceInfo.VendorLogFile.",
+        "Device.DeviceInfo.ProcessStatus.",
+        "Device.DeviceInfo.Location.",
+        "Device.DeviceInfo.MemoryStatus.",
+        "Device.DeviceInfo.VendorConfigFile.",
+        "Device.DeviceInfo.FirmwareImage.",
+        "Device.DeviceInfo.Processor.",
+        "Device.DeviceInfo.X_PRPL-COM_CloneMACAddress()",
+        "Device.DeviceInfo.X_PRPL-COM_RestoreMACAddress()",
+        "Device.DeviceInfo.DeviceCategory",
+        "Device.DeviceInfo.AdditionalHardwareVersion",
+        "Device.DeviceInfo.DeviceImageNumberOfEntries",
+        "Device.DeviceInfo.BootFirmwareImage",
+        "Device.DeviceInfo.ModelNumber",
+        "Device.DeviceInfo.X_PRPL-COM_ClonedMACAddress",
+        "Device.DeviceInfo.ActiveFirmwareImage",
+        "Device.DeviceInfo.X_PRPL-COM_LastUpgradeDate",
+        "Device.DeviceInfo.Description",
+        "Device.DeviceInfo.ProductClass",
+        "Device.DeviceInfo.ModelName",
+        "Device.DeviceInfo.ManufacturerOUI",
+        "Device.DeviceInfo.ProvisioningCode",
+        "Device.DeviceInfo.VendorConfigFileNumberOfEntries",
+        "Device.DeviceInfo.LocationNumberOfEntries",
+        "Device.DeviceInfo.UpTime",
+        "Device.DeviceInfo.FirstUseDate",
+        "Device.DeviceInfo.LogRotateNumberOfEntries",
+        "Device.DeviceInfo.FirmwareImageNumberOfEntries",
+        "Device.DeviceInfo.X_PRPL-COM_Country",
+        "Device.DeviceInfo.SoftwareVersion",
+        "Device.DeviceInfo.CID",
+        "Device.DeviceInfo.ProcessorNumberOfEntries",
+        "Device.DeviceInfo.VendorLogFileNumberOfEntries",
+        "Device.DeviceInfo.AdditionalSoftwareVersion",
+        "Device.DeviceInfo.SerialNumber",
+        "Device.DeviceInfo.HardwareVersion",
+        "Device.DeviceInfo.Manufacturer",
+        "Device.DeviceInfo.HostName",
+        "Device.DeviceInfo.PEN",
+        "Device.DeviceInfo.FriendlyName"
+    ];
+
+
     %global backend-dir = [ "/usr/bin/mods/usp", "/usr/bin/mods/amxb" ];
 
     %global usp.connect-retry = true;
