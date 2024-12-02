@@ -1,9 +1,13 @@
 %config {
     %global usp.translate = {
-        "'DHCPv4Client.Client.'" = "Device.DHCPv4.Client."
+        "'DHCPv4Client.'" = "Device.DHCPv4."
     };
 
-    %global usp.registrations = [ "Device.DHCPv4.Client." ];
+
+    %global usp.registrations = [
+        "Device.DHCPv4.Client.",
+        "Device.DHCPv4.ClientNumberOfEntries"
+    ];
 
     %global backend-dir = [ "/usr/bin/mods/usp", "/usr/bin/mods/amxb" ];
 
