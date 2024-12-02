@@ -4,11 +4,14 @@
     };
 
     %global usp.registrations = [
-       "Device.DNS.Client.",
-       "Device.DNS.Relay.",
-       "Device.DNS.X_PRPL-COM_Host.",
-       "Device.DNS.SupportedRecordTypes",
-       "Device.DNS.X_PRPL-COM_ForwardZoneNumberOfEntries"
+        "Device.DNS.SupportedRecordTypes",
+        "Device.DNS.X_PRPL-COM_ForwardZoneNumberOfEntries",
+        "Device.DNS.X_PRPL-COM_HostNumberOfEntries",
+        "Device.DNS.Client.",
+        "Device.DNS.Diagnostics.",
+        "Device.DNS.Relay.",
+        "Device.DNS.X_PRPL-COM_Host.",
+        "Device.DNS.X_PRPL-COM_RebindProtection."
     ];
 
     %global backend-dir = [ "/usr/bin/mods/usp", "/usr/bin/mods/amxb" ];
