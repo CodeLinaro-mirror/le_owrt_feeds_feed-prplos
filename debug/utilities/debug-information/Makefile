@@ -60,6 +60,7 @@ define Package/$(PKG_NAME)/install
 	if [ -d ./files ]; then \
 		$(CP) ./files/* $(1)/; \
 	fi
+	chmod 0440 $(1)/etc/sudoers.d/sudo_ssh_common_commands
 	find $(1) -name *.a -exec rm {} +;
 	find $(1) -name *.h -exec rm {} +;
 	find $(1) -name *.pc -exec rm {} +;
