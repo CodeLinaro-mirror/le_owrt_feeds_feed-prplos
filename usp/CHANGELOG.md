@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v10.0.2 - 2024-12-12(15:03:16 +0000)
+
+### Other
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): - [USP] No notifications are sent
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Boot event must be sent when NTP is synchronized
+
 ## Release v10.0.1 - 2024-11-25(10:50:48 +0000)
 
 ### Fixes
