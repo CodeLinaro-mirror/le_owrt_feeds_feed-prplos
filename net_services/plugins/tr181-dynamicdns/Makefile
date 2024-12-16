@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dynamicdns
-PKG_VERSION:=v1.5.6
+PKG_VERSION:=mainline-3.2_v0.1.0
 SHORT_DESCRIPTION:=DynamicDNS plugin
 
-PKG_SOURCE:=tr181-dynamicdns-v1.5.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dynamicdns/-/archive/v1.5.6
-PKG_HASH:=50d15c705546f29fdc692316f08ac92bb36998a23a17d7cf06a599ce17b5377c
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dynamicdns-v1.5.6
+PKG_SOURCE:=tr181-dynamicdns-mainline-3.2_v0.1.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dynamicdns/-/archive/mainline-3.2_v0.1.0
+PKG_HASH:=3565e4ebf2ca616ddf145d19ce830439ae3a89b59e818417d402756344924dd8
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dynamicdns-mainline-3.2_v0.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
