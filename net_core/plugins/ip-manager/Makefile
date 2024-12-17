@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ip-manager
-PKG_VERSION:=v1.47.6
+PKG_VERSION:=mainline-3.2_v0.1.0
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-ip-v1.47.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ip/-/archive/v1.47.6
-PKG_HASH:=eb7c57dcadf50afd18f340a762afc4e489635f30e60f6fc8a53b37a037efd2b3
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ip-v1.47.6
+PKG_SOURCE:=tr181-ip-mainline-3.2_v0.1.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ip/-/archive/mainline-3.2_v0.1.0
+PKG_HASH:=1b88c3b67142dc5971ad1dff089a959202a49d7fe6b7fafca6692583ceee1783
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ip-mainline-3.2_v0.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
