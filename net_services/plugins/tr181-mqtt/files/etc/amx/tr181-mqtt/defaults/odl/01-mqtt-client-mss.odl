@@ -5,8 +5,8 @@
             parameter BrokerPort = 1883;
             parameter Enable = false;
             parameter ClientID = "HGW-$(SERIALNUMBER)";
-            parameter Username = "sah";
-            parameter Password = "sah";
+            parameter Username = "$(LOCAL_MQTT_USER)";
+            parameter Password = "$(LOCAL_MQTT_PWD)";
             parameter TransportProtocol = "TCP/IP";
         }
     }
