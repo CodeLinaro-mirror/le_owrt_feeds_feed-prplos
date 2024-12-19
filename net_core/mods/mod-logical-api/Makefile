@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-logical-api
-PKG_VERSION:=v0.8.10
+PKG_VERSION:=v0.8.11
 SHORT_DESCRIPTION:=High Level API for configuring interface hierarchies
 
-PKG_SOURCE:=mod-logical-api-v0.8.10.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-logical-api/-/archive/v0.8.10
-PKG_HASH:=184d6178748824af0b3e9e8ab294da0a0ffdac50c3287dac5699b013705f4dad
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-logical-api-v0.8.10
+PKG_SOURCE:=mod-logical-api-v0.8.11.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-logical-api/-/archive/v0.8.11
+PKG_HASH:=e5af2070adb7d1cd262a02578871db81e6f9f21c2f8cfa66bbf2ea459324eccd
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-logical-api-v0.8.11
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -28,6 +28,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxo
   DEPENDS += +libamxp
   DEPENDS += +libamxb
+  DEPENDS += +libamxd
   DEPENDS += +libsahtrace
   DEPENDS += +libnetmodel
   DEPENDS += +libipat
