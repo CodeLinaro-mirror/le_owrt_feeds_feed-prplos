@@ -1,20 +1,20 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dhcpv4-manager
-PKG_VERSION:=v2.12.14
+PKG_VERSION:=v2.12.18
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-dhcpv4-v2.12.14.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4/-/archive/v2.12.14
-PKG_HASH:=28dab6c3b074523fd161829de46e1e39c5384b1c5a61c7d5ee46cacd5103121a
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4-v2.12.14
+PKG_SOURCE:=tr181-dhcpv4-v2.12.18.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4/-/archive/v2.12.18
+PKG_HASH:=40c991c240bde5fec1ad303e8410dc8875d244612b62af911b816b564510c434
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4-v2.12.18
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
 
 COMPONENT:=dhcpv4-manager
 
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
@@ -57,6 +57,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +netmodel
   DEPENDS += +tr181-firewall
   DEPENDS += +time-manager
+  DEPENDS += +dnsmasq-prpl
   MENU:=1
 endef
 
