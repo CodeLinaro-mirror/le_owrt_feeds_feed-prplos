@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v10.0.3 - 2024-12-19(10:00:06 +0000)
+
+### Other
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] No notifications are sent
+
 ## Release v10.0.2 - 2024-12-12(15:03:16 +0000)
 
 ### Other
