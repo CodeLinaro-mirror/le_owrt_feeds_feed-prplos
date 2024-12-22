@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=debug-information
-PKG_VERSION:=v0.2.8
+PKG_VERSION:=v0.2.9
 SHORT_DESCRIPTION:=Scripts to provide debug Information for a running system
 
-PKG_SOURCE:=debug-information-v0.2.8.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/debug-information/-/archive/v0.2.8
-PKG_HASH:=78ebaf29792a45b886e41c2b1fc6986c03174b30ddc826411fdd030789063901
-PKG_BUILD_DIR:=$(BUILD_DIR)/debug-information-v0.2.8
+PKG_SOURCE:=debug-information-v0.2.9.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/debug-information/-/archive/v0.2.9
+PKG_HASH:=a75899b530b63a30ef075f006620c8aebb33c5621364a6efbd14d376ff08bdc1
+PKG_BUILD_DIR:=$(BUILD_DIR)/debug-information-v0.2.9
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -60,7 +60,6 @@ define Package/$(PKG_NAME)/install
 	if [ -d ./files ]; then \
 		$(CP) ./files/* $(1)/; \
 	fi
-	chmod 0440 $(1)/etc/sudoers.d/sudo_ssh_common_commands
 	find $(1) -name *.a -exec rm {} +;
 	find $(1) -name *.h -exec rm {} +;
 	find $(1) -name *.pc -exec rm {} +;
