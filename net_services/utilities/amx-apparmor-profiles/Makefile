@@ -2,11 +2,11 @@ include $(TOPDIR)/rules.mk
 -include $(STAGING_DIR)/components.config
 
 PKG_NAME:=amx-apparmor-profiles
-PKG_VERSION:=v0.1.3
+PKG_VERSION:=v0.1.4
 SHORT_DESCRIPTION:=AppArmor profiles for amx plugins
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=v0.1.3
+PKG_SOURCE_VERSION:=v0.1.4
 PKG_SOURCE_URL:=https://$(SAH_GIT_USER):$(SAH_GIT_TOKEN)@$(SAH_GIT)/$(SAH_GIT_GROUP)/amx-apparmor-profiles.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
@@ -23,6 +23,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=amx
   SUBMENU:=Utilities
   TITLE:=$(SHORT_DESCRIPTION)
+  URL:=https://$(SAH_GIT)/$(SAH_GIT_GROUP)/amx-apparmor-profiles
   MENU:=1
 endef
 
