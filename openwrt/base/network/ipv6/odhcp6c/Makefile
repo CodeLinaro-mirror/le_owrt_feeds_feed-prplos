@@ -10,10 +10,10 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=odhcp6c
 PKG_RELEASE:=20
 
-PKG_VERSION:=gen_bcd28363_v0.4.0
+PKG_VERSION:=gen_bcd28363_v0.5.0
 PKG_SOURCE:=odhcp6c-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/odhcp6c/-/archive/$(PKG_VERSION)
-PKG_HASH:=c41a5a785883862f43d92175a63b9baad2978be1afa47f178315100f8f92753b
+PKG_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/odhcp6c-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Hans Dedecker <dedeckeh@gmail.com>
