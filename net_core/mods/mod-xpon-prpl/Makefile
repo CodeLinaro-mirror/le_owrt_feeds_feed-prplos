@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-xpon-prpl
-PKG_VERSION:=v1.0.6
+PKG_VERSION:=sah-next_v1.0.7
 SHORT_DESCRIPTION:=xpon prpl module
 
-PKG_SOURCE:=mod-xpon-prpl-v1.0.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-xpon-prpl/-/archive/v1.0.6
-PKG_HASH:=4ceda32d640f64ff84a9f806330d6e8e381fffbbcabf324f3dae0364f1236df4
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-xpon-prpl-v1.0.6
+PKG_SOURCE:=mod-xpon-prpl-sah-next_v1.0.7.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-xpon-prpl/-/archive/sah-next_v1.0.7
+PKG_HASH:=4d2a8c6a280758780eff9ac7321bd67b3b7e1f5081e9e4635b0c99dc4af2e131
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-xpon-prpl-sah-next_v1.0.7
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -32,20 +32,8 @@ define Package/$(PKG_NAME)
   MENU:=1
 endef
 
-define Package/$(PKG_NAME)-mock
-  CATEGORY:=ambiorix
-  SUBMENU:=Modules
-  TITLE:=$(SHORT_DESCRIPTION) mock
-  URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-xpon-prpl
-  DEPENDS += $(PKG_NAME)
-endef
-
 define Package/$(PKG_NAME)/description
 	xpon prpl module
-endef
-
-define Package/$(PKG_NAME)-mock/description
-	xpon prpl module mock
 endef
 
 define Build/Compile
@@ -70,11 +58,4 @@ define Package/$(PKG_NAME)/install
 	find $(1) -name *.pc -exec rm {} +;
 endef
 
-define Package/$(PKG_NAME)-mock/install
-	$(INSTALL_DIR) $(1)/opt/prplos/usr/bin
-	$(CP) $(PKG_BUILD_DIR)/test/onu_hal_mock/onu_hal_mock/src/onu_hal_mock $(1)/opt/prplos/usr/bin/xpon-onu-hal-mock
-	$(CP) $(PKG_BUILD_DIR)/test/onu_hal_mock/dbgtool/src/dbgtool $(1)/opt/prplos/usr/bin/xpon-onu-hal-mock-dbgtool
-endef
-
 $(eval $(call BuildPackage,$(PKG_NAME)))
-$(eval $(call BuildPackage,$(PKG_NAME)-mock))
