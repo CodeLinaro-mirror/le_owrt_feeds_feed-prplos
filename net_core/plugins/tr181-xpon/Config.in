@@ -25,6 +25,12 @@ config SAH_AMX_TR181_XPON_USE_NETDEV_COUNTERS
 	help
 	  If not enabled the vendor module is responsible for displaying the network statistics in the tr181-xpon datamodel
 
+config SAH_AMX_TR181_XPON_SUPPORT_PM_OBJECTS
+    bool "Support Performance Monitoring (PM) objects"
+    default n
+	help
+	  Say Y if tr181-xpon should support querying the parameters of the PM objects. The XPON DM always shows the PM objects, independent of the value of this option. If this option is not set, the parameters in the PM objects will stay 0. Set to Y if your config uses a PON vendor module which supports the PM objects. The default value of this option is no because several PON vendor modules do not yet support the PM objects.
+
 endmenu
 
 endif
