@@ -15,10 +15,6 @@ config SAH_AMX_TR181_DEVICE_ORDER
     int "Start up order for the tr181 device plugin"
     default 41
 
-config SAH_AMX_TR181_DEVICE_RESET_HARD_ENABLE
-    bool "Custom using FactoryReset() rpc call reset_hard or firstboot -y"
-    default y
-
 endmenu
 
 endif
