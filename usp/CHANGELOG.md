@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v10.0.5 - 2025-01-13(12:18:37 +0000)
+
+### Other
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): Index is missing from USP ObjectDeletion Notify message
+
 ## Release v10.0.4 - 2025-01-09(09:58:07 +0000)
 
 ### Other
