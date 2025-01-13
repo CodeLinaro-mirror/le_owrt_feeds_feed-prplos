@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-xpon-prpl
-PKG_VERSION:=sah-next_v1.0.7
+PKG_VERSION:=sah-next_v1.0.8
 SHORT_DESCRIPTION:=xpon prpl module
 
-PKG_SOURCE:=mod-xpon-prpl-sah-next_v1.0.7.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-xpon-prpl/-/archive/sah-next_v1.0.7
-PKG_HASH:=4d2a8c6a280758780eff9ac7321bd67b3b7e1f5081e9e4635b0c99dc4af2e131
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-xpon-prpl-sah-next_v1.0.7
+PKG_SOURCE:=mod-xpon-prpl-sah-next_v1.0.8.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-xpon-prpl/-/archive/sah-next_v1.0.8
+PKG_HASH:=1d1df3284415f82109129a82c5b53c6c834825b2b8a5f232a1ef92f87cdbee46
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-xpon-prpl-sah-next_v1.0.8
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
