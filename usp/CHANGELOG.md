@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v10.0.6 - 2025-01-16(10:40:47 +0000)
+
+### Other
+
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): adapt synt to prpl-foundation
+- [mod-amxb-usp](https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp): Implement USP backend statistics
+
 ## Release v10.0.5 - 2025-01-13(12:18:37 +0000)
 
 ### Other
