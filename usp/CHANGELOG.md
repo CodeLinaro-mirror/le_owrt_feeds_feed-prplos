@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## Release v10.0.7 - 2025-01-18(11:36:09 +0000)
+
+### Other
+
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] installing a container with an invalid path returns error code 7003 iso 7026
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP][Del_Message] No response from the agent after sending Del message request with an invalid Object
+- [uspagent](https://gitlab.com/soft.at.home/usp/applications/uspagent): [USP] Failed to forward subscription to USP service
+
 ## Release v10.0.6 - 2025-01-16(10:40:47 +0000)
 
 ### Other
