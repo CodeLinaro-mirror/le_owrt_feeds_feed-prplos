@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-mqtt
-PKG_VERSION:=v3.6.5
+PKG_VERSION:=sah-next_v3.6.6
 SHORT_DESCRIPTION:=TR-181 compatible MQTT client
 
-PKG_SOURCE:=tr181-mqtt-v3.6.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mqtt/-/archive/v3.6.5
-PKG_HASH:=056ff224e77f585b45428941ec7e6943f0a451b275111ab75b2c2b432b36a490
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqtt-v3.6.5
+PKG_SOURCE:=tr181-mqtt-sah-next_v3.6.6.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mqtt/-/archive/sah-next_v3.6.6
+PKG_HASH:=5bafb85e015a84c8a7e2ddc9495a933cba48dc161ce550206e5e8c06a9270fda
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqtt-sah-next_v3.6.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
