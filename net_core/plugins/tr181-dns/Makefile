@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=dns plugin
 
 PKG_SOURCE:=tr181-dns-sah-next_v4.0.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dns/-/archive/sah-next_v4.0.0
-PKG_HASH:=skip
+PKG_HASH:=8924eeb431607f5b5ed0ef418b359a3490ab70ed0e0fa6dc1ca030d9bc3d7797
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dns-sah-next_v4.0.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
