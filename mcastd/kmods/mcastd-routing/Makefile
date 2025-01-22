@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mcastd-routing
-PKG_VERSION:=v0.1.5
+PKG_VERSION:=sah-next_v0.1.6
 SHORT_DESCRIPTION:=Kernel module to manage linux's multicast forwading cache entries
 
-PKG_SOURCE:=mcastd-routing-v0.1.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-routing/-/archive/v0.1.5
-PKG_HASH:=88407c9ff3123cfa3ac1dadc50c57de2a32eaa9cf47a3697c110255ec1db9c44
-PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-routing-v0.1.5
+PKG_SOURCE:=mcastd-routing-sah-next_v0.1.6.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-routing/-/archive/sah-next_v0.1.6
+PKG_HASH:=0b5d27ff483b9213bd87d89a0fc1650f49f5239d113b489a55210efe6895b7fa
+PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-routing-sah-next_v0.1.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -40,11 +40,11 @@ define Build/Compile
 		COMPONENT_TOPDIR=$(PKG_BUILD_DIR) \
 		STAGINGDIR=$(STAGING_DIR) \
 		CONFIGDIR=$(STAGING_DIR) \
-		LINUX_DIR=$(LINUX_DIR) \
+		LINUX_DIR=$(if $(wildcard $(TOPDIR)/kernel),$(TOPDIR)/kernel,$(LINUX_DIR)) \
 		CONFIG_MCASTD_ROUTING_DEBUG=$(CONFIG_MCASTD_ROUTING_DEBUG) \
-		BUILD_DIR=$(PKG_BUILD_DIR) \
-		$(MAKE_FLAGS) \
-		$(KERNEL_MAKE_FLAGS)
+		PKG_BUILD_DIR=$(PKG_BUILD_DIR) \
+		SAH_PRPL_BUILD=1 \
+		$(if $(wildcard $(TOPDIR)/kernel),,$(MAKE_FLAGS) $(KERNEL_MAKE_FLAGS))
 endef
 
 define Build/Install
