@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=sah-next_v1.35.8
+PKG_VERSION:=sah-next_v1.35.9
 SHORT_DESCRIPTION:=TR069 Manager
 
-PKG_SOURCE:=tr069-manager-sah-next_v1.35.8.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/sah-next_v1.35.8
-PKG_HASH:=58e450f6851f8cf1fe5f576aa2e523771438f043b338fc5e9ac24c7073069407
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-sah-next_v1.35.8
+PKG_SOURCE:=tr069-manager-sah-next_v1.35.9.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/sah-next_v1.35.9
+PKG_HASH:=7141647f43ba3cfd97b00734bddf84dcf737a974ea3a00808c83e552a6c0d75b
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-sah-next_v1.35.9
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
