@@ -13,7 +13,7 @@ PKG_RELEASE:=2
 PKG_VERSION:=gen_1.4.76_v0.3.0
 PKG_SOURCE:=lighttpd-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/lighttpd/-/archive/$(PKG_VERSION)
-PKG_HASH:=skip
+PKG_HASH:=c41bf486fdfc1e3897c77a81c97bb9cdd7433ec37b3e78d306bc5eeb3ab8b267
 PKG_BUILD_DIR:=$(BUILD_DIR)/lighttpd-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Glenn Strauss <gstrauss@gluelogic.com>
