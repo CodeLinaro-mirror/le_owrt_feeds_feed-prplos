@@ -1,0 +1,59 @@
+From 6c3b0d4189c3c200b4c6a2e30485174d0a31d494 Mon Sep 17 00:00:00 2001
+From: Abderraouf Boukhatem <abderraouf.boukhatem_ext@softathome.com>
+Date: Wed, 29 Jan 2025 11:49:04 +0100
+Subject: [PATCH] Added option to disable secure_getenv
+
+---
+ common/compat.c   | 5 +++++
+ meson.build       | 4 ++++
+ meson_options.txt | 4 ++++
+ 3 files changed, 13 insertions(+)
+
+diff --git a/common/compat.c b/common/compat.c
+index b7739cd..8e5244b 100644
+--- a/common/compat.c
++++ b/common/compat.c
+@@ -905,8 +905,13 @@ getauxval (unsigned long type)
+ char *
+ secure_getenv (const char *name)
+ {
++#ifdef P11_ENABLE_SECURE_ENV
+ 	if (getauxval (AT_SECURE))
++#else
++	if (getauxval (AT_SECURE) && strncmp (name, "P11_", 4))
++#endif
+		return NULL;
++
+ 	return getenv (name);
+ }
+ 
+diff --git a/meson.build b/meson.build
+index 64bb342..6b3d6e1 100644
+--- a/meson.build
++++ b/meson.build
+@@ -349,6 +349,10 @@ p11_system_config_modules = p11_system_config / 'modules'
+ p11_user_config_file = p11_user_config / 'pkcs11.conf'
+ p11_user_config_modules = p11_user_config / 'modules'
+ 
++p11_enable_secure_getenv = get_option('enable_secure_getenv')
++if p11_enable_secure_getenv
++  conf.set('P11_ENABLE_SECURE_ENV', 1)
++endif
+ # --------------------------------------------------------------------
+ # Hash implementation
+ 
+diff --git a/meson_options.txt b/meson_options.txt
+index b97919b..858d401 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -77,3 +77,7 @@ option('rpc_min', type : 'integer',
+ option('rpc_max', type : 'integer',
+        min : 0, max : 0, value : 0,
+        description : 'Maximum RPC protocol version we support')
++
++option('enable_secure_getenv', type : 'boolean',
++       value : false,
++       description : 'Disable access to environemnet variables if not prefixed with P11 and secure execution is required')
+-- 
+2.25.1
+
