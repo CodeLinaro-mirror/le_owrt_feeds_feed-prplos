@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Upgrade Persistent Configuration Manager
 
 PKG_SOURCE:=tr181-pcm-sah-next_v0.19.10.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcm/-/archive/sah-next_v0.19.10
-PKG_HASH:=skip
+PKG_HASH:=672395fb21bf37a1ed472286558d89b8dca78784b4ce6154501b3bacd5c68020
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-pcm-sah-next_v0.19.10
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
