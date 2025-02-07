@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mcastd-routing
-PKG_VERSION:=sah-next_v0.1.6
+PKG_VERSION:=sah-next_v0.1.7
 SHORT_DESCRIPTION:=Kernel module to manage linux's multicast forwading cache entries
 
-PKG_SOURCE:=mcastd-routing-sah-next_v0.1.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-routing/-/archive/sah-next_v0.1.6
-PKG_HASH:=0b5d27ff483b9213bd87d89a0fc1650f49f5239d113b489a55210efe6895b7fa
-PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-routing-sah-next_v0.1.6
+PKG_SOURCE:=mcastd-routing-sah-next_v0.1.7.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-routing/-/archive/sah-next_v0.1.7
+PKG_HASH:=658924a095e64bbced63a22ddf58cf62ce1733a9c393825beb366312b72508c4
+PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-routing-sah-next_v0.1.7
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
