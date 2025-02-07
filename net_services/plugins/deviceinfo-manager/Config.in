@@ -55,6 +55,10 @@ config SAH_AMX_TR181_DEVICEINFO_REQUIRES_USERS
     bool "Add a dependency on Users.User that is required on prpl OS"
     default y
 
+config SAH_AMX_TR181_DEVICEINFO_SCRIPT_DIR
+    string "Parent directory where the pre/post hook scripts are stored"
+    default "/etc/amx/deviceinfo-manager/scripts"
+
 endmenu
 
 endif
