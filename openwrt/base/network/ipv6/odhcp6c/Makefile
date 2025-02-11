@@ -13,7 +13,7 @@ PKG_RELEASE:=20
 PKG_VERSION:=gen_bcd28363_v2.0.0
 PKG_SOURCE:=odhcp6c-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/odhcp6c/-/archive/$(PKG_VERSION)
-PKG_HASH:=skip
+PKG_HASH:=51f933ac635bd55d17a4d1716ddb7e9a8da245e4510a83590ae8e01d7e2d8c4a
 PKG_BUILD_DIR:=$(BUILD_DIR)/odhcp6c-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Hans Dedecker <dedeckeh@gmail.com>
