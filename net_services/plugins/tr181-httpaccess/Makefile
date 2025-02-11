@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-httpaccess
-PKG_VERSION:=sah-next_v0.16.0
+PKG_VERSION:=sah-next_v0.17.0
 SHORT_DESCRIPTION:=TR-181 HTTPAccess model plugin
 
-PKG_SOURCE:=tr181-httpaccess-sah-next_v0.16.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-httpaccess/-/archive/sah-next_v0.16.0
-PKG_HASH:=4e6be3cf85ba2dd82acfb010d08bd753476e3dff4239117bc54458d224eb68af
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-httpaccess-sah-next_v0.16.0
+PKG_SOURCE:=tr181-httpaccess-sah-next_v0.17.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-httpaccess/-/archive/sah-next_v0.17.0
+PKG_HASH:=00e731df18afed509c861b1c173cd64a24977f51a498288035798c98a7305d63
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-httpaccess-sah-next_v0.17.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
