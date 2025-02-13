@@ -1,0 +1,81 @@
+From 298381f20c7e24ca00ad58b00d5798d04bc85b56 Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Fri, 2 Aug 2024 15:41:05 +0200
+Subject: [PATCH] PortMapping: Delete rules after inactivity (HOP-6872)
+
+Problem: Rules aren't deleted after a certain inactivity time
+
+Cause: We don't have portmapping rules packets stats
+
+Solution: Use tr181-firewall new parameter InactivityTimeout
+
+Issue: HOP-6872 - [tr181-upnp] the port opened by UPnP is not closed after 20 minutes of inactivity
+GitOrigin-RevId: 3ce32fb0578e7feaf649df53cdd208285235cf1e
+---
+ miniupnpd/amx/amxpmp.c     | 3 ++-
+ miniupnpd/miniupnpd.c      | 1 +
+ miniupnpd/upnpglobalvars.c | 2 ++
+ miniupnpd/upnpglobalvars.h | 1 +
+ 4 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git miniupnpd/amx/amxpmp.c miniupnpd/amx/amxpmp.c
+index 5c690a9..a6ba829 100644
+--- miniupnpd/amx/amxpmp.c
++++ miniupnpd/amx/amxpmp.c
+@@ -120,7 +120,7 @@ int add_pm_rule(amxb_bus_ctx_t* bus_ctx, const char* ifname, const char* rhost,
+     amxc_var_init(&rule);
+     amxc_var_init(&ret);
+     amxc_var_set_type(&rule, AMXC_VAR_ID_HTABLE);
+-    
++
+     syslog(LOG_NOTICE, "Interface open for upnp pinhole %s", ip_interface);
+ 
+     amxc_var_add_key(bool, &rule, "Enable", true);
+@@ -132,6 +132,7 @@ int add_pm_rule(amxb_bus_ctx_t* bus_ctx, const char* ifname, const char* rhost,
+     amxc_var_add_key(uint16_t, &rule, "InternalPort", iport);
+     amxc_var_add_key(cstring_t, &rule, "Protocol", proto_itoa(proto));
+     amxc_var_add_key(uint32_t, &rule, "LeaseDuration", lease_duration);
++    amxc_var_add_key(uint32_t, &rule, "InactivityTimeout", (uint32_t) ruleset_timeout);
+     amxc_var_add_key(cstring_t, &rule, "Description", desc);
+ 
+     rv = amxb_add(bus_ctx, "NAT.PortMapping.", 0, NULL, &rule, &ret, 1);
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index 44b28c7..ea7c4da 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -1415,6 +1415,7 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 				break;
+ 			case UPNPCLEANINTERVAL:
+ 				v->clean_ruleset_interval = atoi(ary_options[i].value);
++				ruleset_timeout = v->clean_ruleset_interval;
+ 				break;
+ #ifdef USE_PF
+ 			case UPNPANCHOR:
+diff --git miniupnpd/upnpglobalvars.c miniupnpd/upnpglobalvars.c
+index 3852131..90e6bcf 100644
+--- miniupnpd/upnpglobalvars.c
++++ miniupnpd/upnpglobalvars.c
+@@ -58,6 +58,8 @@ unsigned long int min_lifetime = 120;
+ unsigned long int max_lifetime = 86400;
+ #endif
+ 
++unsigned long int ruleset_timeout = 0;
++
+ int runtime_flags = 0;
+ 
+ const char * pidfilename = "/var/run/miniupnpd.pid";
+diff --git miniupnpd/upnpglobalvars.h miniupnpd/upnpglobalvars.h
+index bf923ec..a9080c0 100644
+--- miniupnpd/upnpglobalvars.h
++++ miniupnpd/upnpglobalvars.h
+@@ -55,6 +55,7 @@ extern time_t epoch_origin;
+ 
+ extern unsigned long int min_lifetime;
+ extern unsigned long int max_lifetime;
++extern unsigned long int ruleset_timeout;
+ 
+ /* runtime boolean flags */
+ extern int runtime_flags;
+-- 
+2.34.1
+

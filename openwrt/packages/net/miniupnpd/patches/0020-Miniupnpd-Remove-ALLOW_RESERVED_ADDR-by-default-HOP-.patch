@@ -1,0 +1,164 @@
+From 458b894468590ebeb6eeffdb7a671cad1dc33d29 Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Fri, 13 Sep 2024 16:00:32 +0200
+Subject: [PATCH] Miniupnpd: Remove ALLOW_RESERVED_ADDR by default (HOP-7345)
+
+Problem: ALLOW_RESERVED_ADDR is a developper's tool and shouldn't be defaulted
+
+Cause: DSLite feature needed to allow reserved address on miniupnpd
+
+Solution: Implement an option in the config file to allow reserve addr
+
+Issue: HOP-7345 - [UPnP][DSLite] Miniupnpd is using developer's tool as feature [new]
+GitOrigin-RevId: 8d477698b5772a61e5c3c05505f90aeb5bbccc73
+---
+ miniupnpd/amx/amxpcp.c     |  2 +-
+ miniupnpd/amx/amxpmp.c     |  2 +-
+ miniupnpd/miniupnpd.c      | 13 ++++++++++---
+ miniupnpd/options.c        |  1 +
+ miniupnpd/options.h        |  1 +
+ miniupnpd/upnpglobalvars.c |  2 ++
+ miniupnpd/upnpglobalvars.h |  2 ++
+ miniupnpd/upnpsoap.c       |  2 +-
+ 8 files changed, 19 insertions(+), 6 deletions(-)
+
+diff --git miniupnpd/amx/amxpcp.c miniupnpd/amx/amxpcp.c
+index a312370..c3915d5 100644
+--- miniupnpd/amx/amxpcp.c
++++ miniupnpd/amx/amxpcp.c
+@@ -213,7 +213,7 @@ int get_redirect_rule_by_index_pcp(amxb_bus_ctx_t* bus_ctx, int index,
+     }
+     amxc_string_clean(&rule);
+     amxc_var_clean(&ret);
+-    syslog(LOG_WARNING, "get_redirect_rule_by_index: %d (using PCP)", rv);
++    syslog(LOG_INFO, "get_redirect_rule_by_index: %d (using PCP)", rv);
+     return rv;
+ }
+ 
+diff --git miniupnpd/amx/amxpmp.c miniupnpd/amx/amxpmp.c
+index a6ba829..16599c7 100644
+--- miniupnpd/amx/amxpmp.c
++++ miniupnpd/amx/amxpmp.c
+@@ -247,7 +247,7 @@ int get_redirect_rule_by_index_pm(amxb_bus_ctx_t* bus_ctx, int index,
+     }
+     amxc_string_clean(&rule);
+     amxc_var_clean(&ret);
+-    syslog(LOG_WARNING, "get_redirect_rule_by_index: %d", rv);
++    syslog(LOG_INFO, "get_redirect_rule_by_index: %d", rv);
+     return rv;
+ }
+ 
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index ea7c4da..d5dd7d4 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -1384,6 +1384,10 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 				ip_interface[IP_INTERFACE_MAX_LEN - 1] = '\0';
+ 				break;
+ #endif    /*USE_AMX */
++			case UPNPALLOWRESERVEDADDR :
++				if(strcmp(ary_options[i].value, "yes") == 0)
++					allow_reserved_addr = 1;
++				break;
+ 			case UPNPNOTIFY_INTERVAL:
+ 				v->notify_interval = atoi(ary_options[i].value);
+ 				break;
+@@ -1881,7 +1885,7 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ #ifdef ALLOW_RESERVED_ADDR
+ 		if(false) {
+ #else
+-		if (addr_is_reserved(&addr)) {
++		if (allow_reserved_addr == 0 && addr_is_reserved(&addr)) {
+ #endif
+ 			INIT_PRINT_ERR("Error: option ext_ip contains reserved / private address %s, not public routable\n", use_ext_ip_addr);
+ 			return 1;
+@@ -2298,7 +2302,7 @@ main(int argc, char * * argv)
+ #ifdef ALLOW_RESERVED_ADDR
+ 		} else if(false) {
+ #else
+-		} else if (addr_is_reserved(&addr)) {
++		} else if (allow_reserved_addr == 0 && addr_is_reserved(&addr)) {
+ #endif
+ 			syslog(LOG_INFO, "Reserved / private IP address %s on ext interface %s: Port forwarding is impossible", if_addr, ext_if_name);
+ 			syslog(LOG_INFO, "You are probably behind NAT, enable option ext_perform_stun=yes to detect public IP address");
+@@ -2599,7 +2603,7 @@ main(int argc, char * * argv)
+ #else
+ 					int reserved = addr_is_reserved(&addr);
+ #endif
+-					if (!disable_port_forwarding && reserved) {
++					if (!disable_port_forwarding && reserved && allow_reserved_addr == 0) {
+ 						syslog(LOG_INFO, "Reserved / private IP address %s on ext interface %s: Port forwarding is impossible", if_addr, ext_if_name);
+ 						syslog(LOG_INFO, "You are probably behind NAT, enable option ext_perform_stun=yes to detect public IP address");
+ 						syslog(LOG_INFO, "Or use ext_ip= / -o option to declare public IP address");
+@@ -2608,6 +2612,9 @@ main(int argc, char * * argv)
+ 					} else if (disable_port_forwarding && !reserved) {
+ 						syslog(LOG_INFO, "Public IP address %s on ext interface %s: Port forwarding is enabled", if_addr, ext_if_name);
+ 						disable_port_forwarding = 0;
++					} else if (disable_port_forwarding && reserved && allow_reserved_addr == 1) {
++						syslog(LOG_INFO, "Private IP address %s on ext interface %s but allow_reserved_addr mode is on: Port forwarding is enabled", if_addr, ext_if_name);
++						disable_port_forwarding = 0;
+ 					}
+ 				}
+ 			}
+diff --git miniupnpd/options.c miniupnpd/options.c
+index 701835c..90e93d4 100644
+--- miniupnpd/options.c
++++ miniupnpd/options.c
+@@ -106,6 +106,7 @@ static const struct {
+ 	{ UPNPFORCEIGDDESCV1, "force_igd_desc_v1"},
+ #endif
+ 	{ UPNPMINISSDPDSOCKET, "minissdpdsocket"},
++	{ UPNPALLOWRESERVEDADDR, "pf_allow_reserved_addr"},
+ 	{ UPNPSECUREMODE, "secure_mode"}
+ };
+ 
+diff --git miniupnpd/options.h miniupnpd/options.h
+index 268da35..716d302 100644
+--- miniupnpd/options.h
++++ miniupnpd/options.h
+@@ -87,6 +87,7 @@ enum upnpconfigoptions {
+ #ifdef IGD_V2
+ 	UPNPFORCEIGDDESCV1,
+ #endif
++	UPNPALLOWRESERVEDADDR,
+ 	UPNPENABLE				/* enable_upnp */
+ };
+ 
+diff --git miniupnpd/upnpglobalvars.c miniupnpd/upnpglobalvars.c
+index 90e6bcf..e120101 100644
+--- miniupnpd/upnpglobalvars.c
++++ miniupnpd/upnpglobalvars.c
+@@ -172,3 +172,5 @@ char random_url[RANDOM_URL_MAX_LEN] = "random";
+ #ifdef DYNAMIC_OS_VERSION
+ char * os_version = NULL;
+ #endif /* DYNAMIC_OS_VERSION */
++
++unsigned int allow_reserved_addr = 0;
+\ No newline at end of file
+diff --git miniupnpd/upnpglobalvars.h miniupnpd/upnpglobalvars.h
+index a9080c0..48ee927 100644
+--- miniupnpd/upnpglobalvars.h
++++ miniupnpd/upnpglobalvars.h
+@@ -188,4 +188,6 @@ extern char random_url[];
+ extern char * os_version;
+ #endif
+ 
++extern unsigned int allow_reserved_addr;
++
+ #endif /* UPNPGLOBALVARS_H_INCLUDED */
+diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
+index cb6c270..1350f24 100644
+--- miniupnpd/upnpsoap.c
++++ miniupnpd/upnpsoap.c
+@@ -352,7 +352,7 @@ GetExternalIPAddress(struct upnphttp * h, const char * action, const char * ns)
+ #ifdef ALLOW_RESERVED_ADDR
+ 		} else if (0) {
+ #else
+-		} else if (addr_is_reserved(&addr)) {
++		} else if (addr_is_reserved(&addr) && allow_reserved_addr == 0) {
+ #endif
+ 			syslog(LOG_NOTICE, "private/reserved address %s is not suitable for external IP", ext_ip_addr);
+ 			ext_ip_addr[0] = '\0';
+-- 
+2.34.1
+

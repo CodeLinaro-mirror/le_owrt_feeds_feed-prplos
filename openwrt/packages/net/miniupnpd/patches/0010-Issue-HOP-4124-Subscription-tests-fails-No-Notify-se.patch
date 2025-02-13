@@ -1,0 +1,33 @@
+From 7d7dd1f45b0424302d12dd8ff0adcb460bca2d2c Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Wed, 27 Sep 2023 14:32:41 +0200
+Subject: [PATCH] Issue: HOP-4124 Subscription tests fails: No Notify sent and
+ cannot unsubscribe after subscription [fix]
+
+GitOrigin-RevId: a3f4d6d9e05f665d65612dd95c08e112dec966cd
+---
+ miniupnpd/upnpevents.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git miniupnpd/upnpevents.c miniupnpd/upnpevents.c
+index 2e1b22f..6e0a8ad 100644
+--- miniupnpd/upnpevents.c
++++ miniupnpd/upnpevents.c
+@@ -366,6 +366,14 @@ upnp_event_notify_connect(struct upnp_event_notify * obj)
+ 		}
+ 		sa->sin6_port = htons(port);
+ 		addrlen = sizeof(struct sockaddr_in6);
++		if (IN6_IS_ADDR_LINKLOCAL(&sa->sin6_addr) && lan_addrs.lh_first != NULL) {
++			struct ifreq ifr = {0};
++
++			strcpy(ifr.ifr_ifrn.ifrn_name, lan_addrs.lh_first->ifname);
++			if (setsockopt(obj->s, SOL_SOCKET, SO_BINDTODEVICE, &ifr, sizeof(ifr)) < 0) {
++				syslog(LOG_ERR, "Couldn't bind callback ipv6 addr (link local) socket to %s", lan_addrs.lh_first->ifname);
++			}
++		}
+ 	} else {
+ 		struct sockaddr_in * sa = (struct sockaddr_in *)&addr;
+ 		sa->sin_family = AF_INET;
+-- 
+2.34.1
+

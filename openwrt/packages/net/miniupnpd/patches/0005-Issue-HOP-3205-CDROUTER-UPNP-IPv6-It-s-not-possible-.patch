@@ -1,0 +1,698 @@
+From 3fcb8421907336479daad702a2f80934a39191c4 Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Thu, 10 Aug 2023 16:35:43 +0200
+Subject: [PATCH] Issue: HOP-3205 [CDROUTER][UPNP][IPv6] It's not possible to
+ add a Pinhole, 501 ActionFailed received instead [new]
+
+GitOrigin-RevId: 2ef133deae6ce303f8cd299cd3ebaf1f8daa758e
+---
+ miniupnpd/Makefile.linux_amx |   2 +-
+ miniupnpd/amx/amxmisc.c      |  93 +++++++++++++
+ miniupnpd/amx/amxmisc.h      |  75 +++++++++++
+ miniupnpd/amx/amxpinhole.c   | 254 +++++++++++++++++++++++++++++++++++
+ miniupnpd/amx/amxpinhole.h   | 102 ++++++++++++++
+ miniupnpd/amx/amxrdr.c       |  13 +-
+ miniupnpd/miniupnpd.c        |   6 +
+ miniupnpd/upnppinhole.c      |  11 +-
+ 8 files changed, 547 insertions(+), 9 deletions(-)
+ create mode 100644 miniupnpd/amx/amxmisc.c
+ create mode 100644 miniupnpd/amx/amxmisc.h
+ create mode 100644 miniupnpd/amx/amxpinhole.c
+ create mode 100644 miniupnpd/amx/amxpinhole.h
+
+diff --git miniupnpd/Makefile.linux_amx miniupnpd/Makefile.linux_amx
+index a2bf61d..7968228 100644
+--- miniupnpd/Makefile.linux_amx
++++ miniupnpd/Makefile.linux_amx
+@@ -56,7 +56,7 @@ include $(SRCDIR)/gitrev.mk
+ include $(SRCDIR)/objects.mk
+ 
+ # sources in amx/ directory
+-AMXOBJS = amxrdr.o
++AMXOBJS = amxrdr.o amxmisc.o amxpinhole.o
+ 
+ ALLOBJS = $(BASEOBJS) $(LNXOBJS) $(AMXOBJS)
+ 
+diff --git miniupnpd/amx/amxmisc.c miniupnpd/amx/amxmisc.c
+new file mode 100644
+index 0000000..e38c9f2
+--- /dev/null
++++ miniupnpd/amx/amxmisc.c
+@@ -0,0 +1,93 @@
++/****************************************************************************
++**
++** SPDX-License-Identifier: BSD-2-Clause-Patent
++**
++** SPDX-FileCopyrightText: Copyright (c) 2023 SoftAtHome
++**
++** Redistribution and use in source and binary forms, with or
++** without modification, are permitted provided that the following
++** conditions are met:
++**
++** 1. Redistributions of source code must retain the above copyright
++** notice, this list of conditions and the following disclaimer.
++**
++** 2. Redistributions in binary form must reproduce the above
++** copyright notice, this list of conditions and the following
++** disclaimer in the documentation and/or other materials provided
++** with the distribution.
++**
++** Subject to the terms and conditions of this license, each
++** copyright holder and contributor hereby grants to those receiving
++** rights under this license a perpetual, worldwide, non-exclusive,
++** no-charge, royalty-free, irrevocable (except for failure to
++** satisfy the conditions of this license) patent license to make,
++** have made, use, offer to sell, sell, import, and otherwise
++** transfer this software, where such license applies only to those
++** patent claims, already acquired or hereafter acquired, licensable
++** by such copyright holder or contributor that are necessarily
++** infringed by:
++**
++** (a) their Contribution(s) (the licensed copyrights of copyright
++** holders and non-copyrightable additions of contributors, in
++** source or binary form) alone; or
++**
++** (b) combination of their Contribution(s) with the work of
++** authorship to which such Contribution(s) was added by such
++** copyright holder or contributor, if, at the time the Contribution
++** is added, such addition causes such combination to be necessarily
++** infringed. The patent license shall not apply to any other
++** combinations which include the Contribution.
++**
++** Except as expressly stated above, no rights or licenses from any
++** copyright holder or contributor is granted under this license,
++** whether expressly, by implication, estoppel or otherwise.
++**
++** DISCLAIMER
++**
++** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
++** CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
++** INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++** DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
++** CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
++** USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
++** AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
++** ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++** POSSIBILITY OF SUCH DAMAGE.
++**
++****************************************************************************/
++
++#include <amxc/amxc.h>
++#include <amxp/amxp.h>
++#include <amxd/amxd_object.h>
++#include <amxb/amxb.h>
++#include "config.h"
++#include "../upnpglobalvars.h"
++
++static amxb_bus_ctx_t* bus_ctx = NULL;
++
++int init_amx(void) {
++    int r = -1;
++    if(bus_ctx != NULL) {
++        r = 0;
++    } else {
++        r = amxb_be_load(ubus_backend_url);
++        if(r == 0) {
++            r = amxb_connect(&bus_ctx, ubus_sock_url);
++        }
++    }
++    return r;
++}
++
++void shutdown_amx(void) {
++    amxb_disconnect(bus_ctx);
++    bus_ctx = NULL;
++    return;
++}
++
++amxb_bus_ctx_t* get_amx_bus_ctx(void) {
++    return bus_ctx;
++}
+\ No newline at end of file
+diff --git miniupnpd/amx/amxmisc.h miniupnpd/amx/amxmisc.h
+new file mode 100644
+index 0000000..98c54ea
+--- /dev/null
++++ miniupnpd/amx/amxmisc.h
+@@ -0,0 +1,75 @@
++/****************************************************************************
++**
++** SPDX-License-Identifier: BSD-2-Clause-Patent
++**
++** SPDX-FileCopyrightText: Copyright (c) 2023 SoftAtHome
++**
++** Redistribution and use in source and binary forms, with or
++** without modification, are permitted provided that the following
++** conditions are met:
++**
++** 1. Redistributions of source code must retain the above copyright
++** notice, this list of conditions and the following disclaimer.
++**
++** 2. Redistributions in binary form must reproduce the above
++** copyright notice, this list of conditions and the following
++** disclaimer in the documentation and/or other materials provided
++** with the distribution.
++**
++** Subject to the terms and conditions of this license, each
++** copyright holder and contributor hereby grants to those receiving
++** rights under this license a perpetual, worldwide, non-exclusive,
++** no-charge, royalty-free, irrevocable (except for failure to
++** satisfy the conditions of this license) patent license to make,
++** have made, use, offer to sell, sell, import, and otherwise
++** transfer this software, where such license applies only to those
++** patent claims, already acquired or hereafter acquired, licensable
++** by such copyright holder or contributor that are necessarily
++** infringed by:
++**
++** (a) their Contribution(s) (the licensed copyrights of copyright
++** holders and non-copyrightable additions of contributors, in
++** source or binary form) alone; or
++**
++** (b) combination of their Contribution(s) with the work of
++** authorship to which such Contribution(s) was added by such
++** copyright holder or contributor, if, at the time the Contribution
++** is added, such addition causes such combination to be necessarily
++** infringed. The patent license shall not apply to any other
++** combinations which include the Contribution.
++**
++** Except as expressly stated above, no rights or licenses from any
++** copyright holder or contributor is granted under this license,
++** whether expressly, by implication, estoppel or otherwise.
++**
++** DISCLAIMER
++**
++** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
++** CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
++** INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++** DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
++** CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
++** USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
++** AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
++** ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++** POSSIBILITY OF SUCH DAMAGE.
++**
++****************************************************************************/
++#ifndef AMXMISC_H_INCLUDED
++#define AMXMISC_H_INCLUDED
++
++#include <amxc/amxc.h>
++#include <amxp/amxp.h>
++#include <amxd/amxd_object.h>
++#include <amxb/amxb.h>
++
++void shutdown_amx(void);
++int init_amx(void);
++amxb_bus_ctx_t* get_amx_bus_ctx(void);
++
++#endif
++
+diff --git miniupnpd/amx/amxpinhole.c miniupnpd/amx/amxpinhole.c
+new file mode 100644
+index 0000000..9ddf753
+--- /dev/null
++++ miniupnpd/amx/amxpinhole.c
+@@ -0,0 +1,254 @@
++/****************************************************************************
++**
++** SPDX-License-Identifier: BSD-2-Clause-Patent
++**
++** SPDX-FileCopyrightText: Copyright (c) 2023 SoftAtHome
++**
++** Redistribution and use in source and binary forms, with or
++** without modification, are permitted provided that the following
++** conditions are met:
++**
++** 1. Redistributions of source code must retain the above copyright
++** notice, this list of conditions and the following disclaimer.
++**
++** 2. Redistributions in binary form must reproduce the above
++** copyright notice, this list of conditions and the following
++** disclaimer in the documentation and/or other materials provided
++** with the distribution.
++**
++** Subject to the terms and conditions of this license, each
++** copyright holder and contributor hereby grants to those receiving
++** rights under this license a perpetual, worldwide, non-exclusive,
++** no-charge, royalty-free, irrevocable (except for failure to
++** satisfy the conditions of this license) patent license to make,
++** have made, use, offer to sell, sell, import, and otherwise
++** transfer this software, where such license applies only to those
++** patent claims, already acquired or hereafter acquired, licensable
++** by such copyright holder or contributor that are necessarily
++** infringed by:
++**
++** (a) their Contribution(s) (the licensed copyrights of copyright
++** holders and non-copyrightable additions of contributors, in
++** source or binary form) alone; or
++**
++** (b) combination of their Contribution(s) with the work of
++** authorship to which such Contribution(s) was added by such
++** copyright holder or contributor, if, at the time the Contribution
++** is added, such addition causes such combination to be necessarily
++** infringed. The patent license shall not apply to any other
++** combinations which include the Contribution.
++**
++** Except as expressly stated above, no rights or licenses from any
++** copyright holder or contributor is granted under this license,
++** whether expressly, by implication, estoppel or otherwise.
++**
++** DISCLAIMER
++**
++** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
++** CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
++** INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++** DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
++** CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
++** USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
++** AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
++** ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++** POSSIBILITY OF SUCH DAMAGE.
++**
++****************************************************************************/
++
++#include <syslog.h>
++#include <string.h>
++#include <stdlib.h>
++#include <amxc/amxc.h>
++#include <amxc/amxc_macros.h>
++#include <amxp/amxp.h>
++#include <amxd/amxd_object.h>
++#include <amxb/amxb.h>
++#include "config.h"
++#include "../upnpglobalvars.h"
++#include "amxmisc.h"
++
++static amxb_bus_ctx_t* bus_ctx = NULL;
++static const char* pinhole_prefix = "cpe-Pinhole-";
++
++int init_pinhole(void) {
++    int r = -1;
++
++    if(init_amx() == 0) {
++        bus_ctx = get_amx_bus_ctx();
++        if(bus_ctx != NULL) {
++            r = 0;
++        }
++    }
++    return r;
++}
++
++void shutdown_pinhole(void) {
++    shutdown_amx();
++    bus_ctx = NULL;
++    return;
++}
++
++int find_pinhole(UNUSED const char* ifname,
++                 const char* rem_host, unsigned short rem_port,
++                 const char* int_client, unsigned short int_port,
++                 int proto,
++                 char* desc, int desc_len, UNUSED unsigned int* timestamp) {
++    int rv = -1;
++    amxc_string_t expr;
++    amxc_var_t ret;
++
++    amxc_var_init(&ret);
++    amxc_string_init(&expr, 0);
++    amxc_string_setf(&expr, "Firewall.Pinhole.[Protocol=='%d'", proto);
++    if((rem_host != NULL) && (rem_host[0] != '\0')) {
++        amxc_string_appendf(&expr, " && SourcePrefixes=='%s'", rem_host);
++    }
++    amxc_string_appendf(&expr, " && SourcePort==%d", rem_port);
++    if((int_client != NULL) && (int_client[0] != '\0')) {
++        amxc_string_appendf(&expr, " && DestIP=='%s'", int_client);
++    }
++    amxc_string_appendf(&expr, " && DestPort==%d", int_port);
++    amxc_string_appendf(&expr, "].");
++    rv = amxb_get(bus_ctx, amxc_string_get(&expr, 0), 0, &ret, 1);
++    if((GETP_ARG(&ret, "0.0.") != NULL) && (strlen(GETP_CHAR(&ret, "0.0.Alias")) > strlen(pinhole_prefix))) {
++        rv = atoi(GETP_CHAR(&ret, "0.0.Alias") + strlen(pinhole_prefix));
++        if(desc != NULL) {
++            strncpy(desc, GETP_CHAR(&ret, "0.0.Description"), desc_len);
++        }
++        if(rv == 0) {
++            rv = -1;
++        }
++    } else {
++        rv = -1;
++    }
++    amxc_string_clean(&expr);
++    amxc_var_clean(&ret);
++    return rv;
++}
++
++int add_pinhole(UNUSED const char* ifname,
++                const char* rem_host, unsigned short rem_port,
++                const char* int_client, unsigned short int_port,
++                int proto, const char* desc, UNUSED unsigned int timestamp) {
++    int rv = -1;
++    amxc_var_t args;
++    amxc_var_t ret;
++    amxc_string_t tmp;
++
++    amxc_var_init(&args);
++    amxc_var_init(&ret);
++    amxc_string_init(&tmp, 0);
++    amxc_var_set_type(&args, AMXC_VAR_ID_HTABLE);
++    amxc_var_add_key(cstring_t, &args, "alias", "");
++    amxc_var_add_key(cstring_t, &args, "origin", "Controller");
++    amxc_var_add_key(cstring_t, &args, "interface", "Device.IP.Interface.2.");
++    amxc_string_setf(&tmp, "%hu", rem_port);
++    amxc_var_add_key(cstring_t, &args, "sourcePort", amxc_string_get(&tmp, 0));
++    amxc_string_setf(&tmp, "%hu", int_port);
++    amxc_var_add_key(cstring_t, &args, "destinationPort", amxc_string_get(&tmp, 0));
++    amxc_var_add_key(cstring_t, &args, "internalClient", int_client);
++    amxc_var_add_key(cstring_t, &args, "sourcePrefix", rem_host);
++    amxc_var_add_key(bool, &args, "enable", true);
++    amxc_var_add_key(cstring_t, &args, "description", desc);
++    amxc_string_setf(&tmp, "%d", proto);
++    amxc_var_add_key(cstring_t, &args, "protocol", amxc_string_get(&tmp, 0));
++    rv = amxb_call(bus_ctx, "Firewall.", "setPinhole", &args, &ret, 1);
++    if((GETP_ARG(&ret, "0.Alias") != NULL) && (strlen(GETP_CHAR(&ret, "0.Alias")) > strlen(pinhole_prefix))) {
++        rv = atoi(GETP_CHAR(&ret, "0.Alias") + strlen(pinhole_prefix));
++        if(rv == 0) {
++            rv = -1;
++        }
++    } else {
++        syslog(LOG_WARNING, "%s: setPinhole failed (%d) [%s]:%d -> [%s]:%d ", "add_pinhole(amx)", rv, rem_host, rem_port, int_client, int_port);
++        rv = -1;
++    }
++    syslog(LOG_NOTICE, "%s: setPinhole (%d) [%s]:%d -> [%s]:%d ", "add_pinhole(amx)", rv, rem_host, rem_port, int_client, int_port);
++    amxc_var_clean(&args);
++    amxc_var_clean(&ret);
++    return rv;
++}
++
++int delete_pinhole(uint32_t uid) {
++    int rv = -1;
++    amxc_string_t alias;
++    amxc_var_t args;
++    amxc_var_t ret;
++
++    amxc_string_init(&alias, 0);
++    amxc_var_init(&args);
++    amxc_var_init(&ret);
++    amxc_string_setf(&alias, "%s%u", pinhole_prefix, uid);
++    amxc_var_set_type(&args, AMXC_VAR_ID_HTABLE);
++    amxc_var_add_key(cstring_t, &args, "alias", amxc_string_get(&alias, 0));
++    rv = amxb_call(bus_ctx, "Firewall.", "deletePinhole", &args, &ret, 1);
++    syslog(LOG_WARNING, "%s: (%d)", "delete_pinhole(amx)", rv);
++    amxc_var_clean(&ret);
++    amxc_var_clean(&args);
++    amxc_string_clean(&alias);
++    return rv;
++}
++
++int
++get_pinhole_info(unsigned short uid,
++                 char* rem_host, int rem_hostlen, unsigned short* rem_port,
++                 char* int_client, int int_clientlen,
++                 unsigned short* int_port,
++                 int* proto, char* desc, int desclen,
++                 unsigned int* timestamp,
++                 u_int64_t* packets, u_int64_t* bytes) {
++    int rv = -1;
++    amxc_string_t alias;
++    amxc_var_t args;
++    amxc_var_t ret;
++
++    amxc_string_init(&alias, 0);
++    amxc_var_init(&args);
++    amxc_var_init(&ret);
++    amxc_string_setf(&alias, "%s%u", pinhole_prefix, uid);
++    amxc_var_set_type(&args, AMXC_VAR_ID_HTABLE);
++    amxc_var_add_key(cstring_t, &args, "alias", amxc_string_get(&alias, 0));
++    rv = amxb_call(bus_ctx, "Firewall.", "getPinhole", &args, &ret, 1);
++    if(GETP_ARG(&ret, "0.0.") != NULL) {
++        if(rem_host != NULL) {
++            strncpy(rem_host, GETP_CHAR(&ret, "0.0.SourcePrefixes"), rem_hostlen);
++        }
++        if(rem_port != NULL) {
++            *rem_port = (uint16_t) GETP_UINT32(&ret, "0.0.SourcePort");
++        }
++        if(int_client != NULL) {
++
++            strncpy(int_client, GETP_CHAR(&ret, "0.0.DestIP"), int_clientlen);
++        }
++        if(int_port != NULL) {
++            *int_port = (uint16_t) GETP_UINT32(&ret, "0.0.DestPort");
++        }
++        if(proto != NULL) {
++            *proto = amxc_var_dyncast(int32_t, GETP_ARG(&ret, "0.0.Protocol"));
++        }
++        if(desc != NULL) {
++            strncpy(desc, GETP_CHAR(&ret, "0.0.Description"), desclen);
++        }
++        if(timestamp != NULL) {
++            *timestamp = 0;
++        }
++        if(packets != NULL) {
++            *packets = 0;
++        }
++        if(bytes != NULL) {
++            *bytes = 0;
++        }
++    }
++    amxc_var_clean(&ret);
++    amxc_var_clean(&args);
++    amxc_string_clean(&alias);
++    return rv;
++}
++
++int get_pinhole_uid_by_index(int index) {
++    return (index);
++}
+\ No newline at end of file
+diff --git miniupnpd/amx/amxpinhole.h miniupnpd/amx/amxpinhole.h
+new file mode 100644
+index 0000000..94b2a72
+--- /dev/null
++++ miniupnpd/amx/amxpinhole.h
+@@ -0,0 +1,102 @@
++/****************************************************************************
++**
++** SPDX-License-Identifier: BSD-2-Clause-Patent
++**
++** SPDX-FileCopyrightText: Copyright (c) 2023 SoftAtHome
++**
++** Redistribution and use in source and binary forms, with or
++** without modification, are permitted provided that the following
++** conditions are met:
++**
++** 1. Redistributions of source code must retain the above copyright
++** notice, this list of conditions and the following disclaimer.
++**
++** 2. Redistributions in binary form must reproduce the above
++** copyright notice, this list of conditions and the following
++** disclaimer in the documentation and/or other materials provided
++** with the distribution.
++**
++** Subject to the terms and conditions of this license, each
++** copyright holder and contributor hereby grants to those receiving
++** rights under this license a perpetual, worldwide, non-exclusive,
++** no-charge, royalty-free, irrevocable (except for failure to
++** satisfy the conditions of this license) patent license to make,
++** have made, use, offer to sell, sell, import, and otherwise
++** transfer this software, where such license applies only to those
++** patent claims, already acquired or hereafter acquired, licensable
++** by such copyright holder or contributor that are necessarily
++** infringed by:
++**
++** (a) their Contribution(s) (the licensed copyrights of copyright
++** holders and non-copyrightable additions of contributors, in
++** source or binary form) alone; or
++**
++** (b) combination of their Contribution(s) with the work of
++** authorship to which such Contribution(s) was added by such
++** copyright holder or contributor, if, at the time the Contribution
++** is added, such addition causes such combination to be necessarily
++** infringed. The patent license shall not apply to any other
++** combinations which include the Contribution.
++**
++** Except as expressly stated above, no rights or licenses from any
++** copyright holder or contributor is granted under this license,
++** whether expressly, by implication, estoppel or otherwise.
++**
++** DISCLAIMER
++**
++** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
++** CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
++** INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++** DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
++** CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
++** USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
++** AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
++** ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++** POSSIBILITY OF SUCH DAMAGE.
++**
++****************************************************************************/
++#ifndef AMXPINHOLE_H_INCLUDED
++#define AMXPINHOLE_H_INCLUDED
++
++#include <amxc/amxc.h>
++#include <amxp/amxp.h>
++#include <amxd/amxd_object.h>
++#include <amxb/amxb.h>
++
++int init_pinhole(void);
++void shutdown_pinhole(void);
++
++int find_pinhole(const char* ifname,
++                 const char* rem_host, unsigned short rem_port,
++                 const char* int_client, unsigned short int_port,
++                 int proto,
++                 char* desc, int desc_len, unsigned int* timestamp);
++
++int add_pinhole(const char* ifname,
++                const char* rem_host, unsigned short rem_port,
++                const char* int_client, unsigned short int_port,
++                int proto, const char* desc, unsigned int timestamp);
++
++int update_pinhole(unsigned short uid, unsigned int timestamp);
++
++int delete_pinhole(unsigned short uid);
++
++int
++get_pinhole_info(unsigned short uid,
++                 char* rem_host, int rem_hostlen, unsigned short* rem_port,
++                 char* int_client, int int_clientlen,
++                 unsigned short* int_port,
++                 int* proto, char* desc, int desclen,
++                 unsigned int* timestamp,
++                 u_int64_t* packets, u_int64_t* bytes);
++
++int get_pinhole_uid_by_index(int index);
++
++int clean_pinhole_list(unsigned int* next_timestamp);
++
++#endif
++
+diff --git miniupnpd/amx/amxrdr.c miniupnpd/amx/amxrdr.c
+index f55f9f3..8229690 100644
+--- miniupnpd/amx/amxrdr.c
++++ miniupnpd/amx/amxrdr.c
+@@ -70,6 +70,7 @@
+ #include "config.h"
+ #include "../macros.h"
+ #include "../upnpglobalvars.h"
++#include "amxmisc.h"
+ 
+ time_t upnp_time(void);
+ 
+@@ -113,15 +114,19 @@ static int proto_atoi(const char* protocol) {
+ 
+ int init_redirect(void) {
+     int r = -1;
+-    r = amxb_be_load(ubus_backend_url);
+-    if(r == 0) {
+-        r = amxb_connect(&bus_ctx, ubus_sock_url);
++
++    if(init_amx() == 0) {
++        bus_ctx = get_amx_bus_ctx();
++        if(bus_ctx != NULL) {
++            r = 0;
++        }
+     }
+     return r;
+ }
+ 
+ void shutdown_redirect(void) {
+-    amxb_disconnect(bus_ctx);
++    shutdown_amx();
++    bus_ctx = NULL;
+     return;
+ }
+ 
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index 13c895a..00be997 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -99,6 +99,9 @@
+ #ifdef USE_NETFILTER
+ void init_iptpinhole(void);
+ #endif
++#ifdef USE_AMX
++#include "amx/amxpinhole.h"
++#endif
+ #endif
+ 
+ #ifndef DEFAULT_CONFIG
+@@ -1983,6 +1986,9 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ #ifdef USE_NETFILTER
+ 	init_iptpinhole();
+ #endif
++#ifdef USE_AMX
++	init_pinhole();
++#endif
+ #endif
+ 
+ #ifndef NO_BACKGROUND_NO_PIDFILE
+diff --git miniupnpd/upnppinhole.c miniupnpd/upnppinhole.c
+index b48e87e..53093c5 100644
+--- miniupnpd/upnppinhole.c
++++ miniupnpd/upnppinhole.c
+@@ -43,6 +43,9 @@
+ #endif
+ #if defined(USE_IPFW)
+ #endif
++#if defined(USE_AMX)
++#include "amx/amxpinhole.h"
++#endif
+ #ifdef ENABLE_LEASEFILE
+ #include <sys/stat.h>
+ #endif
+@@ -615,7 +618,7 @@ upnp_find_inboundpinhole(const char * raddr, unsigned short rport,
+                          const char * iaddr, unsigned short iport,
+                          int proto, char * desc, int desc_len, unsigned int * leasetime)
+ {
+-#if defined(USE_PF) || defined(USE_NETFILTER)
++#if defined(USE_PF) || defined(USE_NETFILTER) || defined(USE_AMX)
+ 	int uid;
+ 	uid = find_pinhole(NULL, raddr, rport, iaddr, iport, proto,
+ 	                   desc, desc_len, leasetime);
+@@ -669,7 +672,7 @@ upnp_add_inboundpinhole(const char * raddr,
+ #endif /* ENABLE_LEASEFILE */
+ 		return (r >= 0) ? 1 : r;
+ 	}
+-#if defined(USE_PF) || defined(USE_NETFILTER)
++#if defined(USE_PF) || defined(USE_NETFILTER) || defined(USE_AMX)
+ 	*uid = add_pinhole (ext_if_name6, raddr, rport,
+ 	                    iaddr, iport, proto, desc, timestamp);
+ #ifdef ENABLE_LEASEFILE
+@@ -772,7 +775,7 @@ upnp_get_pinhole_info(unsigned short uid,
+                       unsigned int * packets)
+ {
+ 	/* Call Firewall specific code to get IPv6 pinhole infos */
+-#if defined(USE_PF) || defined(USE_NETFILTER)
++#if defined(USE_PF) || defined(USE_NETFILTER) || defined(USE_AMX)
+ 	int r;
+ 	unsigned int timestamp;
+ 	u_int64_t packets_tmp;
+@@ -842,7 +845,7 @@ upnp_update_inboundpinhole(unsigned short uid, unsigned int leasetime)
+ int
+ upnp_delete_inboundpinhole(unsigned short uid)
+ {
+-#if defined(USE_PF) || defined(USE_NETFILTER)
++#if defined(USE_PF) || defined(USE_NETFILTER) || defined(USE_AMX)
+ 	int ret;
+ 	ret = delete_pinhole(uid);
+ #ifdef ENABLE_LEASEFILE
+-- 
+2.34.1
+

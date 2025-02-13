@@ -1,0 +1,153 @@
+From 60e1a87290faa5d2c10d671aff6278e4c36b1233 Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Mon, 4 Sep 2023 10:56:42 +0200
+Subject: [PATCH] Issue: HOP-2738 Cannot add a IPv4 Portmapping using UPnP over
+ IPv6 for the same host [fix]
+
+GitOrigin-RevId: f4c0ca89d79bf451df18e16639305a3994bc6428
+---
+ miniupnpd/amx/amxmisc.c | 55 +++++++++++++++++++++++++++++++++++++++++
+ miniupnpd/amx/amxmisc.h |  1 +
+ miniupnpd/upnpsoap.c    | 17 +++++++++++++
+ 3 files changed, 73 insertions(+)
+
+diff --git miniupnpd/amx/amxmisc.c miniupnpd/amx/amxmisc.c
+index e38c9f2..eedbece 100644
+--- miniupnpd/amx/amxmisc.c
++++ miniupnpd/amx/amxmisc.c
+@@ -60,7 +60,10 @@
+ **
+ ****************************************************************************/
+ 
++#include <string.h>
++#include <syslog.h>
+ #include <amxc/amxc.h>
++#include <amxc/amxc_macros.h>
+ #include <amxp/amxp.h>
+ #include <amxd/amxd_object.h>
+ #include <amxb/amxb.h>
+@@ -90,4 +93,56 @@ void shutdown_amx(void) {
+ 
+ amxb_bus_ctx_t* get_amx_bus_ctx(void) {
+     return bus_ctx;
++}
++
++static int get_host_from_address(const char* addr, amxc_var_t* ret) {
++    int rv = -1;
++    amxc_string_t tmp;
++
++    amxc_string_init(&tmp, 0);
++    amxc_string_setf(&tmp, "Hosts.Host.*.IPv4Address.[IPAddress=='%s'].", addr);
++    when_failed(amxb_get(bus_ctx, amxc_string_get(&tmp, 0), 0, ret, 0), exit);
++    if(GETP_ARG(ret, "0.0.") == NULL) {
++        amxc_string_setf(&tmp, "Hosts.Host.*.IPv6Address.[IPAddress=='%s'].", addr);
++        when_failed(amxb_get(bus_ctx, amxc_string_get(&tmp, 0), 0, ret, 0), exit);
++        if(GETP_ARG(ret, "0.0.") != NULL) {
++            rv = 0;
++        }
++    } else {
++        rv = 0;
++    }
++exit:
++    amxc_string_clean(&tmp);
++    return rv;
++}
++
++int are_addresses_from_same_host(const char* addr_a, const char* addr_b) {
++    int rv = 0;
++    amxc_var_t ret_a;
++    amxc_var_t ret_b;
++    const char* host_a;
++    const char* host_b;
++
++    if(!bus_ctx) {
++        init_amx();
++    }
++    amxc_var_init(&ret_a);
++    amxc_var_init(&ret_b);
++    when_failed(get_host_from_address(addr_a, &ret_a), exit);
++    when_failed(get_host_from_address(addr_b, &ret_b), exit);
++    host_a = amxc_var_key(GETP_ARG(&ret_a, "0.0."));
++    host_b = amxc_var_key(GETP_ARG(&ret_b, "0.0."));
++    when_str_empty(host_a, exit);
++    when_str_empty(host_b, exit);
++    when_null(strstr(host_a, "IPv"), exit);
++    if(strncmp(host_a, host_b, (strstr(host_a, "IP") - host_a)) == 0) {
++        syslog(LOG_DEBUG, "Addresses are from the same host %s, %s", addr_a, addr_b);
++        rv = 1;
++    } else {
++        syslog(LOG_DEBUG, "Addresses aren't from the same host %s, %s", addr_a, addr_b);
++    }
++exit:
++    amxc_var_clean(&ret_a);
++    amxc_var_clean(&ret_b);
++    return rv;
+ }
+\ No newline at end of file
+diff --git miniupnpd/amx/amxmisc.h miniupnpd/amx/amxmisc.h
+index 98c54ea..3f93263 100644
+--- miniupnpd/amx/amxmisc.h
++++ miniupnpd/amx/amxmisc.h
+@@ -70,6 +70,7 @@
+ void shutdown_amx(void);
+ int init_amx(void);
+ amxb_bus_ctx_t* get_amx_bus_ctx(void);
++int are_addresses_from_same_host(const char*, const char*);
+ 
+ #endif
+ 
+diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
+index 2c2e6a2..8fc4a9e 100644
+--- miniupnpd/upnpsoap.c
++++ miniupnpd/upnpsoap.c
+@@ -34,6 +34,9 @@
+ #include "getconnstatus.h"
+ #include "upnpurns.h"
+ #include "upnputils.h"
++#ifdef USE_AMX
++#include "amx/amxmisc.h"
++#endif
+ 
+ /* utility function */
+ static int is_numeric(const char * s)
+@@ -408,9 +411,11 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	char * r_host;
+ 	unsigned short iport, eport;
+ 
++#ifndef USE_AMX
+ 	struct hostent *hp; /* getbyhostname() */
+ 	char ** ptr; /* getbyhostname() */
+ 	struct in_addr result_ip;/*unsigned char result_ip[16];*/ /* inet_pton() */
++#endif
+ 
+ 	ParseNameValue(h->req_buf + h->req_contentoff, h->req_contentlen, &data);
+ 	int_ip = GetValueFromNameValueList(&data, "NewInternalClient");
+@@ -453,6 +458,17 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	else
+ #endif
+ 	/* if ip not valid assume hostname and convert */
++#ifdef USE_AMX
++
++	/* check if NewInternalAddress is the client address */
++	if(GETFLAG(SECUREMODEMASK))
++	{
++		char ip_str[INET6_ADDRSTRLEN] = {0};
++
++		inet_ntop((h->ipv6) ? AF_INET6 : AF_INET, (h->ipv6) ? (void*)&h->clientaddr_v6 : (void*)&h->clientaddr, ip_str, INET6_ADDRSTRLEN);
++		if(are_addresses_from_same_host(int_ip, ip_str) == 0)
++		{
++#else
+ 	if (inet_pton(AF_INET, int_ip, &result_ip) <= 0)
+ 	{
+ 		hp = gethostbyname(int_ip);
+@@ -480,6 +496,7 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	{
+ 		if(h->clientaddr.s_addr != result_ip.s_addr)
+ 		{
++#endif /* !USE_AMX */
+ 			syslog(LOG_INFO, "Client %s tried to redirect port to %s",
+ 			       inet_ntoa(h->clientaddr), int_ip);
+ 			ClearNameValueList(&data);
+-- 
+2.34.1
+

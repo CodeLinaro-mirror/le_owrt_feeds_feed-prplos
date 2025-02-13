@@ -1,0 +1,138 @@
+From 13136eb7441d6adc15114adbf7fc2a855d97906e Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Sun, 26 May 2024 20:38:02 +0200
+Subject: [PATCH] amxpinhole: Set default interface with dm instead of index
+
+Problem: Interface in not portable through platforms
+
+Cause: Index for interface entries was used
+
+Solution: Use a configuration in the DM as it is common for all platform for now
+
+Issue: HOP-6697 - [CDROUTER][UPNP][REGRESSION] IPv6 Pinholes are not effective. traffic not forwarded
+GitOrigin-RevId: 1c86ff20a394fef0f5ea7073d1215304c04dc6ab
+---
+ miniupnpd/amx/amxpinhole.c | 5 ++++-
+ miniupnpd/amx/amxpmp.c     | 8 +++++---
+ miniupnpd/miniupnpd.c      | 4 ++++
+ miniupnpd/options.c        | 1 +
+ miniupnpd/options.h        | 1 +
+ miniupnpd/upnpglobalvars.c | 1 +
+ miniupnpd/upnpglobalvars.h | 2 ++
+ 7 files changed, 18 insertions(+), 4 deletions(-)
+
+diff --git miniupnpd/amx/amxpinhole.c miniupnpd/amx/amxpinhole.c
+index 0ea8eb5..ad16def 100644
+--- miniupnpd/amx/amxpinhole.c
++++ miniupnpd/amx/amxpinhole.c
+@@ -145,9 +145,12 @@ int add_pinhole(UNUSED const char* ifname,
+     amxc_var_init(&ret);
+     amxc_string_init(&tmp, 0);
+     amxc_var_set_type(&args, AMXC_VAR_ID_HTABLE);
++
++    syslog(LOG_NOTICE, "Interface open for upnp pinhole %s", ip_interface);
++
+     amxc_var_add_key(cstring_t, &args, "alias", "");
+     amxc_var_add_key(cstring_t, &args, "origin", "Controller");
+-    amxc_var_add_key(cstring_t, &args, "interface", "Device.IP.Interface.2.");
++    amxc_var_add_key(cstring_t, &args, "interface", ip_interface);
+     amxc_string_setf(&tmp, "%hu", rem_port);
+     amxc_var_add_key(cstring_t, &args, "sourcePort", amxc_string_get(&tmp, 0));
+     amxc_string_setf(&tmp, "%hu", int_port);
+diff --git miniupnpd/amx/amxpmp.c miniupnpd/amx/amxpmp.c
+index 333761c..31de866 100644
+--- miniupnpd/amx/amxpmp.c
++++ miniupnpd/amx/amxpmp.c
+@@ -120,9 +120,12 @@ int add_pm_rule(amxb_bus_ctx_t* bus_ctx, const char* ifname, const char* rhost,
+     amxc_var_init(&rule);
+     amxc_var_init(&ret);
+     amxc_var_set_type(&rule, AMXC_VAR_ID_HTABLE);
++    
++    syslog(LOG_NOTICE, "Interface open for upnp pinhole %s", ip_interface);
++
+     amxc_var_add_key(bool, &rule, "Enable", true);
+     amxc_var_add_key(cstring_t, &rule, "Origin", "UPnP_IWF");
+-    amxc_var_add_key(cstring_t, &rule, "Interface", "IP.Interface.2.");
++    amxc_var_add_key(cstring_t, &rule, "Interface", ip_interface);
+     amxc_var_add_key(cstring_t, &rule, "RemoteHost", rhost);
+     amxc_var_add_key(cstring_t, &rule, "InternalClient", iaddr);
+     amxc_var_add_key(uint16_t, &rule, "ExternalPort", eport);
+@@ -143,10 +146,9 @@ int add_pm_rule(amxb_bus_ctx_t* bus_ctx, const char* ifname, const char* rhost,
+             }
+         } while(strcmp(GETP_CHAR(&rule, "0.0.Status"), "Disabled") == 0 && ++nb_try < MAX_NB_TRY && usleep(100));
+     }
+-
++    syslog(LOG_WARNING, "redirecting port %hu to %s:%hu protocol %s for %s: %d", eport, iaddr, iport, proto_itoa(proto), desc, r);
+     amxc_var_clean(&rule);
+     amxc_var_clean(&ret);
+-    syslog(LOG_WARNING, "redirecting port %hu to %s:%hu protocol %s for %s: %d", eport, iaddr, iport, proto_itoa(proto), desc, r);
+     return r;
+ }
+ 
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index 659af49..44b28c7 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -1379,6 +1379,10 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 				strncpy(ubus_backend_url, ary_options[i].value, UBUS_BE_URL_MAX_LEN);
+ 				ubus_backend_url[UBUS_BE_URL_MAX_LEN - 1] = '\0';
+ 				break;
++			case UPNPAMX_INTERFACE :
++				strncpy(ip_interface, ary_options[i].value, IP_INTERFACE_MAX_LEN);
++				ip_interface[IP_INTERFACE_MAX_LEN - 1] = '\0';
++				break;
+ #endif    /*USE_AMX */
+ 			case UPNPNOTIFY_INTERVAL:
+ 				v->notify_interval = atoi(ary_options[i].value);
+diff --git miniupnpd/options.c miniupnpd/options.c
+index df345ad..701835c 100644
+--- miniupnpd/options.c
++++ miniupnpd/options.c
+@@ -62,6 +62,7 @@ static const struct {
+ #ifdef USE_AMX
+ 	{ UPNPUBUS_SOCK_URL, "ubus_sock_url" },
+ 	{ UPNPUBUS_BE_URL, "ubus_backend_url" },
++	{ UPNPAMX_INTERFACE, "upnp_amx_wan_interface"},
+ #endif
+ 	{ UPNPNOTIFY_INTERVAL, "notify_interval" },
+ 	{ UPNPSYSTEM_UPTIME, "system_uptime" },
+diff --git miniupnpd/options.h miniupnpd/options.h
+index b2589ad..268da35 100644
+--- miniupnpd/options.h
++++ miniupnpd/options.h
+@@ -71,6 +71,7 @@ enum upnpconfigoptions {
+ #ifdef USE_AMX
+ 	UPNPUBUS_SOCK_URL,		/* ubus_sock_url*/
+ 	UPNPUBUS_BE_URL,		/* ubus_backend_url*/
++	UPNPAMX_INTERFACE,		/* IP interface path in bus DM*/
+ #endif
+ #ifdef PF_ENABLE_FILTER_RULES
+ 	UPNPQUICKRULES,			/* quickrules */
+diff --git miniupnpd/upnpglobalvars.c miniupnpd/upnpglobalvars.c
+index c4c4d7d..3852131 100644
+--- miniupnpd/upnpglobalvars.c
++++ miniupnpd/upnpglobalvars.c
+@@ -115,6 +115,7 @@ const char * tag = 0;
+ #ifdef USE_AMX
+ char ubus_sock_url[UBUS_SOCK_URL_MAX_LEN] = "ubus:/var/run/ubus.sock";
+ char ubus_backend_url[UBUS_BE_URL_MAX_LEN] = "/usr/bin/mods/amxb/mod-amxb-ubus.so";
++char ip_interface[IP_INTERFACE_MAX_LEN] = "Device.IP.Interface.2.";
+ #endif
+ 
+ #ifdef ENABLE_NFQUEUE
+diff --git miniupnpd/upnpglobalvars.h miniupnpd/upnpglobalvars.h
+index 3b0df8f..bf923ec 100644
+--- miniupnpd/upnpglobalvars.h
++++ miniupnpd/upnpglobalvars.h
+@@ -156,6 +156,8 @@ extern unsigned nfqix[];
+ extern char ubus_sock_url[];
+ #define UBUS_BE_URL_MAX_LEN (1024)
+ extern char ubus_backend_url[];
++#define IP_INTERFACE_MAX_LEN (256)
++extern char ip_interface[];
+ #endif
+ 
+ /* lan addresses to listen to SSDP traffic */
+-- 
+2.34.1
+

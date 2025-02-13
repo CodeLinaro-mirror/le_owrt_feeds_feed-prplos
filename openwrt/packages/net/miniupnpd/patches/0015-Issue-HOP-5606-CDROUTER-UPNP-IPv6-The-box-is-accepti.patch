@@ -1,0 +1,114 @@
+From 8e2eaf5d3446315632d949cd0e5280a9159c18fb Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Tue, 9 Apr 2024 10:04:07 +0200
+Subject: [PATCH] Issue: HOP-5606 [CDROUTER][UPNP][IPv6] The box is accepting
+ LeaseTime Update via UpdatePinhole Action [fix]
+
+GitOrigin-RevId: c20b1102dd836f7a073f370bb548a87de24267e2
+---
+ miniupnpd/amx/amxpinhole.c | 35 ++++++++++++++++++++++++++++++++++-
+ miniupnpd/upnppinhole.c    |  2 +-
+ miniupnpd/upnpsoap.c       |  6 +++++-
+ 3 files changed, 40 insertions(+), 3 deletions(-)
+
+diff --git miniupnpd/amx/amxpinhole.c miniupnpd/amx/amxpinhole.c
+index 9ddf753..7689c46 100644
+--- miniupnpd/amx/amxpinhole.c
++++ miniupnpd/amx/amxpinhole.c
+@@ -71,6 +71,7 @@
+ #include "config.h"
+ #include "../upnpglobalvars.h"
+ #include "amxmisc.h"
++#include "upnputils.h"
+ 
+ static amxb_bus_ctx_t* bus_ctx = NULL;
+ static const char* pinhole_prefix = "cpe-Pinhole-";
+@@ -134,7 +135,7 @@ int find_pinhole(UNUSED const char* ifname,
+ int add_pinhole(UNUSED const char* ifname,
+                 const char* rem_host, unsigned short rem_port,
+                 const char* int_client, unsigned short int_port,
+-                int proto, const char* desc, UNUSED unsigned int timestamp) {
++                int proto, const char* desc, unsigned int timestamp) {
+     int rv = -1;
+     amxc_var_t args;
+     amxc_var_t ret;
+@@ -155,6 +156,7 @@ int add_pinhole(UNUSED const char* ifname,
+     amxc_var_add_key(cstring_t, &args, "sourcePrefix", rem_host);
+     amxc_var_add_key(bool, &args, "enable", true);
+     amxc_var_add_key(cstring_t, &args, "description", desc);
++    amxc_var_add_key(uint32_t, &args, "leaseDuration", timestamp - upnp_time());
+     amxc_string_setf(&tmp, "%d", proto);
+     amxc_var_add_key(cstring_t, &args, "protocol", amxc_string_get(&tmp, 0));
+     rv = amxb_call(bus_ctx, "Firewall.", "setPinhole", &args, &ret, 1);
+@@ -251,4 +253,35 @@ get_pinhole_info(unsigned short uid,
+ 
+ int get_pinhole_uid_by_index(int index) {
+     return (index);
++}
++
++int
++update_pinhole(unsigned short uid, unsigned int timestamp) {
++    int rv = -1;
++    amxc_var_t args;
++    amxc_var_t ret;
++    amxc_string_t tmp;
++
++    if(get_pinhole_info(uid, NULL, 0, NULL, NULL, 0, NULL, NULL, NULL, 0, NULL, NULL, NULL) != 0) {
++        return -2; /* Not found */
++    }
++    amxc_var_init(&args);
++    amxc_var_init(&ret);
++    amxc_string_init(&tmp, 0);
++    amxc_string_setf(&tmp, "%s%hd", pinhole_prefix, uid);
++    amxc_var_set_type(&args, AMXC_VAR_ID_HTABLE);
++    amxc_var_add_key(cstring_t, &args, "alias", amxc_string_get(&tmp, 0));
++    amxc_var_add_key(cstring_t, &args, "origin", "Controller");
++    amxc_var_add_key(uint32_t, &args, "leaseDuration", timestamp - upnp_time());
++    rv = amxb_call(bus_ctx, "Firewall.", "updatePinhole", &args, &ret, 1);
++    if(rv == 0) {
++        amxc_var_log(&ret);
++        syslog(LOG_NOTICE, "%s: updatePinhole (%d)", "update_pinhole(amx)", rv);
++    } else {
++        syslog(LOG_WARNING, "%s: updatePinhole failed (%d)", "update_pinhole(amx)", rv);
++    }
++    amxc_var_clean(&args);
++    amxc_var_clean(&ret);
++    amxc_string_clean(&tmp);
++    return rv;
+ }
+\ No newline at end of file
+diff --git miniupnpd/upnppinhole.c miniupnpd/upnppinhole.c
+index 53093c5..ceecb80 100644
+--- miniupnpd/upnppinhole.c
++++ miniupnpd/upnppinhole.c
+@@ -824,7 +824,7 @@ upnp_get_pinhole_uid_by_index(int index)
+ int
+ upnp_update_inboundpinhole(unsigned short uid, unsigned int leasetime)
+ {
+-#if defined(USE_PF) || defined(USE_NETFILTER)
++#if defined(USE_PF) || defined(USE_NETFILTER) || defined(USE_AMX)
+ 	unsigned int timestamp;
+ 	int ret;
+ 
+diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
+index 4550dc9..cb6c270 100644
+--- miniupnpd/upnpsoap.c
++++ miniupnpd/upnpsoap.c
+@@ -1669,9 +1669,13 @@ PinholeVerification(struct upnphttp * h, char * int_ip, unsigned short int_port)
+ 		strncpy(clientaddr_str, "*ERROR*", sizeof(clientaddr_str));
+ 	}
+ 
++#ifdef USE_AMX
++	if(are_addresses_from_same_host(clientaddr_str, int_ip) == 0)
++#else
+ 	if(memcmp(&h->clientaddr_v6, &result_ip, sizeof(struct in6_addr)) != 0)
++#endif /* USE_AMX */
+ 	{
+-		syslog(LOG_INFO, "%s: Client %s tried to access pinhole for internal %s and is not authorized",
++		syslog(LOG_WARNING, "%s: Client %s tried to access pinhole for internal %s and is not authorized",
+ 		       "PinholeVerification", clientaddr_str, int_ip);
+ 		SoapError(h, 606, "Action not authorized");
+ 		return 0;
+-- 
+2.34.1
+

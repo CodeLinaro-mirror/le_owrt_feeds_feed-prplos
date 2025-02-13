@@ -1,0 +1,249 @@
+From 9e4964e82dc66d67e3974fa752b95ffd504504bc Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Mon, 2 Oct 2023 14:25:09 +0200
+Subject: [PATCH] Issue: HOP-4284 Delete NAT.PortMapping entries created by
+ miniupnpd when PCP is enabled [fix]
+
+GitOrigin-RevId: 4028dbf7bc1ef89fe4cd8ce545742076b1ca7724
+---
+ miniupnpd/amx/amxpcp.c | 59 ++++++++++++++++++++++++++++++++++++++++++
+ miniupnpd/amx/amxpcp.h |  2 ++
+ miniupnpd/amx/amxpmp.c | 46 ++++++++++++++++++++++++++++++++
+ miniupnpd/amx/amxpmp.h |  2 ++
+ miniupnpd/amx/amxrdr.c | 23 ++++++++++++++++
+ miniupnpd/amx/amxrdr.h |  1 +
+ miniupnpd/miniupnpd.c  |  4 +++
+ 7 files changed, 137 insertions(+)
+
+diff --git miniupnpd/amx/amxpcp.c miniupnpd/amx/amxpcp.c
+index bba1607..a312370 100644
+--- miniupnpd/amx/amxpcp.c
++++ miniupnpd/amx/amxpcp.c
+@@ -345,3 +345,62 @@ int update_portmapping_desc_timestamp_pcp(amxb_bus_ctx_t* bus_ctx, const char* i
+     return r;
+ }
+ 
++void delete_all_pcp_entries(amxb_bus_ctx_t* bus_ctx) {
++    amxc_var_t ret;
++    amxc_var_t ret_amxb_del;
++    amxc_var_t* mappings;
++    amxc_string_t key_index;
++    amxc_string_t object_string;
++    int index = 0;
++
++    amxc_var_init(&ret);
++    amxc_var_init(&ret_amxb_del);
++    amxc_string_init(&key_index, 0);
++    amxc_string_init(&object_string, 0);
++
++    amxb_get(bus_ctx, "PCP.Client.*.Server.*.InboundMapping.[Origin == \"UPnP_IWF\"].", 0, &ret, 1);
++    mappings = GETP_ARG(&ret, "0.");
++    if(mappings == NULL) {
++        syslog(LOG_DEBUG, "There is no InboundMapping instance");
++        goto exit;
++    }
++
++    amxc_var_for_each(pm_var, mappings) {
++        int rv = -1;
++        int pos = 0;
++        amxc_string_setf(&key_index, "%s", amxc_var_key(pm_var));
++        amxc_string_setf(&object_string, "%s", amxc_var_key(pm_var));
++        pos = amxc_string_search(&key_index, "InboundMapping.", 0);
++        amxc_string_remove_at(&key_index, 0, pos);
++        amxc_string_replace(&key_index, "InboundMapping.", "", UINT32_MAX);
++        amxc_string_replace(&key_index, ".", "", UINT32_MAX);
++        amxc_string_remove_at(&object_string, pos, UINT32_MAX);
++        amxc_string_appendf(&object_string, "InboundMapping.");
++
++        if(STRING_EMPTY(amxc_string_get(&key_index, 0))) {
++            syslog(LOG_ERR, "Failed to extract the index from %s", amxc_var_key(pm_var));
++            goto exit;
++        }
++        index = atoi(amxc_string_get(&key_index, 0));
++        if(index <= 0) {
++            syslog(LOG_ERR, "Integer index from %s is not valid.", amxc_var_key(pm_var));
++            goto exit;
++        }
++        if(STRING_EMPTY(amxc_string_get(&object_string, 0))) {
++            syslog(LOG_ERR, "PCP extracted from %s object is empty", amxc_var_key(pm_var));
++            goto exit;
++        }
++
++        rv = amxb_del(bus_ctx, amxc_string_get(&object_string, 0), index, NULL, &ret_amxb_del, 1);
++        if((rv != 0) || STRING_EMPTY(GETI_CHAR(&ret_amxb_del, 0))) {
++            syslog(LOG_ERR, "Failed to delete %s", amxc_var_key(pm_var));
++            goto exit;
++        }
++    }
++
++exit:
++    amxc_var_clean(&ret);
++    amxc_var_clean(&ret_amxb_del);
++    amxc_string_clean(&key_index);
++    amxc_string_clean(&object_string);
++}
+\ No newline at end of file
+diff --git miniupnpd/amx/amxpcp.h miniupnpd/amx/amxpcp.h
+index a216680..8f5b59a 100644
+--- miniupnpd/amx/amxpcp.h
++++ miniupnpd/amx/amxpcp.h
+@@ -101,5 +101,7 @@ int update_portmapping_desc_timestamp_pcp(amxb_bus_ctx_t* bus_ctx, const char* i
+                                           unsigned short eport, int proto,
+                                           const char* desc, unsigned int timestamp, const char* pcp_server);
+ 
++void delete_all_pcp_entries(amxb_bus_ctx_t* bus_ctx);
++
+ #endif
+ 
+diff --git miniupnpd/amx/amxpmp.c miniupnpd/amx/amxpmp.c
+index 9981094..333761c 100644
+--- miniupnpd/amx/amxpmp.c
++++ miniupnpd/amx/amxpmp.c
+@@ -372,3 +372,49 @@ int update_portmapping_desc_timestamp_pm(amxb_bus_ctx_t* bus_ctx, const char* if
+     syslog(LOG_ERR, "update_portmapping_desc_timestamp: %d", r);
+     return r;
+ }
++
++void delete_all_port_mapping_entries(amxb_bus_ctx_t* bus_ctx) {
++    amxc_var_t ret;
++    amxc_var_t ret_amxb_del;
++    amxc_var_t* mappings;
++    amxc_string_t key_index;
++    int index = 0;
++
++    amxc_var_init(&ret);
++    amxc_var_init(&ret_amxb_del);
++    amxc_string_init(&key_index, 0);
++
++    amxb_get(bus_ctx, "NAT.PortMapping.[Origin == \"UPnP_IWF\"].", 0, &ret, 1);
++    mappings = GETP_ARG(&ret, "0.");
++    if(mappings == NULL) {
++        syslog(LOG_DEBUG, "There is no PortMapping instance");
++        goto exit;
++    }
++
++    amxc_var_for_each(pm_var, mappings) {
++        int rv = -1;
++        amxc_string_setf(&key_index, "%s", amxc_var_key(pm_var));
++        amxc_string_replace(&key_index, "NAT.PortMapping.", "", UINT32_MAX);
++        amxc_string_replace(&key_index, ".", "", UINT32_MAX);
++        if(STRING_EMPTY(amxc_string_get(&key_index, 0))) {
++            syslog(LOG_ERR, "Failed to extract the index from %s", amxc_var_key(pm_var));
++            goto exit;
++        }
++        index = atoi(amxc_string_get(&key_index, 0));
++        if(index <= 0) {
++            syslog(LOG_ERR, "Integer index from %s is not valid.", amxc_var_key(pm_var));
++            goto exit;
++        }
++
++        rv = amxb_del(bus_ctx, "NAT.PortMapping.", index, NULL, &ret_amxb_del, 1);
++        if((rv != 0) || STRING_EMPTY(GETI_CHAR(&ret_amxb_del, 0))) {
++            syslog(LOG_ERR, "Failed to delete %s", amxc_var_key(pm_var));
++            goto exit;
++        }
++    }
++
++exit:
++    amxc_var_clean(&ret);
++    amxc_var_clean(&ret_amxb_del);
++    amxc_string_clean(&key_index);
++}
+\ No newline at end of file
+diff --git miniupnpd/amx/amxpmp.h miniupnpd/amx/amxpmp.h
+index 0a63555..85f9224 100644
+--- miniupnpd/amx/amxpmp.h
++++ miniupnpd/amx/amxpmp.h
+@@ -101,5 +101,7 @@ int update_portmapping_desc_timestamp_pm(amxb_bus_ctx_t* bus_ctx, const char* if
+                                          unsigned short eport, int proto,
+                                          const char* desc, unsigned int timestamp);
+ 
++void delete_all_port_mapping_entries(amxb_bus_ctx_t* bus_ctx);
++
+ #endif
+ 
+diff --git miniupnpd/amx/amxrdr.c miniupnpd/amx/amxrdr.c
+index 2f74d9f..423dc82 100644
+--- miniupnpd/amx/amxrdr.c
++++ miniupnpd/amx/amxrdr.c
+@@ -75,6 +75,8 @@
+ 
+ static amxb_bus_ctx_t* bus_ctx = NULL;
+ static bool state_add_rdr = false;
++static bool last_pcp_status = false;
++static bool initialized = false;
+ 
+ int init_redirect(void) {
+     int r = -1;
+@@ -94,6 +96,26 @@ void shutdown_redirect(void) {
+     return;
+ }
+ 
++static void delete_previous_mappings(bool use_pcp) {
++    if(use_pcp) {
++        delete_all_port_mapping_entries(bus_ctx);
++    } else {
++        delete_all_pcp_entries(bus_ctx);
++    }
++}
++
++static void initialize_portmappings(bool use_pcp) {
++    if(initialized) {
++        if(last_pcp_status != use_pcp) {
++            delete_previous_mappings(use_pcp);
++            use_pcp = last_pcp_status;
++        }
++    } else {
++        delete_previous_mappings(use_pcp);
++        initialized = true;
++    }
++}
++
+ static bool is_dslite(amxc_string_t** output_pcp_server) {
+     amxc_var_t ret;
+     amxc_var_t* pcp_servers = NULL;
+@@ -126,6 +148,7 @@ static bool is_dslite(amxc_string_t** output_pcp_server) {
+         use_pcp = true;
+     }
+ exit:
++    initialize_portmappings(use_pcp);
+     amxc_var_clean(&ret);
+     return use_pcp;
+ }
+diff --git miniupnpd/amx/amxrdr.h miniupnpd/amx/amxrdr.h
+index f30ef5c..d1fdb8b 100644
+--- miniupnpd/amx/amxrdr.h
++++ miniupnpd/amx/amxrdr.h
+@@ -65,6 +65,7 @@
+ #include <sys/types.h>
+ #include "../commonrdr.h"
+ 
++#define STRING_EMPTY(TEXT) ((TEXT == NULL) || (*TEXT == 0))
+ #define MAX_NB_TRY 3
+ 
+ int
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index 8af3b9c..1e8f1a0 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -1118,13 +1118,17 @@ int update_ext_ip_addr_from_stun(int init)
+ 			syslog(LOG_WARNING, "STUN: ext interface %s has now public IP address %s but firewall filters incoming connections set by miniunnpd", ext_if_name, if_addr_str);
+ 			syslog(LOG_WARNING, "Check configuration of firewall on local machine and also on upstream router");
+ 		}
++#ifndef ALLOW_RESERVED_ADDR
+ 		syslog(LOG_WARNING, "Port forwarding is now disabled");
++#endif
+ 	} else {
+ 		syslog(LOG_INFO, "STUN: ... done");
+ 	}
+ 
+ 	use_ext_ip_addr = ext_addr_str;
++#ifndef ALLOW_RESERVED_ADDR
+ 	disable_port_forwarding = restrictive_nat;
++#endif
+ 	return 0;
+ }
+ 
+-- 
+2.34.1
+

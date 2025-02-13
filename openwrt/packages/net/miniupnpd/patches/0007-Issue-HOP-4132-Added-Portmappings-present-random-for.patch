@@ -1,0 +1,74 @@
+From 934c7da989dc43ac2900465992dc3e49a1cfb0cd Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Mon, 4 Sep 2023 10:56:06 +0200
+Subject: [PATCH] Issue: HOP-4132 Added Portmappings present random forward
+ issues [fix]
+
+GitOrigin-RevId: b63ab60f8607cccc9894cdd142386cf582c8996b
+---
+ miniupnpd/amx/amxrdr.c | 16 +++++++++++++---
+ miniupnpd/amx/amxrdr.h |  2 ++
+ 2 files changed, 15 insertions(+), 3 deletions(-)
+
+diff --git miniupnpd/amx/amxrdr.c miniupnpd/amx/amxrdr.c
+index 8229690..bdba883 100644
+--- miniupnpd/amx/amxrdr.c
++++ miniupnpd/amx/amxrdr.c
+@@ -71,6 +71,7 @@
+ #include "../macros.h"
+ #include "../upnpglobalvars.h"
+ #include "amxmisc.h"
++#include "amxrdr.h"
+ 
+ time_t upnp_time(void);
+ 
+@@ -137,6 +138,7 @@ int add_redirect_rule2(const char* ifname, const char* rhost,
+     amxc_var_t rule;
+     amxc_var_t ret;
+     unsigned int lease_duration;
++    uint32_t nb_try = 0;
+ 
+     (void) ifname;
+     lease_duration = (timestamp > 0) ? timestamp - upnp_time() : 0;
+@@ -153,14 +155,22 @@ int add_redirect_rule2(const char* ifname, const char* rhost,
+     amxc_var_add_key(uint32_t, &rule, "LeaseDuration", lease_duration);
+     amxc_var_add_key(cstring_t, &rule, "Description", desc);
+     amxb_add(bus_ctx, "NAT.PortMapping.", 0, NULL, &rule, &ret, 1);
+-    if(GETI_ARG(&ret, 0) != NULL) {
++    if(GETP_ARG(&ret, "0.path") != NULL) {
+         r = 0;
++        do {
++            syslog(LOG_DEBUG, "Check if PortMapping is enabled");
++            r = amxb_get(bus_ctx, GETP_CHAR(&ret, "0.path"), 0, &rule, 0);
++            if((r != 0)) {
++                r = -1;
++                break;
++            }
++        } while(strcmp(GETP_CHAR(&rule, "0.0.Status"), "Disabled") == 0 && ++nb_try < MAX_NB_TRY && usleep(100));
+     }
+-    amxc_var_clean(&rule);
+-    amxc_var_clean(&ret);
+     if(r == 0) {
+         state_add_rdr = true;
+     }
++    amxc_var_clean(&rule);
++    amxc_var_clean(&ret);
+     syslog(LOG_WARNING, "redirecting port %hu to %s:%hu protocol %s for %s: %d", eport, iaddr, iport, proto_itoa(proto), desc, r);
+     return r;
+ }
+diff --git miniupnpd/amx/amxrdr.h miniupnpd/amx/amxrdr.h
+index bd4605a..38c7ffa 100644
+--- miniupnpd/amx/amxrdr.h
++++ miniupnpd/amx/amxrdr.h
+@@ -65,6 +65,8 @@
+ #include <sys/types.h>
+ #include "../commonrdr.h"
+ 
++#define MAX_NB_TRY 3
++
+ int
+ add_redirect_rule2(const char * ifname, const char * rhost, unsigned short eport,
+                    const char * iaddr, unsigned short iport, int proto,
+-- 
+2.34.1
+

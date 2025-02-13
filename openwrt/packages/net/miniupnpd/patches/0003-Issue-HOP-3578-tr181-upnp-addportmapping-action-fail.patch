@@ -1,0 +1,131 @@
+From 38d1e081f61cfe178f14f14b50fe369305d836b4 Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Mon, 31 Jul 2023 12:12:12 +0200
+Subject: [PATCH] Issue: HOP-3578 [tr181-upnp] addportmapping action failed
+ [fix]
+
+GitOrigin-RevId: cae46efe1aa665879eb29017f7d4139226600a4a
+---
+ miniupnpd/amx/amxrdr.c     |  8 ++++----
+ miniupnpd/miniupnpd.c      | 10 ++++++++++
+ miniupnpd/options.c        |  4 ++++
+ miniupnpd/options.h        |  4 ++++
+ miniupnpd/upnpglobalvars.c |  5 +++++
+ miniupnpd/upnpglobalvars.h |  7 +++++++
+ 6 files changed, 34 insertions(+), 4 deletions(-)
+
+diff --git miniupnpd/amx/amxrdr.c miniupnpd/amx/amxrdr.c
+index 5c67729..fde8c7e 100644
+--- miniupnpd/amx/amxrdr.c
++++ miniupnpd/amx/amxrdr.c
+@@ -73,8 +73,8 @@
+ 
+ time_t upnp_time(void);
+ 
+-amxb_bus_ctx_t* bus_ctx = NULL;
+-bool state_add_rdr = false;
++static amxb_bus_ctx_t* bus_ctx = NULL;
++static bool state_add_rdr = false;
+ 
+ static const char* proto_itoa(int proto) {
+     const char* protocol;
+@@ -113,9 +113,9 @@ static int proto_atoi(const char* protocol) {
+ 
+ int init_redirect(void) {
+     int r = -1;
+-    r = amxb_be_load("/usr/bin/mods/amxb/mod-amxb-ubus.so");
++    r = amxb_be_load(ubus_backend_url);
+     if(r == 0) {
+-        r = amxb_connect(&bus_ctx, "ubus:/var/run/ubus.sock");
++        r = amxb_connect(&bus_ctx, ubus_sock_url);
+     }
+     return r;
+ }
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index 34b2eda..13c895a 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -1358,6 +1358,16 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 				set_rdr_name(RDR_NAT_POSTROUTING_CHAIN_NAME, ary_options[i].value);
+ 				break;
+ #endif    /* USE_NETFILTER */
++#ifdef USE_AMX
++			case UPNPUBUS_SOCK_URL:
++				strncpy(ubus_sock_url, ary_options[i].value, UBUS_SOCK_URL_MAX_LEN);
++				ubus_sock_url[UBUS_SOCK_URL_MAX_LEN - 1] = '\0';
++				break;
++			case UPNPUBUS_BE_URL:
++				strncpy(ubus_backend_url, ary_options[i].value, UBUS_BE_URL_MAX_LEN);
++				ubus_backend_url[UBUS_BE_URL_MAX_LEN - 1] = '\0';
++				break;
++#endif    /*USE_AMX */
+ 			case UPNPNOTIFY_INTERVAL:
+ 				v->notify_interval = atoi(ary_options[i].value);
+ 				break;
+diff --git miniupnpd/options.c miniupnpd/options.c
+index e63f5b6..df345ad 100644
+--- miniupnpd/options.c
++++ miniupnpd/options.c
+@@ -58,6 +58,10 @@ static const struct {
+ 	{ UPNPMODEL_NAME, "model_name" },
+ 	{ UPNPMODEL_DESCRIPTION, "model_description" },
+ 	{ UPNPMODEL_URL, "model_url" },
++#endif
++#ifdef USE_AMX
++	{ UPNPUBUS_SOCK_URL, "ubus_sock_url" },
++	{ UPNPUBUS_BE_URL, "ubus_backend_url" },
+ #endif
+ 	{ UPNPNOTIFY_INTERVAL, "notify_interval" },
+ 	{ UPNPSYSTEM_UPTIME, "system_uptime" },
+diff --git miniupnpd/options.h miniupnpd/options.h
+index bd193cb..b2589ad 100644
+--- miniupnpd/options.h
++++ miniupnpd/options.h
+@@ -68,6 +68,10 @@ enum upnpconfigoptions {
+ 	UPNPQUEUE,				/* queue */
+ 	UPNPTAG,				/* tag */
+ #endif
++#ifdef USE_AMX
++	UPNPUBUS_SOCK_URL,		/* ubus_sock_url*/
++	UPNPUBUS_BE_URL,		/* ubus_backend_url*/
++#endif
+ #ifdef PF_ENABLE_FILTER_RULES
+ 	UPNPQUICKRULES,			/* quickrules */
+ #endif
+diff --git miniupnpd/upnpglobalvars.c miniupnpd/upnpglobalvars.c
+index 2e4daa1..c4c4d7d 100644
+--- miniupnpd/upnpglobalvars.c
++++ miniupnpd/upnpglobalvars.c
+@@ -112,6 +112,11 @@ const char * queue = 0;
+ const char * tag = 0;
+ #endif
+ 
++#ifdef USE_AMX
++char ubus_sock_url[UBUS_SOCK_URL_MAX_LEN] = "ubus:/var/run/ubus.sock";
++char ubus_backend_url[UBUS_BE_URL_MAX_LEN] = "/usr/bin/mods/amxb/mod-amxb-ubus.so";
++#endif
++
+ #ifdef ENABLE_NFQUEUE
+ int nfqueue = -1;
+ int n_nfqix = 0;
+diff --git miniupnpd/upnpglobalvars.h miniupnpd/upnpglobalvars.h
+index fcdc03e..d43ba84 100644
+--- miniupnpd/upnpglobalvars.h
++++ miniupnpd/upnpglobalvars.h
+@@ -151,6 +151,13 @@ extern int n_nfqix;
+ extern unsigned nfqix[];
+ #endif
+ 
++#ifdef USE_AMX
++#define UBUS_SOCK_URL_MAX_LEN (1024)
++extern char ubus_sock_url[];
++#define UBUS_BE_URL_MAX_LEN (1024)
++extern char ubus_backend_url[];
++#endif
++
+ /* lan addresses to listen to SSDP traffic */
+ extern struct lan_addr_list lan_addrs;
+ 
+-- 
+2.34.1
+

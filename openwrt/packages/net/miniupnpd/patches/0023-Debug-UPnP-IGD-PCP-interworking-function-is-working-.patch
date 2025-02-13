@@ -1,0 +1,33 @@
+From adb8bb5836a75ed8569329496d06ceeded18f472 Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Mon, 7 Oct 2024 14:01:43 +0200
+Subject: [PATCH] Debug: [UPnP-IGD] PCP interworking function is working even
+ if Device.PCP.Client.1.UPnPIWF.Enable=0 (HOP-7254) Problem: [UPnP-IGD] PCP
+ interworking function is working even if Device.PCP.Client.1.UPnPIWF.Enable=0
+
+Cause: Device.PCP.Client.1.UPnPIWF.Enable isn't supported
+
+Solution: Add Device.PCP.Client.1.UPnPIWF.Enable support
+
+Issue: HOP-7254 - [UPnP-IGD] PCP interworking function is working even if Device.PCP.Client.1.UPnPIWF.Enable=0
+GitOrigin-RevId: 8098e385220f97c41264288d61dec05f36783788
+---
+ miniupnpd/amx/amxrdr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git miniupnpd/amx/amxrdr.c miniupnpd/amx/amxrdr.c
+index 423dc82..325f9ac 100644
+--- miniupnpd/amx/amxrdr.c
++++ miniupnpd/amx/amxrdr.c
+@@ -126,7 +126,7 @@ static bool is_dslite(amxc_string_t** output_pcp_server) {
+ 
+     amxb_get(bus_ctx, "DSLite.InterfaceSetting.[Status == \"Enabled\"].", 0, &ret, 1);
+     if(GETP_ARG(&ret, "0.0.") != NULL) {
+-        amxb_get(bus_ctx, "PCP.Client.*.Server.[Status == \"Enabled\"].", 0, &ret, 1);
++        amxb_get(bus_ctx, "PCP.Client.[UPnPIWF.Status == \"Enabled\"].Server.[Status == \"Enabled\"].", 0, &ret, 1);
+         if(GETP_ARG(&ret, "0.0.") == NULL) {
+             syslog(LOG_WARNING, "Failed to get the PCP Server object");
+             goto exit;
+-- 
+2.34.1
+
