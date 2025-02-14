@@ -1,0 +1,13 @@
+%populate {
+    object MQTT.Client {
+        instance add (0, "local", Name = "local") {
+            parameter BrokerAddress="127.0.0.1";
+            parameter BrokerPort = 1883;
+            parameter Enable = false;
+            parameter ClientID = "HGW-$(SERIALNUMBER)";
+            parameter Username = "sah";
+            parameter Password = "sah";
+            parameter TransportProtocol = "TCP/IP";
+        }
+    }
+}

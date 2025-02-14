@@ -1,0 +1,20 @@
+config PACKAGE_tr181-syslog
+    tristate
+    select SAH_AMX_TR181_SYSLOG
+
+if PACKAGE_tr181-syslog
+
+menu "Select tr181-syslog build options"
+    depends on PACKAGE_tr181-syslog
+
+config SAH_AMX_TR181_SYSLOG
+    bool "TR-181 compatible syslog"
+    default y
+
+config SAH_AMX_TR181_SYSLOG_ORDER
+    int "TR-181 syslog plugin start up order"
+    default 12
+
+endmenu
+
+endif

@@ -1,0 +1,20 @@
+config PACKAGE_tr181-ipdiagnostics
+    tristate
+    select SAH_IP_DIAGNOSTICS
+
+if PACKAGE_tr181-ipdiagnostics
+
+menu "Select tr181-ipdiagnostics build options"
+    depends on PACKAGE_tr181-ipdiagnostics
+
+config SAH_IP_DIAGNOSTICS
+    bool "Build the TR-181 IP.Diagnostics"
+    default y
+
+config PRPL_IP_DIAGNOSTIC_UPLOAD_DOWNLOAD
+    bool "Build the TR-181 Device.IP.Diagnostics.DownloadDiagnostics and Device.IP.Diagnostics.UploadDiagnostics"
+    default y
+
+endmenu
+
+endif
