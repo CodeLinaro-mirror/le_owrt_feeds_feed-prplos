@@ -1,0 +1,28 @@
+config PACKAGE_netdev-plugin
+    tristate
+    select SAH_AMX_NETDEV
+
+if PACKAGE_netdev-plugin
+
+menu "Select netdev-plugin build options"
+    depends on PACKAGE_netdev-plugin
+
+config SAH_AMX_NETDEV
+    bool "Build NetDev"
+    default y
+
+config SAH_AMX_NETDEV_64_BITS_NETWORK_STATISTICS
+    bool "Use 64 bit network statistics instead of 32 bit"
+    default y
+
+config SAH_AMX_NETDEV_RUN_AS_USER
+    string "User will be used for the NETDEV plugin"
+    default "tr181_app"
+
+config SAH_AMX_NETDEV_RUN_AS_GROUP
+    string "Group will be used for the NETDEV plugin"
+    default "tr181_app"
+
+endmenu
+
+endif
