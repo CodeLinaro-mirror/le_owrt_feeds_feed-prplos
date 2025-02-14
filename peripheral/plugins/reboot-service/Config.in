@@ -1,0 +1,28 @@
+config PACKAGE_reboot-service
+    tristate
+    select SAH_REBOOT_SERVICE
+
+if PACKAGE_reboot-service
+
+menu "Select reboot-service build options"
+    depends on PACKAGE_reboot-service
+
+config SAH_REBOOT_SERVICE
+    bool "Build reboot plug-in"
+    default y
+
+config SAH_REBOOT_SERVICE_ORDER
+    int "Start up order"
+    default 18
+
+config SAH_REBOOT_SERVICE_RUN_AS_USER
+    string "User will be used for the reboot-service plugin"
+    default "tr181_app"
+
+config SAH_REBOOT_SERVICE_RUN_AS_GROUP
+    string "Group will be used for the reboot-service plugin"
+    default "tr181_app"
+
+endmenu
+
+endif
