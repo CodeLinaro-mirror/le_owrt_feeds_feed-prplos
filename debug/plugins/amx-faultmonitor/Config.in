@@ -1,0 +1,32 @@
+config PACKAGE_amx-faultmonitor
+    tristate
+    select SAH_AMX_FAULTMONITOR
+
+if PACKAGE_amx-faultmonitor
+
+menu "Select amx-faultmonitor build options"
+    depends on PACKAGE_amx-faultmonitor
+
+config SAH_AMX_FAULTMONITOR
+    bool "Build faultmonitor plugin"
+    default y
+
+config SAH_AMX_FAULTMONITOR_ORDER
+    int "Start up order"
+    default 15
+
+config SAH_AMX_FAULTMONITOR_STOP_ORDER
+    int "Stop order"
+    default 99
+
+config SAH_AMX_FAULTMONITOR_RUN_AS_USER
+    string "User will be used for the amx-faultmonitor plugin"
+    default "tr181_app"
+
+config SAH_AMX_FAULTMONITOR_RUN_AS_GROUP
+    string "Group will be used for the amx-faultmonitor plugin"
+    default "tr181_app"
+
+endmenu
+
+endif

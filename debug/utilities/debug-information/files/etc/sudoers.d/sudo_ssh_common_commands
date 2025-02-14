@@ -1,0 +1,22 @@
+# Command alias for iptables and ebtables commands
+Cmnd_Alias IPTABLES_COMMANDS = /usr/sbin/iptables -L -t filter -nv, \
+                                /usr/sbin/iptables -L -t nat -nv, \
+                                /usr/sbin/iptables -L -t mangle -nv, \
+                                /usr/sbin/iptables -L -t raw -nv, \
+                                /usr/sbin/ebtables -t filter -L, \
+                                /usr/sbin/ebtables -t nat -L, \
+                                /usr/sbin/ebtables -t broute -L, \
+                                /usr/sbin/ip6tables -L -t filter -nv, \
+                                /usr/sbin/ip6tables -L -t mangle -nv, \
+                                /usr/sbin/ip6tables -L -t raw -nv
+
+# Command alias for monitoring-related commands
+Cmnd_Alias MONITORING_COMMANDS = /bin/dmesg, \
+                        /bin/cat /proc/slabinfo, \
+                        /bin/opkg list-installed, \
+                        /usr/bin/du / -d 1 -h
+
+# Allow the ssh_group group to run commands without a password
+%ssh_group ALL=(ALL) NOPASSWD: MONITORING_COMMANDS
+
+%ssh_group ALL=(ALL) NOPASSWD: IPTABLES_COMMANDS

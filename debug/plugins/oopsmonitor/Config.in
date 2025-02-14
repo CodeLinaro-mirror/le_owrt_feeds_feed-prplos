@@ -1,0 +1,32 @@
+config PACKAGE_oopsmonitor
+    tristate
+    select SAH_AMX_OOPSMONITOR
+
+if PACKAGE_oopsmonitor
+
+menu "Select oopsmonitor build options"
+    depends on PACKAGE_oopsmonitor
+
+config SAH_AMX_OOPSMONITOR
+    bool "Build the oopsmonitor plugin"
+    default y
+
+config SAH_AMX_OOPSMONITOR_ORDER
+    int "Start up order"
+    default 99
+
+config SAH_AMX_OOPSMONITOR_RUN_AS_USER
+    string "User will be used for the OOPSMONITOR plugin"
+    default "tr181_app"
+
+config SAH_AMX_OOPSMONITOR_RUN_AS_GROUP
+    string "Group will be used for the OOPSMONITOR plugin"
+    default "tr181_app"
+
+config SAH_AMX_OOPSMONITOR_DEFAULT_PARSING
+    bool "Enable default parsing"
+    default y
+
+endmenu
+
+endif
