@@ -1,0 +1,28 @@
+config PACKAGE_tr181-mqttbroker
+    tristate
+    select SAH_AMX_TR181_MQTTBROKER
+
+if PACKAGE_tr181-mqttbroker
+
+menu "Select tr181-mqttbroker build options"
+    depends on PACKAGE_tr181-mqttbroker
+
+config SAH_AMX_TR181_MQTTBROKER
+    bool "TR-181 compatible MQTT broker"
+    default y
+
+config SAH_AMX_TR181_MQTTBROKER_ORDER
+    int "TR-181 MQTT broker plugin start up order"
+    default 49
+
+config SAH_AMX_TR181_MQTTBROKER_RUN_AS_USER
+    string "User that will be used for the tr181-mqttbroker plugin"
+    default "tr181_app"
+
+config SAH_AMX_TR181_MQTTBROKER_RUN_AS_GROUP
+    string "Group that will be used for the tr181-mqttbroker plugin"
+    default "tr181_app"
+
+endmenu
+
+endif

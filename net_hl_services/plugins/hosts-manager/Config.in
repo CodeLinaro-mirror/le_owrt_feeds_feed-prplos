@@ -1,0 +1,24 @@
+config PACKAGE_hosts-manager
+    tristate
+    select SAH_SERVICES_AMX-HOSTS-MANAGER
+
+if PACKAGE_hosts-manager
+
+menu "Select hosts-manager build options"
+    depends on PACKAGE_hosts-manager
+
+config SAH_SERVICES_AMX-HOSTS-MANAGER
+    bool "TR-181 Device.Hosts datamodel implementation"
+    default y
+
+config SAH_SERVICES_AMX-HOSTS-MANAGER_RUN_AS_USER
+    string "User will be used for the hosts-manager plugin"
+    default "tr181_app"
+
+config SAH_SERVICES_AMX-HOSTS-MANAGER_RUN_AS_GROUP
+    string "Group will be used for the hosts-manager plugin"
+    default "tr181_app"
+
+endmenu
+
+endif
