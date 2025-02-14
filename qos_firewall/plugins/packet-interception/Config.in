@@ -1,0 +1,28 @@
+config PACKAGE_packet-interception
+    tristate
+    select SAH_AMX_PACKET_INTERCEPTION
+
+if PACKAGE_packet-interception
+
+menu "Select packet-interception build options"
+    depends on PACKAGE_packet-interception
+
+config SAH_AMX_PACKET_INTERCEPTION
+    bool "Build a packet interception component"
+    default y
+
+config SAH_AMX_PACKET_INTERCEPTION_ORDER
+    int "Start up order"
+    default 50
+
+config SAH_AMX_PACKET_INTERCEPTION_TR181_FIREWALL_RULEPATH
+    string "Firewall iptables rules folder location"
+    default "/etc/amx/tr181-firewall"
+
+config SAH_AMX_PACKET_INTERCEPTION_SUPPORT_SKIPLOG
+    bool "Support skiplog"
+    default n
+
+endmenu
+
+endif
