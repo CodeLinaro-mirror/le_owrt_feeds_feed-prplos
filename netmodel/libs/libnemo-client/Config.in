@@ -1,0 +1,20 @@
+config PACKAGE_libnemo-client
+    tristate
+    select SAH_LIB_NEMO-CLIENT
+
+if PACKAGE_libnemo-client
+
+menu "Select libnemo-client build options"
+    depends on PACKAGE_libnemo-client
+
+config SAH_LIB_NEMO-CLIENT
+    bool "Build NeMo client library"
+    default y
+
+config SAH_LIB_NEMO-CLIENT_AMX_COMP
+    bool "Build the Nemo library for AMX compatible system"
+    default n
+
+endmenu
+
+endif
