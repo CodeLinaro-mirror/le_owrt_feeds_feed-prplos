@@ -1,0 +1,54 @@
+From: Sandesh Mahale <sandesh.mahale@vantiva.com>
+Date: Thu, 14 Mar 2024
+Subject: [PATCH] obuspa: remove_broker_dm_elements_which_are_to_be_registered_by_USPService
+
+Currently, OB-USP-A limits registration to service elements of type object.
+This causes a problem as there are a number of parameters under Device. that are to be registered from the legacy TR-181 service,
+such as:
+Device.InterfaceStackNumberOfEntries
+Device.RootDataModelVersion
+Device.Reboot()
+Device.ScheduleTimer()
+Device.FactoryReset()
+
+To allow tr181-device to register DM elements, the following defines need uncommenting in vendor_defs.h:
+#define REMOVE_DEVICE_INFO
+#define REMOVE_DEVICE_TIME
+#define REMOVE_DEVICE_REBOOT
+#define REMOVE_DEVICE_FACTORY_RESET
+#define REMOVE_DEVICE_SCHEDULE_TIMER
+#define REMOVE_DEVICE_BOOT_EVENT
+#define REMOVE_SELF_TEST_DIAG_EXAMPLE
+
+This removes various parts of the data model from the Broker so that they could be registered by a USP Service
+
+Signed-off-by: Sandesh Mahale <sandesh.mahale@vantiva.com>
+
+diff --git a/src/vendor/vendor_defs.h b/src/vendor/vendor_defs.h
+index 42ae4c2..0784554 100644
+--- a/src/vendor/vendor_defs.h
++++ b/src/vendor/vendor_defs.h
+@@ -127,16 +127,16 @@
+ 
+ //-----------------------------------------------------------------------------------------
+ // Uncomment the following to remove code and features from the standard build
+-//#define REMOVE_DEVICE_INFO               // Removes DeviceInfo from the core data model. It must instead be provided by the vendor.
+-//#define REMOVE_DEVICE_TIME               // Removes Device.Time from the core data model. It must instead be provided by the vendor.
++#define REMOVE_DEVICE_INFO               // Removes DeviceInfo from the core data model. It must instead be provided by the vendor.
++#define REMOVE_DEVICE_TIME               // Removes Device.Time from the core data model. It must instead be provided by the vendor.
+ //#define REMOVE_USP_BROKER                // Removes all USP Broker functionality, including Device.USPServices
+ //#define REMOVE_USP_SERVICE               // Removes all USP Service functionality
+-//#define REMOVE_DEVICE_REBOOT             // Removes Device.Reboot() from the core data model
+-//#define REMOVE_DEVICE_FACTORY_RESET      // Removes Device.FactoryReset() from the core data model
+-//#define REMOVE_DEVICE_SCHEDULE_TIMER     // Removes Device.ScheduleTimer() from the core data model
+-//#define REMOVE_DEVICE_BOOT_EVENT         // Removes Device.Boot! from the core data model
++#define REMOVE_DEVICE_REBOOT             // Removes Device.Reboot() from the core data model
++#define REMOVE_DEVICE_FACTORY_RESET      // Removes Device.FactoryReset() from the core data model
++#define REMOVE_DEVICE_SCHEDULE_TIMER     // Removes Device.ScheduleTimer() from the core data model
++#define REMOVE_DEVICE_BOOT_EVENT         // Removes Device.Boot! from the core data model
+ //#define REMOVE_DEVICE_SECURITY           // Removes Device.Security, Device.LocalAgent.Certificate and ControllerTrust Challenge/Response mechanism
+-//#define REMOVE_SELF_TEST_DIAG_EXAMPLE    // Removes Self Test diagnostics example code
++#define REMOVE_SELF_TEST_DIAG_EXAMPLE    // Removes Self Test diagnostics example code
+ 
+ //#define DONT_SORT_GET_INSTANCES          // Disables the sorting of data model paths returned in a GetInstancesResponse. Useful for slow devices supporting large data models.
+ 

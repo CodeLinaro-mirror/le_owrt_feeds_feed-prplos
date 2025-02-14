@@ -1,0 +1,18 @@
+diff --git a/src/vendor/vendor_defs.h b/src/vendor/vendor_defs.h
+index 565ff0d..3b2e123 100644
+--- a/src/vendor/vendor_defs.h
++++ b/src/vendor/vendor_defs.h
+@@ -55,11 +55,11 @@
+ #define MAX_MSG_ID_LEN (256)        // Maximum number of characters in a USP message ID allocated by this Agent
+ #define MAX_PATH_SEGMENTS (32)      // Maximum number of segments (eg "Device, "LocalAgent") in a path. Does not include instance numbers.
+ #define MAX_COMPOUND_KEY_PARAMS 4   // Maximum number of parameters in a compound unique key
+-#define MAX_CONTROLLERS 5           // Maximum number of controllers which may be present in the DB (Device.LocalAgent.Controller.{i})
++#define MAX_CONTROLLERS 1000         // Maximum number of controllers which may be present in the DB (Device.LocalAgent.Controller.{i})
+ #define MAX_CONTROLLER_MTPS 3       // Maximum number of MTPs that a controller may have in the DB (Device.LocalAgent.Controller.{i}.MTP.{i})
+ #define MAX_AGENT_MTPS (MAX_CONTROLLERS)  // Maximum number of MTPs that an agent may have in the DB (Device.LocalAgent.MTP.{i})
+ #define MAX_STOMP_CONNECTIONS (MAX_CONTROLLERS)  // Maximum number of STOMP connections that an agent may have in the DB (Device.STOMP.Connection.{i})
+-#define MAX_USP_SERVICES 10          // Maximum number of USP services which can connect, when acting as a broker
++#define MAX_USP_SERVICES 1000          // Maximum number of USP services which can connect, when acting as a broker
+ #define MAX_UDS_SERVERS 2           // Maximum number of UDS sockets that an agent may have in the DB (Device.UnixDomainSockets.UnixDomainSocket.{i})
+ 
+ #define MAX_COAP_CONNECTIONS (MAX_CONTROLLERS)  // Maximum number of CoAP connections that an agent may have in the DB (Device.LocalAgent.Controller.{i}.MTP.{i}.CoAP)
