@@ -1,0 +1,36 @@
+config PACKAGE_kmod-mcastd-core
+    tristate
+    select MCASTD_CORE
+
+if PACKAGE_kmod-mcastd-core
+
+menu "Select kmod-mcastd-core build options"
+    depends on PACKAGE_kmod-mcastd-core
+
+config MCASTD_CORE
+    bool "Build mcastd core kernel module"
+    default y
+
+config MCASTD_CORE_DEBUG
+    bool "Build mcastd with debug loggings"
+    default n
+
+config MCASTD_CORE_NICE
+    int "Nice value of mcastd's main kthread"
+    default -18
+
+config MCASTD_CORE_ACCESS_CONTROL
+    bool "Multicast access control (whitelist, max number of groups, ...)"
+    default n
+	help
+	  If set, mcastd controls whether IGMP reports are admitted/dropped
+	  depending on a whitelist, and settings specifying the maximum number
+	  of multicast groups, the maximum overall multicast bandwidth, the
+	  imputed bandwidth per group, and the maximum rate of upstream IGMP
+	  traffic.
+	  There is no support for access control of IPv6 multicast traffic.
+	  This setting should be enabled for HGWs with a PON WAN interface.
+
+endmenu
+
+endif

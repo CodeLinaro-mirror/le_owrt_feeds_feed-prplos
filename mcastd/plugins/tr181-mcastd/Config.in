@@ -1,0 +1,45 @@
+config PACKAGE_tr181-mcastd
+    tristate
+    select SAH_AMX_TR181_MCASTD_CORE_PLUGIN
+
+if PACKAGE_tr181-mcastd
+
+menu "Select tr181-mcastd build options"
+    depends on PACKAGE_tr181-mcastd
+
+config SAH_AMX_TR181_MCASTD_CORE_PLUGIN
+    bool "Build mcastd's user space app"
+    default y
+
+config SAH_AMX_TR181_MCASTD_CORE_PLUGIN_ORDER
+    int "mcastd startup order"
+    default 22
+
+config SAH_AMX_TR181_MCASTD_CORE_PLUGIN_QUERY_MCAST_IPTV_INTF
+    bool "Find out ifindex of mcast-iptv interface"
+    default n
+	help
+	  If set, the plugin runs an extra NeMo query for an IPTV WAN
+	  interface to find out which interface below that IPTV WAN interface
+	  has the flag mcast-iptv. Set this option if the IPTV WAN interface
+	  is a bridge, and the MCASTD accelerator should only create an
+	  acceleration rule for the interface in the bridge which has the
+	  mcast-iptv flag set. The plugin passes the result from the NeMo
+	  query to kernel space.
+	  This option is added for following use case. Some projects put 2
+	  interfaces in the IPTV WAN bridge, one with the flag mcast-iptv, and
+	  one with the flag vod-iptv. But the vod-iptv interface is for VOD
+	  which is unicast. So there's no reason to create a MC acceleration
+	  rule for the vod-iptv interface.
+
+config SAH_AMX_TR181_MCASTD_CORE_PLUGIN_RUN_AS_USER
+    string "User will be used for the tr181-mcastd plugin"
+    default "tr181_app"
+
+config SAH_AMX_TR181_MCASTD_CORE_PLUGIN_RUN_AS_GROUP
+    string "Group will be used for the tr181-mcastd plugin"
+    default "tr181_app"
+
+endmenu
+
+endif
