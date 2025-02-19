@@ -4,10 +4,12 @@ PKG_NAME:=oopsmonitor
 PKG_VERSION:=v1.0.9
 SHORT_DESCRIPTION:=Plugin to track kernel oopses
 
-PKG_SOURCE:=oopsmonitor-v1.0.9.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/oopsmonitor/-/archive/v1.0.9
-PKG_HASH:=9e11bcb0a204297bcc58679e276117e414ccbbfe4d0eed6dafac3b9b08e60b08
-PKG_BUILD_DIR:=$(BUILD_DIR)/oopsmonitor-v1.0.9
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PPW-388
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/oopsmonitor.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
