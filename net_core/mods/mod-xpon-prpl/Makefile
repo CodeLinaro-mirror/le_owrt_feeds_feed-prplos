@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-xpon-prpl
-PKG_VERSION:=v1.0.6
+PKG_VERSION:=v1.0.7
 SHORT_DESCRIPTION:=xpon prpl module
 
-PKG_SOURCE:=mod-xpon-prpl-v1.0.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-xpon-prpl/-/archive/v1.0.6
-PKG_HASH:=4ceda32d640f64ff84a9f806330d6e8e381fffbbcabf324f3dae0364f1236df4
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-xpon-prpl-v1.0.6
+PKG_SOURCE:=mod-xpon-prpl-v1.0.7.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-xpon-prpl/-/archive/v1.0.7
+PKG_HASH:=59c50e2cf4658816d356fc5e8caf659fad32e94dc3f1c58426ace79e89ca2f8f
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-xpon-prpl-v1.0.7
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
