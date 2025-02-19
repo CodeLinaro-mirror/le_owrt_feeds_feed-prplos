@@ -1,0 +1,13 @@
+%config {
+    %global usp.translate = {
+        "'MQTTBroker.'" = "Device.MQTTBroker."
+    };
+
+    %global usp.registrations = [
+        "Device.MQTTBroker."
+    ];
+
+    %global backend-dir = [ "/usr/bin/mods/usp", "/usr/bin/mods/amxb" ];
+
+    %global usp.connect-retry = true;
+}
