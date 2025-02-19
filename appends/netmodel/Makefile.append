@@ -1,0 +1,6 @@
+define Package/$(PKG_NAME) +=
+
+  DEPENDS += +SAH_AMX_NETMODEL_DIRECT_SOCKET:libpcb
+endef
+
+$(call append,Package/$(PKG_NAME)/config,$(newline)source "$(THISDIR)/Config.in")

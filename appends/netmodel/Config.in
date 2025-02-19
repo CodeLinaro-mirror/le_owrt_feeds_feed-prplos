@@ -1,0 +1,12 @@
+if PACKAGE_netmodel
+
+menu "Select netmodel vendor-specific build options"
+    depends on PACKAGE_netmodel
+
+config SAH_AMX_NETMODEL_DIRECT_SOCKET
+    bool "Enable the usage of direct socket communication via PCB"
+    default n
+
+endmenu
+
+endif

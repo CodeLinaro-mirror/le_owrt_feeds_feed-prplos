@@ -40,7 +40,6 @@ define Package/$(PKG_NAME)
   DEPENDS += +libdhcpoptions
   DEPENDS += +amxrt
   DEPENDS += +mod-dmext
-  DEPENDS += +SAH_AMX_NETMODEL_DIRECT_SOCKET:libpcb
   MENU:=1
 endef
 
