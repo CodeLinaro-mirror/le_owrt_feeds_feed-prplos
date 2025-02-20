@@ -1,0 +1,31 @@
+config PACKAGE_tr181-usb
+    tristate
+    select AMX_TR181_USB
+
+if PACKAGE_tr181-usb
+
+menu "Select tr181-usb build options"
+    depends on PACKAGE_tr181-usb
+
+config AMX_TR181_USB
+    bool "Build a TR-181 compatible USB manager"
+    default y
+
+config AMX_TR181_USB_ORDER
+    int "Start up order for the tr181-usb manager"
+    default 81
+
+config AMX_TR181_USB_BUSYBOX_MDEV_OPTIONS
+	bool "Enable busybox support for mdev device events"
+	default n
+	select BUSYBOX_CONFIG_MDEV
+	select BUSYBOX_CONFIG_FEATURE_MDEV_CONF
+	select BUSYBOX_CONFIG_FEATURE_MDEV_RENAME
+	select BUSYBOX_CONFIG_FEATURE_MDEV_RENAME_REGEXP
+	select BUSYBOX_CONFIG_FEATURE_MDEV_EXEC
+	help
+	  Select needed busybox options for usb device events.
+
+endmenu
+
+endif
