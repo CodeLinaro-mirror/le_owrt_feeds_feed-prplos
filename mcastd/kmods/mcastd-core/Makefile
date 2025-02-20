@@ -37,6 +37,8 @@ define KernelPackage/$(PKG_NAME)/description
 	Kernel module for multicast support
 endef
 
+CONFIG_KERNEL_CFLAGS += -D__NO_FORTIFY
+
 define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) compile \
 		COMPONENT=$(PKG_NAME) \
