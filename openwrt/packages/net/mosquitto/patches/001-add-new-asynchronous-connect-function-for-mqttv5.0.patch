@@ -299,3 +299,40 @@ index ded98760..8da3fa94 100644
  int net__socket_connect(struct mosquitto *mosq, const char *host, uint16_t port, const char *bind_address, bool blocking);
  int net__socket_close(struct mosquitto *mosq);
  int net__try_connect(const char *host, uint16_t port, mosq_sock_t *sock, const char *bind_address, bool blocking);
+diff --git a/src/bridge.c b/src/bridge.c
+index 70c7ffe5..d4baf164 100644
+--- a/src/bridge.c
++++ b/src/bridge.c
+@@ -442,7 +442,10 @@ int bridge__connect(struct mosquitto *context)
+ 			context->bridge->bind_address,
+ 			false);
+ 
+-	if(rc > 0){
++	if(rc == MOSQ_ERR_CONN_INPROGRESS){
++			mosquitto__set_state(context, mosq_cs_connect_pending);
++			mux__add_out(context);
++	}else if(rc > 0){
+ 		if(rc == MOSQ_ERR_TLS){
+ 			mux__delete(context);
+ 			net__socket_close(context);
+@@ -452,11 +455,7 @@ int bridge__connect(struct mosquitto *context)
+ 		}else if(rc == MOSQ_ERR_EAI){
+ 			log__printf(NULL, MOSQ_LOG_ERR, "Error creating bridge: %s.", gai_strerror(errno));
+ 		}
+-
+ 		return rc;
+-	}else if(rc == MOSQ_ERR_CONN_PENDING){
+-		mosquitto__set_state(context, mosq_cs_connect_pending);
+-		mux__add_out(context);
+ 	}
+ 
+ 	HASH_ADD(hh_sock, db.contexts_by_sock, sock, sizeof(context->sock), context);
+@@ -851,7 +850,7 @@ void bridge_check(void)
+ 					{
+ 						rc = bridge__connect(context);
+ 						context->bridge->restart_t = 0;
+-						if(rc == MOSQ_ERR_SUCCESS || rc == MOSQ_ERR_CONN_PENDING){
++						if(rc == MOSQ_ERR_SUCCESS || rc == MOSQ_ERR_CONN_INPROGRESS){
+ 							if(context->bridge->round_robin == false && context->bridge->cur_address != 0){
+ 								context->bridge->primary_retry = db.now_s + 5;
+ 							}
