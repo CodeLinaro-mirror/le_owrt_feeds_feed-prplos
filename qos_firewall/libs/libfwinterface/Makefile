@@ -4,10 +4,11 @@ PKG_NAME:=libfwinterface
 PKG_VERSION:=v1.6.8
 SHORT_DESCRIPTION:=A library providing interfaces between lib_fwrules and netfilter
 
-PKG_SOURCE:=libfwinterface-v1.6.8.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfwinterface/-/archive/v1.6.8
-PKG_HASH:=6114e7e5090c83ac5aeb94638a4d4fdb081f99ffdbb12f730fefd8a11035de55
-PKG_BUILD_DIR:=$(BUILD_DIR)/libfwinterface-v1.6.8
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_HAPM-84
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfwinterface.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
