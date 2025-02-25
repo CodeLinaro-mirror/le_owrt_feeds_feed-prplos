@@ -25,7 +25,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxc
   DEPENDS += +libsahtrace
   DEPENDS += +libfwrules
-  DEPENDS += +!DEFAULT_firewall4:libiptc
+  DEPENDS += +!DEFAULT_firewall4:libip4tc +!DEFAULT_firewall4:libip6tc
   DEPENDS += +iptables
   DEPENDS += +kmod-ifb
   DEPENDS += +kmod-ip6tables
