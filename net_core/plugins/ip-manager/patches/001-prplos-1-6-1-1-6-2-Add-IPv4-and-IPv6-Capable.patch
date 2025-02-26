@@ -1,0 +1,52 @@
+From 4154430f14a9ad8a584c5092df53105708ec6184 Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Wed, 26 Feb 2025 14:08:25 +0800
+Subject: [CDRouter Test] [prplos][1-6-1][1-6-2][Add IPv4 and IPv6 Capable]
+
+---
+ src/ip_manager_entrypoint.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/src/ip_manager_entrypoint.c b/src/ip_manager_entrypoint.c
+index ce0e1ea..6f83cc9 100644
+--- a/src/ip_manager_entrypoint.c
++++ b/src/ip_manager_entrypoint.c
+@@ -136,11 +136,35 @@ exit:
+     return rv;
+ }
+ 
++static void check_capability(amxd_object_t* ip_obj) {
++    SAH_TRACEZ_IN(ME);
++    bool ipv4, ipv6;
++    amxd_trans_t trans;
++
++    amxd_trans_init(&trans);
++    ipv4 = true; //TODO check ipv4 capability function
++    ipv6 = true; //TODO check ipv6 capability function
++    
++    amxd_trans_select_object(&trans, ip_obj);
++    amxd_trans_set_attr(&trans, amxd_tattr_change_ro, true);
++    amxd_trans_set_bool(&trans, "IPv4Capable", ipv4);
++    amxd_trans_set_bool(&trans, "IPv6Capable", ipv6);
++    when_failed_status(amxd_trans_apply(&trans, ip_manager_get_dm()), exit, {
++        SAH_TRACEZ_WARNING(ME, "Could not apply transaction to set capabilities");
++    });
++
++exit:
++    amxd_trans_clean(&trans);
++    SAH_TRACEZ_OUT(ME);
++}
++
+ void _app_start(UNUSED const char* const sig_name,
+                 UNUSED const amxc_var_t* const data,
+                 UNUSED void* const priv) {
+     SAH_TRACEZ_IN(ME);
+     amxd_object_t* ip_obj = amxd_dm_get_object(ip_manager_get_dm(), "IP");
++    SAH_TRACEZ_INFO(ME, "Checking ipv4 and ipv6 capability");
++    check_capability(ip_obj);
+     SAH_TRACEZ_INFO(ME, "Initialising IP datamodel");
+     amxd_object_for_all(ip_obj, ".Interface.*", init_interface, NULL);
+ 
+-- 
+2.34.1
+
