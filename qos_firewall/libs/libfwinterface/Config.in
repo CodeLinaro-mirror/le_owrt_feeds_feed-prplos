@@ -10,6 +10,7 @@ menu "Select libfwinterface build options"
 config SAH_LIB_FWINTERFACE
     bool "Build the firewall interfaces library"
     default n
+    depends on SAH_LIB_FWRULES
 
 choice
     prompt "Choose the interface to use between lib_fwrules and netfilter"
