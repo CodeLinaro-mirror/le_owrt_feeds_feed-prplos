@@ -1,0 +1,27 @@
+From 64260139b59d646d02f314005672374b1e15a408 Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Wed, 26 Feb 2025 10:56:01 +0800
+Subject: [CDRouter Test] [prplos][1-6-14][Default lan GUA use EUI-64]
+
+---
+ odl/ip-manager_defaults/30_ip_bridges-defaults.odl.uc | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/odl/ip-manager_defaults/40_ip_bridges-defaults.odl.uc b/odl/ip-manager_defaults/40_ip_bridges-defaults.odl.uc
+index f3beff3..5650818 100644
+--- a/odl/ip-manager_defaults/40_ip_bridges-defaults.odl.uc
++++ b/odl/ip-manager_defaults/40_ip_bridges-defaults.odl.uc
+@@ -111,10 +111,7 @@
+             parameter IPAddress = "";
+             parameter Prefix = "${ip_intf_{{lc(Bridge)}}}IPv6Prefix.2";
+             parameter Origin = "AutoConfigured";
+-{% if ( wan_interfaces != 0 ) : %}
+-            parameter InterfaceIDType = "Fixed";
+-{% endif %}
+             parameter InterfaceID = "::1/128";
+         }
+ 
+         instance add("GUA_STATIC") {
+-- 
+2.34.1
+
