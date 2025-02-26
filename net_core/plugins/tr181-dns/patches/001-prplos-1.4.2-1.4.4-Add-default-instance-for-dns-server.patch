@@ -1,0 +1,52 @@
+From b3916a897913ed9aec197a5a120d06fc9b57a376 Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Wed, 26 Feb 2025 17:01:27 +0800
+Subject: [CDRouter Test] [prplos][1.4.2-1.4.4][Add default instance for dns
+ server]
+
+---
+ odl/defaults.d/00_default_ip_interfaces.odl |  1 +
+ odl/defaults.d/10_tr181-dns_default.odl.uc  | 15 +++++++++++++++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/odl/defaults.d/00_default_ip_interfaces.odl b/odl/defaults.d/00_default_ip_interfaces.odl
+index 5f59c54..a82ce12 100644
+--- a/odl/defaults.d/00_default_ip_interfaces.odl
++++ b/odl/defaults.d/00_default_ip_interfaces.odl
+@@ -1,6 +1,7 @@
+ // default value(s) for Device.IP.Interface reference
+ %config {
+     %global ip_intf_lo = "Device.IP.Interface.1.";
++    %global ip_intf_wan = "Device.IP.Interface.2.";
+     %global ip_intf_lcm = "Device.IP.Interface.5.";
+ }
+ #include "global_ip_interfaces.odl";
+diff --git a/odl/defaults.d/10_tr181-dns_default.odl.uc b/odl/defaults.d/10_tr181-dns_default.odl.uc
+index 2cdcc59..d9bea4f 100644
+--- a/odl/defaults.d/10_tr181-dns_default.odl.uc
++++ b/odl/defaults.d/10_tr181-dns_default.odl.uc
+@@ -68,6 +68,21 @@
+                     parameter DNSServer = "127.0.0.1";
+                     parameter Enable = true;
+                 }
++                instance add("dhcpv4") {
++                    parameter Type = "DHCPv4";
++                    parameter Interface = "${ip_intf_wan}";
++                    parameter Enable = true;
++                }
++                instance add("dhcpv6") {
++                    parameter Type = "DHCPv6";
++                    parameter Interface = "${ip_intf_wan}";
++                    parameter Enable = true;
++                }
++                instance add("ra") {
++                    parameter Type = "RouterAdvertisement";
++                    parameter Interface = "${ip_intf_wan}";
++                    parameter Enable = true;
++                }
+             }
+         }
+     }
+-- 
+2.34.1
+
