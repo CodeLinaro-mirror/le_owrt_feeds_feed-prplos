@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-firewall
-PKG_VERSION:=v8.8.14
+PKG_VERSION:=v8.8.17
 SHORT_DESCRIPTION:=TR181 firewall manager
 
-PKG_SOURCE:=tr181-firewall-v8.8.14.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-firewall/-/archive/v8.8.14
-PKG_HASH:=4db76bbd8e265b3cf6614bbe1cc5eb2cf86fa2fa3485d4511ab4edc16b80fe40
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-firewall-v8.8.14
+PKG_SOURCE:=tr181-firewall-v8.8.17.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-firewall/-/archive/v8.8.17
+PKG_HASH:=d6725eb305542f6453d8eeee6a8eec0473db6a857d33aeaf73b8cb5676810d00
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-firewall-v8.8.17
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -43,7 +43,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libnetmodel
   DEPENDS += +libmnl
   DEPENDS += +libnetfilter-queue
-  DEPENDS += +SAH_AMX_TR181_FIREWALL_PORTMAPPING_CONNTRACK_INACTIVITY_CHECK:libamx-conntrack
+  DEPENDS += +libipset
   DEPENDS += +mod-pcm-svc
   DEPENDS += +libipat
   DEPENDS += +SAH_AMX_TR181_FIREWALL_WITH_GMAP:gmap-client
