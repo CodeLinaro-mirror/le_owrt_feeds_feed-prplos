@@ -10,6 +10,7 @@ menu "Select tr181-dhcpv6client build options"
 config SAH_AMX_TR181_DHCPV6CLIENT
     bool "Build TR-181 compatible DHCPv6 client"
     default y
+    select ODHCP6C_ENABLE_UBUS
 
 config SAH_AMX_TR181_DHCPV6CLIENT_RUN_AS_USER
     string "User will be used for the tr181-dhcpv6client plugin"

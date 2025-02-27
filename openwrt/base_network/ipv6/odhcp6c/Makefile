@@ -20,6 +20,8 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Hans Dedecker <dedeckeh@gmail.com>
 PKG_LICENSE:=GPL-2.0
 
+PKG_CONFIG_DEPENDS:=CONFIG_ODHCP6C_ENABLE_UBUS
+
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
@@ -30,11 +32,15 @@ ifneq ($(CONFIG_PACKAGE_odhcp6c_ext_cer_id),0)
   CMAKE_OPTIONS += -DEXT_CER_ID=$(CONFIG_PACKAGE_odhcp6c_ext_cer_id)
 endif
 
+ifeq ($(CONFIG_ODHCP6C_ENABLE_UBUS),y)
+  CMAKE_OPTIONS += -DENABLE_UBUS=on
+endif
+
 define Package/odhcp6c
   SECTION:=net
   CATEGORY:=Network
   TITLE:=Embedded DHCPv6-client for OpenWrt
-  DEPENDS:=@IPV6 +libubox
+  DEPENDS:=@IPV6 +libubox +ODHCP6C_ENABLE_UBUS:libubus
 endef
 
 define Package/odhcp6c/config
@@ -42,6 +48,9 @@ define Package/odhcp6c/config
     int "CER-ID Extension ID (0 = disabled)"
     depends on PACKAGE_odhcp6c
     default 0
+    config ODHCP6C_ENABLE_UBUS
+    bool "Build with ubus support"
+    depends on PACKAGE_odhcp6c
 endef
 
 define Package/odhcp6c/conffiles
