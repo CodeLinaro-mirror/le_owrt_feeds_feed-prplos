@@ -4,10 +4,12 @@ PKG_NAME:=dhcpv4-manager
 PKG_VERSION:=v2.12.21
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-dhcpv4-v2.12.21.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4/-/archive/v2.12.21
-PKG_HASH:=15ed7a0db4443b54c896299498bb16b9ef3c710a5db2635b0bca56200cdf6162
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4-v2.12.21
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=PPW-403_cleanleases_DevFix
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
