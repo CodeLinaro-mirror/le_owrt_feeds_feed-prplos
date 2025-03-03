@@ -1,0 +1,39 @@
+From 95dcc109ccdbb674a8a65951989ca3012799b2e4 Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Mon, 3 Mar 2025 10:42:00 +0800
+Subject: [CDRouter Test] [prplos][1.2.26/1.2.29][Add action when change
+ DNSServers and IPRouters]
+
+---
+ mod-dhcp-dnsmasq/src/mod_dhcp_dnsmasq.c   | 1 +
+ odl/server/dhcpv4-manager-server-pool.odl | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/mod-dhcp-dnsmasq/src/mod_dhcp_dnsmasq.c b/mod-dhcp-dnsmasq/src/mod_dhcp_dnsmasq.c
+index 3f2d94e..cdc3b18 100644
+--- a/mod-dhcp-dnsmasq/src/mod_dhcp_dnsmasq.c
++++ b/mod-dhcp-dnsmasq/src/mod_dhcp_dnsmasq.c
+@@ -161,6 +161,7 @@ struct _dhcp_config {
+ };
+ 
+ static struct _dhcp_options opts[] = {
++    {"3", "IPRouters"},
+     {"6", "DNSServers"},
+     {"15", "DomainName"}
+ };
+diff --git a/odl/server/dhcpv4-manager-server-pool.odl b/odl/server/dhcpv4-manager-server-pool.odl
+index 90d7e00..e62c5db 100644
+--- a/odl/server/dhcpv4-manager-server-pool.odl
++++ b/odl/server/dhcpv4-manager-server-pool.odl
+@@ -588,6 +588,8 @@
+                 contains("parameters.LeaseTime") or
+                 contains("parameters.Order") or
+                 contains("parameters.Enable") or
++                contains("parameters.DNSServers") or
++                contains("parameters.IPRouters") or
+                 contains("parameters.DomainName"))';
+ 
+     on event "dm:object-changed" call dhcp_server_pool_filter_changed
+-- 
+2.34.1
+
