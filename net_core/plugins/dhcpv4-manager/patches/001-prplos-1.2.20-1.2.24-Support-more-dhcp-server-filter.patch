@@ -1,0 +1,166 @@
+From 02f4c1265f174f5f3a03b0bd302ebbccce7a38a3 Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Fri, 28 Feb 2025 18:38:45 +0800
+Subject: [CDRouter Test] [prplos][1.2.20-1.2.24][Support more dhcp server
+ filter]
+
+---
+ .../include_priv/mod_dhcp_dnsmasq.h           |   2 +
+ mod-dhcp-dnsmasq/src/mod_dhcp_dnsmasq.c       | 102 ++++++++++++++++++
+ odl/server/dhcpv4-manager-server-pool.odl     |   5 +
+ 3 files changed, 109 insertions(+)
+
+diff --git a/mod-dhcp-dnsmasq/include_priv/mod_dhcp_dnsmasq.h b/mod-dhcp-dnsmasq/include_priv/mod_dhcp_dnsmasq.h
+index 333c10e..206b7e7 100644
+--- a/mod-dhcp-dnsmasq/include_priv/mod_dhcp_dnsmasq.h
++++ b/mod-dhcp-dnsmasq/include_priv/mod_dhcp_dnsmasq.h
+@@ -88,6 +88,8 @@ extern "C" {
+ #define MATCH_VENDOR        (1u << 0)
+ #define MATCH_MAC           (1u << 1)
+ #define MATCH_DEVICE        (1u << 2)
++#define MATCH_CLIENT        (1u << 3)
++#define MATCH_USERCLASS     (1u << 4)
+ 
+ #define REJECTED_TAG "drop"
+ 
+diff --git a/mod-dhcp-dnsmasq/src/mod_dhcp_dnsmasq.c b/mod-dhcp-dnsmasq/src/mod_dhcp_dnsmasq.c
+index cff3abd..1edbae8 100644
+--- a/mod-dhcp-dnsmasq/src/mod_dhcp_dnsmasq.c
++++ b/mod-dhcp-dnsmasq/src/mod_dhcp_dnsmasq.c
+@@ -657,6 +657,102 @@ exit:
+     return rc;
+ }
+ 
++/**
++ * @brief
++ * Set the filter for Client ID matching.
++ *
++ * @param params the parameter from the dhcpv4 server plugin.
++ * @param config the configuration string to fill in.
++ * @param flags_activated switch to true if a match is configured
++ * @param pool_tag the tag of the pool
++ * @return 0 if success
++ */
++static int dnsmasq_pool_set_client_id_matching(amxc_var_t* params, amxc_string_t* config, int* flags_activated, const char* pool_tag) {
++    int rc = 1;
++    const char* client_id = NULL;
++
++    when_null_trace(params, exit, ERROR, "No parameters given.");
++    when_null_trace(config, exit, ERROR, "Config not initialised.");
++
++    rc = 0;
++    client_id = GET_CHAR(params, "ClientID");
++    when_str_empty_trace(client_id, exit, INFO, "No Client ID given");
++
++    *flags_activated |= MATCH_CLIENT;
++
++    amxc_string_appendf(config, "dhcp-match=set:%s_client,61,0x%s\n", pool_tag, client_id);
++exit:
++    return rc;
++}
++
++/**
++ * @brief
++ * Set the filter for UserClass ID matching.
++ *
++ * @param params the parameter from the dhcpv4 server plugin.
++ * @param config the configuration string to fill in.
++ * @param flags_activated switch to true if a match is configured
++ * @param pool_tag the tag of the pool
++ * @return 0 if success
++ */
++static int dnsmasq_pool_set_userclass_id_matching(amxc_var_t* params, amxc_string_t* config, int* flags_activated, const char* pool_tag) {
++    int rc = 1;
++    const char* userclass_id = NULL;
++
++    when_null_trace(params, exit, ERROR, "No parameters given.");
++    when_null_trace(config, exit, ERROR, "Config not initialised.");
++
++    rc = 0;
++    userclass_id = GET_CHAR(params, "UserClassID");
++    when_str_empty_trace(userclass_id, exit, INFO, "No Client ID given");
++
++    *flags_activated |= MATCH_USERCLASS;
++
++    amxc_string_appendf(config, "dhcp-match=set:%s_userclass,77,0x%s\n", pool_tag, userclass_id);
++exit:
++    return rc;
++}
++
++/**
++ * @brief
++ * Set the filter for pool reserved address.
++ *
++ * @param params The params from the dhcpv4 server plugin.
++ * @param config the configuration string to fill in.
++ * @param alias the interface alias.
++ * @param pool_tag the tag of the pool
++ * @return 0 if success
++ */
++static int dnsmasq_pool_set_reserved_address(amxc_var_t* params, amxc_string_t* config, char* alias, const char* pool_tag) {
++    int rc = 1;
++    const char* reserved = NULL;
++    amxc_string_t csv_reserved;
++    amxc_llist_t ll_reserved;
++
++    when_null_trace(params, exit, ERROR, "No parameters given.");
++    when_null_trace(config, exit, ERROR, "Config not initialised.");
++
++    amxc_string_init(&csv_reserved, 0);
++    amxc_llist_init(&ll_reserved);
++
++    rc = 0;
++    reserved = GET_CHAR(params, "ReservedAddresses");
++    when_str_empty_trace(reserved, exit, INFO, "No Client ID given");
++    amxc_string_set(&csv_reserved, reserved);
++    rc = amxc_string_split_to_llist(&csv_reserved, &ll_reserved, ',');
++    when_failed_trace(rc, exit, ERROR, "Failed to split reserved address");
++    amxc_llist_for_each(it, &ll_reserved) {
++        amxc_string_t* addr = amxc_string_from_llist_it(it);
++        if (amxc_string_is_empty(addr))
++            continue;
++        amxc_string_appendf(config, "dhcp-host=tag:%s_%s,%s,ignore\n", alias, pool_tag, amxc_string_get(addr, 0));
++    }
++    amxc_llist_clean(&ll_reserved, NULL);
++    rc = 0;
++exit:
++    return rc;
++}
++
+ /**
+  * @brief
+  * Translate the pool parameter from the dhcpv4 server plugin to be dnsmasq compatible.
+@@ -682,8 +778,14 @@ static int translate_to_dnsmasq_pool_config(amxc_var_t* params, amxc_string_t* c
+     when_failed_trace(ret, exit, ERROR, "Unable to set vendor matching pool rule.");
+     ret = dnsmasq_pool_set_mac_matching(params, config, &match_enable, intf_name);
+     when_failed_trace(ret, exit, ERROR, "Unable to set mac matching pool rule.");
++    ret = dnsmasq_pool_set_client_id_matching(params, config, &match_enable, intf_name);
++    when_failed_trace(ret, exit, ERROR, "Unable to set client id matching pool rule.");
++    ret = dnsmasq_pool_set_userclass_id_matching(params, config, &match_enable, intf_name);
++    when_failed_trace(ret, exit, ERROR, "Unable to set user class id matching pool rule.");
+     ret = dnsmasq_pool_set_network_config(params, config, intf_name, match_enable, pool_tag);
+     when_failed_trace(ret, exit, ERROR, "Unable to set network config.");
++    ret = dnsmasq_pool_set_reserved_address(params, config, intf_name, pool_tag);
++    when_failed_trace(ret, exit, ERROR, "Unable to set reserved address matching pool rule.");
+     ret = dnsmasq_pool_set_config_dhcp_options(params, config, intf_name, pool_tag);
+     when_failed_trace(ret, exit, ERROR, "Unable to set dhcp options.");
+ exit:
+diff --git a/odl/server/dhcpv4-manager-server-pool.odl b/odl/server/dhcpv4-manager-server-pool.odl
+index 10c0d83..90d7e00 100644
+--- a/odl/server/dhcpv4-manager-server-pool.odl
++++ b/odl/server/dhcpv4-manager-server-pool.odl
+@@ -598,6 +598,11 @@
+             contains("parameters.Chaddr") or
+             contains("parameters.ChaddrMask") or
+             contains("parameters.ChaddrExclude") or
++            contains("parameters.ClientID") or
++            contains("parameters.ClientIDExclude") or
++            contains("parameters.UserClassID") or
++            contains("parameters.UserClassIDExclude") or
++            contains("parameters.ReservedAddresses") or
+             contains("parameters.Tag") or
+             contains("parameters.AllowedDevices"))';
+ 
+-- 
+2.34.1
+

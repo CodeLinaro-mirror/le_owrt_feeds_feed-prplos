@@ -1,0 +1,32 @@
+From bf6d4049c471677c44839be628dd67196134323e Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Mon, 3 Mar 2025 09:40:55 +0800
+Subject: [CDRouter Test] [prplos][1.2.20-1.2.24][Add apply the tag to the
+ address pool]
+
+---
+ mod-dhcp-dnsmasq/src/mod_dhcp_dnsmasq.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/mod-dhcp-dnsmasq/src/mod_dhcp_dnsmasq.c b/mod-dhcp-dnsmasq/src/mod_dhcp_dnsmasq.c
+index 1edbae8..e0759be 100644
+--- a/mod-dhcp-dnsmasq/src/mod_dhcp_dnsmasq.c
++++ b/mod-dhcp-dnsmasq/src/mod_dhcp_dnsmasq.c
+@@ -531,6 +531,14 @@ static int dnsmasq_pool_set_network_config(amxc_var_t* params, amxc_string_t* co
+         exclude = GET_BOOL(params, "ChaddrExclude");
+         amxc_string_appendf(config, "tag:%s%s_mac,", exclude ? "!" : "", intf_name);
+     }
++    if(flag_activated & MATCH_CLIENT) {
++        exclude = GET_BOOL(params, "ClientIDExclude");
++        amxc_string_appendf(config, "tag:%s%s_client,", exclude ? "!" : "", intf_name);
++    }
++    if(flag_activated & MATCH_USERCLASS) {
++        exclude = GET_BOOL(params, "UserClassIDExclude");
++        amxc_string_appendf(config, "tag:%s%s_userclass,", exclude ? "!" : "", intf_name);
++    }
+     if(flag_activated & MATCH_DEVICE) {
+         const char* allow = GET_CHAR(params, "AllowedDevices");
+         exclude = strcmp(allow, "Unknown") == 0;
+-- 
+2.34.1
+
