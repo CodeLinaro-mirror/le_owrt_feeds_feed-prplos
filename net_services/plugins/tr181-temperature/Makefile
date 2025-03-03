@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-temperature
-PKG_VERSION:=v0.4.11
+PKG_VERSION:=v0.4.13
 SHORT_DESCRIPTION:=TR-181 compatible plugin for device temperature management
 
-PKG_SOURCE:=tr181-temperature-v0.4.11.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-temperature/-/archive/v0.4.11
-PKG_HASH:=d1f7df288c6846eaee011ebe1baeadec131548317c1d585f42e71485fc003851
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-temperature-v0.4.11
+PKG_SOURCE:=tr181-temperature-v0.4.13.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-temperature/-/archive/v0.4.13
+PKG_HASH:=0909be112fc8dde0a14cde5ec1888404982e77ccde4cd02833305a112533c51d
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-temperature-v0.4.13
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -36,6 +36,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libsahtrace
   DEPENDS += +amxrt
   DEPENDS += +mod-dmext
+  DEPENDS += +ucode-mod-fs
   MENU:=1
 endef
 
