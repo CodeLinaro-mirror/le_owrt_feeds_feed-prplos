@@ -1,0 +1,81 @@
+From ef6d13e9b1e70f051d04150ae99f6d7f6be6bd48 Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Fri, 28 Feb 2025 09:38:00 +0800
+Subject: [CDRouter Test] [prplos][1.2.9-1.2.10][Update request and sent
+ options when parameters change]
+
+---
+ src/dhcp_packet.c  |  5 +++++
+ src/dhcpv4c_main.c | 33 ++++++++++++++++++++++++++++++++-
+ 2 files changed, 37 insertions(+), 1 deletion(-)
+
+diff --git a/src/dhcp_packet.c b/src/dhcp_packet.c
+index bfbcc7a..31b3fa3 100644
+--- a/src/dhcp_packet.c
++++ b/src/dhcp_packet.c
+@@ -184,6 +184,11 @@ static int dhcp_packet_req_options(dhcp_lease_t* lease,
+     amxc_var_for_each(var, &lease->req_options) {
+         unsigned char tag = GET_UINT32(var, "Tag");
+ 
++        if(!GET_BOOL(var, "Enable")) {
++            SAH_TRACEZ_INFO(ME, "Req option %u disabled, skip", tag);
++            continue;
++        }
++
+         if((type == DHCPINFORM) && tag_is_suppressed(tag)) {
+             continue;
+         }
+diff --git a/src/dhcpv4c_main.c b/src/dhcpv4c_main.c
+index f8f0954..f5900ba 100644
+--- a/src/dhcpv4c_main.c
++++ b/src/dhcpv4c_main.c
+@@ -191,6 +191,38 @@ exit:
+     return rv;
+ }
+ 
++static int dhcpv4_client_change(UNUSED const char* function_name,
++                                amxc_var_t* args,
++                                amxc_var_t* ret) {
++    dhcp_interface_t* intf = NULL;
++    amxc_llist_t* ll_option;
++    int rv = -1;
++
++    intf = dhcp_interface_find_by_path(GET_CHAR(args, "Interface"));
++    when_null_trace(intf, exit, INFO, "Could not get interface by [%s]", GET_CHAR(args, "Interface"));
++    when_null_trace(intf->lease, exit, INFO, "Could not get lease by [%s]", GET_CHAR(args, "Interface"));
++
++    ll_option = amxc_var_dyncast(amxc_llist_t, GET_ARG(args, "ReqOption"));
++    when_true_trace(amxc_llist_size(ll_option) == 0, exit, INFO, "Get request options is empty");
++    amxc_var_clean(&intf->lease->req_options);
++    amxc_var_init(&intf->lease->req_options);
++    amxc_var_add(amxc_llist_t, &intf->lease->req_options, ll_option);
++    amxc_llist_delete(&ll_option, NULL);
++
++    ll_option = amxc_var_dyncast(amxc_llist_t, GET_ARG(args, "SentOption"));
++    when_true_trace(amxc_llist_size(ll_option) == 0, exit, INFO, "Get sent options is empty");
++    amxc_var_clean(&intf->lease->sent_options);
++    amxc_var_init(&intf->lease->sent_options);
++    amxc_var_add(amxc_llist_t, &intf->lease->sent_options, ll_option);
++    amxc_llist_delete(&ll_option, NULL);
++
++    rv = 0;
++
++exit:
++    amxc_var_set(int32_t, ret, rv);
++    return rv;
++}
++
+ static int dummy_func(UNUSED const char* function_name,
+                       UNUSED amxc_var_t* args,
+                       amxc_var_t* ret) {
+@@ -321,7 +352,7 @@ static AMXM_CONSTRUCTOR mod_dhcpv4c_start(void) {
+     ret = amxm_module_register(&mod, so, MOD_NAME);
+     ret |= amxm_module_add_function(mod, "dhcpv4c-start", dhcpv4c_set_state_start);
+     ret |= amxm_module_add_function(mod, "dhcpv4c-stop", dhcpv4c_set_state_stop);
+-    ret |= amxm_module_add_function(mod, "client-change", dummy_func);
++    ret |= amxm_module_add_function(mod, "client-change", dhcpv4_client_change);
+     ret |= amxm_module_add_function(mod, "update-config", dummy_func);
+     ret |= amxm_module_add_function(mod, "dhcpv4c-renew", dhcpv4c_renew);
+     ret |= amxm_module_add_function(mod, "dhcpv4c-release", dhcpv4c_release);
+-- 
+2.34.1

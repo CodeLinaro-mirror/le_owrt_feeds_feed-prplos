@@ -1,0 +1,38 @@
+From 6908d344dfc4dbc9529ede7932b85116a3b2a33b Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Wed, 5 Mar 2025 16:15:23 +0800
+Subject: [PATCH] [1.2.9-1.2.10][Renew when client change]
+
+---
+ src/dhcpv4c_main.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/src/dhcpv4c_main.c b/src/dhcpv4c_main.c
+index 6d56bc8..e695217 100644
+--- a/src/dhcpv4c_main.c
++++ b/src/dhcpv4c_main.c
+@@ -227,17 +227,19 @@ static int dhcpv4_client_change(UNUSED const char* function_name,
+     when_null_trace(intf->lease, exit, INFO, "Could not get lease by [%s]", GET_CHAR(args, "Interface"));
+ 
+     ll_option = amxc_var_dyncast(amxc_llist_t, GET_ARG(args, "ReqOption"));
+-    when_true_trace(amxc_llist_size(ll_option) == 0, exit, INFO, "Get request options is empty");
++    when_null_trace(ll_option, exit, INFO, "Get request options is null");
+     dhcpv4_client_clear_options(&intf->lease->req_options);
+     dhcpv4_client_fill_options(&intf->lease->req_options, ll_option);
+     amxc_llist_delete(&ll_option, NULL);
+ 
+     ll_option = amxc_var_dyncast(amxc_llist_t, GET_ARG(args, "SentOption"));
+-    when_true_trace(amxc_llist_size(ll_option) == 0, exit, INFO, "Get sent options is empty");
++    when_null_trace(ll_option, exit, INFO, "Get sent options is null");
+     dhcpv4_client_clear_options(&intf->lease->sent_options);
+     dhcpv4_client_fill_options(&intf->lease->sent_options, ll_option);
+     amxc_llist_delete(&ll_option, NULL);
+ 
++ 
++    dhcp_state_start(intf->lease);
+     rv = 0;
+ 
+ exit:
+-- 
+2.34.1
+
