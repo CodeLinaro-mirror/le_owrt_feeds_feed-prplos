@@ -1,0 +1,68 @@
+From a2b085be66c8c82eec8b281202be991d7befe86f Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Tue, 4 Mar 2025 14:33:00 +0800
+Subject: [PATCH] [patch][Add action to handle request or sent options change]
+
+---
+ src/dhcpv4c_main.c | 34 ++++++++++++++++++++++++++++------
+ 1 file changed, 28 insertions(+), 6 deletions(-)
+
+diff --git a/src/dhcpv4c_main.c b/src/dhcpv4c_main.c
+index 35f073d..6d56bc8 100644
+--- a/src/dhcpv4c_main.c
++++ b/src/dhcpv4c_main.c
+@@ -191,6 +191,30 @@ exit:
+     return rv;
+ }
+ 
++static void dhcpv4_client_clear_options(amxc_var_t* option) {
++    amxc_var_clean(option);
++    amxc_var_init(option);
++    amxc_var_set_type(option, AMXC_VAR_ID_LIST);
++}
++
++static int dhcpv4_client_fill_options(amxc_var_t* options, const amxc_llist_t* ll) {
++    int rv = -1;
++    amxc_var_t* item;
++    amxc_var_t* option;
++
++    when_null_trace(options, exit, ERROR, "Invalid first parameter");
++    when_null_trace(ll, exit, ERROR, "Invalid second parameter");
++
++    amxc_llist_for_each(it, ll) {
++        item = amxc_llist_it_get_data(it, amxc_var_t, lit);
++        option = amxc_var_add(amxc_htable_t, options, NULL);
++        when_failed_trace(amxc_var_copy(option, item), exit, ERROR, "Failed to filling option");
++    }
++    rv = 0;
++exit:
++    return rv;
++}
++
+ static int dhcpv4_client_change(UNUSED const char* function_name,
+                                 amxc_var_t* args,
+                                 amxc_var_t* ret) {
+@@ -204,16 +228,14 @@ static int dhcpv4_client_change(UNUSED const char* function_name,
+ 
+     ll_option = amxc_var_dyncast(amxc_llist_t, GET_ARG(args, "ReqOption"));
+     when_true_trace(amxc_llist_size(ll_option) == 0, exit, INFO, "Get request options is empty");
+-    amxc_var_clean(&intf->lease->req_options);
+-    amxc_var_init(&intf->lease->req_options);
+-    amxc_var_add(amxc_llist_t, &intf->lease->req_options, ll_option);
++    dhcpv4_client_clear_options(&intf->lease->req_options);
++    dhcpv4_client_fill_options(&intf->lease->req_options, ll_option);
+     amxc_llist_delete(&ll_option, NULL);
+ 
+     ll_option = amxc_var_dyncast(amxc_llist_t, GET_ARG(args, "SentOption"));
+     when_true_trace(amxc_llist_size(ll_option) == 0, exit, INFO, "Get sent options is empty");
+-    amxc_var_clean(&intf->lease->sent_options);
+-    amxc_var_init(&intf->lease->sent_options);
+-    amxc_var_add(amxc_llist_t, &intf->lease->sent_options, ll_option);
++    dhcpv4_client_clear_options(&intf->lease->sent_options);
++    dhcpv4_client_fill_options(&intf->lease->sent_options, ll_option);
+     amxc_llist_delete(&ll_option, NULL);
+ 
+     rv = 0;
+-- 
+2.34.1
+
