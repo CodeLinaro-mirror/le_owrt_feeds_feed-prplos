@@ -1,0 +1,214 @@
+From 178b8f8b6046970ea576e5c00d24f347e92034b1 Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Mon, 10 Mar 2025 14:44:44 +0800
+Subject: [PATCH] [1.6.6][1.6.13][Sync static address and link local address]
+
+---
+ src/ip_manager_netdev.c | 138 +++++++++++++++++++++++++++++++++++++++-
+ src/ipv6_addresses.c    |   3 +-
+ 2 files changed, 139 insertions(+), 2 deletions(-)
+
+diff --git a/src/ip_manager_netdev.c b/src/ip_manager_netdev.c
+index dcf87a1..865b6f6 100644
+--- a/src/ip_manager_netdev.c
++++ b/src/ip_manager_netdev.c
+@@ -54,6 +54,7 @@
+ 
+ #include <stdlib.h>
+ #include <string.h>
++#include <ipat/ipat.h>
+ 
+ #include <amxc/amxc_lqueue.h>
+ #include <amxp/amxp_signal.h>
+@@ -93,6 +94,131 @@ static amxd_status_t ip_manager_set_parameters(amxd_object_t* addr_obj,
+     return rv;
+ }
+ 
++static char* create_full_prefix(const char* address, int prefixlen) {
++    char* prefix = NULL;
++    char output[INET6_ADDRSTRLEN];
++    uint8_t full_addr[16];
++    uint64_t* upper, * lower;
++    uint64_t upper_mask = 0, lower_mask = 0;
++
++    when_null_trace(address, exit, ERROR, "Null of address pass");
++    when_false_trace(prefixlen >= 0 && prefixlen <= 128, exit, ERROR, "Out of prefixlen range");
++
++    when_false_trace(inet_pton(AF_INET6, address, full_addr), exit, ERROR, "Failed to convert bin for address");
++    upper = (uint64_t*)full_addr;
++    lower = (uint64_t*)(full_addr + 8);
++    for (int i = 0; i < prefixlen; ++i) {
++        if (i < 64)
++            upper_mask |= 1ULL << (64 - i);
++        else
++            lower_mask |= 1ULL << (128 - i);
++    }
++    (* upper) &= upper_mask;
++    (* lower) &= lower_mask;
++    when_null_trace(inet_ntop(AF_INET6, full_addr, output, INET6_ADDRSTRLEN), exit, ERROR, "Failed to convert str for address");
++    prefix = calloc(INET6_ADDRSTRLEN, sizeof(char));
++    when_null_trace(prefix, exit, ERROR, "Failed to alloc menory to prefix");
++    snprintf(prefix, INET6_ADDRSTRLEN, "%s/%d", output, prefixlen);
++
++exit:
++    return prefix;
++}
++
++static void delete_full_prefix(char** prefix) {
++    if(prefix && *prefix)
++        free(*prefix);
++    *prefix = NULL;
++}
++
++static amxd_object_t* create_static_prefix(amxc_var_t* ip_instance, const char* intf_name, const char* tag) {
++    amxd_status_t status = amxd_status_unknown_error;
++    amxd_object_t* prefix_obj = NULL;
++    ipv6_prefix_info_t* prefix_info = NULL;
++    amxd_trans_t trans;
++    amxc_ts_t validlifetime;
++    amxc_ts_t preferredlifetime;
++    uint32_t plt = 0;
++    uint32_t vlt = 0;
++    char* prefix = NULL;
++    int prefix_len;
++
++    amxd_trans_init(&trans);
++
++    when_str_empty_trace(intf_name, exit, ERROR, "Empty interface name");
++    when_str_empty_trace(tag, exit, ERROR, "Empty interface tag");
++    when_null_trace(ip_instance, exit, ERROR, "Null interface ip instance");
++
++    prefix_len = GET_INT32(ip_instance, "PrefixLen");
++    prefix = create_full_prefix(GET_CHAR(ip_instance, "Address"), prefix_len);
++    when_null_trace(prefix, exit, ERROR, "Failed to get prefix");
++
++    amxd_trans_set_attr(&trans, amxd_tattr_change_ro, true);
++    prefix_obj = amxd_dm_findf(ip_manager_get_dm(),
++                               "IP.Interface.[Name == '%s'].IPv6Prefix.[Alias == '%s'].",
++                               intf_name,
++                               tag);
++
++    if(prefix_obj == NULL) {
++        amxd_trans_select_pathf(&trans, "IP.Interface.[Name == '%s'].IPv6Prefix.", intf_name);
++        amxd_trans_add_inst(&trans, 0, tag);
++    } else {
++        amxd_trans_select_object(&trans, prefix_obj);
++    }
++
++    amxd_trans_set_value(bool, &trans, "Enable", true);
++    amxd_trans_set_value(bool, &trans, "OnLink", strcmp(GET_CHAR(ip_instance, "Scope"), "link") == 0);
++    amxd_trans_set_value(cstring_t, &trans, "Origin", "Static");
++    amxd_trans_set_value(cstring_t, &trans, "StaticType", "Static");
++    amxd_trans_set_value(cstring_t, &trans, "Prefix", prefix);
++
++    plt = GET_UINT32(ip_instance, "PreferredLifetime");
++    vlt = GET_UINT32(ip_instance, "ValidLifetime");
++    if(plt == 0) {
++        plt = UINT32_MAX;
++    }
++    if(vlt == 0) {
++        vlt = UINT32_MAX;
++    }
++    calculate_lifetimes(plt, vlt, &preferredlifetime, &validlifetime);
++    amxd_trans_set_value(uint32_t, &trans, "RelativePreferredLifetime", plt);
++    if(amxc_ts_is_valid(&preferredlifetime)) {
++        amxd_trans_set_value(amxc_ts_t, &trans, "PreferredLifetime", &preferredlifetime);
++    }
++
++    amxd_trans_set_value(uint32_t, &trans, "RelativeValidLifetime", vlt);
++    if(amxc_ts_is_valid(&validlifetime)) {
++        amxd_trans_set_value(amxc_ts_t, &trans, "ValidLifetime", &validlifetime);
++    }
++
++    status = amxd_trans_apply(&trans, ip_manager_get_dm());
++    when_failed_trace(status, exit, ERROR,
++                      "Failed to add instance '%s' on interface '%s', return '%d'",
++                      tag,
++                      intf_name,
++                      status);
++
++    if(prefix_obj == NULL) {
++        prefix_obj = amxd_dm_findf(ip_manager_get_dm(),
++                                   "IP.Interface.[Name == '%s'].IPv6Prefix.[Alias == '%s'].",
++                                   intf_name,
++                                   tag);
++        when_null_trace(prefix_obj, exit, ERROR, "Could not found prefix object");
++    }
++
++    if(prefix_obj->priv) {
++        prefix_info = (ipv6_prefix_info_t*)prefix_obj->priv;
++        prefix_info->prefix_origin = prefix_origin_to_enum("Static");
++        prefix_info->prefix_type = prefix_static_type_to_enum("Static");
++        amxp_timer_stop(prefix_info->preferred_timer);
++        amxp_timer_stop(prefix_info->valid_timer);
++    }
++
++exit:
++    delete_full_prefix(&prefix);
++    amxd_trans_clean(&trans);
++    return prefix_obj;
++}
++
+ /**
+  * @brief Add the IP instance to the IP manager and fills in the addr_info structure
+  *
+@@ -107,12 +233,15 @@ static amxd_object_t* add_ipv6_to_ip_manager(amxc_var_t* ip_instance, const char
+     amxd_trans_t trans;
+     amxd_object_t* addr_object = NULL;
+     amxd_object_t* addr_obj = NULL;
++    amxd_object_t* prefix_obj = NULL;
++    amxc_string_t prefix;
+     amxd_status_t status = amxd_status_unknown_error;
+     amxc_ts_t validlifetime;
+     amxc_ts_t preferredlifetime;
+     amxc_string_t the_flag;
+     ipv6_addr_info_t* addr_info = NULL;
+     int index = 0;
++    char* prefix_path;
+     const char* flag = NULL;
+     const char* final_flag = NULL;
+     uint32_t plt = 0;
+@@ -174,12 +302,25 @@ static amxd_object_t* add_ipv6_to_ip_manager(amxc_var_t* ip_instance, const char
+         amxc_string_appendf(&the_flag, "%d", index);
+     }
+     final_flag = amxc_string_get(&the_flag, 0);
++    prefix_obj = create_static_prefix(ip_instance, intf_name, final_flag);
++    when_null_trace(prefix_obj, exit, ERROR, "Failed to create prefix instance object for %s", final_flag);
+ 
++    prefix_path = amxd_object_get_path(prefix_obj, AMXD_OBJECT_INDEXED);
++    amxc_string_init(&prefix, 0);
++    amxc_string_set(&prefix, prefix_path);
++    amxc_string_prependf(&prefix, "%s", "Device.");
++    free(prefix_path);
++
+     amxd_trans_add_inst(&trans, 0, final_flag);
+     amxd_trans_set_value(bool, &trans, "Enable", true);
+     amxd_trans_set_value(cstring_t, &trans, "IPAddress", GET_CHAR(ip_instance, "Address"));
+-    amxd_trans_set_value(cstring_t, &trans, "Origin", "WellKnown");
+     amxd_trans_set_value(bool, &trans, "AutoDetected", true);
++    if(strncmp(final_flag, "LLA", 3) == 0)
++        amxd_trans_set_value(cstring_t, &trans, "Origin", "AutoConfigured");
++    else
++        amxd_trans_set_value(cstring_t, &trans, "Origin", "Static");
++    amxd_trans_set_value(cstring_t, &trans, "Prefix", amxc_string_get(&prefix, 0));
++    amxc_string_clean(&prefix);
+ 
+     plt = GET_UINT32(ip_instance, "PreferredLifetime");
+     vlt = GET_UINT32(ip_instance, "ValidLifetime");
+diff --git a/src/ipv6_addresses.c b/src/ipv6_addresses.c
+index f63f376..f8aed73 100644
+--- a/src/ipv6_addresses.c
++++ b/src/ipv6_addresses.c
+@@ -611,7 +611,8 @@ int init_ipv6(amxd_object_t* addr_obj) {
+     }
+     when_null_trace(addr_info, exit, ERROR, "No address info provided");
+ 
+-    if(((addr_info->origin == ADDR_ORIGIN_WELLKNOWN) || (addr_info->origin == ADDR_ORIGIN_STATIC))) {
++    if(((addr_info->origin == ADDR_ORIGIN_WELLKNOWN) || (addr_info->origin == ADDR_ORIGIN_STATIC)) ||
++       ((addr_info->origin == ADDR_ORIGIN_AUTOCONFIGURED) && (strncmp(amxd_object_get_name(addr_info->addr_obj, AMXD_OBJECT_NAMED), "LLA", 3) == 0))) {
+         if(!addr_info->auto_detected) {
+             init_relative_lifetimes(addr_info->addr_obj);
+         }
+-- 
+2.34.1
+
