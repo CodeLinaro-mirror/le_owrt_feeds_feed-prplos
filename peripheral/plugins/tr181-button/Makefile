@@ -6,8 +6,8 @@ SHORT_DESCRIPTION:=Implementation of the Button HL API to expose the buttons and
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-button.git
-PKG_SOURCE_VERSION:=0d3265b74de5ad96b2a59309ff0db292a9e27a1a
-PKG_MIRROR_HASH:=3f30791c6c5596a8e259f42c6b16d2748d9c631a1ce55b4d0e4a7df4b0ac38b7
+PKG_SOURCE_VERSION:=3a4b33a73fd35eb45dbd440cff350ccfe4beb7f1
+PKG_MIRROR_HASH:=b2b6e0469f58614abfd8fdb7bc73aa2b1be5966fbddaed54cfc62ad6aa551805
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-button-v0.1.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
