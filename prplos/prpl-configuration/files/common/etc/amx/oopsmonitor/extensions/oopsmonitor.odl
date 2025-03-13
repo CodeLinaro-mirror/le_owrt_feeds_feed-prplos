@@ -1,0 +1,13 @@
+%config {
+    %global usp.translate = {
+        "'KernelFaults.'" = "Device.DeviceInfo.KernelFaults."
+    };
+
+    %global usp.registrations = [
+        "Device.DeviceInfo.KernelFaults."
+    ];
+
+    %global backend-dir = [ "/usr/bin/mods/usp", "/usr/bin/mods/amxb" ];
+
+    %global usp.connect-retry = true;
+}
