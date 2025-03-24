@@ -4,10 +4,11 @@ PKG_NAME:=netmodel-cellular
 PKG_VERSION:=v0.1.1
 SHORT_DESCRIPTION:=Network Model Cellular client
 
-PKG_SOURCE:=netmodel-cellular-v0.1.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-cellular/-/archive/v0.1.1
-PKG_HASH:=3552f07857c77025b62a61132652a53f522317929c9b7cf52b238698c0392a0d
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-cellular-v0.1.1
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PCF-1636
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-cellular.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
