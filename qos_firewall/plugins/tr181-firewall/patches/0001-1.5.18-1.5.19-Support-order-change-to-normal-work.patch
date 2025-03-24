@@ -1,0 +1,29 @@
+From c9b86677e1a8452c35ec1606203e5169e011457d Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Wed, 19 Mar 2025 10:44:54 +0800
+Subject: [PATCH] [1.5.18][1.5.19][Support order change to normal work]
+
+---
+ odl/tr181-firewall.odl | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/odl/tr181-firewall.odl b/odl/tr181-firewall.odl
+index eddb113..7f568e5 100644
+--- a/odl/tr181-firewall.odl
++++ b/odl/tr181-firewall.odl
+@@ -54,7 +54,11 @@
+     };
+ }
+ 
+-import "mod-dmext.so";
++import "mod-dmext.so" as "tr181";
++%define {
++    entry-point tr181.dmext_main;
++}
++
+ import "${name}.so" as firewall;
+ 
+ include "${name}_vars.odl";
+-- 
+2.34.1
+
