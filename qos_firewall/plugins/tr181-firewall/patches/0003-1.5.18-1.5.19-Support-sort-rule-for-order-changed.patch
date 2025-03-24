@@ -1,0 +1,54 @@
+From 0d82d4bd5c3b8012d5a9906fc7d4642d7baac8cc Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Mon, 24 Mar 2025 18:28:19 +0800
+Subject: [PATCH] [1.5.18][1.5.19][Support sort rule for order changed]
+
+---
+ odl/firewall/firewall_definition.odl | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/odl/firewall/firewall_definition.odl b/odl/firewall/firewall_definition.odl
+index 1f7668f..7da2689 100644
+--- a/odl/firewall/firewall_definition.odl
++++ b/odl/firewall/firewall_definition.odl
+@@ -689,6 +689,14 @@
+                    (contains("parameters.Enable"))
+                )';
+ 
++    on event "dm:object-changed" call order_changed
++        filter 'path matches "^Firewall\.Level\.[0-9]+\.$" &&
++                contains("parameters.Order")';
++
++    on event "dm:object-changed" call order_changed
++        filter 'path matches "^Firewall\.Chain\.[0-9]+\.Rule\.[0-9]+\.$" &&
++                contains("parameters.Order")';
++
+     on event "dm:object-changed" call firewall_changed
+         filter 'path == "Firewall." && (
+                    (contains("parameters.Config")) ||
+@@ -733,6 +741,7 @@
+                    (contains("parameters.DestMatchSet")) ||
+                    (contains("parameters.SourceMatchSetExclude")) ||
+                    (contains("parameters.DestMatchSetExclude")) ||
++                   (contains("parameters.Order")) ||
+                    (contains("parameters.${prefix_}Log")) ||
+                    (contains("parameters.${prefix_}LogController")) ||
+                    (contains("parameters.${prefix_}LogControllerDeniedInbound")) ||
+@@ -744,14 +753,6 @@
+ 
+     on event "dm:object-changed" call update_last_changed
+         filter 'path matches "^Firewall\..*"';
+-
+-    on event "dm:object-changed" call order_changed
+-        filter 'path matches "^Firewall\.Level\.[0-9]+\.$" &&
+-                contains("parameters.Order")';
+-
+-    on event "dm:object-changed" call order_changed
+-        filter 'path matches "^Firewall\.Chain\.[0-9]+\.Rule\.[0-9]+\.$" &&
+-                contains("parameters.Order")';
+ }
+ 
+ ?include "interfacesetting_definition.odl" : "feature/interfacesetting_definition.odl";
+-- 
+2.34.1
+
