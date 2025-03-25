@@ -4,10 +4,11 @@ PKG_NAME:=tr181-dns
 PKG_VERSION:=v3.3.7
 SHORT_DESCRIPTION:=dns plugin
 
-PKG_SOURCE:=tr181-dns-v3.3.7.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dns/-/archive/v3.3.7
-PKG_HASH:=555e71d810d989d27c8bf8f990c5b21c7e735727085fd21fe23abab3348df111
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dns-v3.3.7
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PCF-1636
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dns.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -26,7 +27,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=TR-181 Managers
+  SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dns
   DEPENDS += +libamxb
