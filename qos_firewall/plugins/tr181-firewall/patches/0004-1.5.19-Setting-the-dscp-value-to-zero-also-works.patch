@@ -1,0 +1,25 @@
+From 02e552b6c6c8240bfebe6c3652fdb6cc2e97322d Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Wed, 26 Mar 2025 10:06:08 +0800
+Subject: [PATCH] [1.5.19][Setting the dscp value to zero also works]
+
+---
+ src/fwrule_helpers.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/fwrule_helpers.c b/src/fwrule_helpers.c
+index 7e36405..f79e64a 100644
+--- a/src/fwrule_helpers.c
++++ b/src/fwrule_helpers.c
+@@ -982,7 +982,7 @@ bool folder_feature_set_dscp(fw_folder_t* folder, int32_t dscp, bool exclude) {
+     fw_rule_t* s = NULL;
+     bool retval = false;
+ 
+-    if(dscp > 0) {
++    if(dscp >= 0 && dscp <= 63) {
+         fw_folder_set_feature(folder, FW_FEATURE_DSCP);
+ 
+         s = fw_folder_fetch_feature_rule(folder, FW_FEATURE_DSCP);
+-- 
+2.48.1
+
