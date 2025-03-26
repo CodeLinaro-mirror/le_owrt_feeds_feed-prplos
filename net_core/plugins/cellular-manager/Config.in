@@ -1,0 +1,20 @@
+config PACKAGE_cellular-manager
+    tristate
+    select SAH_AMX_TR181_CELLULAR
+
+if PACKAGE_cellular-manager
+
+menu "Select cellular-manager build options"
+    depends on PACKAGE_cellular-manager
+
+config SAH_AMX_TR181_CELLULAR
+    bool "Build a tr181 compatible cellular plugin"
+    default y
+
+config SAH_AMX_TR181_CELLULAR_ORDER
+    int "Start up order for the tr181 cellular plugin"
+    default 97
+
+endmenu
+
+endif
