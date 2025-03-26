@@ -1,0 +1,83 @@
+From 6d4f12a3e20a1c77808b9e007dd5c739e252ea9a Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Wed, 26 Mar 2025 10:13:23 +0800
+Subject: [PATCH] [1.5.19][Support set dscp to zero and add a check macro]
+
+---
+ include/fwrules/fw_rule.h |  4 ++--
+ src/fw_rule.c             | 17 ++++++++++++-----
+ 2 files changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/include/fwrules/fw_rule.h b/include/fwrules/fw_rule.h
+index 35c798c..9608184 100644
+--- a/include/fwrules/fw_rule.h
++++ b/include/fwrules/fw_rule.h
+@@ -509,7 +509,7 @@ int fw_rule_set_source_mac_address(fw_rule_t* const rule, const char* source_mac
+ 
+    @returns @c 0 on success, @c -1 on failure.
+  */
+-int fw_rule_set_dscp(fw_rule_t* const rule, const uint32_t dscp);
++int fw_rule_set_dscp(fw_rule_t* const rule, const int32_t dscp);
+ 
+ /**
+    @ingroup rule
+@@ -1463,7 +1463,7 @@ uint32_t fw_rule_get_protocol(const fw_rule_t* const rule);
+    @returns
+    The DSCP value to match if set, otherwise @c 0.
+  */
+-uint32_t fw_rule_get_dscp(const fw_rule_t* const rule);
++int32_t fw_rule_get_dscp(const fw_rule_t* const rule);
+ 
+ /**
+    @ingroup rule
+diff --git a/src/fw_rule.c b/src/fw_rule.c
+index 7def75a..4572e5d 100644
+--- a/src/fw_rule.c
++++ b/src/fw_rule.c
+@@ -345,6 +345,12 @@ static amxc_llist_t g_rules;
+         amxc_var_get_const_ ## type(var); \
+     })
+ 
++#define fw_rule_ht_check(ht, key) \
++    ({ \
++        amxc_var_t* var = amxc_var_get_key(ht, key, AMXC_VAR_FLAG_DEFAULT); \
++        (var != NULL); \
++    })
++
+ #define fw_rule_sync_cstring_t(dest, src, param) \
+     ({ \
+         int ret = -1; \
+@@ -1101,7 +1107,7 @@ exit:
+     return source_mac_address;
+ }
+ 
+-int fw_rule_set_dscp(fw_rule_t* const rule, const uint32_t dscp) {
++int fw_rule_set_dscp(fw_rule_t* const rule, const int32_t dscp) {
+     int retval = -1;
+ 
+     when_null(rule, exit);
+@@ -1109,16 +1115,17 @@ int fw_rule_set_dscp(fw_rule_t* const rule, const uint32_t dscp) {
+                fw_rule_get_current_feature(rule) == FW_FEATURE_DSCP,
+                exit);
+ 
+-    retval = fw_rule_ht_set(uint32_t, rule->ht, "dscp", dscp);
++    retval = fw_rule_ht_set(int32_t, rule->ht, "dscp", dscp);
+ exit:
+     return retval;
+ }
+ 
+-uint32_t fw_rule_get_dscp(const fw_rule_t* const rule) {
+-    uint32_t dscp = 0;
++int32_t fw_rule_get_dscp(const fw_rule_t* const rule) {
++    int32_t dscp = -1;
+ 
+     when_null(rule, exit);
+-    dscp = fw_rule_ht_get(uint32_t, rule->ht, "dscp");
++    when_false(fw_rule_ht_check(rule->ht, "dscp"), exit);
++    dscp = fw_rule_ht_get(int32_t, rule->ht, "dscp");
+ 
+ exit:
+     return dscp;
+-- 
+2.48.1
+
