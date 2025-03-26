@@ -4,7 +4,7 @@ PKG_NAME:=netmodel
 PKG_VERSION:=v2.17.15
 SHORT_DESCRIPTION:=Network Model plugin
 
-PKG_SOURCE:=netmodel-v2.17.15.tar.gz
+PKG_SOURCE_VERSION:=netmodel-v2.17.15.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/netmodel/-/archive/v2.17.15
 PKG_HASH:=0576e6e5ba09773b23f14ac5e84661aab3315b60f4a4351a167d89fa6b235077
 PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-v2.17.15
