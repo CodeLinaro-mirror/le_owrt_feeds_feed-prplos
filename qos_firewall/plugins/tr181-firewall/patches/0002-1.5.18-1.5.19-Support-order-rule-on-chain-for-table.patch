@@ -1,0 +1,249 @@
+From d164cfadc5df446ab8c4a517743472c24b7dfbba Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Mon, 24 Mar 2025 18:18:47 +0800
+Subject: [PATCH] [1.5.18][1.5.19][Support order rule on chain for table]
+
+---
+ src/firewall/dm_rule_events.c | 177 ++++++----------------------------
+ src/rules.c                   |   6 +-
+ 2 files changed, 36 insertions(+), 147 deletions(-)
+
+diff --git a/src/firewall/dm_rule_events.c b/src/firewall/dm_rule_events.c
+index 0b3c7c6..1994b71 100644
+--- a/src/firewall/dm_rule_events.c
++++ b/src/firewall/dm_rule_events.c
+@@ -232,20 +232,49 @@ exit:
+     return rule;
+ }
+ 
++static int rule_iterate_update(amxd_object_t* templ) {
++    int rv = 0;
++    amxd_object_t* object;
++    rule_t* rule;
++
++    amxd_object_iterate(instance, it, templ) {
++        object = amxc_llist_it_get_data(it, amxd_object_t, it);
++        rule = object->priv;
++        if(rule == NULL)
++            continue;
++        decrement_set_ref(object_da_string(rule->common.object, "SourceMatchSet"));
++        decrement_set_ref(object_da_string(rule->common.object, "SourceMatchSetExclude"));
++        decrement_set_ref(object_da_string(rule->common.object, "DestMatchSet"));
++        decrement_set_ref(object_da_string(rule->common.object, "DestMatchSetExclude"));
++        rule_delete(&rule);
++        object->priv = rule;
++        set_status(object, FIREWALL_DISABLED);
++    }
++
++    amxd_object_iterate(instance, it, templ) {
++        int status;
++
++        object = amxc_llist_it_get_data(it, amxd_object_t, it);
++        rule = rule_init(object);
++        status = rule ? fw_apply() : 1;
++        if(status != 0)
++            SAH_TRACEZ_WARNING(ME, "Could not init new rule to [%s]", 
++                               amxd_object_get_name(object, AMXD_OBJECT_NAMED));
++        rv |= status;
++    }
++
++    return rv;
++}
++
+ void _firewall_rule_added(UNUSED const char* const sig_name,
+                           const amxc_var_t* const event_data,
+                           UNUSED void* const priv) {
+     FW_PROFILING_IN(TRACE_DM_EVENT);
+     amxd_object_t* templ = amxd_dm_signal_get_object(fw_get_dm(), event_data);
+-    amxd_object_t* object = amxd_object_get_instance(templ, NULL, GET_UINT32(event_data, "index"));
+-    rule_t* rule = NULL;
+-
+-    when_null(object, exit);
+ 
+-    rule = rule_init(object);
+-    when_null(rule, exit);
++    when_null(templ, exit);
++    when_failed(rule_iterate_update(templ), exit);
+ 
+-    fw_apply();
+ exit:
+     FW_PROFILING_OUT();
+     return;
+@@ -255,147 +274,15 @@ void _firewall_rule_changed(UNUSED const char* const sig_name,
+                             const amxc_var_t* const event_data,
+                             UNUSED void* const priv) {
+     FW_PROFILING_IN(TRACE_DM_EVENT);
+-    amxd_object_t* object = amxd_dm_signal_get_object(fw_get_dm(), event_data);
+-    amxc_var_t* params = GET_ARG(event_data, "parameters");
+-    amxc_var_t* var = NULL;
+-    amxc_var_t* var2 = NULL;
+-    rule_t* rule = NULL;
+-    const char* src_interface = NULL;
+-    const char* dest_interface = NULL;
+-    ipversion_t ipversion = IPvAll;
+-    bool ipversion_changed = false;
++    amxd_object_t* object = NULL;
++    amxd_object_t* templ = NULL;
+ 
++    object = amxd_dm_signal_get_object(fw_get_dm(), event_data);
+     when_null(object, exit);
+-    when_null(object->priv, exit);
+-    rule = (rule_t*) object->priv;
+-
+-    rule->common.flags = FW_MODIFIED;
+-    rule->common.validated = false;
+-
+-    var = GET_ARG(params, "Target");
+-    if(var != NULL) {
+-        rule_set_target(rule, GET_CHAR(var, "to"));
+-    }
+-
+-    var = GET_ARG(params, "LogTarget");
+-    if(var != NULL) {
+-        rule_set_log_target(rule, GET_CHAR(var, "to"));
+-    }
+-
+-    var = GET_ARG(params, "Protocol");
+-    if(var != NULL) {
+-        rule_set_protocol(rule, GET_INT32(var, "to"));
+-    }
+-
+-    var = GET_ARG(params, "DestPort");
+-    var2 = GET_ARG(params, "DestPortRangeMax");
+-    if((var != NULL) || (var2 != NULL)) {
+-        int start = 0;
+-        int end = 0;
+-        if(var != NULL) {
+-            start = GET_INT32(var, "to");
+-        } else {
+-            start = amxd_object_get_value(int32_t, object, "DestPort", NULL);
+-        }
+-        if(var2 != NULL) {
+-            end = GET_INT32(var2, "to");
+-        } else {
+-            end = amxd_object_get_value(int32_t, object, "DestPortRangeMax", NULL);
+-        }
+-        rule_set_dst_port(rule, start, end);
+-    }
+-
+-    var = GET_ARG(params, "SourcePort");
+-    var2 = GET_ARG(params, "SourcePortRangeMax");
+-    if((var != NULL) || (var2 != NULL)) {
+-        int start = 0;
+-        int end = 0;
+-        if(var != NULL) {
+-            start = GET_INT32(var, "to");
+-        } else {
+-            start = amxd_object_get_value(int32_t, object, "SourcePort", NULL);
+-        }
+-        if(var2 != NULL) {
+-            end = GET_INT32(var2, "to");
+-        } else {
+-            end = amxd_object_get_value(int32_t, object, "SourcePortRangeMax", NULL);
+-        }
+-        rule_set_src_port(rule, start, end);
+-    }
+-
+-    mask_or_ip_changed(true, params, object, "SourceMask", "SourceIP", rule_set_source, rule);
+-    mask_or_ip_changed(true, params, object, "DestMask", "DestIP", rule_set_destination, rule);
+-
+-    var = GET_ARG(params, "SourceMatchSet");
+-    if(var != NULL) {
+-        decrement_set_ref(GET_CHAR(var, "from"));
+-        increment_set_ref(GET_CHAR(var, "to"));
+-    }
+-
+-    var = GET_ARG(params, "DestMatchSet");
+-    if(var != NULL) {
+-        decrement_set_ref(GET_CHAR(var, "from"));
+-        increment_set_ref(GET_CHAR(var, "to"));
+-    }
+-
+-    var = GET_ARG(params, "SourceMatchSetExclude");
+-    if(var != NULL) {
+-        decrement_set_ref(GET_CHAR(var, "from"));
+-        increment_set_ref(GET_CHAR(var, "to"));
+-    }
+-
+-    var = GET_ARG(params, "DestMatchSetExclude");
+-    if(var != NULL) {
+-        decrement_set_ref(GET_CHAR(var, "from"));
+-        increment_set_ref(GET_CHAR(var, "to"));
+-    }
+-
+-    var = GET_ARG(params, "Enable");
+-    if(var != NULL) {
+-        rule_set_enable(rule, GET_BOOL(var, "to"));
+-    }
+-
+-    var = GET_ARG(params, "SourceInterface");
+-    if(var != NULL) {
+-        src_interface = GET_CHAR(var, "to");
+-    }
+-
+-    var = GET_ARG(params, "DestInterface");
+-    if(var != NULL) {
+-        dest_interface = GET_CHAR(var, "to");
+-    }
+-
+-    var = GET_ARG(params, "IPVersion");
+-    if(var != NULL) {
+-        ipversion = int_to_ipversion(GET_INT32(var, "to"));
+-        ipversion_changed = true;
+-    }
+-
+-    if((src_interface != NULL) || (dest_interface != NULL) || ipversion_changed) {
+-        if(ipversion_changed) {
+-            if(src_interface == NULL) {
+-                src_interface = object_da_string(object, "SourceInterface");
+-            }
+-            if(dest_interface == NULL) {
+-                dest_interface = object_da_string(object, "DestInterface");
+-            }
+-        } else {
+-            ipversion = object_get_ipversion(object);
+-        }
+-        set_interface(rule, src_interface, dest_interface, ipversion);
+-    }
+-#ifdef FIREWALL_LOGS //only compile this piece of code if the logging configuration is enabled
+-    update_rule_logs(rule, NULL, event_data, NULL, NULL, true);
+-#endif //FIREWALL_LOGS
+-
+-#ifdef WITH_GMAP
+-    var = GET_ARG(params, param_vendor_class_id());
+-    if(var != NULL) {
+-        rule_query_vendor_class_id(rule);
+-    }
+-#endif
++    templ = amxd_object_get_parent(object);
++    when_null(templ, exit);
+ 
+-    rule_update(rule);
++    rule_iterate_update(templ);
+ 
+ exit:
+     FW_PROFILING_OUT();
+diff --git a/src/rules.c b/src/rules.c
+index 05e6e5f..15f144f 100644
+--- a/src/rules.c
++++ b/src/rules.c
+@@ -1350,12 +1350,14 @@ bool rule_activate(rule_t* rule) {
+     waiting = (dest_fwiface->addr_required && !address_has_ipversion(&dest_fwiface->address, ipversion));
+     when_true_trace(waiting, out, INFO, "%s is waiting for interface[%s] address", rule->common.object_path, amxc_string_get(&dest_fwiface->netmodel_interface, 0));
+ 
++    retval = false;
+     if(ipversion != IPv6) {
+-        when_false(rule_activate_ipv4(rule), cleanup);
++        retval |= rule_activate_ipv4(rule);
+     }
+     if(ipversion != IPv4) {
+-        when_false(rule_activate_ipv6(rule), cleanup);
++        retval |= rule_activate_ipv6(rule);
+     }
++    when_false(retval, cleanup);
+ 
+     status = FIREWALL_ENABLED;
+ cleanup:
+-- 
+2.34.1
+
