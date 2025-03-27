@@ -1,0 +1,25 @@
+From 497905b006079f5eb8d3b81a58518cd63e9d21ef Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Thu, 27 Mar 2025 09:46:38 +0800
+Subject: [PATCH] [1.5.19][Add action when rule dscp change]
+
+---
+ odl/firewall/firewall_definition.odl | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/odl/firewall/firewall_definition.odl b/odl/firewall/firewall_definition.odl
+index 7da2689..b2277d7 100644
+--- a/odl/firewall/firewall_definition.odl
++++ b/odl/firewall/firewall_definition.odl
+@@ -742,6 +742,8 @@
+                    (contains("parameters.SourceMatchSetExclude")) ||
+                    (contains("parameters.DestMatchSetExclude")) ||
+                    (contains("parameters.Order")) ||
++                   (contains("parameters.DSCP")) ||
++                   (contains("parameters.DSCPExclude")) ||
+                    (contains("parameters.${prefix_}Log")) ||
+                    (contains("parameters.${prefix_}LogController")) ||
+                    (contains("parameters.${prefix_}LogControllerDeniedInbound")) ||
+-- 
+2.48.1
+
