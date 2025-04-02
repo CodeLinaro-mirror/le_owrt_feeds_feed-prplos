@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ethernet/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ethernet-manager
-PKG_VERSION:=v1.24.1
+PKG_VERSION:=v1.25.0
 SHORT_DESCRIPTION:=Ethernet plugin
 
-PKG_SOURCE:=tr181-ethernet-v1.24.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ethernet/-/archive/v1.24.1
-PKG_HASH:=e4252f1345130e1a7e4a83981ac6ce27c0f9a06e7e0f1697d05a1e29750d0f16
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ethernet-v1.24.1
+PKG_SOURCE:=tr181-ethernet-v1.25.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ethernet/-/archive/v1.25.0
+PKG_HASH:=01796dbfd3c91bce76431ea3ff288978ebdf0f2029dfd86d07ce2b1e812a249b
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ethernet-v1.25.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
