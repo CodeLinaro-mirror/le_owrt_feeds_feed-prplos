@@ -1,0 +1,28 @@
+config PACKAGE_tr181-powerstatus
+    tristate
+    select SAH_AMX_TR181_POWERSTATUS
+
+if PACKAGE_tr181-powerstatus
+
+menu "Select tr181-powerstatus build options"
+    depends on PACKAGE_tr181-powerstatus
+
+config SAH_AMX_TR181_POWERSTATUS
+    bool "Build a tr181 compatible powerstatus plugin"
+    default y
+
+config SAH_AMX_TR181_POWERSTATUS_ORDER
+    int "Start up order"
+    default 15
+
+config SAH_AMX_TR181_POWERSTATUS_RUN_AS_USER
+    string "User will be used for the tr181-powerstatus plugin"
+    default "tr181_app"
+
+config SAH_AMX_TR181_POWERSTATUS_RUN_AS_GROUP
+    string "Group will be used for the tr181-powerstatus plugin"
+    default "tr181_app"
+
+endmenu
+
+endif
