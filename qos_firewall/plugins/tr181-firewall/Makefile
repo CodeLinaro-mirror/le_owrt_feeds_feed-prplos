@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-firewall/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-firewall
-PKG_VERSION:=v8.8.18
+PKG_VERSION:=v8.8.19
 SHORT_DESCRIPTION:=TR181 firewall manager
 
-PKG_SOURCE:=tr181-firewall-v8.8.18.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-firewall/-/archive/v8.8.18
-PKG_HASH:=48b5af8de60520631233df6e6934c5d1d0f4391df26179242dbb1b98dac46b07
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-firewall-v8.8.18
+PKG_SOURCE:=tr181-firewall-v8.8.19.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-firewall/-/archive/v8.8.19
+PKG_HASH:=070096bd1a9581a5849687071fec9d80dbc5ef65a9d71e56694dfb37b09fde03
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-firewall-v8.8.19
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
