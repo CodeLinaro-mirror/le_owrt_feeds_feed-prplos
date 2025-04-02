@@ -33,7 +33,7 @@ define Package/$(PKG_NAME)/description
 	OB-USP-AGENT is a daemon providing a User Services Platform (USP) Agent.
 endef
 
-CONFIGURE_ARGS += --disable-websockets --disable-bulkdata
+CONFIGURE_ARGS += --disable-websockets --disable-bulkdata --disable-coap
 
 define Package/$(PKG_NAME)/install
 	$(RM) -r $(PKG_INSTALL_DIR)/var
