@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dns/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dns
-PKG_VERSION:=v3.3.7
+PKG_VERSION:=v3.3.9
 SHORT_DESCRIPTION:=dns plugin
 
-PKG_SOURCE:=tr181-dns-v3.3.7.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dns/-/archive/v3.3.7
-PKG_HASH:=555e71d810d989d27c8bf8f990c5b21c7e735727085fd21fe23abab3348df111
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dns-v3.3.7
+PKG_SOURCE:=tr181-dns-v3.3.9.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dns/-/archive/v3.3.9
+PKG_HASH:=dabe6985bb654b1344d206294f35651b37689fc58c5b5e8a6895846a7e7ee896
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dns-v3.3.9
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
