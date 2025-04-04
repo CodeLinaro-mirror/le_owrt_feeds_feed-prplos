@@ -1,0 +1,28 @@
+config PACKAGE_tr181-periodicfileupload
+    tristate
+    select SAH_AMX_TR181_PERIODICFILEUPLOAD
+
+if PACKAGE_tr181-periodicfileupload
+
+menu "Select tr181-periodicfileupload build options"
+    depends on PACKAGE_tr181-periodicfileupload
+
+config SAH_AMX_TR181_PERIODICFILEUPLOAD
+    bool "Build a tr181 compatible periodic uploaded file manager"
+    default y
+
+config SAH_AMX_TR181_PERIODICFILEUPLOAD_ORDER
+    int "Start up order for the tr181 uploaded file manager"
+    default 99
+
+config SAH_AMX_TR181_PERIODICFILEUPLOAD_RUN_AS_USER
+    string "User will be used for the tr181-periodicfileupload plugin"
+    default "tr181-app"
+
+config SAH_AMX_TR181_PERIODICFILEUPLOAD_RUN_AS_GROUP
+    string "Group will be used for the tr181-periodicfileupload plugin"
+    default "tr181_app"
+
+endmenu
+
+endif
