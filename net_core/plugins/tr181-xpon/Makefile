@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-xpon/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-xpon
-PKG_VERSION:=v1.4.7
+PKG_VERSION:=v1.5.0
 SHORT_DESCRIPTION:=TR-181 XPON manager
 
-PKG_SOURCE:=tr181-xpon-v1.4.7.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-xpon/-/archive/v1.4.7
-PKG_HASH:=4d078a9398ee2e9ba7d44b79616578df5a35c507b6f669e97b1d07627ef22f43
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-xpon-v1.4.7
+PKG_SOURCE:=tr181-xpon-v1.5.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-xpon/-/archive/v1.5.0
+PKG_HASH:=281c686749fb0a10987fe1211752ac82b48b69262e5374040fedde05772d7f93
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-xpon-v1.5.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
