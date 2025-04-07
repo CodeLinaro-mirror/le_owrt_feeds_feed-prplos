@@ -1,0 +1,13 @@
+%config {
+    %global usp.translate = {
+        "'PowerStatus.'" = "Device.DeviceInfo.PowerStatus."
+    };
+
+    %global usp.registrations = [
+        "Device.DeviceInfo.PowerStatus."
+    ];
+
+    %global backend-dir = [ "/usr/bin/mods/usp", "/usr/bin/mods/amxb" ];
+
+    %global usp.connect-retry = true;
+}
