@@ -1,0 +1,20 @@
+config PACKAGE_tr181-sfp
+    tristate
+    select SAH_AMX_TR181_SFP
+
+if PACKAGE_tr181-sfp
+
+menu "Select tr181-sfp build options"
+    depends on PACKAGE_tr181-sfp
+
+config SAH_AMX_TR181_SFP
+    bool "Build a tr181 compatible time plugin"
+    default y
+
+config SAH_AMX_TR181_SFP_ORDER
+    int "SFP manager plugin start up order"
+    default 30
+
+endmenu
+
+endif
