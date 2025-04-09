@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6client/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dhcpv6client
-PKG_VERSION:=v1.6.4
+PKG_VERSION:=v1.7.0
 SHORT_DESCRIPTION:=TR-181 compatible DHCPv6 client
 
-PKG_SOURCE:=tr181-dhcpv6client-v1.6.4.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6client/-/archive/v1.6.4
-PKG_HASH:=504ff023f7d9219846ef129d0ad572c8d661fd93d712c57c91a22a4a0834e9ab
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6client-v1.6.4
+PKG_SOURCE:=tr181-dhcpv6client-v1.7.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6client/-/archive/v1.7.0
+PKG_HASH:=3de997ca468537cc29fd1d8fc2c5a68a0dc737f15b9681f0600af87d26ea7547
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6client-v1.7.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
