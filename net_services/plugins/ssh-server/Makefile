@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/ssh-server/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ssh-server
-PKG_VERSION:=v0.6.25
+PKG_VERSION:=v0.6.29
 SHORT_DESCRIPTION:=Process Controller Data Model - dropbear
 
-PKG_SOURCE:=ssh-server-v0.6.25.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/ssh-server/-/archive/v0.6.25
-PKG_HASH:=ed48b97f4984ec6dc8d986f32902cb79b0d8a555edc6b5097acfd6cb21691d0c
-PKG_BUILD_DIR:=$(BUILD_DIR)/ssh-server-v0.6.25
+PKG_SOURCE:=ssh-server-v0.6.29.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/ssh-server/-/archive/v0.6.29
+PKG_HASH:=00f46fc91d36dd96cb3fdd7c20f01ff537e8444b1c2cc3c085f03984a4b5774f
+PKG_BUILD_DIR:=$(BUILD_DIR)/ssh-server-v0.6.29
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
