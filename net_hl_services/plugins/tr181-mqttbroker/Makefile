@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mqttbroker/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-mqttbroker
-PKG_VERSION:=v0.1.2
+PKG_VERSION:=v0.1.3
 SHORT_DESCRIPTION:=TR-181 compatible MQTT broker
 
-PKG_SOURCE:=tr181-mqttbroker-v0.1.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mqttbroker/-/archive/v0.1.2
-PKG_HASH:=0c7edd70654f65e8f47d69ab15c93bfcb32f2f05a8cd27a272a27a2322e5a319
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqttbroker-v0.1.2
+PKG_SOURCE:=tr181-mqttbroker-v0.1.3.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mqttbroker/-/archive/v0.1.3
+PKG_HASH:=28e6c912199b611b72357636e30279b07c2f04597cce17ed859f08755e8e37a3
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqttbroker-v0.1.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
