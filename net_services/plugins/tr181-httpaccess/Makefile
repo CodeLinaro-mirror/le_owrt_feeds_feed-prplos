@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-httpaccess/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-httpaccess
-PKG_VERSION:=v0.15.14
+PKG_VERSION:=v0.15.16
 SHORT_DESCRIPTION:=TR-181 HTTPAccess model plugin
 
-PKG_SOURCE:=tr181-httpaccess-v0.15.14.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-httpaccess/-/archive/v0.15.14
-PKG_HASH:=1f1477430d22aa170aff75689cdb08b88e27c4d1671954fe52654de6c1097515
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-httpaccess-v0.15.14
+PKG_SOURCE:=tr181-httpaccess-v0.15.16.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-httpaccess/-/archive/v0.15.16
+PKG_HASH:=eddc5ba3186212f4975445304c24eff7254f3ed0128333260e42a0b2507dd08e
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-httpaccess-v0.15.16
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
