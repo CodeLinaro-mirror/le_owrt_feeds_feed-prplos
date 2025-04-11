@@ -4,10 +4,11 @@ PKG_NAME:=multisettings
 PKG_VERSION:=v0.11.2
 SHORT_DESCRIPTION:=multisettings plugin
 
-PKG_SOURCE:=multisettings-v0.11.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/multisettings/-/archive/v0.11.2
-PKG_HASH:=356891451bc4de591260e5433a84322290b6a69a077f1e61288dd6dde72d0624
-PKG_BUILD_DIR:=$(BUILD_DIR)/multisettings-v0.11.2
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_prefix
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/multisettings.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
