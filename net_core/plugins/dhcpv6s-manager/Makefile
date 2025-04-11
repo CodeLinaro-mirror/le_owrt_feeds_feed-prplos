@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6s/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dhcpv6s-manager
-PKG_VERSION:=v0.21.0
+PKG_VERSION:=v0.21.1
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-dhcpv6s-v0.21.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6s/-/archive/v0.21.0
-PKG_HASH:=0d9d5d6266a9bd8463302cb79a25314060a6c9e7a08744cb2d2d3d9d2adfffba
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6s-v0.21.0
+PKG_SOURCE:=tr181-dhcpv6s-v0.21.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6s/-/archive/v0.21.1
+PKG_HASH:=8a01a2944aa69a3f54f6987f9091b2b00b97590f2a0607e7d630390035cf153a
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6s-v0.21.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
