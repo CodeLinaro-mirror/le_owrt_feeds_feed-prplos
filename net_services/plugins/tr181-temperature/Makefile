@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-temperature/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-temperature
-PKG_VERSION:=v0.4.13
+PKG_VERSION:=v0.4.14
 SHORT_DESCRIPTION:=TR-181 compatible plugin for device temperature management
 
-PKG_SOURCE:=tr181-temperature-v0.4.13.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-temperature/-/archive/v0.4.13
-PKG_HASH:=0909be112fc8dde0a14cde5ec1888404982e77ccde4cd02833305a112533c51d
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-temperature-v0.4.13
+PKG_SOURCE:=tr181-temperature-v0.4.14.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-temperature/-/archive/v0.4.14
+PKG_HASH:=a63df906c222c5bae9ad3d2f7623222540d7c9e08822134cfeea23f5a552884e
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-temperature-v0.4.14
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
