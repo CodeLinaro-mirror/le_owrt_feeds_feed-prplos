@@ -4,10 +4,11 @@ PKG_NAME:=tr181-dhcpv4client
 PKG_VERSION:=v1.26.9
 SHORT_DESCRIPTION:=TR-181 compatible DHCPv4 client
 
-PKG_SOURCE:=tr181-dhcpv4client-v1.26.9.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4client/-/archive/v1.26.9
-PKG_HASH:=2ec12588109eabf96952dff3d1bf68a190f605b92444a4c5be1a7926ebbfb8f1
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4client-v1.26.9
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_prefix
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4client.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -20,15 +21,6 @@ define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
 	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S27$(COMPONENT)
 	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/K75$(COMPONENT)
-endef
-
-define SAHBackupRestore/Install
-	install -d ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/backup
-	install -d ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/restore
-	install -d ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/import
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/backup/B25$(COMPONENT)
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/restore/R25$(COMPONENT)
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/import/R25$(COMPONENT)
 endef
 
 include $(INCLUDE_DIR)/package.mk
@@ -67,7 +59,6 @@ define Build/Install
 	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_TR181_DHCPV4CLIENT_RUN_AS_USER=$(CONFIG_SAH_AMX_TR181_DHCPV4CLIENT_RUN_AS_USER) CONFIG_SAH_AMX_TR181_DHCPV4CLIENT_RUN_AS_GROUP=$(CONFIG_SAH_AMX_TR181_DHCPV4CLIENT_RUN_AS_GROUP))
 
 	$(call SAHInit/Install)
-	$(call SAHBackupRestore/Install)
 endef
 
 define Build/InstallDev
