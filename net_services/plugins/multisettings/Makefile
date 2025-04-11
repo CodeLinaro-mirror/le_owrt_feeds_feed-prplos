@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/multisettings/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=multisettings
-PKG_VERSION:=v0.11.2
+PKG_VERSION:=v0.11.4
 SHORT_DESCRIPTION:=multisettings plugin
 
-PKG_SOURCE:=multisettings-v0.11.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/multisettings/-/archive/v0.11.2
-PKG_HASH:=356891451bc4de591260e5433a84322290b6a69a077f1e61288dd6dde72d0624
-PKG_BUILD_DIR:=$(BUILD_DIR)/multisettings-v0.11.2
+PKG_SOURCE:=multisettings-v0.11.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/multisettings/-/archive/v0.11.4
+PKG_HASH:=4486cbd4d38a1b06ea53555972067972714253e125055bd505d7a2312179d08c
+PKG_BUILD_DIR:=$(BUILD_DIR)/multisettings-v0.11.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
