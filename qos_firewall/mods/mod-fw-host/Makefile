@@ -4,10 +4,11 @@ PKG_NAME:=mod-fw-host
 PKG_VERSION:=v0.1.3
 SHORT_DESCRIPTION:=Host Module for Firewall
 
-PKG_SOURCE:=mod-fw-host-v0.1.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-fw-host/-/archive/v0.1.3
-PKG_HASH:=bbffc4aba87d675b8e632c87f65bca549a1257556e968e722b02171483a746ea
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-fw-host-v0.1.3
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_prefix
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-fw-host.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
