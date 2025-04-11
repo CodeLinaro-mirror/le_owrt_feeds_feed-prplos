@@ -1,0 +1,88 @@
+From 47da97891f5d40bb4867d79c48215b539779e2cf Mon Sep 17 00:00:00 2001
+From: rui_zhong <rui_zhong@arcadyan.com.cn>
+Date: Wed, 26 Mar 2025 10:21:38 +0800
+Subject: [PATCH] [1.5.19][Replace dscp filter with tos filter]
+
+---
+ include_priv/interface_iptc/iptc_matches.h |  2 +-
+ src/interface_iptc/iptc.c                  |  2 +-
+ src/interface_iptc/iptc_matches.c          | 25 +++++++++++++---------
+ 3 files changed, 17 insertions(+), 12 deletions(-)
+
+diff --git a/include_priv/interface_iptc/iptc_matches.h b/include_priv/interface_iptc/iptc_matches.h
+index fb13947..7b0b773 100644
+--- a/include_priv/interface_iptc/iptc_matches.h
++++ b/include_priv/interface_iptc/iptc_matches.h
+@@ -81,7 +81,7 @@ struct xt_entry_match* iptc_rule_add_icmp_match(struct iptc_rule* r, unsigned ch
+                                                 unsigned char code, unsigned char flags);
+ struct xt_entry_match* iptc_rule_add_icmp6_match(struct iptc_rule* r, unsigned char type,
+                                                  unsigned char code, unsigned char flags);
+-struct xt_entry_match* iptc_rule_add_dscp_match(struct iptc_rule* r, unsigned char dscp,
++struct xt_entry_match* iptc_rule_add_dscp_match(struct iptc_rule* r, int dscp,
+                                                 unsigned char flags);
+ struct xt_entry_match* iptc_rule_add_mac_match(struct iptc_rule* r, uint8_t* smac, int sinvert);
+ 
+diff --git a/src/interface_iptc/iptc.c b/src/interface_iptc/iptc.c
+index a283580..29d6dd7 100644
+--- a/src/interface_iptc/iptc.c
++++ b/src/interface_iptc/iptc.c
+@@ -560,7 +560,7 @@ struct iptc_rule* iptc_create_rule(const fw_rule_t* const rule) {
+     uint32_t ip_length_min = fw_rule_get_ip_min_length(rule);
+     uint32_t ip_length_max = fw_rule_get_ip_max_length(rule);
+     bool exclude_ip_length = false;
+-    uint32_t dscp = fw_rule_get_dscp(rule);
++    int32_t dscp = fw_rule_get_dscp(rule);
+     bool exclude_dscp = fw_rule_get_dscp_excluded(rule);
+     bool ipv4 = fw_rule_get_ipv4(rule);
+     const char* ctstate = fw_rule_get_conntrack_state(rule);
+diff --git a/src/interface_iptc/iptc_matches.c b/src/interface_iptc/iptc_matches.c
+index 1932e88..26a406a 100644
+--- a/src/interface_iptc/iptc_matches.c
++++ b/src/interface_iptc/iptc_matches.c
+@@ -342,27 +342,33 @@ out:
+     return m;
+ }
+ 
+-struct xt_entry_match* iptc_rule_add_dscp_match(struct iptc_rule* r, unsigned char dscp, unsigned char flag) {
++struct xt_entry_match* iptc_rule_add_dscp_match(struct iptc_rule* r, int dscp, unsigned char flag) {
+     unsigned int size = XT_ALIGN(sizeof(struct xt_entry_match));
+-    unsigned int dscp_size = XT_ALIGN(sizeof(struct xt_length_info));
++    unsigned int tos_size = XT_ALIGN(sizeof(struct xt_tos_match_info));
+     struct xt_entry_match* m = NULL;
+-    struct xt_dscp_info* info = NULL;
++    struct xt_tos_match_info* info = NULL;
+ 
+     when_null(r, out);
+-    when_true((dscp == 0), out);
++    when_true((dscp < 0 || dscp > 63), out);
+ 
+-    m = (struct xt_entry_match*) calloc(1, size + dscp_size);
++    m = (struct xt_entry_match*) calloc(1, size + tos_size);
+     when_null(m, out);
+ 
+-    info = (struct xt_dscp_info*) m->data;
++    info = (struct xt_tos_match_info*) m->data;
+ 
+-    m->u.match_size = size + dscp_size;
+-    strncpy(m->u.user.name, "dscp", XT_EXTENSION_MAXNAMELEN);
++    m->u.match_size = size + tos_size;
++    m->u.user.revision = 1; // I don't know if it will change with the kernel version, but let it go?
++    strncpy(m->u.user.name, "tos", XT_EXTENSION_MAXNAMELEN);
+ 
+-    info->dscp = dscp;
++    info->tos_value = dscp << 2U;
+     info->invert = flag;
++    if(dscp % 8 == 0) { // This is the Class Selector Codepoint
++        info->tos_mask = 0xE0;
++    } else {
++        info->tos_mask = 0xFC;
++    }
+ 
+-    iptc_rule_add_match_element(r, (unsigned char*) m, size + dscp_size);
++    iptc_rule_add_match_element(r, (unsigned char*) m, size + tos_size);
+ out:
+     return m;
+ }
+-- 
+2.48.1
+
