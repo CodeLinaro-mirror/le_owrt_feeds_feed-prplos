@@ -4,10 +4,11 @@ PKG_NAME:=tr181-button
 PKG_VERSION:=v0.1.2
 SHORT_DESCRIPTION:=Implementation of the Button HL API to expose the buttons and its states in (tr181) data model
 
-PKG_SOURCE:=tr181-button-v0.1.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-button/-/archive/v0.1.2
-PKG_HASH:=2b60f5c9a1a6241bf323e6ef201e2376083c1072405c0ac3ced62bdf0ab0ca9e
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-button-v0.1.2
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_prefix
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-button.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
