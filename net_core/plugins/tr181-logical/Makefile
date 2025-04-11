@@ -4,10 +4,11 @@ PKG_NAME:=tr181-logical
 PKG_VERSION:=v1.0.2
 SHORT_DESCRIPTION:=logical interface plugin
 
-PKG_SOURCE:=tr181-logical-v1.0.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-logical/-/archive/v1.0.2
-PKG_HASH:=428afb701a5775e4f858edb8ed1cc83700aec3be9d536634e94be9a24b23590f
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-logical-v1.0.2
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_prefix
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-logical.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
