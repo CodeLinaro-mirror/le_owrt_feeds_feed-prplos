@@ -1,15 +1,13 @@
-# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
-# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-powerstatus/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-powerstatus
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=v0.2.0
 SHORT_DESCRIPTION:=tr181-powerstatus plugin
 
-PKG_SOURCE:=tr181-powerstatus-v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-powerstatus/-/archive/v0.1.0
-PKG_HASH:=f70c55156c80d6c8092d440492cc46c55327c9b199d879cac8fd1c294d2dffb2
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-powerstatus-v0.1.0
+PKG_SOURCE:=tr181-powerstatus-v0.2.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-powerstatus/-/archive/v0.2.0
+PKG_HASH:=79e86cc38a6a49b0d18b6ee9c35fb0627799839cab8dc89a92f4885494264c15
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-powerstatus-v0.2.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
