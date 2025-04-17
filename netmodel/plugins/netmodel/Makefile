@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/netmodel/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel
-PKG_VERSION:=v2.17.15
+PKG_VERSION:=v2.18.0
 SHORT_DESCRIPTION:=Network Model plugin
 
-PKG_SOURCE:=netmodel-v2.17.15.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/netmodel/-/archive/v2.17.15
-PKG_HASH:=0576e6e5ba09773b23f14ac5e84661aab3315b60f4a4351a167d89fa6b235077
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-v2.17.15
+PKG_SOURCE:=netmodel-v2.18.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/netmodel/-/archive/v2.18.0
+PKG_HASH:=7056a05c1d8f19630f86213a62f5d29850f410bc83a6c39e177efd78c42143a5
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-v2.18.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
