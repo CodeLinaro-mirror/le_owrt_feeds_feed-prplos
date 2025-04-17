@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/utilities/odl-generator/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=odl-generator
-PKG_VERSION:=v1.13.0
+PKG_VERSION:=v1.13.1
 SHORT_DESCRIPTION:=Odl generator using ucode
 
-PKG_SOURCE:=odl-generator-v1.13.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/odl-generator/-/archive/v1.13.0
-PKG_HASH:=dd61f69e82c8dfd12cd2ba56028120e8435156d1a7bbdc6c2987ac85d98fc1d8
-PKG_BUILD_DIR:=$(BUILD_DIR)/odl-generator-v1.13.0
+PKG_SOURCE:=odl-generator-v1.13.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/odl-generator/-/archive/v1.13.1
+PKG_HASH:=6166e8ff5f95828e36a1383aedcafe4b5fae4b4d9f09bfe446134e0c7a3d74ac
+PKG_BUILD_DIR:=$(BUILD_DIR)/odl-generator-v1.13.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
