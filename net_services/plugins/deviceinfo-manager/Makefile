@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-deviceinfo/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=deviceinfo-manager
-PKG_VERSION:=v2.35.8
+PKG_VERSION:=v2.35.9
 SHORT_DESCRIPTION:=TR-181 compatible DeviceInfo plugin
 
-PKG_SOURCE:=tr181-deviceinfo-v2.35.8.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-deviceinfo/-/archive/v2.35.8
-PKG_HASH:=38bfac59a5285d90a6012c0a36f6a5603868f1d46b78f738e17b1ac51d388ae8
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-deviceinfo-v2.35.8
+PKG_SOURCE:=tr181-deviceinfo-v2.35.9.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-deviceinfo/-/archive/v2.35.9
+PKG_HASH:=728e46daa32bd0687c03d0bff76eb2cc1d9cb35a85fe30d5e8e4a7928f279908
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-deviceinfo-v2.35.9
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
