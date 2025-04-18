@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-time/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=time-manager
-PKG_VERSION:=v2.7.12
+PKG_VERSION:=v2.7.14
 SHORT_DESCRIPTION:=TR181 Time plugin
 
-PKG_SOURCE:=tr181-time-v2.7.12.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-time/-/archive/v2.7.12
-PKG_HASH:=d2fd9393f034fb57b7a73ddb14ea9f65de4b7bb045a1725d903cb5c536a7db33
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-time-v2.7.12
+PKG_SOURCE:=tr181-time-v2.7.14.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-time/-/archive/v2.7.14
+PKG_HASH:=c8170776f0fbcecdaf10c92426dbe575ee31391be45a9f52134d27d6af81777b
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-time-v2.7.14
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
