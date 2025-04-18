@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dhcpv4-manager
-PKG_VERSION:=v2.12.22
+PKG_VERSION:=v2.12.24
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-dhcpv4-v2.12.22.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4/-/archive/v2.12.22
-PKG_HASH:=9ee79d84309d44fdc2c9bc6656ddc1d2b533f228c4ebdd7dee61c60e95f05c09
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4-v2.12.22
+PKG_SOURCE:=tr181-dhcpv4-v2.12.24.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4/-/archive/v2.12.24
+PKG_HASH:=5e2fbd346e339a462a5d1ea77b3e7020eab78b696f473881a477672d43552953
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4-v2.12.24
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
