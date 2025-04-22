@@ -1,0 +1,28 @@
+diff --git a/src/vendor/vendor_defs.h b/src/vendor/vendor_defs.h
+index b027c15..ed3d44b 100755
+--- a/src/vendor/vendor_defs.h
++++ b/src/vendor/vendor_defs.h
+@@ -174,7 +174,7 @@
+ // This interface is used to get the serial number of the agent (as MAC address) for the endpoint_id string
+ // It is also the interface used for all USP communications
+ // This may be overridden using the '-i' option or by an environment variable. See nu_macaddr_wan_ifname().
+-#define DEFAULT_WAN_IFNAME "eth0"
++#define DEFAULT_WAN_IFNAME "eth1"
+ 
+ // Key used to obfuscate (using XOR) all secure data model parameters stored in the USP Agent database (eg passwords)
+ #define PASSWORD_OBFUSCATION_KEY  "$%^&*()@~#/,?"
+@@ -192,12 +192,12 @@
+ // Comma separated list of network interface names on which CoAP should listen for USP messages
+ // An empty list or "any" indicates to listen on all interfaces
+ // This may be overridden using the '-i' option (only one interface name is supported, if using '-i')
+-#define COAP_LISTEN_INTERFACES    "eth0"  /* "lo, enp0s9" */
++#define COAP_LISTEN_INTERFACES    "eth1"  /* "lo, enp0s9" */
+ 
+ // Network interface name that USP Agent's websocket server listens on (only one interface is currently supported)
+ // An empty list or "any" indicates to listen on all interfaces
+ // This may be overridden using the '-i' option
+-#define WEBSOCKET_LISTEN_INTERFACE "eth0"  /*"lo"*/
++#define WEBSOCKET_LISTEN_INTERFACE "eth1"  /*"lo"*/
+ 
+ // Fallback QoS value for MQTT messages when not configured by TR-369 parameters.
+ #define MQTT_FALLBACK_QOS 0 /* 0, 1, 2 */

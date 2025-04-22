@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=obuspa
-PKG_VERSION:=v9.0.8
+PKG_VERSION:=v10.0.0
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/BroadbandForum/obuspa.git
-PKG_MIRROR_HASH:=1fee8ecc4fc793aced430591f437924cfe00a5fde9a6804f853d9a6136701496
-PKG_SOURCE_VERSION:=2cc5af743b40eea30b5bbce5b847db765d6092af
+PKG_MIRROR_HASH:=d331452633ecb9d5c1f228d58dfdeb84f04d4a9055e7b17896af797fdd0cffea
+PKG_SOURCE_VERSION:=8fb0942ea06d3cf3ac0f95dc69cc3596b6db62fc
 
 
 PKG_MAINTAINER:=support.prpl@vantiva.com
@@ -15,7 +15,7 @@ PKG_LICENSE_FILES:=LICENSE
 PKG_FIXUP:=autoreconf
 PKG_INSTALL=1
 
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
 
