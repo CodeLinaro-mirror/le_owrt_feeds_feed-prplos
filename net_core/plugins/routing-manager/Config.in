@@ -19,6 +19,10 @@ config SAH_AMX_TR181_ROUTING_RUN_AS_GROUP
     string "Group will be used for the ROUTING-MANAGER plugin"
     default "tr181_app"
 
+config SAH_AMX_TR181_ROUTING_ROUTER_DISCOVERY
+    bool "Enable TR-181 Routing router discovery functionality"
+    default n
+
 endmenu
 
 endif
