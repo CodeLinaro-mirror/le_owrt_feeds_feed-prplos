@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# Define the block device and partition name
+DEVICE="/dev/mmcblk0"
+PARTITION_NAME="lcm_data"
+
+# Check if the partition already exists
+if sgdisk -p "$DEVICE" | grep -q "$PARTITION_NAME"; then
+    echo "Error: Partition '$PARTITION_NAME' already exists."
+    exit 1
+fi
+
+# Get the next available partition number
+NEXT_PARTITION_NUMBER=$(sgdisk -p "$DEVICE" | awk '/^[[:space:]]*[0-9]+/ {print $1}' | sort -n | tail -n 1)
+if [ -z "$NEXT_PARTITION_NUMBER" ]; then
+    echo "Could not properly retrieve partition layout. Aborting."
+    exit 1
+else
+    NEXT_PARTITION_NUMBER=$((NEXT_PARTITION_NUMBER + 1))
+fi
+
+# Get the maximum number of entries in the partition table
+MAX_ENTRIES=$(sgdisk -p "$DEVICE" | awk '/Partition table holds up to/ {print $6}')
+
+if [ "$NEXT_PARTITION_NUMBER" -gt "$MAX_ENTRIES" ]; then
+    echo "Extending the partition table to accommodate more entries."
+    sgdisk -S 128 "$DEVICE"
+fi
+
+# Create a new partition at the end of the device
+sgdisk -v -N"$NEXT_PARTITION_NUMBER" -I -c"$NEXT_PARTITION_NUMBER:$PARTITION_NAME" "$DEVICE"
+
+echo "Partition '$PARTITION_NAME' created as partition number $NEXT_PARTITION_NUMBER."
