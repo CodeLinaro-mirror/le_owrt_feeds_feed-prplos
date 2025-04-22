@@ -1,0 +1,33 @@
+#!/bin/sh 
+
+### Find the right mmc device for lcm_data partiton from label 
+lcm_data_devname=""
+
+for partition in $(ls /sys/class/mmc_host/mmc0/mmc0:0001/block/mmcblk0/mmcblk0*/uevent); do     
+    partname=$(grep -q -w "PARTNAME=lcm_data" "$partition" && grep "DEVNAME" "$partition" | cut -d= -f2)
+    if [ $? -eq 0 ]; then
+        lcm_data_devname=$partname
+    fi
+done
+
+### Only proceed if lcm_data partition was found on mmc device 
+[ ! -z "$lcm_data_devname" ] && [ -e "/dev/$lcm_data_devname" ] && {       
+        if [ ! -d "/lcm" ]; then
+                mkdir /lcm
+                chmod 600 /lcm
+        fi
+        
+        e2fsck -p /dev/$lcm_data_devname > /dev/null
+        ret=$?
+
+        if [ $(( ret&4 )) -eq 4 ]; then
+                echo "e2fsck recovery failed"
+                e2fsck -y /dev/$lcm_data_devname > /dev/null
+        fi
+
+        
+        mount -t ext4 -o nosuid,nodev,noexec,noatime /dev/$lcm_data_devname /lcm || {
+                mkfs.ext4 /dev/$lcm_data_devname
+                mount -t ext4 -o nosuid,nodev,noexec,noatime /dev/$lcm_data_devname /lcm
+        }
+}
