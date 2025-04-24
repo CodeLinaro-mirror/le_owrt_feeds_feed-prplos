@@ -11,10 +11,10 @@ PKG_NAME:=unbound-prpl
 PKG_RELEASE:=1
 
 PKG_VERSION:=1.22.0
-PKG_SOURCE:=unbound-prpl-stable-1.22.y_v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/unbound/-/archive/prpl/stable-1.22.y_v0.1.0
-PKG_HASH:=0c511300f09364a1124429db0beefb23539527b3aa02f414a6f15ba6d12e59d5
-PKG_BUILD_DIR:=$(BUILD_DIR)/unbound-prpl-stable-1.22.y_v0.1.0
+PKG_SOURCE:=unbound-prpl-stable-1.22.y_v0.2.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/unbound/-/archive/prpl/stable-1.22.y_v0.2.0
+PKG_HASH:=c31d5745b9e0a057256099790a25afe9374da61a2cefb04f08ab9e0a17e77582
+PKG_BUILD_DIR:=$(BUILD_DIR)/unbound-prpl-stable-1.22.y_v0.2.0
 PKG_MAINTAINER:=Eric Luehrsen <ericluehrsen@gmail.com>
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE
