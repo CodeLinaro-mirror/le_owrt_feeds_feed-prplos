@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=unbound-prpl
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_VERSION:=1.22.0
 PKG_SOURCE:=unbound-prpl-stable-1.22.y_v0.2.0.tar.gz
