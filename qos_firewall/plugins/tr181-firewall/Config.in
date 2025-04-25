@@ -28,7 +28,7 @@ config SAH_AMX_TR181_FIREWALL_WITH_GMAP
     default y
 
 config SAH_AMX_TR181_FIREWALL_LOGS
-    bool "Compile tr181-firewall with netfilter log support. The logs might affect performance."
+    bool "[DEPRECATED, now always true] Compile tr181-firewall with netfilter log support. The logs might affect performance."
     default y
 
 config SAH_AMX_TR181_FIREWALL_DEBUG_PROFILING
