@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-logical/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-logical
-PKG_VERSION:=v1.0.2
+PKG_VERSION:=v1.0.3
 SHORT_DESCRIPTION:=logical interface plugin
 
-PKG_SOURCE:=tr181-logical-v1.0.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-logical/-/archive/v1.0.2
-PKG_HASH:=428afb701a5775e4f858edb8ed1cc83700aec3be9d536634e94be9a24b23590f
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-logical-v1.0.2
+PKG_SOURCE:=tr181-logical-v1.0.3.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-logical/-/archive/v1.0.3
+PKG_HASH:=dd44c5dfe99d34bda93a8257352da491c6467bdceb882bead1909092b80a092f
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-logical-v1.0.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
