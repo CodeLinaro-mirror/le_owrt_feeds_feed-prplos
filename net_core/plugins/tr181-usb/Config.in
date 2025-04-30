@@ -16,15 +16,8 @@ config AMX_TR181_USB_ORDER
     default 81
 
 config AMX_TR181_USB_BUSYBOX_MDEV_OPTIONS
-	bool "Enable busybox support for mdev device events"
-	default n
-	select BUSYBOX_CONFIG_MDEV
-	select BUSYBOX_CONFIG_FEATURE_MDEV_CONF
-	select BUSYBOX_CONFIG_FEATURE_MDEV_RENAME
-	select BUSYBOX_CONFIG_FEATURE_MDEV_RENAME_REGEXP
-	select BUSYBOX_CONFIG_FEATURE_MDEV_EXEC
-	help
-	  Select needed busybox options for usb device events.
+    bool "Enable busybox support for mdev device events"
+    default n
 
 endmenu
 
