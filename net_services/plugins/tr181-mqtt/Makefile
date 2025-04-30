@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mqtt/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-mqtt
-PKG_VERSION:=v3.6.5
+PKG_VERSION:=v3.6.6
 SHORT_DESCRIPTION:=TR-181 compatible MQTT client
 
-PKG_SOURCE:=tr181-mqtt-v3.6.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mqtt/-/archive/v3.6.5
-PKG_HASH:=056ff224e77f585b45428941ec7e6943f0a451b275111ab75b2c2b432b36a490
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqtt-v3.6.5
+PKG_SOURCE:=tr181-mqtt-v3.6.6.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mqtt/-/archive/v3.6.6
+PKG_HASH:=b6e08f57d7575b1ed6c6679cd79bde90adbf23ed2be420ce186b474a3289c99c
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqtt-v3.6.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
