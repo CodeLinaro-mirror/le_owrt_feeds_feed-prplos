@@ -1,15 +1,16 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usb/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-usb
+PKG_VERSION:=v0.1.0
 SHORT_DESCRIPTION:=TR-181 USB manager
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2025-04-23
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usb
-PKG_SOURCE_VERSION:=553ce86c064e608bab9c2abe4b0e44de4117d265
-PKG_MIRROR_HASH:=8fd8a2d3bc8a0d599c2106e3393f3d5be14390bbeb8f845e4355f8eaabfcea92
-
-PKG_MAINTAINER:=Sagemcom <support.opensource@sagemcom.com>
+PKG_SOURCE:=tr181-usb-v0.1.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usb/-/archive/v0.1.0
+PKG_HASH:=410c5aa5d21d8e660c43135d25b4ce53e5927ccfbe7eca447ee09ddd4414c82d
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-usb-v0.1.0
+PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
 
@@ -30,58 +31,50 @@ define Package/$(PKG_NAME)
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usb
+  DEPENDS += +libamxb
   DEPENDS += +libamxc
-  DEPENDS += +libamxp
   DEPENDS += +libamxd
   DEPENDS += +libamxo
-  DEPENDS += +amxrt
-  DEPENDS += +libsahtrace
+  DEPENDS += +libamxp
   DEPENDS += +libamxm
+  DEPENDS += +libsahtrace
+  DEPENDS += +amxrt
   DEPENDS += +libsysfs
+  DEPENDS += +rpcd
   DEPENDS += +libbsd
   MENU:=1
 endef
 
 define Package/$(PKG_NAME)/description
-	Implementation of TR181 USB datamodel
+	TR-181 USB manager
 endef
 
-ifdef CONFIG_AMX_TR181_USB_BUSYBOX_MDEV_OPTIONS
-CONFIGURE_OPTS += CONFIG_AMX_TR181_USB_BUSYBOX_MDEV_OPTIONS=$(CONFIG_AMX_TR181_USB_BUSYBOX_MDEV_OPTIONS)
-endif
-
 define Build/Compile
-	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_AMX_TR181_USB_ORDER=$(CONFIG_AMX_TR181_USB_ORDER) $(CONFIGURE_OPTS))
+	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_AMX_TR181_USB_ORDER=$(CONFIG_AMX_TR181_USB_ORDER) CONFIG_AMX_TR181_USB_BUSYBOX_MDEV_OPTIONS=$(CONFIG_AMX_TR181_USB_BUSYBOX_MDEV_OPTIONS))
 endef
 
 define Build/Install
-	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_AMX_TR181_USB_ORDER=$(CONFIG_AMX_TR181_USB_ORDER) $(CONFIGURE_OPTS))
+	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_AMX_TR181_USB_ORDER=$(CONFIG_AMX_TR181_USB_ORDER) CONFIG_AMX_TR181_USB_BUSYBOX_MDEV_OPTIONS=$(CONFIG_AMX_TR181_USB_BUSYBOX_MDEV_OPTIONS))
 
 	$(call SAHInit/Install)
 endef
 
 define Build/InstallDev
-	$(call Build/Install/Default, install INSTALL=install D=$(STAGING_DIR) DEST=$(STAGING_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_AMX_TR181_USB_ORDER=$(CONFIG_AMX_TR181_USB_ORDER) $(CONFIGURE_OPTS))
+	$(call Build/Install/Default, install INSTALL=install D=$(STAGING_DIR) DEST=$(STAGING_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_AMX_TR181_USB_ORDER=$(CONFIG_AMX_TR181_USB_ORDER) CONFIG_AMX_TR181_USB_BUSYBOX_MDEV_OPTIONS=$(CONFIG_AMX_TR181_USB_BUSYBOX_MDEV_OPTIONS))
 endef
 
 define Package/$(PKG_NAME)/install
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
-ifdef CONFIG_AMX_TR181_USB_BUSYBOX_MDEV_OPTIONS
-	if [ -d ./files/mdev ]; then \
-		$(CP) ./files/mdev/* $(1)/; \
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
 	fi
-else
-	if [ -d ./files/hotplug ]; then \
-		$(CP) ./files/hotplug/* $(1)/; \
-	fi
-endif
 	find $(1) -name *.a -exec rm {} +;
 	find $(1) -name *.h -exec rm {} +;
 	find $(1) -name *.pc -exec rm {} +;
 endef
 
 define Package/$(PKG_NAME)/config
-        source "$(SOURCE)/Config.in"
+	source "$(SOURCE)/Config.in"
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
