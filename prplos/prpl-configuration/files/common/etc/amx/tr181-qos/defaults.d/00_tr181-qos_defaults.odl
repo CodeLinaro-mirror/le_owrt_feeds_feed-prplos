@@ -4,21 +4,21 @@
         object Classification {
             instance add (0, "icmp_dscp_cs6") {
                 parameter Enable = false;
-                parameter X_PRPL-COM_Direction = "Postrouting";
+                parameter '${global_vendor_prefix_}Direction' = "Postrouting";
                 parameter DSCPMark = 48;
                 parameter Protocol = 1;
                 parameter IPVersion = 4;
             }
             instance add (0, "icmp6_dscp_cs6") {
                 parameter Enable = false;
-                parameter X_PRPL-COM_Direction = "Postrouting";
+                parameter '${global_vendor_prefix_}Direction' = "Postrouting";
                 parameter DSCPMark = 48;
                 parameter Protocol = 58;
                 parameter IPVersion = 6;
             }
             instance add (0, "lansubnet1") {
                 parameter Enable = false;
-                parameter X_PRPL-COM_Direction = "Forward";
+                parameter '${global_vendor_prefix_}Direction' = "Forward";
                 parameter DestIP = "192.168.25.0";
                 parameter DestMask = "255.255.255.0";
                 parameter TrafficClass = 3;
@@ -27,7 +27,7 @@
             instance add (0, "icmp_to_voip_queue") {
                 parameter Enable = false;
                 parameter Protocol = 1;
-                parameter X_PRPL-COM_Direction = "Prerouting";
+                parameter '${global_vendor_prefix_}Direction' = "Prerouting";
                 parameter IPVersion = 4;
                 parameter TrafficClass = 5;
             }
