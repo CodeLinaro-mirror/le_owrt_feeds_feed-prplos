@@ -1,6 +1,6 @@
 %config {
     %global usp.translate = {
-        "'PersistentConfiguration.'" = "Device.X_PRPL-COM_PersistentConfiguration."
+        "'PersistentConfiguration.'" = "Device.X_PRPLWARE-COM_PersistentConfiguration."
     };
 
     %global backend-dir = [ "/usr/bin/mods/usp", "/usr/bin/mods/amxb" ];

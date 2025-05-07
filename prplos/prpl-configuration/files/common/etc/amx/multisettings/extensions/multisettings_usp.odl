@@ -1,6 +1,6 @@
 %config {
     %global usp.translate = {
-        "'MultiSettings.'" = "Device.X_PRPL-COM_MultiSettings."
+        "'MultiSettings.'" = "Device.X_PRPLWARE-COM_MultiSettings."
     };
 
     %global backend-dir = [ "/usr/bin/mods/usp", "/usr/bin/mods/amxb" ];
