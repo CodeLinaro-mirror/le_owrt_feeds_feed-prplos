@@ -1,6 +1,6 @@
 %config {
     %global usp.translate = {
-        "'Buttons.'" = "Device.X_PRPL-COM_Buttons."
+        "'Buttons.'" = "Device.X_PRPLWARE-COM_Buttons."
     };
 
     %global backend-dir = [ "/usr/bin/mods/usp", "/usr/bin/mods/amxb" ];
