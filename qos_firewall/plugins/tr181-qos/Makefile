@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-qos/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-qos
-PKG_VERSION:=v4.3.2
+PKG_VERSION:=v4.5.0
 SHORT_DESCRIPTION:=TR-181 QoS model plugin
 
-PKG_SOURCE:=tr181-qos-v4.3.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-qos/-/archive/v4.3.2
-PKG_HASH:=760c3891ee7d6e989de95dd4472cd8b60d34bce00946bd956ddc7f39bbd1c862
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-qos-v4.3.2
+PKG_SOURCE:=tr181-qos-v4.5.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-qos/-/archive/v4.5.0
+PKG_HASH:=d55bc1310b754bc32b5322f645995b57272d001c435537dde83dda8ce927760a
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-qos-v4.5.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
