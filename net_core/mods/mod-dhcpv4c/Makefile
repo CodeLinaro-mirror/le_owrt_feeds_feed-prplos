@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-dhcpv4c
-PKG_VERSION:=v0.13.9
+PKG_VERSION:=v0.13.10
 SHORT_DESCRIPTION:=Implementation of a DHCPv4 client as ambiorix module
 
-PKG_SOURCE:=mod-dhcpv4c-v0.13.9.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-dhcpv4c/-/archive/v0.13.9
-PKG_HASH:=ed2d4b1bf541a460758f946ba4455b90777167a9cec5e9818811943dc8466496
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-dhcpv4c-v0.13.9
+PKG_SOURCE:=mod-dhcpv4c-v0.13.10.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-dhcpv4c/-/archive/v0.13.10
+PKG_HASH:=74b40c64209f3aa7dad51a93008fcdb075dd105fafd7bb7bb3f315eb566123ca
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-dhcpv4c-v0.13.10
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
