@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/libraries/libfiletransfer/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libfiletransfer
-PKG_VERSION:=v1.6.0
+PKG_VERSION:=v1.6.1
 SHORT_DESCRIPTION:=Libfiletransfer is a library providing an upload/download API for HTTP(s)
 
-PKG_SOURCE:=libfiletransfer-v1.6.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfiletransfer/-/archive/v1.6.0
-PKG_HASH:=dc5baec587af3a4712ce3cc9d7a6f8fd7b41b6104d53b3eb25e1ecbaf354344a
-PKG_BUILD_DIR:=$(BUILD_DIR)/libfiletransfer-v1.6.0
+PKG_SOURCE:=libfiletransfer-v1.6.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfiletransfer/-/archive/v1.6.1
+PKG_HASH:=83502d7b024fc01311e9d9948d050c1c6ca5d49fa94c895890d7e3b8ba029892
+PKG_BUILD_DIR:=$(BUILD_DIR)/libfiletransfer-v1.6.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
