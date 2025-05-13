@@ -1,20 +1,22 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-core/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mcastd-core
-PKG_VERSION:=v0.1.5
+PKG_VERSION:=dev_add_baf
 SHORT_DESCRIPTION:=Kernel module for multicast support
 
-PKG_SOURCE:=mcastd-core-v0.1.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-core/-/archive/v0.1.5
-PKG_HASH:=9167a169e8342b435c71301af761cd136ed7eed0def4181ed9d3c87d21dc0ab2
-PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-core-v0.1.5
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_add_baf
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-core.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
 
 
 PKG_RELEASE:=1
-PKG_BUILD_DEPENDS += kernel
 PKG_EXTMOD_SUBDIRS+=src/kernel_core
 PKG_EXTMOD_SUBDIRS+=src/kernel_proxy
 
@@ -43,13 +45,13 @@ define Build/Compile
 		COMPONENT_TOPDIR=$(PKG_BUILD_DIR) \
 		STAGINGDIR=$(STAGING_DIR) \
 		CONFIGDIR=$(STAGING_DIR) \
-		LINUX_DIR=$(LINUX_DIR) \
+		LINUX_DIR=$(if $(wildcard $(TOPDIR)/kernel),$(TOPDIR)/kernel,$(LINUX_DIR)) \
 		CONFIG_MCASTD_CORE_DEBUG=$(CONFIG_MCASTD_CORE_DEBUG) \
 		CONFIG_MCASTD_CORE_NICE=$(CONFIG_MCASTD_CORE_NICE) \
 		CONFIG_MCASTD_CORE_ACCESS_CONTROL=$(CONFIG_MCASTD_CORE_ACCESS_CONTROL) \
-		BUILD_DIR=$(PKG_BUILD_DIR) \
-		$(MAKE_FLAGS) \
-		$(KERNEL_MAKE_FLAGS)
+		PKG_BUILD_DIR=$(PKG_BUILD_DIR) \
+		SAH_PRPL_BUILD=1 \
+		$(if $(wildcard $(TOPDIR)/kernel),,$(MAKE_FLAGS) $(KERNEL_MAKE_FLAGS))
 endef
 
 define Build/Install
