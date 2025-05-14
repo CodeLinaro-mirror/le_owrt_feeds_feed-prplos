@@ -16,9 +16,9 @@ index 5f59c54..a82ce12 100644
 @@ -1,6 +1,7 @@
  // default value(s) for Device.IP.Interface reference
  %config {
-     %global ip_intf_lo = "Device.IP.Interface.1.";
-+    %global ip_intf_wan = "Device.IP.Interface.2.";
-     %global ip_intf_lcm = "Device.IP.Interface.5.";
+     %global ip_intf_lo = "Device.IP.Interface.1";
++    %global ip_intf_wan = "Device.IP.Interface.2";
+     %global ip_intf_lcm = "Device.IP.Interface.5";
  }
  #include "global_ip_interfaces.odl";
 diff --git a/odl/defaults.d/10_tr181-dns_default.odl.uc b/odl/defaults.d/10_tr181-dns_default.odl.uc
