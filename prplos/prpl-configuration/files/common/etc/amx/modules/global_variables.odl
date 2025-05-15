@@ -1,3 +1,5 @@
+#include "global_amxb_timeouts.odl";
+
 %config {
     %global global_vendor_prefix_ = "X_PRPLWARE-COM_";
 }
