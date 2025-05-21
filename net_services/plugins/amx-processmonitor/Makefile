@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/amx-processmonitor/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=amx-processmonitor
-PKG_VERSION:=v0.2.8
+PKG_VERSION:=v0.2.9
 SHORT_DESCRIPTION:=monitor processes
 
-PKG_SOURCE:=amx-processmonitor-v0.2.8.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/amx-processmonitor/-/archive/v0.2.8
-PKG_HASH:=755a74459f7dd6795a6173c255c08b071888f4e84a982739ad8aff23e57e42b0
-PKG_BUILD_DIR:=$(BUILD_DIR)/amx-processmonitor-v0.2.8
+PKG_SOURCE:=amx-processmonitor-v0.2.9.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/amx-processmonitor/-/archive/v0.2.9
+PKG_HASH:=8a40cdefa2cab1b3d1a6c63f5aaaf09efa900f43c905922a4e8253dc75690ec2
+PKG_BUILD_DIR:=$(BUILD_DIR)/amx-processmonitor-v0.2.9
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -26,7 +28,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=TR-181 Managers
+  SUBMENU:=Ambiorix
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/amx-processmonitor
   DEPENDS += +libamxb
