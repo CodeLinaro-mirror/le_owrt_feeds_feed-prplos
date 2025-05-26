@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcp/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-pcp
-PKG_VERSION:=v0.10.12
+PKG_VERSION:=v0.10.13
 SHORT_DESCRIPTION:=Port control protocol
 
-PKG_SOURCE:=tr181-pcp-v0.10.12.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcp/-/archive/v0.10.12
-PKG_HASH:=be699a68fb34508f64ccdb0c6ce9745460e8e942b119dd5ef92e0cec25d63fcb
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-pcp-v0.10.12
+PKG_SOURCE:=tr181-pcp-v0.10.13.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcp/-/archive/v0.10.13
+PKG_HASH:=9a4a53f2bbcac4d81125e7946f1394e6ce461663136ea50f21a93fb7145cd1bf
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-pcp-v0.10.13
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -26,7 +28,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=TR-181 Managers
+  SUBMENU:=Ambiorix
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcp
   DEPENDS += +libamxb
