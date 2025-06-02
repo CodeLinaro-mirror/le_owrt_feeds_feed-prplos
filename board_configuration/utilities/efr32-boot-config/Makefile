@@ -3,7 +3,6 @@ include $(INCLUDE_DIR)/version.mk
 
 PKG_NAME:=efr32-boot-config
 PKG_RELEASE:=1
-PKG_FLAGS:=nonshared
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -18,7 +17,6 @@ define Package/efr32-boot-config
   TITLE:=Bootmode configuration for EFR32
   CATEGORY:=prpl Foundation
   SUBMENU:=Utilities
-  DEPENDS:=@TARGET_ipq95xx_generic_DEVICE_prpl_freedom
 endef
 
 define Package/efr32-boot-config/install
