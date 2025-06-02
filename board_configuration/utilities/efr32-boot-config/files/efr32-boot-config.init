@@ -5,52 +5,64 @@ START=80
 extra_command "enter_application" "Switches EFR32 into application mode"
 extra_command "enter_bootloader" "Switches EFR32 into bootloader mode"
 
-efr32_gpio_reset=437       # EFR32 RESETn pin connected to P05 pin on TCA6416 GPIO expander
-efr32_gpio_fwupgrade=468   # EFR32 PC04 pin connected to IPQ GPIO pin 21
+board_init() {
+	. /lib/functions.sh
+
+	local board_name=$(board_name)
+
+	case "$board_name" in
+	"prpl,freedom")
+		efr32_gpio_reset=437      # EFR32 RESETn pin connected to P05 pin on TCA6416 GPIO expander
+		efr32_gpio_fwupgrade=468  # EFR32 PC04 pin connected to IPQ GPIO pin 21
+		;;
+	"mxl,lgm")
+		efr32_gpio_reset=967      # EFR32 RESETn pin connected to MxL GPIO 39
+		efr32_gpio_fwupgrade=989  # EFR32 PC04 pin connected to MxL GPIO 61
+		;;
+	*)
+		echo "Unsupported board: $board_name"
+		exit 1
+		;;
+	esac
+}
 
 gpio_init() {
-	echo $efr32_gpio_reset > /sys/class/gpio/export
-	echo $efr32_gpio_fwupgrade > /sys/class/gpio/export
+	echo $efr32_gpio_reset >/sys/class/gpio/export
+	echo $efr32_gpio_fwupgrade >/sys/class/gpio/export
 
-	echo out > /sys/class/gpio/gpio${efr32_gpio_reset}/direction
-	echo out > /sys/class/gpio/gpio${efr32_gpio_fwupgrade}/direction
+	echo out >/sys/class/gpio/gpio${efr32_gpio_reset}/direction
+	echo out >/sys/class/gpio/gpio${efr32_gpio_fwupgrade}/direction
 }
 
 gpio_deinit() {
-	echo $efr32_gpio_reset > /sys/class/gpio/unexport
-	echo $efr32_gpio_fwupgrade > /sys/class/gpio/unexport
+	echo $efr32_gpio_reset >/sys/class/gpio/unexport
+	echo $efr32_gpio_fwupgrade >/sys/class/gpio/unexport
 }
 
 enter_application() {
+	board_init
 	gpio_init
 
-	# GPIO 437 is set to 0 to reset the EFR32MG
-	echo 0 > /sys/class/gpio/gpio${efr32_gpio_reset}/value
-
-	# GPIO 468 is set to 1 to indicate entering the application (not bootloader)
-	echo 1 > /sys/class/gpio/gpio${efr32_gpio_fwupgrade}/value
+	echo 0 >/sys/class/gpio/gpio${efr32_gpio_reset}/value
+	echo 1 >/sys/class/gpio/gpio${efr32_gpio_fwupgrade}/value
 
 	sleep .01
 
-	# Set GPIO 437 back to 1 to complete the reset process
-	echo 1 > /sys/class/gpio/gpio${efr32_gpio_reset}/value
+	echo 1 >/sys/class/gpio/gpio${efr32_gpio_reset}/value
 
 	gpio_deinit
 }
 
 enter_bootloader() {
+	board_init
 	gpio_init
 
-	# GPIO 437 is set to 0 to reset the EFR32MG
-	echo 0 > /sys/class/gpio/gpio${efr32_gpio_reset}/value
-
-	# GPIO 468 is set to 0 to indicate entering the bootloader
-	echo 0 > /sys/class/gpio/gpio${efr32_gpio_fwupgrade}/value
+	echo 0 >/sys/class/gpio/gpio${efr32_gpio_reset}/value
+	echo 0 >/sys/class/gpio/gpio${efr32_gpio_fwupgrade}/value
 
 	sleep .01
 
-	# Set GPIO 437 back to 1 to complete the reset process
-	echo 1 > /sys/class/gpio/gpio${efr32_gpio_reset}/value
+	echo 1 >/sys/class/gpio/gpio${efr32_gpio_reset}/value
 
 	gpio_deinit
 }
