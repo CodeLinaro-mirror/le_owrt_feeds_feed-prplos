@@ -1,13 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=debug-information
-PKG_VERSION:=v0.3.0
+PKG_VERSION:=test_ethernet_logs
 SHORT_DESCRIPTION:=Scripts to provide debug Information for a running system
 
-PKG_SOURCE:=debug-information-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/debug-information/-/archive/$(PKG_VERSION)
-PKG_HASH:=98c1198a0e7ba50d056d2bd2b88ba78027d5aa57816be0ce59935e2171a32558
-PKG_BUILD_DIR:=$(BUILD_DIR)/debug-information-$(PKG_VERSION)
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=test_ethernet_logs
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/debug-information.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
