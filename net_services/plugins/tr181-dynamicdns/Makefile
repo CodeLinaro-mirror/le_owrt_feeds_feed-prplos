@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dynamicdns
-PKG_VERSION:=v1.6.1
+PKG_VERSION:=dev_PCF-1683
 SHORT_DESCRIPTION:=DynamicDNS plugin
 
-PKG_SOURCE:=tr181-dynamicdns-v1.6.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dynamicdns/-/archive/v1.6.1
-PKG_HASH:=25cd9bc5360e38196e8c95e7403fe4d01938f3366b7ffa6a814cfaad0d04fe85
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dynamicdns-v1.6.1
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PCF-1683
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dynamicdns.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -28,7 +29,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=TR-181 Managers
+  SUBMENU:=Ambiorix
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dynamicdns
   DEPENDS += +libamxc
