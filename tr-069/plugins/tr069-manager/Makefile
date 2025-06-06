@@ -3,11 +3,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=dev_PPW-544
+PKG_VERSION:=test_extra_logs
 SHORT_DESCRIPTION:=TR069 Manager
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=dev_PPW-544
+PKG_SOURCE_VERSION:=test_extra_logs
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
