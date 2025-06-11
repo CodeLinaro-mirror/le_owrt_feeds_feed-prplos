@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-bulkdata
-PKG_VERSION:=v0.2.4
+PKG_VERSION:=v0.2.5
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-bulkdata-v0.2.4.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bulkdata/-/archive/v0.2.4
-PKG_HASH:=8d50c53554efbf85a4c1288d2d2030c1737d4f2299ed5e323c7e369fac50dc0f
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bulkdata-v0.2.4
+PKG_SOURCE:=tr181-bulkdata-v0.2.5.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bulkdata/-/archive/v0.2.5
+PKG_HASH:=402aac33e3b07be20d546d592870688de842443f770c1521c4157c5323094173
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bulkdata-v0.2.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -37,6 +37,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxd
   DEPENDS += +libamxb
   DEPENDS += +libamxo
+  DEPENDS += +libamxa
   DEPENDS += +libsahtrace
   DEPENDS += +libimtp
   DEPENDS += +mod-dmext
