@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pcm-manager
-PKG_VERSION:=v0.19.10
+PKG_VERSION:=v0.19.11
 SHORT_DESCRIPTION:=Upgrade Persistent Configuration Manager
 
-PKG_SOURCE:=tr181-pcm-v0.19.10.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcm/-/archive/v0.19.10
-PKG_HASH:=4d8ea1318f06b967361ea409b4874db72e86d5247d16473dec3c45963c3b4787
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-pcm-v0.19.10
+PKG_SOURCE:=tr181-pcm-v0.19.11.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcm/-/archive/v0.19.11
+PKG_HASH:=26fee7580c5ade052f051ac66e4b416be96fd22393b4c58d70413b5811c016bf
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-pcm-v0.19.11
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
