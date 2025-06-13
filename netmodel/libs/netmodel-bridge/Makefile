@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-bridge
-PKG_VERSION:=v1.0.4
+PKG_VERSION:=v1.0.5
 SHORT_DESCRIPTION:=Network Model bridge client
 
-PKG_SOURCE:=netmodel-bridge-v1.0.4.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge/-/archive/v1.0.4
-PKG_HASH:=7a62a94b1495ae8c9532d6c56ab477f1d5e49968868ba565e0998e76c4f803a7
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-bridge-v1.0.4
+PKG_SOURCE:=netmodel-bridge-v1.0.5.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-bridge/-/archive/v1.0.5
+PKG_HASH:=1b8f3c77d262016606dd1cc4b4dac52f870e9bb5fcee63392b84a201bb02e76a
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-bridge-v1.0.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
