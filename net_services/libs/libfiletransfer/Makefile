@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libfiletransfer
-PKG_VERSION:=v1.6.1
+PKG_VERSION:=v1.6.2
 SHORT_DESCRIPTION:=Libfiletransfer is a library providing an upload/download API for HTTP(s)
 
-PKG_SOURCE:=libfiletransfer-v1.6.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfiletransfer/-/archive/v1.6.1
-PKG_HASH:=83502d7b024fc01311e9d9948d050c1c6ca5d49fa94c895890d7e3b8ba029892
-PKG_BUILD_DIR:=$(BUILD_DIR)/libfiletransfer-v1.6.1
+PKG_SOURCE:=libfiletransfer-v1.6.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfiletransfer/-/archive/v1.6.2
+PKG_HASH:=fb56b416c17b4e4e575aafa34d676467e375f9d1a1d2827142131ea1ae8781a2
+PKG_BUILD_DIR:=$(BUILD_DIR)/libfiletransfer-v1.6.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -21,7 +21,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=Libraries
+  SUBMENU:=Ambiorix
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfiletransfer
   DEPENDS += +libamxc
