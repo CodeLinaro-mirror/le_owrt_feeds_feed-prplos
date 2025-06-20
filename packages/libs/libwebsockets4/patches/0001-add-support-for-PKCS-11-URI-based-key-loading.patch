@@ -1,0 +1,87 @@
+From fee336ed6deda0150ae0d7c6186e1511507b7eb3 Mon Sep 17 00:00:00 2001
+From: Filip VAN GENCK <filip.vangenck@softathome.com>
+Date: Thu, 19 Jun 2025 17:04:00 +0200
+Subject: [PATCH] add support for PKCS#11 URI-based key loading via OpenSSL 3
+ provider
+
+---
+ lib/tls/openssl/openssl-client.c | 49 ++++++++++++++++++++++++++++----
+ 1 file changed, 43 insertions(+), 6 deletions(-)
+
+diff --git a/lib/tls/openssl/openssl-client.c b/lib/tls/openssl/openssl-client.c
+index 884ca021..a3d00c25 100644
+--- a/lib/tls/openssl/openssl-client.c
++++ b/lib/tls/openssl/openssl-client.c
+@@ -30,6 +30,8 @@
+ #endif
+ #endif
+ #include <string.h>
++#include <openssl/store.h>
++#include <openssl/provider.h>
+ 
+ #include "private-lib-core.h"
+ #include "private-lib-tls-openssl.h"
+@@ -707,6 +709,28 @@ lws_tls_client_vhost_extra_cert_mem(struct lws_vhost *vh,
+ 	return n != 1;
+ }
+ 
++static EVP_PKEY *load_pkcs11_key(const char *uri) {
++    OSSL_STORE_CTX *store = OSSL_STORE_open(uri, NULL, NULL, NULL, NULL);
++    if (!store) return NULL;
++
++    OSSL_STORE_INFO *info;
++    EVP_PKEY *key = NULL;
++
++    while (!OSSL_STORE_eof(store)) {
++        info = OSSL_STORE_load(store);
++        if (!info)
++            break;
++        if (OSSL_STORE_INFO_get_type(info) == OSSL_STORE_INFO_PKEY) {
++            key = OSSL_STORE_INFO_get1_PKEY(info);
++            OSSL_STORE_INFO_free(info);
++            break;
++        }
++        OSSL_STORE_INFO_free(info);
++    }
++    OSSL_STORE_close(store);
++    return key;
++}
++
+ int
+ lws_tls_client_create_vhost_context(struct lws_vhost *vh,
+ 				    const struct lws_context_creation_info *info,
+@@ -1120,12 +1144,25 @@ lws_tls_client_create_vhost_context(struct lws_vhost *vh,
+ 		lwsl_info("%s: using private key filepath\n", __func__);
+ 		lws_ssl_bind_passphrase(vh->tls.ssl_client_ctx, 1, info);
+ 		/* set the private key from KeyFile */
+-		if (SSL_CTX_use_PrivateKey_file(vh->tls.ssl_client_ctx,
+-		    private_key_filepath, SSL_FILETYPE_PEM) != 1) {
+-			lwsl_err("use_PrivateKey_file '%s'\n",
+-				 private_key_filepath);
+-			lws_tls_err_describe_clear();
+-			return 1;
++		if (strncmp(private_key_filepath, "pkcs11:", 7) == 0) {
++			OSSL_PROVIDER *prov = OSSL_PROVIDER_load(NULL, "pkcs11");
++			EVP_PKEY *pkey = load_pkcs11_key(private_key_filepath);
++			if (!pkey || SSL_CTX_use_PrivateKey(vh->tls.ssl_client_ctx, pkey) != 1) {
++				lwsl_err("Failed to load private key from pkcs11 URI '%s'\n", private_key_filepath);
++				lws_tls_err_describe_clear();
++				OSSL_PROVIDER_unload(prov);
++				return 1;
++			}
++			EVP_PKEY_free(pkey);
++			OSSL_PROVIDER_unload(prov);
++		} else {
++			if (SSL_CTX_use_PrivateKey_file(vh->tls.ssl_client_ctx,
++				private_key_filepath, SSL_FILETYPE_PEM) != 1) {
++				lwsl_err("use_PrivateKey_file '%s'\n",
++					private_key_filepath);
++				lws_tls_err_describe_clear();
++				return 1;
++			}
+ 		}
+ 		lwsl_info("Loaded client cert private key %s\n",
+ 			    private_key_filepath);
+-- 
+2.34.1
+
