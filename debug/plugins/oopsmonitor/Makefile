@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/oopsmonitor/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=oopsmonitor
-PKG_VERSION:=v1.0.12
+PKG_VERSION:=v1.2.0
 SHORT_DESCRIPTION:=Plugin to track kernel oopses
 
-PKG_SOURCE:=oopsmonitor-v1.0.12.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/oopsmonitor/-/archive/v1.0.12
-PKG_HASH:=b470eb6bebc5c892b6371a4830f0765722f5a2bfd77dcea4f53cc32cbcd4bd3e
-PKG_BUILD_DIR:=$(BUILD_DIR)/oopsmonitor-v1.0.12
+PKG_SOURCE:=oopsmonitor-v1.2.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/oopsmonitor/-/archive/v1.2.0
+PKG_HASH:=3723f49bbfc5425e33b57642c1a14b6986b1f3a8740de9f18c3bd7a932c8e8c4
+PKG_BUILD_DIR:=$(BUILD_DIR)/oopsmonitor-v1.2.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
