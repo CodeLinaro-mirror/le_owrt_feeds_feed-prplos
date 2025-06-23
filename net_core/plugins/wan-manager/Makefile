@@ -16,6 +16,7 @@ PKG_LICENSE_FILES:=LICENSE
 
 COMPONENT:=wan-manager
 
+
 PKG_RELEASE:=1
 
 define SAHInit/Install
