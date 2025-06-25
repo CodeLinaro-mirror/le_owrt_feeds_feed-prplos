@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=amx-faultmonitor
-PKG_VERSION:=v1.0.21
+PKG_VERSION:=v1.3.0
 SHORT_DESCRIPTION:=Plugin to track and log faults in userspace programs
 
-PKG_SOURCE:=faultmonitor-v1.0.21.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/faultmonitor/-/archive/v1.0.21
-PKG_HASH:=221712048b5dd77baf21cd2cea0ad681751c6ad19776cb2b1a6143949d2272d6
-PKG_BUILD_DIR:=$(BUILD_DIR)/faultmonitor-v1.0.21
+PKG_SOURCE:=faultmonitor-v1.3.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/faultmonitor/-/archive/v1.3.0
+PKG_HASH:=1ca7c1c74c1df3086f3cfb6dc14967da2ff47ed5f8035fe50e20f15cc8d205de
+PKG_BUILD_DIR:=$(BUILD_DIR)/faultmonitor-v1.3.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -39,6 +39,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +amxrt
   DEPENDS += +mod-dmext
   DEPENDS += +libcap-ng
+  DEPENDS += +libfiletransfer
   MENU:=1
 endef
 
