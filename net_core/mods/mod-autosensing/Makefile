@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-autosensing
-PKG_VERSION:=v0.5.1
+PKG_VERSION:=v0.3.1
 SHORT_DESCRIPTION:=SoC module wan-manager select the active wan-mode
 
-PKG_SOURCE:=mod-autosensing-v0.5.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-autosensing/-/archive/v0.5.1
-PKG_HASH:=bcf11489b6232cb3b8501ab30ff1f7dfa0fa09487c0cee4d8fd2599b44120162
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-autosensing-v0.5.1
+PKG_SOURCE:=mod-autosensing-v0.3.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-autosensing/-/archive/v0.3.1
+PKG_HASH:=142e3b9872121675d0c80036c9b4294813d1baf5c745c0b5d8bddb783334c866
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-autosensing-v0.3.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
