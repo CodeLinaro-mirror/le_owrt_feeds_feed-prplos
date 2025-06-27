@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-ip
-PKG_VERSION:=v1.4.1
+PKG_VERSION:=v1.4.2
 SHORT_DESCRIPTION:=Network Model IP client
 
-PKG_SOURCE:=netmodel-ip-v1.4.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip/-/archive/v1.4.1
-PKG_HASH:=00cb49fface952b368e67eb4bbce535741be4001f4201c63094f8260fdcf6aab
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-ip-v1.4.1
+PKG_SOURCE:=netmodel-ip-v1.4.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-ip/-/archive/v1.4.2
+PKG_HASH:=b1937be5ee978f6dfeb260154bcd1b974939ed298ff52f7b9279883c8b622bbf
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-ip-v1.4.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
