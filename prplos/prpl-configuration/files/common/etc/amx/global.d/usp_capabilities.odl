@@ -1,0 +1,6 @@
+%config {
+    %global usp.caps = {
+        resolve = true,
+        has = true
+    };
+}
