@@ -1,0 +1,24 @@
+config PACKAGE_tr181-conmon
+    tristate
+    select SAH_AMX_TR181_CONMON
+
+if PACKAGE_tr181-conmon
+
+menu "Select tr181-conmon build options"
+    depends on PACKAGE_tr181-conmon
+
+config SAH_AMX_TR181_CONMON
+    bool "Build TR-181 Connection Monitor plugin"
+    default y
+
+config SAH_AMX_TR181_CONMON_RUN_AS_USER
+    string "User will be used for the tr181-conmon plugin"
+    default "tr181_app"
+
+config SAH_AMX_TR181_CONMON_RUN_AS_GROUP
+    string "Group will be used for the tr181-conmon plugin"
+    default "tr181_app"
+
+endmenu
+
+endif
