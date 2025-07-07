@@ -1,0 +1,4 @@
+%config {
+    %global amxb-internal-timeout = 10;
+    %global amxb-minimal-timeout = 10;
+}
