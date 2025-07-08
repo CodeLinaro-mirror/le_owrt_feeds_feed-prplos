@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-ipdiagnostics
-PKG_VERSION:=v0.9.36
+PKG_VERSION:=v0.9.37
 SHORT_DESCRIPTION:=Speedtest plugin
 
-PKG_SOURCE:=tr181-ipdiagnostics-v0.9.36.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ipdiagnostics/-/archive/v0.9.36
-PKG_HASH:=4a68cd668d9013ea67a0be86ff5e8a2a3e95e6b41acd992a3e57a88c8298be04
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ipdiagnostics-v0.9.36
+PKG_SOURCE:=tr181-ipdiagnostics-v0.9.37.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ipdiagnostics/-/archive/v0.9.37
+PKG_HASH:=010cd92c10ddbc3a81ece4ff23dedfb54a0f8a685ba87abb0309ff5e66c0bae0
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ipdiagnostics-v0.9.37
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -22,15 +22,6 @@ define SAHInit/Install
 	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
 	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S25$(COMPONENT)
 	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/K10$(COMPONENT)
-endef
-
-define SAHBackupRestore/Install
-	install -d ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/backup
-	install -d ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/restore
-	install -d ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/import
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/backup/B10$(COMPONENT)
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/restore/R10$(COMPONENT)
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/usr/lib/hgwcfg/import/R10$(COMPONENT)
 endef
 
 include $(INCLUDE_DIR)/package.mk
@@ -69,7 +60,6 @@ define Build/Install
 	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_PRPL_IP_DIAGNOSTIC_UPLOAD_DOWNLOAD=$(CONFIG_PRPL_IP_DIAGNOSTIC_UPLOAD_DOWNLOAD))
 
 	$(call SAHInit/Install)
-	$(call SAHBackupRestore/Install)
 endef
 
 define Build/InstallDev
