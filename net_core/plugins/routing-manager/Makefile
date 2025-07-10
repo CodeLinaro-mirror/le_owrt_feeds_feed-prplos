@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=routing-manager
-PKG_VERSION:=v1.21.2
+PKG_VERSION:=test_PPW1850_PPW1910
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-routing-v1.21.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routing/-/archive/v1.21.2
-PKG_HASH:=c756527ab6ba0d48272fd2d812102f421e92aaaa02306bf4502a1b8587704ad0
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routing-v1.21.2
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=test_PPW1850_PPW1910
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routing.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -45,6 +46,9 @@ define Package/$(PKG_NAME)
   DEPENDS += +libnetmodel
   DEPENDS += +libdhcpoptions
   DEPENDS += +rpcd
+  DEPENDS += +libnl-core
+  DEPENDS += +libnl-route
+  DEPENDS += +libipat
   MENU:=1
 endef
 
