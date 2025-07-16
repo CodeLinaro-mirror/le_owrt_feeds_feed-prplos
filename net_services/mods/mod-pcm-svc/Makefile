@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-pcm-svc
-PKG_VERSION:=v0.15.0
+PKG_VERSION:=v0.15.1
 SHORT_DESCRIPTION:=Upgrade Persistent Configuration Manager service module
 
-PKG_SOURCE:=mod-pcm-svc-v0.15.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-pcm-svc/-/archive/v0.15.0
-PKG_HASH:=76fa34b52577d796f13cd408057d0d589673125a0e2482d44706a0172e1d6f37
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-pcm-svc-v0.15.0
+PKG_SOURCE:=mod-pcm-svc-v0.15.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-pcm-svc/-/archive/v0.15.1
+PKG_HASH:=b318c6e9e3806d5c45d4d902cb37c498f340729bd605c79f427ce29c326e43e1
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-pcm-svc-v0.15.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -21,7 +21,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=Ambiorix
+  SUBMENU:=Modules
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-pcm-svc
   DEPENDS += +amxrt
