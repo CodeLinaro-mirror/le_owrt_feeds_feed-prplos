@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-temperature
-PKG_VERSION:=v0.6.0
+PKG_VERSION:=v0.6.1
 SHORT_DESCRIPTION:=TR-181 compatible plugin for device temperature management
 
-PKG_SOURCE:=tr181-temperature-v0.6.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-temperature/-/archive/v0.6.0
-PKG_HASH:=ccfff2792a41f245fc9148354da9b35160e6557e1c295921002ce88696492560
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-temperature-v0.6.0
+PKG_SOURCE:=tr181-temperature-v0.6.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-temperature/-/archive/v0.6.1
+PKG_HASH:=156b5a02fc40bb312fe41422af5c683690964304a3a3f0bd9b0ba611992ff30f
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-temperature-v0.6.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -28,7 +28,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=TR-181 Managers
+  SUBMENU:=Ambiorix
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-temperature
   DEPENDS += +libamxc
