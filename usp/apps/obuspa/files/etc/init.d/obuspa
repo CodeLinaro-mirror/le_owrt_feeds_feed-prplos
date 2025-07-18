@@ -21,8 +21,10 @@ register_service()
 
 	boardserial=$(source /etc/environment 2>/dev/null ; echo $SERIALNUMBER)
 	boardoui=$(source /etc/environment 2>/dev/null ; echo $MANUFACTUREROUI)
+	hostname=$(source /etc/environment 2>/dev/null ; echo $MY_HOSTNAME)
 	procd_set_param env USP_BOARD_SERIAL="${boardserial}" \
 						USP_BOARD_OUI="${boardoui}"
+	sed -i "s/^\(Device.LocalAgent.EndpointID\ \)\(.*\)/\1 \"proto::${boardoui:-000000}-${hostname:-prplOS}-${boardserial:-SN000000000000}\"/" $RESET_FILE
 
 	# -p Enables trace logging of the USP protocol messages. Enable setting -p option to utilize prototracing
 	# procd_append_param command -p
