@@ -1,0 +1,42 @@
+menu "Select usp_discovery build options"
+    depends on PACKAGE_usp_discovery
+
+config DMM_USP_DISCOVERY_ORDER
+    int "Start up order usp_discovery plugin"
+    default 54
+
+config USP_DISCOVERY_SUPPORT_MQTT_MTP
+    bool "Whether MQTT MTP is supported for USP Controller discovery"
+    default n
+
+config USP_DISCOVERY_SUPPORT_STOMP_MTP
+    bool "Whether STOMP MTP is supported for USP Controller discovery"
+    default n
+
+if USP_DISCOVERY_SUPPORT_MQTT_MTP
+config USP_DISCOVERY_MQTT_AGENT_REPLY_TOPIC
+    string "MQTT reply topic for DHCP-configured controller for the obuspa"
+    default "/usp/controller"
+
+config USP_DISCOVERY_MQTT_CONTROLLER_RESPONSE_TOPIC
+    string "MQTT subscribe topic for DHCP-configured controller for the obuspa"
+    default ""
+
+endif
+
+if USP_DISCOVERY_SUPPORT_STOMP_MTP
+
+config USP_DISCOVERY_STOMP_AGENT_CONTROLLER_DST
+    string "STOMP USP Controller destination, that will be used with a for DHCP-configured controller in obuspa"
+    default "/usp/controller"
+
+config USP_DISCOVERY_STOMP_CONTROLLER_AGENT_DST
+    string "STOMP USP Agent destination, that will be used with a for DHCP-configured controller in obuspa"
+    default ""
+
+config USP_DISCOVERY_STOMP_FORCE_NO_ENCRYPTION
+    bool "Whether encryption is disabled for STOMP protocol"
+    default n
+endif
+
+endmenu
