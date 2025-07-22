@@ -1,0 +1,14 @@
+choice
+	bool "Build Mode Configuration"
+	default PRPL_CONFIGURATION_GATEWAY
+	depends on PACKAGE_prpl-configration
+
+config PRPL_CONFIGURATION_EXTENDER
+	bool
+	prompt "Build Software as an Extender"
+
+config PRPL_CONFIGURATION_GATEWAY
+	bool
+	prompt "Build Software as a Gateway"
+
+endchoice
