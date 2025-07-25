@@ -1,0 +1,108 @@
+From 0d413a5a43f3dcc8858a21d3219cbe4cb97444e4 Mon Sep 17 00:00:00 2001
+From: Paul HENRYS <paul.henrys_ext@softathome.com>
+Date: Mon, 29 Jul 2024 17:20:04 +0200
+Subject: [PATCH] Add support for PSS padding when signing with RSA
+
+SWUpdate supports both PKCS#1 and PSS padding with RSA but swugenerator only
+implements PKCS#1 padding. PSS padding support is therefore added in SWUSignRSA.
+One can use the keyword RSAPSS to sign the sw-description file with RSA and PSS
+padding. For instance:
+  "-k RSAPSS,myprivatekey.pem"
+
+Signed-off-by: Paul HENRYS <paul.henrys_ext@softathome.com>
+Signed-off-by: Philippe Reynes <philippe.reynes@softathome.com>
+---
+ swugenerator/main.py     | 18 +++++++++++++-----
+ swugenerator/swu_sign.py | 19 ++++++++++++++++++-
+ 2 files changed, 31 insertions(+), 6 deletions(-)
+
+diff --git a/swugenerator/main.py b/swugenerator/main.py
+index b5ede6b..c543313 100644
+--- a/swugenerator/main.py
++++ b/swugenerator/main.py
+@@ -94,6 +94,8 @@ def parse_signing_option(
+     CMS,<private key>,<certificate used to sign>
+     RSA,<private key>,<file with password>
+     RSA,<private key>
++    RSAPSS,<private key>,<file with password>
++    RSAPSS,<private key>
+     PKCS11,<pin>[,<module>,<slot>,<id>]
+     CUSTOM,<custom command>
+ 
+@@ -124,16 +126,22 @@ def parse_signing_option(
+         # Format : CMS,<private key>,<certificate used to sign>
+         else:
+             return SWUSignCMS(sign_parms[1], sign_parms[2], None, None, engine, keyform)
+-    if cmd == "RSA":
++    if cmd[:3] == "RSA":
+         if len(sign_parms) not in (2, 3) or not all(sign_parms):
+             raise InvalidSigningOption(
+                 "RSA requires private key and an optional password file"
+             )
+-        # Format : RSA,<private key>,<file with password>
++        if cmd == "RSA":
++            mode = SWUSignRSA.RSAMode.PKCS1
++        elif cmd == "RSAPSS":
++            mode = SWUSignRSA.RSAMode.PSS
++        else:
++            raise InvalidSigningOption(f"Unknown RSA mode: {cmd}")
++        # Format : RSA(PSS),<private key>,<file with password>
+         if len(sign_parms) == 3:
+-            return SWUSignRSA(sign_parms[1], sign_parms[2])
+-        # Format : RSA,<private key>
+-        return SWUSignRSA(sign_parms[1], None)
++            return SWUSignRSA(sign_parms[1], sign_parms[2], mode=mode)
++        # Format : RSA(PSS),<private key>
++        return SWUSignRSA(sign_parms[1], None, mode=mode)
+     if cmd == "PKCS11":
+         # Format : PKCS11,<pin>[,<module>,<slot>,<id>]
+         if len(sign_parms) not in range(2, 6) or not all(sign_parms[0:2]):
+diff --git a/swugenerator/swu_sign.py b/swugenerator/swu_sign.py
+index 53b6727..1eeeff5 100644
+--- a/swugenerator/swu_sign.py
++++ b/swugenerator/swu_sign.py
+@@ -6,6 +6,8 @@ import logging
+ import subprocess
+ import sys
+ 
++from enum import Enum
++
+ 
+ class SWUSign:
+     def __init__(self):
+@@ -85,16 +87,31 @@ class SWUSignCMS(SWUSign):
+ 
+ 
+ class SWUSignRSA(SWUSign):
+-    def __init__(self, key, passin):
++    class RSAMode(Enum):
++        PKCS1 = "pkcs1"
++        PSS = "pss"
++
++    def __init__(self, key, passin, mode=RSAMode.PKCS1):
+         super().__init__()
+         self.type = "RSA"
+         self.key = key
+         self.passin = passin
++        self.mode = mode
++
++    def _get_rsa_mode_args(self):
++        if self.mode == self.RSAMode.PSS:
++            return ["-sigopt", "rsa_padding_mode:pss",
++                    "-sigopt", "rsa_pss_saltlen:-2"]
++        elif self.mode == self.RSAMode.PKCS1:
++            return []
++        else:
++            raise ValueError(f"Unknown or unsupported RSA mode: {self.mode}")
+ 
+     def prepare_cmd(self, sw_desc_in, sw_desc_sig):
+         self.signcmd = (
+             ["openssl", "dgst", "-sha256", "-sign", self.key]
+             + self.get_passwd_file_args()
++            + self._get_rsa_mode_args()
+             + ["-out", sw_desc_sig, sw_desc_in]
+         )
+ 
+-- 
+2.43.0
+
