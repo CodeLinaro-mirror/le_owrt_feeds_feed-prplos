@@ -1,0 +1,7 @@
+--- a/configs/tools-only_defconfig
++++ b/configs/tools-only_defconfig
+@@ -38,4 +38,3 @@ CONFIG_VIRTIO_MMIO=n
+ CONFIG_VIRTIO_PCI=n
+ CONFIG_VIRTIO_SANDBOX=n
+ CONFIG_GENERATE_ACPI_TABLE=n
+-CONFIG_TOOLS_MKEFICAPSULE=y
