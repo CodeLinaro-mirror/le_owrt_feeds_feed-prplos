@@ -59,6 +59,9 @@ endef
 define Host/Install
 	@echo "******* Installing swugenerator on the host *******"
 	$(call HostPython3/PipInstall,$(HOST_BUILD_DIR))
+	@echo "******* Copy preinstall and postinstall scripts *******"
+	mkdir -p $(PKG_BUILD_DIR)/scripts
+	$(CP) $(CURDIR)/scripts/* $(PKG_BUILD_DIR)/scripts/
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
