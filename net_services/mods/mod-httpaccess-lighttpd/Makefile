@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/modules/mod-httpaccess-lighttpd/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-httpaccess-lighttpd
-PKG_VERSION:=v0.5.1
+PKG_VERSION:=v0.7.0
 SHORT_DESCRIPTION:=Module to manage HTTP accesses for lighttpd server
 
-PKG_SOURCE:=mod-httpaccess-lighttpd-v0.5.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-httpaccess-lighttpd/-/archive/v0.5.1
-PKG_HASH:=9c25e49320006792ea784c7f3da581720956b672654c1a7a6fbdc655a428cfbd
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-httpaccess-lighttpd-v0.5.1
+PKG_SOURCE:=mod-httpaccess-lighttpd-v0.7.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-httpaccess-lighttpd/-/archive/v0.7.0
+PKG_HASH:=8d2047adb7576a076e4f31568bf12e39d9854a45aadb8dc9560fceceb20c69f1
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-httpaccess-lighttpd-v0.7.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -22,7 +24,9 @@ define Package/$(PKG_NAME)
   SUBMENU:=Modules
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-httpaccess-lighttpd
+  DEPENDS += +libamxb
   DEPENDS += +libamxc
+  DEPENDS += +libamxd
   DEPENDS += +libamxp
   DEPENDS += +libamxm
   DEPENDS += +libsahtrace

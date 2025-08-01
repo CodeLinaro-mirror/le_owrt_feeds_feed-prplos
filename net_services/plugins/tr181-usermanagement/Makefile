@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-usermanagement
-PKG_VERSION:=v0.24.0
+PKG_VERSION:=v0.24.1
 SHORT_DESCRIPTION:=tr181 user management plugin
 
-PKG_SOURCE:=tr181-usermanagement-v0.24.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usermanagement/-/archive/v0.24.0
-PKG_HASH:=d8ef53d2e8a2bd93b96b99acb194921350bb0bb685ca7e820b102ac31bf0fb88
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-usermanagement-v0.24.0
+PKG_SOURCE:=tr181-usermanagement-v0.24.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usermanagement/-/archive/v0.24.1
+PKG_HASH:=b0fedff222f241222b65ce575c1dabd052033691c523bccb72df8f2d5866ebb5
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-usermanagement-v0.24.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -28,7 +28,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=Ambiorix
+  SUBMENU:=Plugins
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usermanagement
   DEPENDS += +libamxc

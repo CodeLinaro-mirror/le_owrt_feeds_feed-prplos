@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-security/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-security
-PKG_VERSION:=v0.4.6
+PKG_VERSION:=v0.6.0
 SHORT_DESCRIPTION:=TR-181 compatible security plugin
 
-PKG_SOURCE:=tr181-security-v0.4.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-security/-/archive/v0.4.6
-PKG_HASH:=acbff1a62fa53bea6ca9b268b87bee8d215627d593bb62099f0fb589657fe7eb
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-security-v0.4.6
+PKG_SOURCE:=tr181-security-v0.6.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-security/-/archive/v0.6.0
+PKG_HASH:=aafbe1606724bd887b895d37268f43c5dbef7a772a7d99632146cc51f923c2b5
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-security-v0.6.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
