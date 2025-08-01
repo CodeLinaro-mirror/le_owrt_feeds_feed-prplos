@@ -6,9 +6,10 @@ PKG_NAME:=tr181-usermanagement
 PKG_VERSION:=v0.23.16
 SHORT_DESCRIPTION:=tr181 user management plugin
 
-PKG_SOURCE:=tr181-usermanagement-v0.23.16.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usermanagement/-/archive/v0.23.16
-PKG_HASH:=f71c950aa90d0350bcc45278b5cc577bd66a5a117cfc03adc11b7700b3fe10e5
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usermanagement.git
+PKG_MIRROR_HASH:=6f0236062fcbbc58201b1c1d3d20e85d90598fe341aef2dec18a36d85e929eaf
+PKG_SOURCE_VERSION:=8dc2599fda043d8e0462203551ed20caf7336726
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-usermanagement-v0.23.16
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent

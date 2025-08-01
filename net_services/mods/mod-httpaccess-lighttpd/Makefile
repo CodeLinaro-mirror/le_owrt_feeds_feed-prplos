@@ -4,9 +4,10 @@ PKG_NAME:=mod-httpaccess-lighttpd
 PKG_VERSION:=v0.5.1
 SHORT_DESCRIPTION:=Module to manage HTTP accesses for lighttpd server
 
-PKG_SOURCE:=mod-httpaccess-lighttpd-v0.5.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-httpaccess-lighttpd/-/archive/v0.5.1
-PKG_HASH:=9c25e49320006792ea784c7f3da581720956b672654c1a7a6fbdc655a428cfbd
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-httpaccess-lighttpd.git
+PKG_MIRROR_HASH:=bfcf5c067868ece17b39dc08d6dd2bc0d153e52ce186f88672f081a9017d8e92
+PKG_SOURCE_VERSION:=aafadf2115bb46e9b58b93495cb740aac4db4d0f
 PKG_BUILD_DIR:=$(BUILD_DIR)/mod-httpaccess-lighttpd-v0.5.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent

@@ -4,9 +4,10 @@ PKG_NAME:=tr181-security
 PKG_VERSION:=v0.4.6
 SHORT_DESCRIPTION:=TR-181 compatible security plugin
 
-PKG_SOURCE:=tr181-security-v0.4.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-security/-/archive/v0.4.6
-PKG_HASH:=acbff1a62fa53bea6ca9b268b87bee8d215627d593bb62099f0fb589657fe7eb
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-security.git
+PKG_MIRROR_HASH:=fd8b7756a1f7a9f26bef6734bec03f00cbbfa319a36b3807a5401a0c635c5f52
+PKG_SOURCE_VERSION:=fe67f68626457065951d95a1cc9fd28a2b3b37ce
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-security-v0.4.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
