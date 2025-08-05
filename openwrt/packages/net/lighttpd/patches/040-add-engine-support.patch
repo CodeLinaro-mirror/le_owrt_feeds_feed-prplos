@@ -1,0 +1,41 @@
+--- a/src/mod_openssl.c	2024-04-11 07:30:19.000000000 +0200
++++ b/src/mod_openssl.c	2025-07-28 20:32:13.390126840 +0200
+@@ -37,6 +37,8 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
++#include <openssl/engine.h>
++
+ /*(not needed)*/
+ /* correction; needed for:
+  *   SSL_load_client_CA_file()
+@@ -520,6 +522,7 @@
+    && (!defined(LIBRESSL_VERSION_NUMBER) \
+        || LIBRESSL_VERSION_NUMBER >= 0x2070000fL)
+     OPENSSL_init_ssl(OPENSSL_INIT_LOAD_SSL_STRINGS
++                    |OPENSSL_INIT_LOAD_CONFIG
+                     |OPENSSL_INIT_LOAD_CRYPTO_STRINGS,NULL);
+     OPENSSL_init_crypto(OPENSSL_INIT_ADD_ALL_CIPHERS
+                        |OPENSSL_INIT_ADD_ALL_DIGESTS
+@@ -1841,8 +1844,19 @@
+     if (NULL == ssl_pemfile_x509)
+         return NULL;
+ 
+-    EVP_PKEY *ssl_pemfile_pkey =
+-      mod_openssl_evp_pkey_load_pem_file(privkey->ptr, srv->errh);
++    EVP_PKEY *ssl_pemfile_pkey = NULL;
++    if (0 == strncmp(privkey->ptr, "pkcs11:", 7)) {
++	    ENGINE *e = ENGINE_by_id("pkcs11");
++      if (e) {
++        ENGINE_init(e);
++        ssl_pemfile_pkey =
++          ENGINE_load_private_key(e, privkey->ptr, NULL, NULL);
++      }
++    }
++    if (NULL == ssl_pemfile_pkey) {
++	    ssl_pemfile_pkey =
++		    mod_openssl_evp_pkey_load_pem_file(privkey->ptr, srv->errh);
++    }
+     if (NULL == ssl_pemfile_pkey) {
+         X509_free(ssl_pemfile_x509);
+         sk_X509_pop_free(ssl_pemfile_chain, X509_free);
