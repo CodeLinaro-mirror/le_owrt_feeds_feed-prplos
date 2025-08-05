@@ -8,7 +8,7 @@ SHORT_DESCRIPTION:=TR-181 compatible MQTT client
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mqtt.git
-PKG_MIRROR_HASH:=74fe869ef99988e6ab9ed87a2b6fde63611238a04844dbb57590a2836b84f723
+PKG_MIRROR_HASH:=29fe797487c63c4e14f2f1535312c5ab441f76d27ff1cb6de3d77ca2e00a2e7d
 PKG_SOURCE_VERSION:=feat-54-dev
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqtt-v3.6.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
