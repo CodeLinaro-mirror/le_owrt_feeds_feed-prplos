@@ -8,7 +8,7 @@ SHORT_DESCRIPTION:=monitor processes
 
 PKG_SOURCE:=amx-processmonitor-v0.2.10.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/amx-processmonitor/-/archive/v0.2.10
-PKG_HASH:=88fad4e381dea04c746b3998c38264470ce194ab8dcebd74fb0e3cee17ac7b1b
+PKG_HASH:=86b45e670f6475ed359f1842afefafb12f9ed143b969e79f8d62156e26446d9a
 PKG_BUILD_DIR:=$(BUILD_DIR)/amx-processmonitor-v0.2.10
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
@@ -36,7 +36,10 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxp
   DEPENDS += +libamxd
   DEPENDS += +libamxo
+  DEPENDS += +libamxj
   DEPENDS += +libsahtrace
+  DEPENDS += +libubus
+  DEPENDS += +libubox
   MENU:=1
 endef
 
