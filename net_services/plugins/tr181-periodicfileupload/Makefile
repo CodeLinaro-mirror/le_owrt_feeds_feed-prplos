@@ -8,6 +8,7 @@ SHORT_DESCRIPTION:=periodic uploaded file manager
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-periodicfileupload.git
+PKG_MIRROR_HASH:=89a49be42589f53627803e53e73b82b412a93bda926574a3faeddd8eb6039d3f
 PKG_SOURCE_VERSION:=feat-54-dev
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-periodicfileupload-v0.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
