@@ -6,9 +6,10 @@ PKG_NAME:=tr069-manager
 PKG_VERSION:=v1.35.10
 SHORT_DESCRIPTION:=TR069 Manager
 
-PKG_SOURCE:=tr069-manager-v1.35.10.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.35.10
-PKG_HASH:=1a1cf414350cac493447b8b2326a0a1a3f08817097718f49ef18febcdbf5ed7a
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager.git
+PKG_SOURCE_VERSION:=feat54-dev
+PKG_MIRROR_HASH:=41e02379131ee3de730b30f032c1ed6f308ca358c5b931aff84458e955bf21cf
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.35.10
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
