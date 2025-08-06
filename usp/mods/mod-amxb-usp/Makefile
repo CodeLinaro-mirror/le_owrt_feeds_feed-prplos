@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-amxb-usp
-PKG_VERSION:=v5.3.0
+PKG_VERSION:=dev_ppw735
 SHORT_DESCRIPTION:=USP backend implementation for amxb
 
-PKG_SOURCE:=amxb_usp-v5.3.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp/-/archive/v5.3.0
-PKG_HASH:=0d803359199f5abc51771b94ad6f659c2177046674449ffc7e9dea3552666740
-PKG_BUILD_DIR:=$(BUILD_DIR)/amxb_usp-v5.3.0
+PKG_SOURCE:=amxb_usp-dev_ppw735.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp/-/archive/dev_ppw735
+PKG_HASH:=0691b93c368626c0ae5964ff2a58ffad8d812ae8b583b09e07e3f55209735e02
+PKG_BUILD_DIR:=$(BUILD_DIR)/amxb_usp-dev_ppw735
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
