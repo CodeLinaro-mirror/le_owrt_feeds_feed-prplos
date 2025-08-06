@@ -33,10 +33,10 @@ define Package/softhsm2/description
 endef
 
 define Package/softhsm2/install
-	$(INSTALL_DIR) $(1)/usr/lib/softhsm $(1)/usr/bin $(1)/etc/softhsm
+	$(INSTALL_DIR) $(1)/usr/lib/softhsm $(1)/usr/bin $(1)/etc/softhsm/tokens
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/softhsm/libsofthsm2.so* $(1)/usr/lib/softhsm/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/softhsm2-util $(1)/usr/bin/
-	$(CP) ./files/softhsm2.conf $(1)/etc/softhsm/softhsm2.conf
+	$(CP) ./files/softhsm2.conf $(1)/etc/softhsm2.conf
 endef
 
 $(eval $(call BuildPackage,softhsm2))
