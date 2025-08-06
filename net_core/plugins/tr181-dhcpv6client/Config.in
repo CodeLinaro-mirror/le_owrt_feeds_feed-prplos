@@ -29,10 +29,10 @@ config SAH_AMX_TR181_DHCPV6CLIENT_USP_DISCOVERY_ENABLED
     default y
     depends on PACKAGE_usp_discovery
 
-config SAH_AMX_TR181_DHCPV6CLIENT_ACS_DISCOVERY_ENABLED
+config SAH_AMX_TR181_DHCPV6CLIENT_TR069_DISCOVERY_ENABLED
     bool "Whether ACS discovery is enabled"
     default y
-    depends on PACKAGE_acs-discovery
+    depends on PACKAGE_tr069-discovery
 
 config SAH_AMX_TR181_DHCPV6CLIENT_TR181_GATEWAYINFO_ENABLED
     bool "Whether tr181-gatewayinfo is enabled"
