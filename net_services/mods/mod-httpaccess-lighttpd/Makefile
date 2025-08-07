@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=Module to manage HTTP accesses for lighttpd server
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-httpaccess-lighttpd.git
-PKG_MIRROR_HASH:=5e4b9df36e0c9702ff5d787b1ef6cbece8aa41133e4e612ed5dc6d84ce759c58
+PKG_MIRROR_HASH:=0e3b8efd062a939eefd1817d69c931f23456c660087c549277a7afd56a5cdd90
 PKG_SOURCE_VERSION:=feat-54-dev
 PKG_BUILD_DIR:=$(BUILD_DIR)/mod-httpaccess-lighttpd-v0.5.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
