@@ -39,7 +39,7 @@ define Package/libp11/description
   to make using PKCS#11 implementations easier.
 endef
 
-CONFIGURE_ARGS += --with-enginesdir=/usr/lib/engines
+CONFIGURE_ARGS += --with-enginesdir=/usr/lib/engines-3
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include/
@@ -52,11 +52,12 @@ define Build/InstallDev
 endef
 
 define Package/libp11/install
-	$(INSTALL_DIR) $(1)/usr/lib/
+	$(INSTALL_DIR) $(1)/usr/lib/engines-3 $(1)/etc/ssl/modules.cnf.d $(1)/etc/uci-defaults
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libp11.so.* $(1)/usr/lib/
-	$(INSTALL_DIR) $(1)/usr/lib/engines
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/engines/*.so* $(1)/usr/lib/engines
-	$(LN) pkcs11.so $(1)/usr/lib/engines/libpkcs11.so
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/engines-3/*.so* $(1)/usr/lib/engines-3
+	$(LN) pkcs11.so $(1)/usr/lib/engines-3/libpkcs11.so
+	$(CP) ./files/pkcs11.cnf $(1)/etc/ssl/modules.cnf.d/pkcs11.cnf
+	$(CP) ./files/openssl-pkcs11 $(1)/etc/uci-defaults/openssl-pkcs11
 endef
 
 $(eval $(call BuildPackage,libp11))
