@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Add pkcs11 engine to /etc/config/openssl if not already present
+
+if ! uci -q get openssl.pkcs11; then
+    touch /etc/config/openssl
+    uci set openssl.pkcs11=engine
+    uci set openssl.pkcs11.enabled=1
+    uci set openssl.pkcs11.engine_id=pkcs11
+    uci commit openssl
+fi
