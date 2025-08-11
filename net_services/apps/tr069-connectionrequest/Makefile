@@ -11,6 +11,7 @@ PKG_HASH:=508823c6d60a921ad9ba6ba28632abf0f50ef26d2b8ef2f109968bb0a3868d7a
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-connectionrequest-v0.1.0
 
 COMPONENT:=tr069-connectionrequest
+BIN_NAME:=tr069-connectionrequest
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -37,6 +38,9 @@ endef
 
 define Build/Install
 	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include)
+	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(BIN_NAME) ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_TR069_CONNECTIONREQUEST_ORDER)$(BIN_NAME)
+	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(BIN_NAME) ${PKG_INSTALL_DIR}/etc/rc.d/K$(CONFIG_TR069_CONNECTIONREQUEST_ORDER)$(BIN_NAME)
 endef
 
 define Build/InstallDev
@@ -51,6 +55,10 @@ define Package/$(PKG_NAME)/install
 	find $(1) -name *.a -exec rm {} +;
 	find $(1) -name *.h -exec rm {} +;
 	find $(1) -name *.pc -exec rm {} +;
+endef
+
+define Package/$(PKG_NAME)/config
+	source "$(SOURCE)/Config.in"
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
