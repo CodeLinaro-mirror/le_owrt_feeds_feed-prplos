@@ -13,7 +13,7 @@ config SAH_AMX_TR069_MANAGER
 
 config SAH_AMX_TR069_MANAGER_ORDER
     int "TR069 Manager start up order"
-    default 98
+    default 97
 
 config SAH_AMX_TR069_MANAGER_CERTIFICATE_NO_PEM
     bool "Allow not to use any certificate"

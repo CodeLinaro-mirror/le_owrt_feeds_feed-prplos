@@ -1,0 +1,15 @@
+config PACKAGE_tr069-discovery
+    tristate
+
+if PACKAGE_tr069-discovery
+
+menu "Select tr069-discovery build options"
+    depends on PACKAGE_tr069-discovery
+
+config TR069_DISCOVERY_ORDER
+    int "ACS Discovery start up order"
+    default 98
+
+endmenu
+
+endif

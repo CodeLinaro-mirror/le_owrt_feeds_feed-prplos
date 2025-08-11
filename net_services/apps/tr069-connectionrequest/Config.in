@@ -1,0 +1,10 @@
+
+menu "Select tr069-connectionrequest build options"
+    depends on PACKAGE_tr069-connectionrequest
+
+config TR069_CONNECTIONREQUEST_ORDER
+    int "tr069-connectionrequest start up order"
+    default 99
+
+endmenu
+
