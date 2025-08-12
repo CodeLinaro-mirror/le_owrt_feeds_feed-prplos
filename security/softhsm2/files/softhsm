@@ -1,0 +1,62 @@
+#!/bin/sh /etc/rc.common
+
+START=14
+
+LABEL="server-key"
+CERT_STORE="/root/certs"
+
+softhsm_init() {
+    mkdir -p $CERT_STORE
+
+    # check if softHSM is not yet initialized (first boot)
+    pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --list-objects 2>&1 | grep -q CKR_TOKEN_NOT_RECOGNIZED
+    if [ $? -eq 0 ]; then
+        echo "Initializing SoftHSM"
+        softhsm2-util --init-token --free --label cpe-token --pin 1234 --so-pin 123456
+        if [ $? -ne 0 ]; then
+            echo "SoftHSM init failed"
+            exit 1
+        fi
+    fi
+
+    # provision softHSM with TEST/DEV ca.key (to later sign the device certificate)
+    pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --list-objects 2>&1 | grep -q ca-key
+    if [ $? -ne 0 ]; then
+        openssl genrsa -out $CERT_STORE/ca.key 2048
+
+        echo "Provisioning SoftHSM with test ca key"
+        pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --write-object $CERT_STORE/ca.key --type privkey --label ca-key
+        if [ $? -ne 0 ]; then
+            echo "Test CA key provisioning failed"
+            exit 1
+        fi
+        rm $CERT_STORE/ca.key
+
+        # create ca.crt
+        openssl req -x509 -new -nodes -engine pkcs11 -keyform ENGINE -key "pkcs11:object=ca-key;type=private" -sha256 -days 3650 -out $CERT_STORE/ca.crt -subj '/CN=Test CA'
+    fi
+
+    # generate device key inside softHSM
+    pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --list-objects 2>&1 | grep -q $LABEL
+    if [ $? -ne 0 ]; then
+        echo "Provisioning SoftHSM with device private key"
+        pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --keypairgen --key-type rsa:2048 --label $LABEL
+        if [ $? -ne 0 ]; then
+            echo "Private key generation failed"
+            exit 1
+        fi
+    fi
+
+    # create device certificate
+    if [ ! -f /etc/config/autocert/server.crt ]; then
+        openssl req -new -engine pkcs11 -keyform ENGINE -key "pkcs11:object=server-key;type=private" -out $CERT_STORE/server.csr -subj '/CN=prplOS.lan'
+        openssl x509 -req -in $CERT_STORE/server.csr -CA $CERT_STORE/ca.crt -engine pkcs11 -CAkeyform ENGINE -CAkey "pkcs11:object=ca-key;type=private" -out $CERT_STORE/server.crt -days 3650 -sha256
+        rm $CERT_STORE/server.csr
+        mkdir -p /etc/config/autocert
+        mv $CERT_STORE/server.crt /etc/config/autocert/
+    fi
+}
+
+start() {
+    softhsm_init
+}
