@@ -1,0 +1,23 @@
+#!/bin/sh /etc/rc.common
+
+START=90
+
+provision_security_uris() {
+    CertificateNumberOfEntries=$(ba-cli -l 'Security.CertificateNumberOfEntries?' | tail -n 2 | head -n 1)
+
+    for i in $(seq 1 "$CertificateNumberOfEntries"); do
+        CAFileName=$(ba-cli -l "ubus-protected; Security.Certificate.$i.CAFileName?" | tail -n 2 | head -n 1)
+        CAPath=$(ba-cli -l "ubus-protected; Security.Certificate.$i.CAPath?" | tail -n 2 | head -n 1)
+
+        ba-cli "ubus-protected; Security.Certificate.$i.CertificateURI=file://$CAPath/$CAFileName"
+
+        if [ ! "$CAPath" = "/usr/share/ca-certificates" ]; then
+            LABEL=${CAFileName%.*}
+            ba-cli "ubus-protected; Security.Certificate.$i.PrivateKeyURI=\"pkcs11:object=$LABEL-key;type=private\""
+        fi
+    done
+}
+
+start() {
+    provision_security_uris
+}
