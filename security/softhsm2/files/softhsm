@@ -1,0 +1,68 @@
+#!/bin/sh /etc/rc.common
+
+START=60
+
+LABEL="cpe-key"
+CA_KEY_DIR="/root/certs"
+CA_CERT_DIR="/usr/share/ca-certificates"
+DEVICE_CERT_DIR="/etc/config/autocert"
+SOFTHSM_TOKEN_DIR="/etc/softhsm/tokens"
+
+softhsm_init() {
+    chgrp certificates $SOFTHSM_TOKEN_DIR
+    chmod g+s $SOFTHSM_TOKEN_DIR
+
+    # check if softHSM is not yet initialized (first boot)
+    pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --list-objects 2>&1 | grep -q CKR_TOKEN_NOT_RECOGNIZED
+    if [ $? -eq 0 ]; then
+        echo "Initializing SoftHSM"
+        softhsm2-util --init-token --free --label cpe-token --pin 1234 --so-pin 123456
+        if [ $? -ne 0 ]; then
+            echo "SoftHSM init failed"
+            exit 1
+        fi
+    fi
+
+    # provision softHSM with TEST/DEV ca.key (to later sign the device certificate)
+    pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --list-objects 2>&1 | grep -q ca-key
+    if [ $? -ne 0 ]; then
+        if [ ! -f $CA_KEY_DIR/ca.key ]; then
+            echo "$CA_KEY_DIR/ca.key doesn't exist as a file nor in HSM. Please factory reset the device"
+            exit 1
+        fi
+
+        echo "Provisioning SoftHSM with test ca key"
+        pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --write-object $CA_KEY_DIR/ca.key --type privkey --label ca-key
+        if [ $? -ne 0 ]; then
+            echo "Test CA key provisioning failed"
+            exit 1
+        fi
+        rm $CA_KEY_DIR/ca.key
+    fi
+
+    # generate device key inside softHSM
+    pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --list-objects 2>&1 | grep -q $LABEL
+    if [ $? -ne 0 ]; then
+        echo "Generating device private key inside SoftHSM"
+        pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --keypairgen --key-type rsa:2048 --label $LABEL
+        if [ $? -ne 0 ]; then
+            echo "Private key generation failed"
+            exit 1
+        fi
+    fi
+
+    # create device certificate
+    if [ ! -f $DEVICE_CERT_DIR/cpe.crt ]; then
+        openssl req -new -engine pkcs11 -keyform ENGINE -key "pkcs11:object=$LABEL;type=private" -out /tmp/cpe.csr -subj '/CN=prplOS.lan' -addext "subjectAltName=DNS:prplos.lan,IP:192.168.1.1"
+        openssl x509 -req -in /tmp/cpe.csr -CA $CA_CERT_DIR/ca.crt -engine pkcs11 -CAkeyform ENGINE -CAkey "pkcs11:object=ca-key;type=private" -out $DEVICE_CERT_DIR/cpe.crt -days 36500 -sha256 -extfile <(printf "subjectAltName=DNS:prplos.lan,IP:192.168.1.1")
+        rm /tmp/cpe.csr
+    fi
+
+    # Allow the whole 'certificates' group to use softhsm
+    chmod -R g+r $SOFTHSM_TOKEN_DIR
+    find $SOFTHSM_TOKEN_DIR -type d -exec chmod g+x {} \;
+}
+
+start() {
+    softhsm_init
+}
