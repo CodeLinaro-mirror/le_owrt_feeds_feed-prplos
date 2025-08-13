@@ -11,10 +11,11 @@ PKG_NAME:=miniupnpd-prpl
 PKG_RELEASE:=2
 
 PKG_VERSION:=2.3.3
-PKG_SOURCE:=miniupnpd-prpl-stable-2.3.y_v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/forks/miniupnpd/-/archive/prpl/stable-2.3.y_v0.1.0
-PKG_HASH:=80f9e70e2b7643357831e30492e89043b84278ea7a04738185edf7fb7d060d83
-PKG_BUILD_DIR:=$(BUILD_DIR)/miniupnpd-prpl-stable-2.3.y_v0.1.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=PPW-802_fix_allow_reserved_addr
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/miniupnpd.git
+PKG_MIRROR_HASH:=053272d7505040b028033fb3495dd7d55097ab10c61ebffe83fa5a0fbbb02390
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_MAINTAINER:=
 PKG_LICENSE:=BSD-3-Clause
