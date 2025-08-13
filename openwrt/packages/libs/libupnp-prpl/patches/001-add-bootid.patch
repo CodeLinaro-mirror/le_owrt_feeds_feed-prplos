@@ -1,0 +1,167 @@
+From e3a5f7b19c2d4a8f01b3769c54de821a6f9dcb42 Mon Sep 17 00:00:00 2001
+From: Roman Yaroshenko <r.yaroshenko@inango-systems.com>
+Date: Mon Sep 1 15:09:33 2025 +0300
+Subject: [PATCH 1/2] BootID is not parsed properly
+
+Positional placement of HTTP header info for BootID
+is wrong and causes internal search mechanism to skip it during the search
+
+Upstream-Status: Inappropriate [prpl specific hack]
+Signed-off-by: Roman Yaroshenko <r.yaroshenko@inango-systems.com>
+---
+diff --git a/upnp/inc/UpnpDiscovery.h b/upnp/inc/UpnpDiscovery.h
+index 84bc9949..b219abf5 100644
+--- a/upnp/inc/UpnpDiscovery.h
++++ b/upnp/inc/UpnpDiscovery.h
+@@ -152,6 +152,21 @@ UPNP_EXPORT_SPEC int UpnpDiscovery_strncpy_Location(
+ /*! UpnpDiscovery_clear_Location */
+ UPNP_EXPORT_SPEC void UpnpDiscovery_clear_Location(UpnpDiscovery *p);
+ 
++/*! UpnpDiscovery_get_BootID */
++UPNP_EXPORT_SPEC const UpnpString *UpnpDiscovery_get_BootID(const UpnpDiscovery *p);
++/*! UpnpDiscovery_set_BootID */
++UPNP_EXPORT_SPEC int UpnpDiscovery_set_BootID(UpnpDiscovery *p, const UpnpString *s);
++/*! UpnpDiscovery_get_BootID_Length */
++UPNP_EXPORT_SPEC size_t UpnpDiscovery_get_BootID_Length(const UpnpDiscovery *p);
++/*! UpnpDiscovery_get_BootID_cstr */
++UPNP_EXPORT_SPEC const char *UpnpDiscovery_get_BootID_cstr(const UpnpDiscovery *p);
++/*! UpnpDiscovery_strcpy_BootID */
++UPNP_EXPORT_SPEC int UpnpDiscovery_strcpy_BootID(UpnpDiscovery *p, const char *s);
++/*! UpnpDiscovery_strncpy_BootID */
++UPNP_EXPORT_SPEC int UpnpDiscovery_strncpy_BootID(UpnpDiscovery *p, const char *s, size_t n);
++/*! UpnpDiscovery_clear_BootID */
++UPNP_EXPORT_SPEC void UpnpDiscovery_clear_BootID(UpnpDiscovery *p);
++
+ /*! UpnpDiscovery_get_Os */
+ UPNP_EXPORT_SPEC const UpnpString *UpnpDiscovery_get_Os(const UpnpDiscovery *p);
+ /*! UpnpDiscovery_set_Os */
+diff --git a/upnp/src/api/UpnpDiscovery.c b/upnp/src/api/UpnpDiscovery.c
+index 108d469a..df67ffe4 100644
+--- a/upnp/src/api/UpnpDiscovery.c
++++ b/upnp/src/api/UpnpDiscovery.c
+@@ -24,6 +24,7 @@ struct s_UpnpDiscovery
+ 	UpnpString *m_ServiceType;
+ 	UpnpString *m_ServiceVer;
+ 	UpnpString *m_Location;
++	UpnpString *m_BootID;
+ 	UpnpString *m_Os;
+ 	UpnpString *m_Date;
+ 	UpnpString *m_Ext;
+@@ -44,6 +45,7 @@ UpnpDiscovery *UpnpDiscovery_new()
+ 	p->m_ServiceType = UpnpString_new();
+ 	p->m_ServiceVer = UpnpString_new();
+ 	p->m_Location = UpnpString_new();
++	p->m_BootID = UpnpString_new();
+ 	p->m_Os = UpnpString_new();
+ 	p->m_Date = UpnpString_new();
+ 	p->m_Ext = UpnpString_new();
+@@ -68,6 +70,8 @@ void UpnpDiscovery_delete(UpnpDiscovery *q)
+ 	p->m_Os = 0;
+ 	UpnpString_delete(p->m_Location);
+ 	p->m_Location = 0;
++	UpnpString_delete(p->m_BootID);
++	p->m_BootID = 0;
+ 	UpnpString_delete(p->m_ServiceVer);
+ 	p->m_ServiceVer = 0;
+ 	UpnpString_delete(p->m_ServiceType);
+@@ -101,6 +105,7 @@ int UpnpDiscovery_assign(UpnpDiscovery *p, const UpnpDiscovery *q)
+ 				   p, UpnpDiscovery_get_ServiceVer(q));
+ 		ok = ok && UpnpDiscovery_set_Location(
+ 				   p, UpnpDiscovery_get_Location(q));
++		ok = ok && UpnpDiscovery_set_BootID(p, UpnpDiscovery_get_BootID(q));
+ 		ok = ok && UpnpDiscovery_set_Os(p, UpnpDiscovery_get_Os(q));
+ 		ok = ok && UpnpDiscovery_set_Date(p, UpnpDiscovery_get_Date(q));
+ 		ok = ok && UpnpDiscovery_set_Ext(p, UpnpDiscovery_get_Ext(q));
+@@ -326,6 +331,43 @@ void UpnpDiscovery_clear_Location(UpnpDiscovery *p)
+ 	UpnpString_clear(p->m_Location);
+ }
+ 
++const UpnpString *UpnpDiscovery_get_BootID(const UpnpDiscovery *p)
++{
++	return p->m_BootID;
++}
++
++int UpnpDiscovery_set_BootID(UpnpDiscovery *p, const UpnpString *s)
++{
++	const char *q = UpnpString_get_String(s);
++
++	return UpnpString_set_String(p->m_BootID, q);
++}
++
++size_t UpnpDiscovery_get_BootID_Length(const UpnpDiscovery *p)
++{
++	return UpnpString_get_Length(UpnpDiscovery_get_BootID(p));
++}
++
++const char *UpnpDiscovery_get_BootID_cstr(const UpnpDiscovery *p)
++{
++	return UpnpString_get_String(UpnpDiscovery_get_BootID(p));
++}
++
++int UpnpDiscovery_strcpy_BootID(UpnpDiscovery *p, const char *s)
++{
++	return UpnpString_set_String(p->m_BootID, s);
++}
++
++int UpnpDiscovery_strncpy_BootID(UpnpDiscovery *p, const char *s, size_t n)
++{
++	return UpnpString_set_StringN(p->m_BootID, s, n);
++}
++
++void UpnpDiscovery_clear_BootID(UpnpDiscovery *p)
++{
++	UpnpString_clear(p->m_BootID);
++}
++
+ const UpnpString *UpnpDiscovery_get_Os(const UpnpDiscovery *p)
+ {
+ 	return p->m_Os;
+diff --git a/upnp/src/genlib/net/http/httpparser.c b/upnp/src/genlib/net/http/httpparser.c
+index 3e8ae4ee..4ae3fe8d 100644
+--- a/upnp/src/genlib/net/http/httpparser.c
++++ b/upnp/src/genlib/net/http/httpparser.c
+@@ -71,13 +71,14 @@ static str_int_entry Http_Method_Table[NUM_HTTP_METHODS] = {
+ 	{"POST", SOAPMETHOD_POST},
+ 	{"PUT", HTTPMETHOD_PUT}};
+ 
+-#define NUM_HTTP_HEADER_NAMES 33
++#define NUM_HTTP_HEADER_NAMES 34
+ str_int_entry Http_Header_Names[NUM_HTTP_HEADER_NAMES] = {
+ 	{"ACCEPT", HDR_ACCEPT},
+ 	{"ACCEPT-CHARSET", HDR_ACCEPT_CHARSET},
+ 	{"ACCEPT-ENCODING", HDR_ACCEPT_ENCODING},
+ 	{"ACCEPT-LANGUAGE", HDR_ACCEPT_LANGUAGE},
+ 	{"ACCEPT-RANGES", HDR_ACCEPT_RANGE},
++	{"BOOTID.UPNP.ORG", HDR_BOOTID},
+ 	{"CACHE-CONTROL", HDR_CACHE_CONTROL},
+ 	{"CALLBACK", HDR_CALLBACK},
+ 	{"CONTENT-ENCODING", HDR_CONTENT_ENCODING},
+diff --git a/upnp/src/inc/httpparser.h b/upnp/src/inc/httpparser.h
+index 99c3f2e8..5cc84329 100644
+--- a/upnp/src/inc/httpparser.h
++++ b/upnp/src/inc/httpparser.h
+@@ -147,6 +147,8 @@ typedef enum
+ #define HDR_RANGE 35
+ #define HDR_TE 36
+ 
++#define HDR_BOOTID 37
++
+ /*! status of parsing */
+ typedef enum
+ {
+diff --git a/upnp/src/ssdp/ssdp_ctrlpt.c b/upnp/src/ssdp/ssdp_ctrlpt.c
+index 8644c746..2a7030c6 100644
+--- a/upnp/src/ssdp/ssdp_ctrlpt.c
++++ b/upnp/src/ssdp/ssdp_ctrlpt.c
+@@ -159,6 +159,11 @@ void ssdp_handle_ctrlpt_msg(
+ 		UpnpDiscovery_strncpy_Location(
+ 			param, hdr_value.buf, hdr_value.length);
+ 	}
++	/* BOOTID.UPNP.ORG */
++	if (httpmsg_find_hdr(hmsg, HDR_BOOTID, &hdr_value) != NULL) {
++		UpnpDiscovery_strncpy_BootID(
++			param, hdr_value.buf, hdr_value.length);
++	}
+ 	/* SERVER / USER-AGENT */
+ 	if (httpmsg_find_hdr(hmsg, HDR_SERVER, &hdr_value) != NULL ||
+ 		httpmsg_find_hdr(hmsg, HDR_USER_AGENT, &hdr_value) != NULL) {
