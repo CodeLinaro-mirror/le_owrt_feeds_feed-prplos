@@ -34,6 +34,7 @@ define Package/miniupnpd-prpl
 	+libcap-ng \
 	+libmnl \
 	+libuuid \
+	+libamxrt \
 	+libamxb \
 	+libamxc \
 	+libamxd \
