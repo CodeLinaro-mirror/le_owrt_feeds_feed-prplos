@@ -34,6 +34,7 @@ define Package/miniupnpd-prpl
 	+libcap-ng \
 	+libmnl \
 	+libuuid \
+	+libamxrt \
 	+libamxb \
 	+libamxc \
 	+libamxd \
@@ -66,6 +67,7 @@ MAKE_PATH = $(CONFIGURE_PATH)
 
 TARGET_CFLAGS += $(FPIC) -flto
 TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
+TARGET_CPPFLAGS += -DRANDOMIZE_URLS
 
 ifeq ($(ALLOW_RESERVED_ADDR),y)
 	TARGET_CFLAGS += -DALLOW_RESERVED_ADDR
