@@ -39,6 +39,7 @@ define Package/miniupnpd-prpl
 	+libamxd \
 	+libamxo \
 	+libamxp \
+	+libubox \
 	+tr181-firewall
   PROVIDES:=miniupnpd-iptables
   CONFLICTS:=miniupnpd-iptables miniupnpd-nftables
