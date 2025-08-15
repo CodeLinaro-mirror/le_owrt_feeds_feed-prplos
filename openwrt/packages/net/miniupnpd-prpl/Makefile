@@ -10,11 +10,11 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=miniupnpd-prpl
 PKG_RELEASE:=2
 
-PKG_VERSION:=PCF-1996_fix_upnp_events_over_cli
+PKG_VERSION:=PCF-2015_SystemUpdateId_is_not_changing_after_AddPortMapping_or_DeletePortMapping
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=PCF-1996_fix_upnp_events_over_cli
+PKG_SOURCE_VERSION:=PCF-2015_SystemUpdateId_is_not_changing_after_AddPortMapping_or_DeletePortMapping
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/miniupnpd.git
-PKG_MIRROR_HASH:=f440953306db4b0e63da1817b74f5c952ddcb990c1b3dd381950240fc3255d5f
+PKG_MIRROR_HASH:=6ce325164461cc91a9f0918a293831d3e34ee8c26322cb332d882fc3cb633ccd
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_MAINTAINER:=
