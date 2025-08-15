@@ -23,6 +23,10 @@ config SAH_AMX_TR181_BRIDGING_MSTPD
     bool "STP daemon mstpd will be built and installed. Disable if the kernel STP implementation should be used."
     default y
 
+config SAH_AMX_TR181_BRIDGING_ENABLE_STP_FOR_LAN_BRIDGE
+    bool "Enable STP for the LAN bridge"
+    default n
+
 endmenu
 
 endif
