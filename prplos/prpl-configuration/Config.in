@@ -1,0 +1,26 @@
+config PACKAGE_prpl-configuration
+    tristate
+    select PRPL_CONFIG
+
+if PACKAGE_prpl-configuration
+
+choice
+	bool "Build Mode Configuration"
+	default PRPL_CPE_OPMODE_GATEWAY
+
+config PRPL_CPE_OPMODE_GATEWAY
+        bool
+        prompt "Build Software as a Gateway"
+
+config PRPL_CPE_OPMODE_EXTENDER
+	bool
+	prompt "Build Software as an Extender"
+
+endchoice
+
+config PRPL_CPE_OPMODE
+	string
+	default "gateway" if PRPL_CPE_OPMODE_GATEWAY
+	default "extender" if PRPL_CPE_OPMODE_EXTENDER
+
+endif

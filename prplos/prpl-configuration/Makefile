@@ -19,4 +19,8 @@ define Package/prpl-configuration/install
 	$(CP) ./files/common/* $(1)/
 endef
 
+define Package/prpl-configuration/config
+	source "$(SOURCE)/Config.in"
+endef
+
 $(eval $(call BuildPackage,prpl-configuration))
