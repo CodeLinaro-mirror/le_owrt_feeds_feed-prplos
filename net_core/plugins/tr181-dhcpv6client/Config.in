@@ -20,6 +20,25 @@ config SAH_AMX_TR181_DHCPV6CLIENT_RUN_AS_GROUP
     string "Group will be used for the tr181-dhcpv6client plugin"
     default "tr181_app"
 
+config SAH_AMX_TR181_DHCPV6CLIENT_SENTOPTION_17
+    string "Vendor-Identifying Vendor-Specific Information Option to sent in DHCP requests"
+    default ""
+
+config SAH_AMX_TR181_DHCPV6CLIENT_USP_DISCOVERY_ENABLED
+    bool "Whether USP Controller discovery is enabled"
+    default y
+    depends on PACKAGE_usp_discovery
+
+config SAH_AMX_TR181_DHCPV6CLIENT_ACS_DISCOVERY_ENABLED
+    bool "Whether ACS discovery is enabled"
+    default y
+    depends on PACKAGE_acs-discovery
+
+config SAH_AMX_TR181_DHCPV6CLIENT_TR181_GATEWAYINFO_ENABLED
+    bool "Whether tr181-gatewayinfo is enabled"
+    default y
+    depends on PACKAGE_tr181-gatewayinfo
+
 endmenu
 
 endif
