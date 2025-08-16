@@ -6,10 +6,10 @@ PKG_NAME:=time-manager
 PKG_VERSION:=v2.7.15
 SHORT_DESCRIPTION:=TR181 Time plugin
 
-PKG_SOURCE:=tr181-time-v2.7.15.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-time/-/archive/v2.7.15
-PKG_HASH:=2ab25a97a5f037e10ff887af7fc91ccd532f071b551846d2b844da0ebb669c42
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-time-v2.7.15
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=PCF-1863_networking_for_extender
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-time.git
+PKG_MIRROR_HASH:=efd25f17690c32d02536b8067d2b3cea59f2710833260e3fb035b74f6bc2c6df
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
