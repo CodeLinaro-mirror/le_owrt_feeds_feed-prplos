@@ -1,4 +1,4 @@
-From aa09e234c7a9d58108438053d422f86db65f34fc Mon Sep 17 00:00:00 2001
+From 75003ef3870b3f8a5abac391e3829a7beb8f6015 Mon Sep 17 00:00:00 2001
 From: sahbot <support.opensource@softathome.com>
 Date: Thu, 10 Aug 2023 16:24:55 +0200
 Subject: [PATCH] Issue: HOP-4116: [UPNP] miniupnpd is crashing when receiving

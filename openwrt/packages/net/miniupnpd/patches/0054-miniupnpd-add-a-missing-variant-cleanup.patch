@@ -1,4 +1,4 @@
-From 5b635985a12f15beb61e411b5f828fba0e9823b7 Mon Sep 17 00:00:00 2001
+From ed7dfdbfe1d853fc03aa395045aa0d2c168d94c9 Mon Sep 17 00:00:00 2001
 From: Florian Rouzaud <florian.rouzaud@softathome.com>
 Date: Fri, 3 Oct 2025 10:03:55 +0000
 Subject: [PATCH] miniupnpd: add a missing variant cleanup

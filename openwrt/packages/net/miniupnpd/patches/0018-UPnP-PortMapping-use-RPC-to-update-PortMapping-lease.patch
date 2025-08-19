@@ -1,4 +1,4 @@
-From 087e14f1222213f3bf9dac7ad0503f23d13c70d3 Mon Sep 17 00:00:00 2001
+From 0eb5bbf82dd69e15edf46c432b94679e59bac491 Mon Sep 17 00:00:00 2001
 From: sahbot <support.opensource@softathome.com>
 Date: Mon, 15 Jul 2024 15:10:55 +0200
 Subject: [PATCH] UPnP/PortMapping: use RPC to update PortMapping lease

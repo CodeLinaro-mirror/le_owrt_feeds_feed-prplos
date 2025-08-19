@@ -1,4 +1,4 @@
-From 24a1aac06fe12f893cbcf682c4d24bd3331e03b2 Mon Sep 17 00:00:00 2001
+From 82f0554cb4d5dde63694fb83cc095224daf2d78b Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Th=C3=A9o-Paul=20Bodin?= <theo-paul.bodin@softathome.com>
 Date: Wed, 20 Nov 2024 19:20:30 +0100
 Subject: [PATCH] UPnP: Subscribe socket is closed on LAN change Problem:
@@ -41,10 +41,10 @@ index d88f283..ef9e27d 100644
      when_failed(get_host_from_address(addr_b, &ret_b), exit);
      host_a = amxc_var_key(GETP_ARG(&ret_a, "0.0."));
 diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
-index 0485218..09b06ae 100644
+index 6846b0d..67a8262 100644
 --- miniupnpd/miniupnpd.c
 +++ miniupnpd/miniupnpd.c
-@@ -134,6 +134,10 @@ volatile sig_atomic_t should_send_public_address_change_notif = 0;
+@@ -130,6 +130,10 @@ volatile sig_atomic_t should_send_public_address_change_notif = 0;
  volatile sig_atomic_t should_rewrite_leasefile = 0;
  #endif /* !TOMATO && ENABLE_LEASEFILE && LEASEFILE_USE_REMAINING_TIME */
  
@@ -55,7 +55,7 @@ index 0485218..09b06ae 100644
  #ifdef TOMATO
  #if 1
  /* Tomato specific code */
-@@ -1170,6 +1174,38 @@ void complete_uuidvalues(void)
+@@ -1174,6 +1178,38 @@ void complete_uuidvalues(void)
  	}
  }
  
@@ -94,7 +94,7 @@ index 0485218..09b06ae 100644
  /* init phase :
   * 1) read configuration file
   * 2) read command line arguments
-@@ -1200,8 +1236,6 @@ init(int argc, char * * argv, struct runtime_vars * v)
+@@ -1204,8 +1240,6 @@ init(int argc, char * * argv, struct runtime_vars * v)
  	int options_flag = 0;
  	const char * optionsfile = DEFAULT_CONFIG;
  #endif /* DISABLE_CONFIG_FILE */
@@ -103,7 +103,7 @@ index 0485218..09b06ae 100644
  
  	/* only print usage if -h is used */
  	for(i=1; i<argc; i++)
-@@ -1211,7 +1245,7 @@ init(int argc, char * * argv, struct runtime_vars * v)
+@@ -1215,7 +1249,7 @@ init(int argc, char * * argv, struct runtime_vars * v)
  		if(0 == strcmp(argv[i], "-d"))
  			debug_flag = 1;
  	}
@@ -112,7 +112,7 @@ index 0485218..09b06ae 100644
  	openlog_option = LOG_PID|LOG_CONS;
  	openlog_option = LOG_PID;
  	if(debug_flag)
-@@ -1288,23 +1322,11 @@ init(int argc, char * * argv, struct runtime_vars * v)
+@@ -1292,23 +1326,11 @@ init(int argc, char * * argv, struct runtime_vars * v)
  				ext_stun_port = atoi(ary_options[i].value);
  				break;
  			case UPNPLISTENING_IP:
@@ -138,7 +138,7 @@ index 0485218..09b06ae 100644
  				break;
  #ifdef ENABLE_IPV6
  			case UPNPIPV6_LISTENING_IP:
-@@ -1771,30 +1793,11 @@ init(int argc, char * * argv, struct runtime_vars * v)
+@@ -1787,30 +1809,11 @@ init(int argc, char * * argv, struct runtime_vars * v)
  			if(i+1 < argc)
  			{
  				i++;
@@ -171,7 +171,7 @@ index 0485218..09b06ae 100644
  			} else {
  				INIT_PRINT_ERR("Option -%c takes one argument.\n", argv[i][1]);
  				goto print_usage;
-@@ -1810,28 +1813,11 @@ init(int argc, char * * argv, struct runtime_vars * v)
+@@ -1826,28 +1829,11 @@ init(int argc, char * * argv, struct runtime_vars * v)
  				}
  				sprintf(val, "%s %s", argv[i+1], argv[i+2]);
  
@@ -202,7 +202,7 @@ index 0485218..09b06ae 100644
  
  				free(val);
  				i+=2;
-@@ -1977,6 +1963,7 @@ init(int argc, char * * argv, struct runtime_vars * v)
+@@ -1993,6 +1979,7 @@ init(int argc, char * * argv, struct runtime_vars * v)
  	}
  	else
  	{
@@ -210,7 +210,7 @@ index 0485218..09b06ae 100644
  		snprintf(presentationurl, PRESENTATIONURL_MAX_LEN,
  		         "http://%s/", lan_addrs.lh_first->str);
  		         /*"http://%s:%d/", lan_addrs.lh_first->str, 80);*/
-@@ -2166,6 +2153,46 @@ print_usage:
+@@ -2186,6 +2173,46 @@ print_usage:
  	return 1;
  }
  
@@ -257,7 +257,7 @@ index 0485218..09b06ae 100644
  /* === main === */
  /* process HTTP or SSDP requests */
  int
-@@ -2641,6 +2668,60 @@ main(int argc, char * * argv)
+@@ -2698,6 +2725,60 @@ main(int argc, char * * argv)
  		if(should_send_public_address_change_notif)
  		{
  			syslog(LOG_INFO, "should send external iface address change notification(s)");
@@ -318,7 +318,7 @@ index 0485218..09b06ae 100644
  			if(GETFLAG(PERFORMSTUNMASK))
  			{
  				if (update_ext_ip_addr_from_stun(0) != 0) {
-@@ -3261,13 +3342,7 @@ shutdown:
+@@ -3319,13 +3400,7 @@ shutdown:
  	if(sifacewatcher >= 0) close(sifacewatcher);
  #endif
  #ifdef ENABLE_NATPMP
@@ -333,7 +333,7 @@ index 0485218..09b06ae 100644
  #endif
  #if defined(ENABLE_IPV6) && defined(ENABLE_PCP)
  	if(spcp_v6 >= 0)
-@@ -3290,12 +3365,7 @@ shutdown:
+@@ -3348,12 +3423,7 @@ shutdown:
  
  	if (GETFLAG(ENABLEUPNPMASK))
  	{
@@ -347,7 +347,7 @@ index 0485218..09b06ae 100644
  	}
  
  	/* remove pidfile */
-@@ -3307,20 +3377,11 @@ shutdown:
+@@ -3365,20 +3435,11 @@ shutdown:
  #endif
  
  	/* delete lists */

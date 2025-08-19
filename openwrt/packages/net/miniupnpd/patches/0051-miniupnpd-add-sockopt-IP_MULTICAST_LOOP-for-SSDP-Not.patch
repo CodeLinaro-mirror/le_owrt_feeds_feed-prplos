@@ -1,4 +1,4 @@
-From fdb119c4c0ee003373b1d279da28a748306cb8e8 Mon Sep 17 00:00:00 2001
+From ea6039b389ab8536d876494a4e9e2737d04eb3cf Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Th=C3=A9o-Paul=20Bodin?= <theo-paul.bodin@softathome.com>
 Date: Wed, 19 Feb 2025 17:34:44 +0100
 Subject: [PATCH] miniupnpd: add sockopt IP_MULTICAST_LOOP for SSDP Notify
@@ -23,7 +23,7 @@ Signed-off-by: Théo-Paul Bodin <theo-paul.bodin@softathome.com>
  1 file changed, 4 insertions(+)
 
 diff --git miniupnpd/minissdp.c miniupnpd/minissdp.c
-index a6ab4dc..bcbae98 100644
+index 0587e66..1224a88 100644
 --- miniupnpd/minissdp.c
 +++ miniupnpd/minissdp.c
 @@ -291,7 +291,11 @@ static int

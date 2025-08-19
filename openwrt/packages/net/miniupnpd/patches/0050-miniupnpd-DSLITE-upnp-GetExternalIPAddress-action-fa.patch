@@ -1,4 +1,4 @@
-From de7c86c665548d27d4d5c20303113d5998a92765 Mon Sep 17 00:00:00 2001
+From 6ddfcafed05f52e94910898d72559e30251c0cde Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Th=C3=A9o-Paul=20Bodin?= <theo-paul.bodin@softathome.com>
 Date: Thu, 5 Dec 2024 19:42:50 +0100
 Subject: [PATCH] miniupnpd: [DSLITE] upnp GetExternalIPAddress action fails
@@ -78,10 +78,10 @@ index 3b974e3..48bdd61 100644
  #endif
  
 diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
-index 09b06ae..7924ebf 100644
+index 67a8262..d91fc53 100644
 --- miniupnpd/miniupnpd.c
 +++ miniupnpd/miniupnpd.c
-@@ -2672,6 +2672,9 @@ main(int argc, char * * argv)
+@@ -2729,6 +2729,9 @@ main(int argc, char * * argv)
  			clean_snatpmp(&snatpmp, addr_count);
  			clear_lan_addrs();
  			parselanaddr_wrapper();
@@ -92,7 +92,7 @@ index 09b06ae..7924ebf 100644
  			for(lan_addr = lan_addrs.lh_first; lan_addr != NULL; lan_addr = lan_addr->list.le_next)
  				addr_count++;
 diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
-index 119d5b2..ca28fb4 100644
+index f99b588..1b8c796 100644
 --- miniupnpd/upnpsoap.c
 +++ miniupnpd/upnpsoap.c
 @@ -368,7 +368,13 @@ GetExternalIPAddress(struct upnphttp * h, const char * action, const char * ns)

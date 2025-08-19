@@ -1,4 +1,4 @@
-From e3f39753ad57e2bd48493c4912d77d796f211596 Mon Sep 17 00:00:00 2001
+From 2a49fe12c5dd06beac7e50b1d55e76daa3fa676b Mon Sep 17 00:00:00 2001
 From: Mykyta Diachyna <m.diachyna@inango-systems.com>
 Date: Thu, 11 Sep 2025 16:33:24 +0300
 Subject: [PATCH] miniupnpd: upnpsoap: Add MAC-based permissions
@@ -443,7 +443,7 @@ index b04653c..f8b9f15 100644
  extern const char * ext_if_name;
  
 diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
-index 8ecbe12..119d5b2 100644
+index 4e4fd9b..f99b588 100644
 --- miniupnpd/upnpsoap.c
 +++ miniupnpd/upnpsoap.c
 @@ -37,6 +37,7 @@
@@ -469,7 +469,7 @@ index 8ecbe12..119d5b2 100644
  
  	struct in_addr result_ip;/*unsigned char result_ip[16];*/ /* inet_pton() */
  #ifndef USE_AMX
-@@ -604,6 +607,26 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -608,6 +611,26 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
  	       action, eport, int_ip, iport, protocol, desc, leaseduration,
  	       r_host ? r_host : "NULL");
  
@@ -496,7 +496,7 @@ index 8ecbe12..119d5b2 100644
  	r = upnp_redirect(r_host, eport, int_ip, iport, protocol, desc, leaseduration);
  
  	ClearNameValueList(&data);
-@@ -635,6 +658,12 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -639,6 +662,12 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
  	switch(r)
  	{
  	case 0:	/* success */
@@ -509,7 +509,7 @@ index 8ecbe12..119d5b2 100644
  		bodylen = snprintf(body, sizeof(body), resp,
  		                   action, ns/*SERVICE_TYPE_WANIPC||SERVICE_TYPE_WANPPPC*/);
  		BuildSendAndCloseSoapResp(h, body, bodylen);
-@@ -674,9 +703,11 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -678,9 +707,11 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
  	struct NameValueParserData data;
  	const char * int_ip, * int_port, * ext_port, * protocol, * desc;
  	const char * r_host;
@@ -523,7 +523,7 @@ index 8ecbe12..119d5b2 100644
  
  	struct hostent *hp; /* getbyhostname() */
  	char ** ptr; /* getbyhostname() */
-@@ -796,6 +827,27 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -800,6 +831,27 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
  		}
  	}
  
@@ -551,7 +551,7 @@ index 8ecbe12..119d5b2 100644
  	/* first try the port asked in request, then
  	 * try +1, -1, +2, -2, etc. */
  	r = upnp_redirect(r_host, eport, int_ip, iport, protocol, desc, leaseduration);
-@@ -825,6 +877,23 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -829,6 +881,23 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
  			}
  			if (!(allowed_eports[eport / 32] & ((uint32_t)1U << (eport % 32))))
  				continue;	/* not allowed */
@@ -575,7 +575,7 @@ index 8ecbe12..119d5b2 100644
  			r = upnp_redirect(r_host, eport, int_ip, iport, protocol, desc, leaseduration);
  			if (r == 0 || r == -1 || r == -3) {
  				/* OK or failure : Stop */
-@@ -843,6 +912,13 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -847,6 +916,13 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
  		SoapError(h, 728, "NoPortMapsAvailable");
  		break;
  	case 0:	/* success */
@@ -589,7 +589,7 @@ index 8ecbe12..119d5b2 100644
  		bodylen = snprintf(body, sizeof(body), resp,
  		              action, ns, /*SERVICE_TYPE_WANIPC,*/
  					  eport, action);
-@@ -1028,10 +1104,19 @@ DeletePortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -1032,10 +1108,19 @@ DeletePortMapping(struct upnphttp * h, const char * action, const char * ns)
  			if(inet_pton(AF_INET, int_ip, &int_ip_addr) > 0)
  			{
  #ifdef USE_AMX
@@ -610,7 +610,7 @@ index 8ecbe12..119d5b2 100644
  #else
  				if(h->clientaddr.s_addr != int_ip_addr.s_addr)
  #endif /* USE_AMX */
-@@ -1052,6 +1137,9 @@ DeletePortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -1059,6 +1144,9 @@ DeletePortMapping(struct upnphttp * h, const char * action, const char * ns)
  	case 0: /* success */
  		bodylen = snprintf(body, sizeof(body), resp, action, ns, action);
  		BuildSendAndCloseSoapResp(h, body, bodylen);
@@ -620,7 +620,7 @@ index 8ecbe12..119d5b2 100644
  		break;
  	case -2: /* not found */
  		SoapError(h, 714, "NoSuchEntryInArray");
-@@ -1135,9 +1223,27 @@ DeletePortMappingRange(struct upnphttp * h, const char * action, const char * ns
+@@ -1142,9 +1230,27 @@ DeletePortMappingRange(struct upnphttp * h, const char * action, const char * ns
  		return;
  	}
  
@@ -648,7 +648,7 @@ index 8ecbe12..119d5b2 100644
  		r = upnp_get_redirection_infos(port_list[i], protocol, &a,
  		                               int_ip, sizeof(int_ip),
  		                               NULL, 0,
-@@ -1154,7 +1260,7 @@ DeletePortMappingRange(struct upnphttp * h, const char * action, const char * ns
+@@ -1161,7 +1267,7 @@ DeletePortMappingRange(struct upnphttp * h, const char * action, const char * ns
  			continue;
  		}
  
@@ -657,7 +657,7 @@ index 8ecbe12..119d5b2 100644
  			syslog(LOG_INFO,
  			       "%s: NOT deleting external port: %hu, protocol: %s: NewManage=0 and InternalAddress does not match ClientAddress",
  			       action, port_list[i], protocol);
-@@ -1165,6 +1271,9 @@ DeletePortMappingRange(struct upnphttp * h, const char * action, const char * ns
+@@ -1172,6 +1278,9 @@ DeletePortMappingRange(struct upnphttp * h, const char * action, const char * ns
  		r = upnp_delete_redirection(port_list[i], protocol);
  		if (r == 0) {
  			deleted_number += 1;

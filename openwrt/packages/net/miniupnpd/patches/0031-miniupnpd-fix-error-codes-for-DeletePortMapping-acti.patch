@@ -1,4 +1,4 @@
-From 66671f14d032ba53ab33c21066118e7d24fef6d6 Mon Sep 17 00:00:00 2001
+From 3c3d228bbe85be940adc559baed87c3a64699f3c Mon Sep 17 00:00:00 2001
 From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
 Date: Tue, 29 Jul 2025 19:09:25 +0300
 Subject: [PATCH] miniupnpd: fix error codes for DeletePortMapping action
@@ -100,10 +100,10 @@ index 16599c7..e06c7a1 100644
      amxc_var_clean(&ret);
      syslog(LOG_WARNING, "delete_redirect_rule: %d", r);
 diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
-index 90a00e9..47f024f 100644
+index 6599c3e..9b120be 100644
 --- miniupnpd/upnpsoap.c
 +++ miniupnpd/upnpsoap.c
-@@ -1008,15 +1008,21 @@ DeletePortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -1015,15 +1015,21 @@ DeletePortMapping(struct upnphttp * h, const char * action, const char * ns)
  
  	r = upnp_delete_redirection(eport, protocol);
  

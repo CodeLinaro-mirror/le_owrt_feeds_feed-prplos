@@ -1,4 +1,4 @@
-From 1d8d6c0df205f68aea7c49cc9bb38a747ddf0ab8 Mon Sep 17 00:00:00 2001
+From 2d50e51e8dad16baafbc1f3afe90dabac766089a Mon Sep 17 00:00:00 2001
 From: Florian Rouzaud <florian.rouzaud@softathome.com>
 Date: Wed, 1 Oct 2025 15:41:24 +0200
 Subject: [PATCH] miniupnpd: Add doxygen documentation
@@ -58,10 +58,10 @@ index 6f15646..072756e 100644
      int rv = 0;
      amxc_var_t ret;
 diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
-index 7cab20b..f86c47c 100644
+index 4a74bae..c9288b5 100644
 --- miniupnpd/miniupnpd.c
 +++ miniupnpd/miniupnpd.c
-@@ -1174,6 +1174,20 @@ void complete_uuidvalues(void)
+@@ -1178,6 +1178,20 @@ void complete_uuidvalues(void)
  	}
  }
  
@@ -82,7 +82,7 @@ index 7cab20b..f86c47c 100644
  static uint32_t parselanaddr_wrapper(void) {
  	struct lan_addr_s* lan_addr = NULL;
  	struct lan_addr_s* lan_addr2 = NULL;
-@@ -2153,6 +2167,20 @@ print_usage:
+@@ -2173,6 +2187,20 @@ print_usage:
  	return 1;
  }
  
@@ -103,7 +103,7 @@ index 7cab20b..f86c47c 100644
  static void clean_snotify(int **snotify_addr, int addr_count) {
  	int32_t i;
  	int *snotify = *snotify_addr;
-@@ -2168,6 +2196,21 @@ static void clean_snotify(int **snotify_addr, int addr_count) {
+@@ -2188,6 +2216,21 @@ static void clean_snotify(int **snotify_addr, int addr_count) {
  	snotify = NULL;
  }
  
@@ -125,7 +125,7 @@ index 7cab20b..f86c47c 100644
  static void clean_snatpmp(int **snatpmp_addr, int addr_count) {
  	int32_t i;
  	int *snatpmp = *snatpmp_addr;
-@@ -2183,6 +2226,15 @@ static void clean_snatpmp(int **snatpmp_addr, int addr_count) {
+@@ -2203,6 +2246,15 @@ static void clean_snatpmp(int **snatpmp_addr, int addr_count) {
  	snatpmp = NULL;
  }
  

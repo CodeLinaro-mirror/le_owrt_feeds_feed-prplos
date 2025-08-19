@@ -1,4 +1,4 @@
-From d0b409d508c20061978883e73a08b3f0648154c3 Mon Sep 17 00:00:00 2001
+From 024e9fe1f6f66600142c817c41285802107585f4 Mon Sep 17 00:00:00 2001
 From: Vladimir Shulika <v.shulika@inango-systems.com>
 Date: Fri, 22 Aug 2025 21:20:25 +0300
 Subject: [PATCH] miniupnpd: implement SystemUpdateID counter
@@ -37,10 +37,10 @@ index 6e8fa40..c4825dd 100644
      syslog(LOG_INFO, "Port mapping entries changed, notification needed");
  }
 diff --git miniupnpd/testupnpdescgen.c miniupnpd/testupnpdescgen.c
-index 6dcf689..db42fdd 100644
+index f318c20..e3a7f35 100644
 --- miniupnpd/testupnpdescgen.c
 +++ miniupnpd/testupnpdescgen.c
-@@ -47,6 +47,8 @@ unsigned int ext_is_ppp = 0;
+@@ -48,6 +48,8 @@ unsigned int allow_reserved_addr = 0;
  
  int runtime_flags = 0;
  
@@ -50,7 +50,7 @@ index 6dcf689..db42fdd 100644
  {
  	UNUSED(ifname);
 diff --git miniupnpd/upnpdescgen.c miniupnpd/upnpdescgen.c
-index 7a0803a..aec0a87 100644
+index 569b2b5..d988444 100644
 --- miniupnpd/upnpdescgen.c
 +++ miniupnpd/upnpdescgen.c
 @@ -1568,8 +1568,7 @@ genEventVars(int * len, const struct serviceDesc * s)

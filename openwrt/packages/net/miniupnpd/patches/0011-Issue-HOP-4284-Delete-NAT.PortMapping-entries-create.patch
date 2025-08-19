@@ -1,4 +1,4 @@
-From 9e4964e82dc66d67e3974fa752b95ffd504504bc Mon Sep 17 00:00:00 2001
+From b15f68ca2cb58edc8c664445a43fba10d19e1d65 Mon Sep 17 00:00:00 2001
 From: sahbot <support.opensource@softathome.com>
 Date: Mon, 2 Oct 2023 14:25:09 +0200
 Subject: [PATCH] Issue: HOP-4284 Delete NAT.PortMapping entries created by
@@ -223,10 +223,10 @@ index f30ef5c..d1fdb8b 100644
  
  int
 diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
-index 8af3b9c..1e8f1a0 100644
+index dcac3c9..06a6995 100644
 --- miniupnpd/miniupnpd.c
 +++ miniupnpd/miniupnpd.c
-@@ -1118,13 +1118,17 @@ int update_ext_ip_addr_from_stun(int init)
+@@ -1122,13 +1122,17 @@ int update_ext_ip_addr_from_stun(int init)
  			syslog(LOG_WARNING, "STUN: ext interface %s has now public IP address %s but firewall filters incoming connections set by miniunnpd", ext_if_name, if_addr_str);
  			syslog(LOG_WARNING, "Check configuration of firewall on local machine and also on upstream router");
  		}

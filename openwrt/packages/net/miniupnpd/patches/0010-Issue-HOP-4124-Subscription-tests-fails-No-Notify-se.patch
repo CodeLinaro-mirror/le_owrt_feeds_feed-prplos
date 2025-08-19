@@ -1,4 +1,4 @@
-From 7d7dd1f45b0424302d12dd8ff0adcb460bca2d2c Mon Sep 17 00:00:00 2001
+From 1794502c393d8039bad6dc8b5219bacb8151d0c8 Mon Sep 17 00:00:00 2001
 From: sahbot <support.opensource@softathome.com>
 Date: Wed, 27 Sep 2023 14:32:41 +0200
 Subject: [PATCH] Issue: HOP-4124 Subscription tests fails: No Notify sent and

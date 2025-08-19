@@ -1,4 +1,4 @@
-From 362294dfe4e208eb9753da0ee87a3bea07850c01 Mon Sep 17 00:00:00 2001
+From 736071a912f4db43595bb2145466601deb559286 Mon Sep 17 00:00:00 2001
 From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
 Date: Fri, 25 Jul 2025 21:05:50 +0300
 Subject: [PATCH] miniupnpd: fix InternalPort validation for AddPortMapping
@@ -22,10 +22,10 @@ Signed-Off-By: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
  1 file changed, 21 insertions(+), 4 deletions(-)
 
 diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
-index b978c4f..46f5db3 100644
+index 9c08316..aada61a 100644
 --- miniupnpd/upnpsoap.c
 +++ miniupnpd/upnpsoap.c
-@@ -528,6 +528,13 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -532,6 +532,13 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
  		return;
  	}
  
@@ -39,7 +39,7 @@ index b978c4f..46f5db3 100644
  	leaseduration = leaseduration_str ? atoi(leaseduration_str) : 0;
  #ifdef IGD_V2
  	/* PortMappingLeaseDuration can be either a value between 1 and
-@@ -643,14 +650,24 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -647,14 +654,24 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
  		return;
  	}
  
@@ -66,7 +66,7 @@ index b978c4f..46f5db3 100644
  		return;
  	}
  #ifndef SUPPORT_REMOTEHOST
-@@ -710,7 +727,7 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -714,7 +731,7 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
  	/* first try the port asked in request, then
  	 * try +1, -1, +2, -2, etc. */
  	r = upnp_redirect(r_host, eport, int_ip, iport, protocol, desc, leaseduration);
@@ -75,7 +75,7 @@ index b978c4f..46f5db3 100644
  		unsigned short eport_below, eport_above;
  		struct in_addr address;
  		uint32_t allowed_eports[65536 / 32];
-@@ -737,7 +754,7 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -741,7 +758,7 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
  			if (!(allowed_eports[eport / 32] & ((uint32_t)1U << (eport % 32))))
  				continue;	/* not allowed */
  			r = upnp_redirect(r_host, eport, int_ip, iport, protocol, desc, leaseduration);

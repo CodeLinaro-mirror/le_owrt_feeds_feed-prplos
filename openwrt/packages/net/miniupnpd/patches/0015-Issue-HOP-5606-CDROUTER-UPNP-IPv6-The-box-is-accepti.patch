@@ -1,4 +1,4 @@
-From 8e2eaf5d3446315632d949cd0e5280a9159c18fb Mon Sep 17 00:00:00 2001
+From b641f475a193fe1fa0b83e2e0b32608c6d902200 Mon Sep 17 00:00:00 2001
 From: sahbot <support.opensource@softathome.com>
 Date: Tue, 9 Apr 2024 10:04:07 +0200
 Subject: [PATCH] Issue: HOP-5606 [CDROUTER][UPNP][IPv6] The box is accepting
@@ -78,10 +78,10 @@ index 9ddf753..7689c46 100644
  }
 \ No newline at end of file
 diff --git miniupnpd/upnppinhole.c miniupnpd/upnppinhole.c
-index 53093c5..ceecb80 100644
+index 6d778b6..db5956e 100644
 --- miniupnpd/upnppinhole.c
 +++ miniupnpd/upnppinhole.c
-@@ -824,7 +824,7 @@ upnp_get_pinhole_uid_by_index(int index)
+@@ -830,7 +830,7 @@ upnp_get_pinhole_uid_by_index(int index)
  int
  upnp_update_inboundpinhole(unsigned short uid, unsigned int leasetime)
  {
@@ -91,10 +91,10 @@ index 53093c5..ceecb80 100644
  	int ret;
  
 diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
-index 4550dc9..cb6c270 100644
+index 28149d2..5bdd42b 100644
 --- miniupnpd/upnpsoap.c
 +++ miniupnpd/upnpsoap.c
-@@ -1669,9 +1669,13 @@ PinholeVerification(struct upnphttp * h, char * int_ip, unsigned short int_port)
+@@ -1676,9 +1676,13 @@ PinholeVerification(struct upnphttp * h, char * int_ip, unsigned short int_port)
  		strncpy(clientaddr_str, "*ERROR*", sizeof(clientaddr_str));
  	}
  

@@ -1,4 +1,4 @@
-From ed1292344bba1d5ca96b81c82c9556c071a981ad Mon Sep 17 00:00:00 2001
+From 62bae09868aca544aaeb3648f348370ec0248656 Mon Sep 17 00:00:00 2001
 From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
 Date: Tue, 2 Sep 2025 23:20:40 +0300
 Subject: [PATCH] miniupnpd: GetGenericPortMappingEntry error codes
@@ -284,7 +284,7 @@ index e0568c2..6991274 100644
  
      amxc_string_delete(&pcp_server);
 diff --git miniupnpd/commonrdr.h miniupnpd/commonrdr.h
-index d36e284..c55d5b8 100644
+index 3944e7d..fa37583 100644
 --- miniupnpd/commonrdr.h
 +++ miniupnpd/commonrdr.h
 @@ -39,9 +39,10 @@ get_redirect_rule(const char * ifname, unsigned short eport, int proto,
@@ -376,10 +376,10 @@ index d6791d2..e2f42fc 100644
  		printf("%2d - %5hu=>%15s:%5hu %d '%s' '%s' %u %" PRIu64 " %" PRIu64 "\n",
  		       i, eport, iaddr, iport, proto, desc, rhost, timestamp,
 diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
-index 0f91b71..0485218 100644
+index ca17da2..6846b0d 100644
 --- miniupnpd/miniupnpd.c
 +++ miniupnpd/miniupnpd.c
-@@ -156,6 +156,7 @@ tomato_save(const char *fname)
+@@ -152,6 +152,7 @@ tomato_save(const char *fname)
  	char iaddr[32];
  	char desc[64];
  	char rhost[32];
@@ -387,7 +387,7 @@ index 0f91b71..0485218 100644
  	int n;
  	FILE *f;
  	int t;
-@@ -167,10 +168,13 @@ tomato_save(const char *fname)
+@@ -163,10 +164,13 @@ tomato_save(const char *fname)
  		if ((f = fdopen(t, "w")) != NULL)
  		{
  			n = 0;
@@ -404,7 +404,7 @@ index 0f91b71..0485218 100644
  				++n;
  			}
  			fclose(f);
-@@ -249,6 +253,7 @@ tomato_delete(void)
+@@ -245,6 +249,7 @@ tomato_delete(void)
  	char iaddr[32];
  	char desc[64];
  	char rhost[32];
@@ -412,7 +412,7 @@ index 0f91b71..0485218 100644
  	int n;
  
  	if ((f = fopen("/etc/upnp/delete", "r")) != NULL)
-@@ -263,9 +268,12 @@ tomato_delete(void)
+@@ -259,9 +264,12 @@ tomato_delete(void)
  					n = upnp_get_portmapping_number_of_entries();
  					while (--n >= 0)
  					{
@@ -538,10 +538,10 @@ index 6e1d175..cc834eb 100644
  			printf("rule not found\n");
  		}
 diff --git miniupnpd/netfilter_nft/nftnlrdr.c miniupnpd/netfilter_nft/nftnlrdr.c
-index 7ad72bc..5f4c97e 100644
+index 5daeee7..f951ffd 100644
 --- miniupnpd/netfilter_nft/nftnlrdr.c
 +++ miniupnpd/netfilter_nft/nftnlrdr.c
-@@ -501,10 +501,12 @@ get_redirect_rule_by_index(int index,
+@@ -509,10 +509,12 @@ get_redirect_rule_by_index(int index,
  			   int * proto, char * desc, int desclen,
  			   char * rhost, int rhostlen,
  			   unsigned int * timestamp,
@@ -570,7 +570,7 @@ index 50448d6..f0c83c0 100644
  unsigned short *
  get_portmappings_in_range(unsigned short startport, unsigned short endport,
 diff --git miniupnpd/netfilter_nft/testnftnlrdr.c miniupnpd/netfilter_nft/testnftnlrdr.c
-index 1005d51..9e4e61f 100644
+index eb4b0fa..05a77ae 100644
 --- miniupnpd/netfilter_nft/testnftnlrdr.c
 +++ miniupnpd/netfilter_nft/testnftnlrdr.c
 @@ -77,6 +77,7 @@ main(int argc, char ** argv)
@@ -585,14 +585,14 @@ index 1005d51..9e4e61f 100644
  		                              &proto2, desc, sizeof(desc),
  		                              rhost, sizeof(rhost),
  		                              &timestamp,
--					      &packets, &bytes) < 0)
+-		                              &packets, &bytes) < 0)
 +		                              &packets, &bytes,
 +		                              &is_upnp_rule) < 0)
  		{
  			printf("rule not found\n");
  		}
 diff --git miniupnpd/pcpserver.c miniupnpd/pcpserver.c
-index 4aeb024..a70bd92 100644
+index 2e234bb..6748bff 100644
 --- miniupnpd/pcpserver.c
 +++ miniupnpd/pcpserver.c
 @@ -1101,6 +1101,7 @@ static void DeletePCPMap(pcp_info_t *pcp_msg_info)
@@ -619,10 +619,10 @@ index 4aeb024..a70bd92 100644
  			if(0 == strcmp(iaddr2, pcp_msg_info->mapped_str)
  			   && (proto2==proto)
 diff --git miniupnpd/pf/obsdrdr.c miniupnpd/pf/obsdrdr.c
-index 86c67f2..7d93237 100644
+index 47a51d4..9a98e2f 100644
 --- miniupnpd/pf/obsdrdr.c
 +++ miniupnpd/pf/obsdrdr.c
-@@ -1204,13 +1204,16 @@ get_redirect_rule_by_index(int index,
+@@ -1415,7 +1415,8 @@ get_redirect_rule_by_index(int index,
                             int * proto, char * desc, int desclen,
                             char * rhost, int rhostlen,
                             unsigned int * timestamp,
@@ -630,8 +630,9 @@ index 86c67f2..7d93237 100644
 +                           u_int64_t * packets, u_int64_t * bytes,
 +                           u_int8_t * is_upnp_rule)
  {
- 	int n;
- 	struct pfioc_rule pr;
+ 	int n, r;
+ 	unsigned int tnum;
+@@ -1431,6 +1432,8 @@ get_redirect_rule_by_index(int index,
  #ifndef PF_NEWSTYLE
  	struct pfioc_pooladdr pp;
  #endif
@@ -641,7 +642,7 @@ index 86c67f2..7d93237 100644
  		return -1;
  	if(dev<0) {
 diff --git miniupnpd/pf/testobsdrdr.c miniupnpd/pf/testobsdrdr.c
-index 543369a..25f783b 100644
+index 526104e..4175c7e 100644
 --- miniupnpd/pf/testobsdrdr.c
 +++ miniupnpd/pf/testobsdrdr.c
 @@ -51,13 +51,15 @@ test_index(void)
@@ -662,7 +663,7 @@ index 543369a..25f783b 100644
  		printf("get.._by_index : no rule\n");
  	}
 diff --git miniupnpd/upnpredirect.c miniupnpd/upnpredirect.c
-index 2447dc4..771b6e5 100644
+index 533c479..960887b 100644
 --- miniupnpd/upnpredirect.c
 +++ miniupnpd/upnpredirect.c
 @@ -309,6 +309,7 @@ void lease_file_rewrite(void)
@@ -718,7 +719,7 @@ index 2447dc4..771b6e5 100644
  	else
  	{
  		current_time = upnp_time();
-@@ -611,13 +616,15 @@ upnp_get_portmapping_number_of_entries()
+@@ -611,13 +616,15 @@ upnp_get_portmapping_number_of_entries(void)
  	unsigned short eport, iport;
  	char protocol[8], iaddr[32], desc[64], rhost[32];
  	unsigned int leaseduration;
@@ -824,10 +825,10 @@ index bb105de..4a49c06 100644
  /* upnp_delete_redirection()
   * returns: 0 on success
 diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
-index 2bdac6f..8ecbe12 100644
+index 56e2b53..4e4fd9b 100644
 --- miniupnpd/upnpsoap.c
 +++ miniupnpd/upnpsoap.c
-@@ -1215,6 +1215,7 @@ GetGenericPortMappingEntry(struct upnphttp * h, const char * action, const char
+@@ -1222,6 +1222,7 @@ GetGenericPortMappingEntry(struct upnphttp * h, const char * action, const char
  	char rhost[40];
  	unsigned int leaseduration = 0;
  	struct NameValueParserData data;
@@ -835,7 +836,7 @@ index 2bdac6f..8ecbe12 100644
  
  	ParseNameValue(h->req_buf + h->req_contentoff, h->req_contentlen, &data);
  	m_index = GetValueFromNameValueList(&data, "NewPortMappingIndex");
-@@ -1249,21 +1250,33 @@ GetGenericPortMappingEntry(struct upnphttp * h, const char * action, const char
+@@ -1256,21 +1257,33 @@ GetGenericPortMappingEntry(struct upnphttp * h, const char * action, const char
                                              iaddr, sizeof(iaddr),
  	                                        desc, sizeof(desc),
  	                                        rhost, sizeof(rhost),

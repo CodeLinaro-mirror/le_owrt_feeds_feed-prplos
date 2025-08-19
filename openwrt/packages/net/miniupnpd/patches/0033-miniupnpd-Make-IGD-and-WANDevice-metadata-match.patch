@@ -1,4 +1,4 @@
-From 6f5994bd9db39ec7978b85b2746aa047cbcb0457 Mon Sep 17 00:00:00 2001
+From 7d82d24c356a9dd6fa2b45d7774b852e41c399cf Mon Sep 17 00:00:00 2001
 From: Mykyta Diachyna <m.diachyna@inango-systems.com>
 Date: Fri, 15 Aug 2025 14:57:44 +0300
 Subject: [PATCH] miniupnpd: Make IGD and WANDevice metadata match
@@ -14,7 +14,7 @@ Signed-off-by: Mykyta Diachyna <m.diachyna@inango-systems.com>
  1 file changed, 10 insertions(+)
 
 diff --git miniupnpd/upnpdescgen.c miniupnpd/upnpdescgen.c
-index 5f1037c..75c1c15 100644
+index 685ef52..ccd45ad 100644
 --- miniupnpd/upnpdescgen.c
 +++ miniupnpd/upnpdescgen.c
 @@ -349,6 +349,15 @@ static const struct XMLElt rootDesc[] =

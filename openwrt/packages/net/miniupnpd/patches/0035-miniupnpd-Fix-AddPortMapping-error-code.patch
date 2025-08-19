@@ -1,4 +1,4 @@
-From 95f55e7c1fce341335ee3e1a9009230342dae090 Mon Sep 17 00:00:00 2001
+From 920de4fb780d0f9f83d89535f18acf16f92c209d Mon Sep 17 00:00:00 2001
 From: Danyil Zubok <d.zubok@inango-systems.com>
 Date: Tue, 12 Aug 2025 21:10:18 +0300
 Subject: [PATCH] miniupnpd: Fix AddPortMapping error code
@@ -100,7 +100,7 @@ index d1fdb8b..77e8dbd 100644
  #endif
  
 diff --git miniupnpd/upnpredirect.c miniupnpd/upnpredirect.c
-index 65d6508..0da114f 100644
+index 9655818..da47725 100644
 --- miniupnpd/upnpredirect.c
 +++ miniupnpd/upnpredirect.c
 @@ -430,6 +430,11 @@ upnp_redirect(const char * rhost, unsigned short eport,

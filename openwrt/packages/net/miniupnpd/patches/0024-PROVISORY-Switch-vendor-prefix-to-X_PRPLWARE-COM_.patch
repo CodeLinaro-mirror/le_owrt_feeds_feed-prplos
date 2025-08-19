@@ -1,4 +1,4 @@
-From d6668b4e1223404fefc89db0a6654d77e0074d82 Mon Sep 17 00:00:00 2001
+From 64a4dab9e057eed2c4025812ffe87b3773acd330 Mon Sep 17 00:00:00 2001
 From: Toon Caeyers <toon.caeyers_ext@softathome.com>
 Date: Tue, 13 May 2025 14:38:40 +0200
 Subject: [PATCH] PROVISORY: Switch vendor prefix to X_PRPLWARE-COM_

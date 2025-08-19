@@ -1,0 +1,11 @@
+--- tr181-upnp-v0.11.8/mod-upnp-miniupnp/include_priv/upnp_miniupnp.h.orig	2025-08-22 11:05:03.345350478 +0300
++++ tr181-upnp-v0.11.8/mod-upnp-miniupnp/include_priv/upnp_miniupnp.h	2025-08-22 11:05:15.186649112 +0300
+@@ -74,7 +74,7 @@
+ #define MINIUPNP_CONF_FILE "/var/etc/miniupnpd.conf"
+ // persistent override config location (for UUID)
+ #define MINIUPNP_CONF_OVERRIDE_FILE "/etc/miniupnpd.conf.override"
+-#define MINIUPNP_CONF_VERSION "2.3.3"
++#define MINIUPNP_CONF_VERSION "2.3.7"
+ 
+ #ifdef __cplusplus
+ }

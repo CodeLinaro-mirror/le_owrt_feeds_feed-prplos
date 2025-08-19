@@ -1,4 +1,4 @@
-From 5120f2f633957ffeb455383328a546c9762803d8 Mon Sep 17 00:00:00 2001
+From e2612f66120828c7615b6359f6b7b7f39e76c01d Mon Sep 17 00:00:00 2001
 From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
 Date: Wed, 20 Aug 2025 15:04:26 +0300
 Subject: [PATCH] miniupnpd: deprecated PortMapping Origin value

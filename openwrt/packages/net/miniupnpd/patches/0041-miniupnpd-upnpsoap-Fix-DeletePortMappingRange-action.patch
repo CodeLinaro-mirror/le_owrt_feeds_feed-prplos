@@ -1,4 +1,4 @@
-From a5b008b9bddafb4a0b19068fefb7ad85c35877f7 Mon Sep 17 00:00:00 2001
+From 142fabcc4eea9782b1896008572ba34cca78757d Mon Sep 17 00:00:00 2001
 From: Mykyta Diachyna <m.diachyna@inango-systems.com>
 Date: Tue, 26 Aug 2025 20:28:05 +0300
 Subject: [PATCH] miniupnpd: upnpsoap: Fix DeletePortMappingRange action
@@ -15,10 +15,10 @@ Signed-off-by: Mykyta Diachyna <m.diachyna@inango-systems.com>
  1 file changed, 45 insertions(+)
 
 diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
-index c31f869..3555ad2 100644
+index c91f685..a7255e5 100644
 --- miniupnpd/upnpsoap.c
 +++ miniupnpd/upnpsoap.c
-@@ -1089,6 +1089,12 @@ DeletePortMappingRange(struct upnphttp * h, const char * action, const char * ns
+@@ -1096,6 +1096,12 @@ DeletePortMappingRange(struct upnphttp * h, const char * action, const char * ns
  	/*int manage;*/
  	unsigned short * port_list;
  	unsigned int i, number = 0;
@@ -31,7 +31,7 @@ index c31f869..3555ad2 100644
  
  	ParseNameValue(h->req_buf + h->req_contentoff, h->req_contentlen, &data);
  	startport_s = GetValueFromNameValueList(&data, "NewStartPort");
-@@ -1129,13 +1135,52 @@ DeletePortMappingRange(struct upnphttp * h, const char * action, const char * ns
+@@ -1136,13 +1142,52 @@ DeletePortMappingRange(struct upnphttp * h, const char * action, const char * ns
  		return;
  	}
  

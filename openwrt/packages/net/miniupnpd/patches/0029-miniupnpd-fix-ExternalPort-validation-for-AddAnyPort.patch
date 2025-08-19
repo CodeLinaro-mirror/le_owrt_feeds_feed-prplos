@@ -1,4 +1,4 @@
-From 7cc710deeb602d9e246a24c07810c82fae1db5fe Mon Sep 17 00:00:00 2001
+From dbaca4e603655d86c15de2bd1560ef5486a23f18 Mon Sep 17 00:00:00 2001
 From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
 Date: Mon, 28 Jul 2025 16:48:00 +0300
 Subject: [PATCH] miniupnpd: fix ExternalPort validation for AddAnyPortMapping
@@ -17,10 +17,10 @@ Signed-Off-By: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
  1 file changed, 5 insertions(+), 9 deletions(-)
 
 diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
-index d029181..90a00e9 100644
+index 9febd4a..6599c3e 100644
 --- miniupnpd/upnpsoap.c
 +++ miniupnpd/upnpsoap.c
-@@ -687,17 +687,13 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -691,17 +691,13 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
  		return;
  	}
  

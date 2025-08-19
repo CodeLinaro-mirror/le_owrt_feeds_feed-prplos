@@ -1,4 +1,4 @@
-From d5971a40819435b62b5a12be5b2a8b4f366ef74f Mon Sep 17 00:00:00 2001
+From 110f5d0de15283a027071410523ca904a339d4e7 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Th=C3=A9o-Paul=20Bodin?= <theo-paul.bodin@softathome.com>
 Date: Tue, 1 Apr 2025 17:56:41 +0200
 Subject: [PATCH] miniupnpd: Load all backends connect all buses
@@ -368,10 +368,10 @@ index 6991274..d80b04d 100644
      if(r == 0) {
          state_add_rdr = true;
 diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
-index 7924ebf..7cab20b 100644
+index d91fc53..4a74bae 100644
 --- miniupnpd/miniupnpd.c
 +++ miniupnpd/miniupnpd.c
-@@ -1402,13 +1402,13 @@ init(int argc, char * * argv, struct runtime_vars * v)
+@@ -1409,13 +1409,13 @@ init(int argc, char * * argv, struct runtime_vars * v)
  				break;
  #endif    /* USE_NETFILTER */
  #ifdef USE_AMX
@@ -392,7 +392,7 @@ index 7924ebf..7cab20b 100644
  			case UPNPAMX_INTERFACE :
  				strncpy(ip_interface, ary_options[i].value, IP_INTERFACE_MAX_LEN);
 diff --git miniupnpd/options.c miniupnpd/options.c
-index 2a947e3..3e9e3c9 100644
+index 43f5c56..b9a2054 100644
 --- miniupnpd/options.c
 +++ miniupnpd/options.c
 @@ -60,8 +60,8 @@ static const struct {
@@ -407,10 +407,10 @@ index 2a947e3..3e9e3c9 100644
  #endif
  	{ UPNPNOTIFY_INTERVAL, "notify_interval" },
 diff --git miniupnpd/options.h miniupnpd/options.h
-index 918133a..90b669f 100644
+index 9f60a89..f8e156e 100644
 --- miniupnpd/options.h
 +++ miniupnpd/options.h
-@@ -69,8 +69,8 @@ enum upnpconfigoptions {
+@@ -70,8 +70,8 @@ enum upnpconfigoptions {
  	UPNPTAG,				/* tag */
  #endif
  #ifdef USE_AMX

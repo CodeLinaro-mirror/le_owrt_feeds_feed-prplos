@@ -1,4 +1,4 @@
-From 652ac266296142ea88ddc8004051395cfbaf380a Mon Sep 17 00:00:00 2001
+From c2c826fdd121143fedbfc79bff1d564f859c7f44 Mon Sep 17 00:00:00 2001
 From: Volodymyr Martysh <vmartysh@maxlinear.com>
 Date: Tue, 5 Aug 2025 17:19:52 +0300
 Subject: [PATCH] miniupnpd: WANIPConnection IGD returns 0.0.0.0 even when
@@ -9,11 +9,24 @@ Added missing check for whether reserved IPs are allowed.
 References: PPW-802
 Signed-off-by: Volodymyr Martysh <v.martysh@inango-systems.com>
 ---
- miniupnpd/upnpdescgen.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ miniupnpd/testupnpdescgen.c | 1 +
+ miniupnpd/upnpdescgen.c     | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
+diff --git miniupnpd/testupnpdescgen.c miniupnpd/testupnpdescgen.c
+index 2fc019d..91c5e65 100644
+--- miniupnpd/testupnpdescgen.c
++++ miniupnpd/testupnpdescgen.c
+@@ -44,6 +44,7 @@ unsigned int upnp_configid = 666;
+ const char * use_ext_ip_addr = NULL;
+ const char * ext_if_name = "eth0";
+ unsigned int ext_is_ppp = 0;
++unsigned int allow_reserved_addr = 0;
+ 
+ int runtime_flags = 0;
+ 
 diff --git miniupnpd/upnpdescgen.c miniupnpd/upnpdescgen.c
-index b5b03ca..5f1037c 100644
+index a7af7a1..685ef52 100644
 --- miniupnpd/upnpdescgen.c
 +++ miniupnpd/upnpdescgen.c
 @@ -1475,7 +1475,7 @@ genEventVars(int * len, const struct serviceDesc * s)

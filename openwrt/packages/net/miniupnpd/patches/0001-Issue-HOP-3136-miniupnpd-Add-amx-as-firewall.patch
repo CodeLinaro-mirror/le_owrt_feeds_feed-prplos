@@ -1,4 +1,4 @@
-From 6576a56451042f9e1544911f752deea171c26b0d Mon Sep 17 00:00:00 2001
+From 240d2af15b59202fd066f6c3b005f579e7b5fce0 Mon Sep 17 00:00:00 2001
 From: sahbot <support.opensource@softathome.com>
 Date: Thu, 6 Jul 2023 16:49:29 +0200
 Subject: [PATCH] Issue: HOP-3136 [miniupnpd] Add amx as firewall
@@ -741,11 +741,11 @@ index 0000000..bd4605a
 +#endif
 +
 diff --git miniupnpd/configure miniupnpd/configure
-index 41144b9..08816e2 100755
+index f55a3ee..bfef4da 100755
 --- miniupnpd/configure
 +++ miniupnpd/configure
-@@ -439,6 +439,9 @@ case $OS_NAME in
- 		OS_URL=http://www.openwrt.org/
+@@ -456,6 +456,9 @@ case $OS_NAME in
+ 		OS_URL=https://www.openwrt.org/
  		echo "#define USE_IFACEWATCHER 1" >> ${CONFIGFILE}
  		GETIFADDRS=1
 +		if [ -z "$FW" ] ; then
@@ -753,8 +753,8 @@ index 41144b9..08816e2 100755
 +		fi
  		;;
  	OpenEmbedded)
- 		OS_URL=http://www.openembedded.org/
-@@ -589,6 +592,14 @@ case $FW in
+ 		OS_URL=https://www.openembedded.org/
+@@ -609,6 +612,14 @@ case $FW in
  			echo "#undef IPTABLES_143" >> ${CONFIGFILE}
  		fi
  		;;
@@ -770,7 +770,7 @@ index 41144b9..08816e2 100755
  		MAKEFILE=Makefile.linux_nft
  		echo "#define USE_NETFILTER 1" >> ${CONFIGFILE}
 diff --git miniupnpd/upnpredirect.c miniupnpd/upnpredirect.c
-index 272a981..65d6508 100644
+index e9d1c82..9655818 100644
 --- miniupnpd/upnpredirect.c
 +++ miniupnpd/upnpredirect.c
 @@ -38,6 +38,9 @@

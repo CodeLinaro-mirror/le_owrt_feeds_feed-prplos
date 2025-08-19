@@ -1,4 +1,4 @@
-From 38d1e081f61cfe178f14f14b50fe369305d836b4 Mon Sep 17 00:00:00 2001
+From 9fe6bb9e1afb8dc0b0301149f6f89d83391eb1cb Mon Sep 17 00:00:00 2001
 From: sahbot <support.opensource@softathome.com>
 Date: Mon, 31 Jul 2023 12:12:12 +0200
 Subject: [PATCH] Issue: HOP-3578 [tr181-upnp] addportmapping action failed
@@ -42,11 +42,11 @@ index 5c67729..fde8c7e 100644
      return r;
  }
 diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
-index 34b2eda..13c895a 100644
+index 2cb283f..72c319f 100644
 --- miniupnpd/miniupnpd.c
 +++ miniupnpd/miniupnpd.c
-@@ -1358,6 +1358,16 @@ init(int argc, char * * argv, struct runtime_vars * v)
- 				set_rdr_name(RDR_NAT_POSTROUTING_CHAIN_NAME, ary_options[i].value);
+@@ -1365,6 +1365,16 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 				set_rdr_name(RDR_FAMILY_SPLIT, ary_options[i].value);
  				break;
  #endif    /* USE_NETFILTER */
 +#ifdef USE_AMX
@@ -63,7 +63,7 @@ index 34b2eda..13c895a 100644
  				v->notify_interval = atoi(ary_options[i].value);
  				break;
 diff --git miniupnpd/options.c miniupnpd/options.c
-index e63f5b6..df345ad 100644
+index ce56bc5..32ca947 100644
 --- miniupnpd/options.c
 +++ miniupnpd/options.c
 @@ -58,6 +58,10 @@ static const struct {
@@ -78,10 +78,10 @@ index e63f5b6..df345ad 100644
  	{ UPNPNOTIFY_INTERVAL, "notify_interval" },
  	{ UPNPSYSTEM_UPTIME, "system_uptime" },
 diff --git miniupnpd/options.h miniupnpd/options.h
-index bd193cb..b2589ad 100644
+index d9b0496..ca704ec 100644
 --- miniupnpd/options.h
 +++ miniupnpd/options.h
-@@ -68,6 +68,10 @@ enum upnpconfigoptions {
+@@ -69,6 +69,10 @@ enum upnpconfigoptions {
  	UPNPQUEUE,				/* queue */
  	UPNPTAG,				/* tag */
  #endif

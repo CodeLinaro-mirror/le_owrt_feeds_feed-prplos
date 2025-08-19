@@ -1,4 +1,4 @@
-From 7ae287699df4ace45a8cddc7030154568725e907 Mon Sep 17 00:00:00 2001
+From ea801468f6e599554a0bbb204d210ebd4f600f45 Mon Sep 17 00:00:00 2001
 From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
 Date: Wed, 27 Aug 2025 18:32:54 +0300
 Subject: [PATCH] miniupnpd: support WAN PPP events
@@ -23,10 +23,10 @@ Signed-off-by: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
  5 files changed, 50 insertions(+), 5 deletions(-)
 
 diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
-index 74f2622..0f91b71 100644
+index b65f990..ca17da2 100644
 --- miniupnpd/miniupnpd.c
 +++ miniupnpd/miniupnpd.c
-@@ -1899,6 +1899,17 @@ init(int argc, char * * argv, struct runtime_vars * v)
+@@ -1915,6 +1915,17 @@ init(int argc, char * * argv, struct runtime_vars * v)
  
  #ifdef USE_AMX
  	ext_is_ppp = amx_is_wan_ppp();
@@ -44,7 +44,7 @@ index 74f2622..0f91b71 100644
  #endif
  
  #ifndef NO_BACKGROUND_NO_PIDFILE
-@@ -2665,7 +2676,7 @@ main(int argc, char * * argv)
+@@ -2722,7 +2733,7 @@ main(int argc, char * * argv)
  #ifdef ENABLE_EVENTS
  			if(GETFLAG(ENABLEUPNPMASK))
  			{
@@ -53,7 +53,7 @@ index 74f2622..0f91b71 100644
  #ifdef USE_AMX
  				/* If notify is sent, then
  				 * we can skip sending notify messages
-@@ -2882,7 +2893,7 @@ main(int argc, char * * argv)
+@@ -2940,7 +2951,7 @@ main(int argc, char * * argv)
  		if(should_send_upnp_notify)
  		{
  			syslog(LOG_INFO, "should_send_upnp_notify is set, sending notifications");
@@ -126,7 +126,7 @@ index d6b6ccc..173b37c 100644
  upnp_event_var_change_notify(enum subscriber_service_enum service);
  
 diff --git miniupnpd/upnpredirect.c miniupnpd/upnpredirect.c
-index 222966a..2447dc4 100644
+index e192d3d..533c479 100644
 --- miniupnpd/upnpredirect.c
 +++ miniupnpd/upnpredirect.c
 @@ -483,7 +483,7 @@ upnp_redirect_internal(const char * rhost, unsigned short eport,

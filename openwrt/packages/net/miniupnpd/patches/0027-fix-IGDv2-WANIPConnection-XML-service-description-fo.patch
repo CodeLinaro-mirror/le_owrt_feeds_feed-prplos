@@ -1,4 +1,4 @@
-From 5214b21d0d33fd955c2d44dfea091cd83111b0ec Mon Sep 17 00:00:00 2001
+From 185232996c9c5505da260a2d8e12b917e81c7a9f Mon Sep 17 00:00:00 2001
 From: Thomas Bernard <miniupnp@free.fr>
 Date: Sun, 25 Feb 2024 01:40:25 +0100
 Subject: [PATCH] fix IGDv2 WANIPConnection XML service description for
@@ -11,11 +11,12 @@ Changelog + check precisely lenth of 12
 (cherry picked from commit 55e650b125a8329f06c6d589b5b71f40911898ef)
 Signed-off-by: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
 ---
- miniupnpd/upnpdescgen.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ miniupnpd/upnpdescgen.c |  2 +-
+ miniupnpd/upnpsoap.c    | 25 +++++++++++++++++++++++--
+ 2 files changed, 24 insertions(+), 3 deletions(-)
 
 diff --git miniupnpd/upnpdescgen.c miniupnpd/upnpdescgen.c
-index 8bafceb..b5b03ca 100644
+index 64c1de3..a7af7a1 100644
 --- miniupnpd/upnpdescgen.c
 +++ miniupnpd/upnpdescgen.c
 @@ -1273,7 +1273,7 @@ genServiceDesc(int * len, const struct serviceDesc * s, int force_igd1)
@@ -27,6 +28,61 @@ index 8bafceb..b5b03ca 100644
  				          && args[j].dir == 2
  				          && 0 == memcmp(acts[i].name, "AddAnyPortMapping", 18)) {
  					str = strcat_str(str, len, &tmplen, "ReservedPort");
+diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
+index aada61a..a9962c8 100644
+--- miniupnpd/upnpsoap.c
++++ miniupnpd/upnpsoap.c
+@@ -411,10 +411,10 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	char * r_host;
+ 	unsigned short iport, eport;
+ 
++	struct in_addr result_ip;/*unsigned char result_ip[16];*/ /* inet_pton() */
+ #ifndef USE_AMX
+ 	struct hostent *hp; /* getbyhostname() */
+ 	char ** ptr; /* getbyhostname() */
+-	struct in_addr result_ip;/*unsigned char result_ip[16];*/ /* inet_pton() */
+ #endif
+ 
+ 	ParseNameValue(h->req_buf + h->req_contentoff, h->req_contentlen, &data);
+@@ -428,9 +428,15 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	if (!int_ip || int_ip[0] == '\0')
+ 	{
+ 		ClearNameValueList(&data);
+-		SoapError(h, 402, "Invalid Args");
++		SoapError(h, 715, "WildCardNotPermittedInSrcIP");
+ 		return;
+ 	}
++
++	if (inet_pton(AF_INET, int_ip, &result_ip) <= 0)
++	{
++		ClearNameValueList(&data);
++		SoapError(h, 600, "Argument Value Invalid");
++	}
+ #endif
+ 
+ 	/* IGD 2 MUST support both wildcard and specific IP address values
+@@ -647,6 +653,21 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	if(leaseduration == 0)
+ 		leaseduration = 604800;
+ 
++#ifdef UPNP_STRICT
++	if (!int_ip || int_ip[0] == '\0')
++	{
++		ClearNameValueList(&data);
++		SoapError(h, 715, "WildCardNotPermittedInSrcIP");
++		return;
++	}
++
++	if (inet_pton(AF_INET, int_ip, &result_ip) <= 0)
++	{
++		ClearNameValueList(&data);
++		SoapError(h, 600, "Argument Value Invalid");
++	}
++#endif
++
+ 	if (!int_ip || !ext_port || !int_port || !protocol)
+ 	{
+ 		ClearNameValueList(&data);
 -- 
 2.34.1
 

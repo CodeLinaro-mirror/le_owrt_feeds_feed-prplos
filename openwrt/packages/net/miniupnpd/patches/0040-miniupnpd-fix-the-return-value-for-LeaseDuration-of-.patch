@@ -1,4 +1,4 @@
-From 520570a33f3f8f0f38729c6fb0135aff79836cb6 Mon Sep 17 00:00:00 2001
+From 36cb31ecc31acf8698e3f086a8fe9393ad67d9bd Mon Sep 17 00:00:00 2001
 From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
 Date: Thu, 31 Jul 2025 11:59:22 +0300
 Subject: [PATCH] miniupnpd: fix the return value for LeaseDuration of static
@@ -218,7 +218,7 @@ index 7f8783a..a93e38e 100644
  #endif
  
 diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
-index c0c02b7..c31f869 100644
+index 6193eef..c91f685 100644
 --- miniupnpd/upnpsoap.c
 +++ miniupnpd/upnpsoap.c
 @@ -36,6 +36,7 @@
@@ -229,7 +229,7 @@ index c0c02b7..c31f869 100644
  #endif
  
  /* utility function */
-@@ -573,6 +574,20 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -577,6 +578,20 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
  
  	leaseduration = leaseduration_str ? atoi(leaseduration_str) : 0;
  #ifdef IGD_V2
@@ -250,7 +250,7 @@ index c0c02b7..c31f869 100644
  	/* PortMappingLeaseDuration can be either a value between 1 and
  	 * 604800 seconds or the zero value (for infinite lease time).
  	 * Note that an infinite lease time can be only set by out-of-band
-@@ -592,6 +607,8 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -596,6 +611,8 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
  	r = upnp_redirect(r_host, eport, int_ip, iport, protocol, desc, leaseduration);
  
  	ClearNameValueList(&data);

@@ -1,4 +1,4 @@
-From fecf00dcf67884d779902eb7e79002afd9f963a0 Mon Sep 17 00:00:00 2001
+From de5f7199405153ea9a79bc5a1fc751bfded81b50 Mon Sep 17 00:00:00 2001
 From: sahbot <support.opensource@softathome.com>
 Date: Thu, 11 Jan 2024 17:59:30 +0100
 Subject: [PATCH] Issue: HOP-5527 Customize SerialNumber and ModelNumber

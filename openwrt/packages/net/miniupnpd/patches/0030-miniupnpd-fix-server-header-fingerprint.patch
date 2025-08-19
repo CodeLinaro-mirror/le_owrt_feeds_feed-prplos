@@ -1,4 +1,4 @@
-From f211fc1452271293ac7c1912a62d711229b96308 Mon Sep 17 00:00:00 2001
+From ec7ee61ce7b547cb4020632df93d3378cc65e824 Mon Sep 17 00:00:00 2001
 From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
 Date: Mon, 28 Jul 2025 16:54:38 +0300
 Subject: [PATCH] miniupnpd: fix server header fingerprint

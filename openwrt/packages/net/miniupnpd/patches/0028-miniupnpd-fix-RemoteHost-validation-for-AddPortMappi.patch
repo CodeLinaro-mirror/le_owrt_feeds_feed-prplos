@@ -1,4 +1,4 @@
-From b893645cdd1c03d6f1f270a538b04498d99d50dc Mon Sep 17 00:00:00 2001
+From f64a88638a7eab03c7469047105a17ae48c31e45 Mon Sep 17 00:00:00 2001
 From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
 Date: Fri, 25 Jul 2025 21:10:38 +0300
 Subject: [PATCH] miniupnpd: fix RemoteHost validation for AddPortMapping
@@ -16,7 +16,7 @@ Signed-Off-By: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
  1 file changed, 16 insertions(+)
 
 diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
-index 61825de..d029181 100644
+index a9962c8..9febd4a 100644
 --- miniupnpd/upnpsoap.c
 +++ miniupnpd/upnpsoap.c
 @@ -442,6 +442,14 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
@@ -34,7 +34,7 @@ index 61825de..d029181 100644
  #ifndef SUPPORT_REMOTEHOST
  #ifdef UPNP_STRICT
  	if (r_host && (r_host[0] != '\0') && (0 != strcmp(r_host, "*")))
-@@ -662,6 +670,14 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -666,6 +674,14 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
  		ClearNameValueList(&data);
  		SoapError(h, 600, "Argument Value Invalid");
  	}

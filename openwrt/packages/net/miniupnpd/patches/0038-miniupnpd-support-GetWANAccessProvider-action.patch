@@ -1,4 +1,4 @@
-From 34e50d6fee038bd1d97ba4b75e8d3acbd8e45b39 Mon Sep 17 00:00:00 2001
+From de90c670bda3f7a8f6b33c9b11937a2358508748 Mon Sep 17 00:00:00 2001
 From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
 Date: Tue, 12 Aug 2025 20:09:14 +0300
 Subject: [PATCH] miniupnpd: support GetWANAccessProvider action
@@ -25,10 +25,10 @@ Signed-off-by: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
  8 files changed, 49 insertions(+), 3 deletions(-)
 
 diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
-index 6cb84ea..0a810f6 100644
+index 10b3a37..0c89bfa 100644
 --- miniupnpd/miniupnpd.c
 +++ miniupnpd/miniupnpd.c
-@@ -1498,6 +1498,10 @@ init(int argc, char * * argv, struct runtime_vars * v)
+@@ -1507,6 +1507,10 @@ init(int argc, char * * argv, struct runtime_vars * v)
  				}
  				break;
  #endif
@@ -40,12 +40,12 @@ index 6cb84ea..0a810f6 100644
  				INIT_PRINT_ERR("Unknown option in file %s\n",
  				        optionsfile);
 diff --git miniupnpd/miniupnpd.conf miniupnpd/miniupnpd.conf
-index d314d86..8377ad1 100644
+index 17b2229..a6d616b 100644
 --- miniupnpd/miniupnpd.conf
 +++ miniupnpd/miniupnpd.conf
-@@ -107,6 +107,10 @@
+@@ -118,6 +118,10 @@
  # Model URL, default is URL of OS vendor
- #model_url=http://miniupnp.free.fr/
+ #model_url=https://miniupnp.tuxfamily.org/
  
 +# Name name of the Service Provider providing link connectivity
 +# on the WAN interface.
@@ -55,10 +55,10 @@ index d314d86..8377ad1 100644
  # by default miniupnpd tries to get WAN interface speed
  #bitrate_up=1000000
 diff --git miniupnpd/options.c miniupnpd/options.c
-index 90e93d4..2a947e3 100644
+index 7e8ade5..43f5c56 100644
 --- miniupnpd/options.c
 +++ miniupnpd/options.c
-@@ -107,7 +107,8 @@ static const struct {
+@@ -110,7 +110,8 @@ static const struct {
  #endif
  	{ UPNPMINISSDPDSOCKET, "minissdpdsocket"},
  	{ UPNPALLOWRESERVEDADDR, "pf_allow_reserved_addr"},
@@ -69,10 +69,10 @@ index 90e93d4..2a947e3 100644
  
  int
 diff --git miniupnpd/options.h miniupnpd/options.h
-index 716d302..918133a 100644
+index 7bd6820..9f60a89 100644
 --- miniupnpd/options.h
 +++ miniupnpd/options.h
-@@ -88,7 +88,8 @@ enum upnpconfigoptions {
+@@ -89,7 +89,8 @@ enum upnpconfigoptions {
  	UPNPFORCEIGDDESCV1,
  #endif
  	UPNPALLOWRESERVEDADDR,
@@ -83,7 +83,7 @@ index 716d302..918133a 100644
  
  /* readoptionsfile()
 diff --git miniupnpd/upnpdescgen.c miniupnpd/upnpdescgen.c
-index 3f5693b..7a0803a 100644
+index f4d0ece..569b2b5 100644
 --- miniupnpd/upnpdescgen.c
 +++ miniupnpd/upnpdescgen.c
 @@ -835,6 +835,12 @@ static const struct argument GetTotalPacketsReceivedArgs[] =
@@ -145,7 +145,7 @@ index a093e9b..6159817 100644
  extern struct upnpperm * upnppermlist;
  extern unsigned int num_upnpperm;
 diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
-index de6be01..c0c02b7 100644
+index 58bcc65..6193eef 100644
 --- miniupnpd/upnpsoap.c
 +++ miniupnpd/upnpsoap.c
 @@ -192,6 +192,28 @@ GetTotalPacketsSent(struct upnphttp * h, const char * action, const char * ns)
@@ -177,7 +177,7 @@ index de6be01..c0c02b7 100644
  static void
  GetTotalPacketsReceived(struct upnphttp * h, const char * action, const char * ns)
  {
-@@ -2424,6 +2446,7 @@ soapMethods[] =
+@@ -2431,6 +2453,7 @@ soapMethods[] =
  	{ "GetTotalPacketsReceived", GetTotalPacketsReceived},
  	{ "GetCommonLinkProperties", GetCommonLinkProperties},
  	{ "GetStatusInfo", GetStatusInfo},

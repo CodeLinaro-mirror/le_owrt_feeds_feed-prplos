@@ -1,4 +1,4 @@
-From fd3af7c3aa5993bf5491395821dd7e3f24750b4e Mon Sep 17 00:00:00 2001
+From d9734a7df3bba516f30b1b2c6606e5eb807c3f7d Mon Sep 17 00:00:00 2001
 From: sahbot <support.opensource@softathome.com>
 Date: Mon, 7 Oct 2024 14:32:13 +0200
 Subject: [PATCH] UPnP/PPP: WANPPPConnection isn't advertised (HOP-7453)
@@ -14,10 +14,10 @@ GitOrigin-RevId: 807948fb0adc75c64221ec6001cf7165616c49ca
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git miniupnpd/configure miniupnpd/configure
-index 4081a5e..fb93d03 100755
+index dbd484e..ed4d492 100755
 --- miniupnpd/configure
 +++ miniupnpd/configure
-@@ -788,7 +788,7 @@ echo "" >> ${CONFIGFILE}
+@@ -819,7 +819,7 @@ echo "" >> ${CONFIGFILE}
  
  echo "/* define ADVERTISE_WANPPPCONN to allow buggy Control Point to use" >> ${CONFIGFILE}
  echo " * WANPPPConnection instead of WANIPConnection. */" >>  ${CONFIGFILE}

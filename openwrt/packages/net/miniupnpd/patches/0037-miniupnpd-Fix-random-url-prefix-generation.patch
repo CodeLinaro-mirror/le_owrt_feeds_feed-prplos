@@ -1,4 +1,4 @@
-From 702d0c86580e5d9414e1cbe65856f3f655f8de0d Mon Sep 17 00:00:00 2001
+From 35fa0fbc2d83d8c4ff81ebd4a0b82e623b98ca42 Mon Sep 17 00:00:00 2001
 From: Danyil Zubok <d.zubok@inango-systems.com>
 Date: Fri, 15 Aug 2025 14:42:21 +0300
 Subject: [PATCH] miniupnpd: Fix random url prefix generation
@@ -16,10 +16,10 @@ Signed-off-by: Danyil Zubok <d.zubok@inango-systems.com>
  3 files changed, 6 insertions(+), 4 deletions(-)
 
 diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
-index fe0aa03..6cb84ea 100644
+index 04c30f7..10b3a37 100644
 --- miniupnpd/miniupnpd.c
 +++ miniupnpd/miniupnpd.c
-@@ -2000,7 +2000,9 @@ init(int argc, char * * argv, struct runtime_vars * v)
+@@ -2016,7 +2016,9 @@ init(int argc, char * * argv, struct runtime_vars * v)
  	/* initialize random number generator */
  	srandom((unsigned int)time(NULL));
  #ifdef RANDOMIZE_URLS
@@ -31,7 +31,7 @@ index fe0aa03..6cb84ea 100644
  
  	/* initialize redirection engine (and pinholes) */
 diff --git miniupnpd/testupnpdescgen.c miniupnpd/testupnpdescgen.c
-index 2fc019d..6dcf689 100644
+index 91c5e65..f318c20 100644
 --- miniupnpd/testupnpdescgen.c
 +++ miniupnpd/testupnpdescgen.c
 @@ -37,7 +37,7 @@ char model_description[] = ROOTDEV_MODELDESCRIPTION;

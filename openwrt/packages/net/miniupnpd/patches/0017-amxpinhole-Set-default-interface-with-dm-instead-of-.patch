@@ -1,4 +1,4 @@
-From 13136eb7441d6adc15114adbf7fc2a855d97906e Mon Sep 17 00:00:00 2001
+From 18f4c26ce03ed746076077025839e8f2fe20c895 Mon Sep 17 00:00:00 2001
 From: sahbot <support.opensource@softathome.com>
 Date: Sun, 26 May 2024 20:38:02 +0200
 Subject: [PATCH] amxpinhole: Set default interface with dm instead of index
@@ -70,10 +70,10 @@ index 333761c..31de866 100644
  }
  
 diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
-index 659af49..44b28c7 100644
+index 2a12b3e..91db0c9 100644
 --- miniupnpd/miniupnpd.c
 +++ miniupnpd/miniupnpd.c
-@@ -1379,6 +1379,10 @@ init(int argc, char * * argv, struct runtime_vars * v)
+@@ -1386,6 +1386,10 @@ init(int argc, char * * argv, struct runtime_vars * v)
  				strncpy(ubus_backend_url, ary_options[i].value, UBUS_BE_URL_MAX_LEN);
  				ubus_backend_url[UBUS_BE_URL_MAX_LEN - 1] = '\0';
  				break;
@@ -85,7 +85,7 @@ index 659af49..44b28c7 100644
  			case UPNPNOTIFY_INTERVAL:
  				v->notify_interval = atoi(ary_options[i].value);
 diff --git miniupnpd/options.c miniupnpd/options.c
-index df345ad..701835c 100644
+index 32ca947..6728998 100644
 --- miniupnpd/options.c
 +++ miniupnpd/options.c
 @@ -62,6 +62,7 @@ static const struct {
@@ -97,10 +97,10 @@ index df345ad..701835c 100644
  	{ UPNPNOTIFY_INTERVAL, "notify_interval" },
  	{ UPNPSYSTEM_UPTIME, "system_uptime" },
 diff --git miniupnpd/options.h miniupnpd/options.h
-index b2589ad..268da35 100644
+index ca704ec..0939f15 100644
 --- miniupnpd/options.h
 +++ miniupnpd/options.h
-@@ -71,6 +71,7 @@ enum upnpconfigoptions {
+@@ -72,6 +72,7 @@ enum upnpconfigoptions {
  #ifdef USE_AMX
  	UPNPUBUS_SOCK_URL,		/* ubus_sock_url*/
  	UPNPUBUS_BE_URL,		/* ubus_backend_url*/
