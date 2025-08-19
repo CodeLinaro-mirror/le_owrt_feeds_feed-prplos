@@ -1,4 +1,4 @@
-From 298381f20c7e24ca00ad58b00d5798d04bc85b56 Mon Sep 17 00:00:00 2001
+From 53fc1f67179ae37de7d8964316b8e399830cb759 Mon Sep 17 00:00:00 2001
 From: sahbot <support.opensource@softathome.com>
 Date: Fri, 2 Aug 2024 15:41:05 +0200
 Subject: [PATCH] PortMapping: Delete rules after inactivity (HOP-6872)
@@ -40,10 +40,10 @@ index 5c690a9..a6ba829 100644
  
      rv = amxb_add(bus_ctx, "NAT.PortMapping.", 0, NULL, &rule, &ret, 1);
 diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
-index 44b28c7..ea7c4da 100644
+index 91db0c9..c0c91e6 100644
 --- miniupnpd/miniupnpd.c
 +++ miniupnpd/miniupnpd.c
-@@ -1415,6 +1415,7 @@ init(int argc, char * * argv, struct runtime_vars * v)
+@@ -1422,6 +1422,7 @@ init(int argc, char * * argv, struct runtime_vars * v)
  				break;
  			case UPNPCLEANINTERVAL:
  				v->clean_ruleset_interval = atoi(ary_options[i].value);

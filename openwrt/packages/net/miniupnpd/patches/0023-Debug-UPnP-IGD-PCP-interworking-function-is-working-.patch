@@ -1,4 +1,4 @@
-From adb8bb5836a75ed8569329496d06ceeded18f472 Mon Sep 17 00:00:00 2001
+From 893c4b2dad12301dea09c4009a1a3e001e752f97 Mon Sep 17 00:00:00 2001
 From: sahbot <support.opensource@softathome.com>
 Date: Mon, 7 Oct 2024 14:01:43 +0200
 Subject: [PATCH] Debug: [UPnP-IGD] PCP interworking function is working even

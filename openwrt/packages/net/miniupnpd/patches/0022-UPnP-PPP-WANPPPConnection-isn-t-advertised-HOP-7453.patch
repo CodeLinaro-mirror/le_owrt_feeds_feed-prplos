@@ -1,4 +1,4 @@
-From 5527978871a5a37609315b9764dd625ff9bd1c97 Mon Sep 17 00:00:00 2001
+From 1a2a3145e611ba81c26643888e0d069f4443b64c Mon Sep 17 00:00:00 2001
 From: sahbot <support.opensource@softathome.com>
 Date: Wed, 16 Oct 2024 15:11:17 +0200
 Subject: [PATCH] UPnP/PPP: WANPPPConnection isn't advertised (HOP-7453)
@@ -59,10 +59,10 @@ index a78e443..024d804 100644
  #endif
  
 diff --git miniupnpd/minissdp.c miniupnpd/minissdp.c
-index a672c71..a6ab4dc 100644
+index b9bf259..0587e66 100644
 --- miniupnpd/minissdp.c
 +++ miniupnpd/minissdp.c
-@@ -800,6 +800,10 @@ SendSSDPNotifies(int s, const char * host, unsigned short http_port,
+@@ -801,6 +801,10 @@ SendSSDPNotifies(int s, const char * host, unsigned short http_port,
  				ver_str[0] = '\0';
  			else
  				snprintf(ver_str, sizeof(ver_str), "%d", known_service_types[i].version);
@@ -73,7 +73,7 @@ index a672c71..a6ab4dc 100644
  			SendSSDPNotify(s, (struct sockaddr *)&sockname, sockname_len, dest_str,
  			               host, http_port,
  #ifdef ENABLE_HTTPS
-@@ -1206,6 +1210,10 @@ ProcessSSDPData(int s, const char *bufr, int n,
+@@ -1224,6 +1228,10 @@ ProcessSSDPData(int s, const char *bufr, int n,
  			/* Responds to request with a device as ST header */
  			for(i = 0; known_service_types[i].s; i++)
  			{
@@ -84,7 +84,7 @@ index a672c71..a6ab4dc 100644
  				l = (int)strlen(known_service_types[i].s);
  				if(l<=st_len && (0 == memcmp(st, known_service_types[i].s, l))
  #ifdef UPNP_STRICT
-@@ -1267,6 +1275,10 @@ ProcessSSDPData(int s, const char *bufr, int n,
+@@ -1285,6 +1293,10 @@ ProcessSSDPData(int s, const char *bufr, int n,
  				syslog(LOG_INFO, "ssdp:all found");
  				for(i=0; known_service_types[i].s; i++)
  				{
@@ -95,7 +95,7 @@ index a672c71..a6ab4dc 100644
  #ifdef DELAY_MSEARCH_RESPONSE
  					delay += delay_increment;
  #endif
-@@ -1462,6 +1474,10 @@ SendSSDPGoodbye(int * sockets, int n_sockets)
+@@ -1480,6 +1492,10 @@ SendSSDPGoodbye(int * sockets, int n_sockets)
  #endif
  	    for(i=0; known_service_types[i].s; i++)
  	    {
@@ -106,7 +106,7 @@ index a672c71..a6ab4dc 100644
  			if(i==0)
  				ver_str[0] = '\0';
  			else
-@@ -1522,6 +1538,10 @@ SubmitServicesToMiniSSDPD(const char * host, unsigned short port) {
+@@ -1540,6 +1556,10 @@ SubmitServicesToMiniSSDPD(const char * host, unsigned short port) {
  		return -1;
  	}
  	for(i = 0; known_service_types[i].s; i++) {
@@ -118,7 +118,7 @@ index a672c71..a6ab4dc 100644
  		if(i==0)
  			ver_str[0] = '\0';
 diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
-index d5dd7d4..16d640a 100644
+index 5816f94..04c30f7 100644
 --- miniupnpd/miniupnpd.c
 +++ miniupnpd/miniupnpd.c
 @@ -101,6 +101,7 @@ void init_iptpinhole(void);
@@ -129,7 +129,7 @@ index d5dd7d4..16d640a 100644
  #endif
  #endif
  
-@@ -1892,6 +1893,10 @@ init(int argc, char * * argv, struct runtime_vars * v)
+@@ -1908,6 +1909,10 @@ init(int argc, char * * argv, struct runtime_vars * v)
  		}
  	}
  
@@ -169,7 +169,7 @@ index f6eda7b..2fc019d 100644
  int runtime_flags = 0;
  
 diff --git miniupnpd/upnpdescgen.c miniupnpd/upnpdescgen.c
-index 714feae..8d24fed 100644
+index 5f93bba..a7af7a1 100644
 --- miniupnpd/upnpdescgen.c
 +++ miniupnpd/upnpdescgen.c
 @@ -35,6 +35,38 @@
@@ -679,10 +679,10 @@ index 48ee927..a093e9b 100644
  extern const char * ext_stun_host;
  extern uint16_t ext_stun_port;
 diff --git miniupnpd/upnphttp.c miniupnpd/upnphttp.c
-index b6241fb..218add9 100644
+index 8ad3932..9b77e62 100644
 --- miniupnpd/upnphttp.c
 +++ miniupnpd/upnphttp.c
-@@ -775,6 +775,9 @@ ProcessHttpQuery_upnphttp(struct upnphttp * h)
+@@ -783,6 +783,9 @@ ProcessHttpQuery_upnphttp(struct upnphttp * h)
  #endif
  #ifdef ENABLE_DP_SERVICE
  		{ DP_PATH, genDP},
@@ -693,10 +693,10 @@ index b6241fb..218add9 100644
  		{ NULL, NULL}
  	};
 diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
-index 1350f24..b978c4f 100644
+index fd4b32e..9c08316 100644
 --- miniupnpd/upnpsoap.c
 +++ miniupnpd/upnpsoap.c
-@@ -576,7 +576,7 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -580,7 +580,7 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
  	{
  	case 0:	/* success */
  		bodylen = snprintf(body, sizeof(body), resp,

@@ -1,4 +1,4 @@
-From 49421d030f4662c0473c6b48554fe171f53dc44f Mon Sep 17 00:00:00 2001
+From ac2bce5fb7708d7ba79ee3d9f9f7d3cd96d0ebf7 Mon Sep 17 00:00:00 2001
 From: sahbot <support.opensource@softathome.com>
 Date: Tue, 28 Nov 2023 17:14:46 +0100
 Subject: [PATCH] Issue: HOP-5153 [CDROUTER][UPNP][IPv6] IPv4 forwarding rule
@@ -10,7 +10,7 @@ GitOrigin-RevId: 23ba598ae285ca5cc47c6376cb9324f360f719f5
  1 file changed, 17 insertions(+), 3 deletions(-)
 
 diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
-index 8fc4a9e..4550dc9 100644
+index 53d28d2..28149d2 100644
 --- miniupnpd/upnpsoap.c
 +++ miniupnpd/upnpsoap.c
 @@ -496,8 +496,8 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
@@ -23,8 +23,8 @@ index 8fc4a9e..4550dc9 100644
 +			syslog(LOG_WARNING, "Client %s tried to redirect port to %s",
  			       inet_ntoa(h->clientaddr), int_ip);
  			ClearNameValueList(&data);
- 			SoapError(h, 718, "ConflictInMappingEntry");
-@@ -690,8 +690,15 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ #ifdef IGD_V2
+@@ -694,8 +694,15 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
  	/* check if NewInternalAddress is the client address */
  	if(GETFLAG(SECUREMODEMASK))
  	{
@@ -41,7 +41,7 @@ index 8fc4a9e..4550dc9 100644
  			syslog(LOG_INFO, "Client %s tried to redirect port to %s",
  			       inet_ntoa(h->clientaddr), int_ip);
  			ClearNameValueList(&data);
-@@ -931,7 +938,14 @@ DeletePortMapping(struct upnphttp * h, const char * action, const char * ns)
+@@ -935,7 +942,14 @@ DeletePortMapping(struct upnphttp * h, const char * action, const char * ns)
  		{
  			if(inet_pton(AF_INET, int_ip, &int_ip_addr) > 0)
  			{
@@ -54,8 +54,8 @@ index 8fc4a9e..4550dc9 100644
  				if(h->clientaddr.s_addr != int_ip_addr.s_addr)
 +#endif /* USE_AMX */
  				{
+ #ifdef IGD_V2
  					SoapError(h, 606, "Action not authorized");
- 					/*SoapError(h, 714, "NoSuchEntryInArray");*/
 -- 
 2.34.1
 

@@ -1,4 +1,4 @@
-From f54c927ef83bc435a1d577e124b6dd1c81fc3196 Mon Sep 17 00:00:00 2001
+From 4ac2023192d1a3de19a1be560425cae43e99c359 Mon Sep 17 00:00:00 2001
 From: sahbot <support.opensource@softathome.com>
 Date: Mon, 18 Sep 2023 14:09:47 +0200
 Subject: [PATCH] Issue: HOP-3136 [UPnP-IGD][PCP] When PCP is enabled UPNP

@@ -1,4 +1,4 @@
-From 60e1a87290faa5d2c10d671aff6278e4c36b1233 Mon Sep 17 00:00:00 2001
+From 8aef7e9cdad26d15add0ba26024bcc84f7c2aa81 Mon Sep 17 00:00:00 2001
 From: sahbot <support.opensource@softathome.com>
 Date: Mon, 4 Sep 2023 10:56:42 +0200
 Subject: [PATCH] Issue: HOP-2738 Cannot add a IPv4 Portmapping using UPnP over
@@ -97,7 +97,7 @@ index 98c54ea..3f93263 100644
  #endif
  
 diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
-index 2c2e6a2..8fc4a9e 100644
+index 5c8790e..53d28d2 100644
 --- miniupnpd/upnpsoap.c
 +++ miniupnpd/upnpsoap.c
 @@ -34,6 +34,9 @@
