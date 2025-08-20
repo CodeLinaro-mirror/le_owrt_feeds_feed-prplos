@@ -1,5 +1,3 @@
-pkcs11=pkcs11_sect
-
 [ pkcs11_sect ]
 engine_id = pkcs11
 dynamic_path = /usr/lib/engines-3/pkcs11.so
