@@ -13,7 +13,7 @@ PKG_RELEASE:=2
 PKG_VERSION:=2.3.3
 PKG_SOURCE:=miniupnpd-prpl-stable-2.3.y_v0.1.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/forks/miniupnpd/-/archive/prpl/stable-2.3.y_v0.1.0
-PKG_HASH:=80f9e70e2b7643357831e30492e89043b84278ea7a04738185edf7fb7d060d83
+PKG_HASH:=35359320d43bf2a32ab8902289961463739ff5fe60788a34c84b718a7610e22d
 PKG_BUILD_DIR:=$(BUILD_DIR)/miniupnpd-prpl-stable-2.3.y_v0.1.0
 
 PKG_MAINTAINER:=
