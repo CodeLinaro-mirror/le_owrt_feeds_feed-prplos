@@ -1,6 +1,6 @@
 #!/bin/sh /etc/rc.common
 
-START=14
+START=60
 
 LABEL="server-key"
 CERT_STORE="/root/certs"
@@ -33,7 +33,7 @@ softhsm_init() {
         rm $CERT_STORE/ca.key
 
         # create ca.crt
-        openssl req -x509 -new -nodes -engine pkcs11 -keyform ENGINE -key "pkcs11:object=ca-key;type=private" -sha256 -days 3650 -out $CERT_STORE/ca.crt -subj '/CN=Test CA'
+        openssl req -x509 -new -nodes -engine pkcs11 -keyform ENGINE -key "pkcs11:object=ca-key;type=private" -sha256 -days 36500 -out $CERT_STORE/ca.crt -subj '/CN=Test CA'
     fi
 
     # generate device key inside softHSM
@@ -50,7 +50,7 @@ softhsm_init() {
     # create device certificate
     if [ ! -f /etc/config/autocert/server.crt ]; then
         openssl req -new -engine pkcs11 -keyform ENGINE -key "pkcs11:object=server-key;type=private" -out $CERT_STORE/server.csr -subj '/CN=prplOS.lan'
-        openssl x509 -req -in $CERT_STORE/server.csr -CA $CERT_STORE/ca.crt -engine pkcs11 -CAkeyform ENGINE -CAkey "pkcs11:object=ca-key;type=private" -out $CERT_STORE/server.crt -days 3650 -sha256
+        openssl x509 -req -in $CERT_STORE/server.csr -CA $CERT_STORE/ca.crt -engine pkcs11 -CAkeyform ENGINE -CAkey "pkcs11:object=ca-key;type=private" -out $CERT_STORE/server.crt -days 36500 -sha256
         rm $CERT_STORE/server.csr
         mkdir -p /etc/config/autocert
         mv $CERT_STORE/server.crt /etc/config/autocert/
