@@ -3,10 +3,13 @@
 START=60
 
 LABEL="server-key"
-CERT_STORE="/root/certs"
+CA_KEY_DIR="/root/certs"
+CA_CERT_DIR="/usr/share/ca-certificates"
+DEVICE_CERT_DIR="/etc/config/autocert"
 
 softhsm_init() {
-    mkdir -p $CERT_STORE
+    chown root:certificates $CA_CERT_DIR
+    chown root:certificates $DEVICE_CERT_DIR
 
     # check if softHSM is not yet initialized (first boot)
     pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --list-objects 2>&1 | grep -q CKR_TOKEN_NOT_RECOGNIZED
@@ -22,24 +25,24 @@ softhsm_init() {
     # provision softHSM with TEST/DEV ca.key (to later sign the device certificate)
     pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --list-objects 2>&1 | grep -q ca-key
     if [ $? -ne 0 ]; then
-        openssl genrsa -out $CERT_STORE/ca.key 2048
+        if [ ! -f $CA_KEY_DIR/ca.key ]; then
+            echo "$CA_KEY_DIR/ca.key doesn't exist as a file nor in HSM. Please factory reset the device"
+            exit 1
+        fi
 
         echo "Provisioning SoftHSM with test ca key"
-        pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --write-object $CERT_STORE/ca.key --type privkey --label ca-key
+        pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --write-object $CA_KEY_DIR/ca.key --type privkey --label ca-key
         if [ $? -ne 0 ]; then
             echo "Test CA key provisioning failed"
             exit 1
         fi
-        rm $CERT_STORE/ca.key
-
-        # create ca.crt
-        openssl req -x509 -new -nodes -engine pkcs11 -keyform ENGINE -key "pkcs11:object=ca-key;type=private" -sha256 -days 36500 -out $CERT_STORE/ca.crt -subj '/CN=Test CA'
+        rm $CA_KEY_DIR/ca.key
     fi
 
     # generate device key inside softHSM
     pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --list-objects 2>&1 | grep -q $LABEL
     if [ $? -ne 0 ]; then
-        echo "Provisioning SoftHSM with device private key"
+        echo "Generating device private key inside SoftHSM"
         pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --keypairgen --key-type rsa:2048 --label $LABEL
         if [ $? -ne 0 ]; then
             echo "Private key generation failed"
@@ -48,12 +51,10 @@ softhsm_init() {
     fi
 
     # create device certificate
-    if [ ! -f /etc/config/autocert/server.crt ]; then
-        openssl req -new -engine pkcs11 -keyform ENGINE -key "pkcs11:object=server-key;type=private" -out $CERT_STORE/server.csr -subj '/CN=prplOS.lan'
-        openssl x509 -req -in $CERT_STORE/server.csr -CA $CERT_STORE/ca.crt -engine pkcs11 -CAkeyform ENGINE -CAkey "pkcs11:object=ca-key;type=private" -out $CERT_STORE/server.crt -days 36500 -sha256
-        rm $CERT_STORE/server.csr
-        mkdir -p /etc/config/autocert
-        mv $CERT_STORE/server.crt /etc/config/autocert/
+    if [ ! -f $DEVICE_CERT_DIR/server.crt ]; then
+        openssl req -new -engine pkcs11 -keyform ENGINE -key "pkcs11:object=server-key;type=private" -out /tmp/server.csr -subj '/CN=prplOS.lan'
+        openssl x509 -req -in /tmp/server.csr -CA $CA_CERT_DIR/ca.crt -engine pkcs11 -CAkeyform ENGINE -CAkey "pkcs11:object=ca-key;type=private" -out $DEVICE_CERT_DIR/server.crt -days 36500 -sha256
+        rm /tmp/server.csr
     fi
 }
 
