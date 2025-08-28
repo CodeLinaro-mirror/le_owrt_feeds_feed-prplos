@@ -2,7 +2,7 @@
 
 START=60
 
-LABEL="server-key"
+LABEL="cpe-key"
 CA_KEY_DIR="/root/certs"
 CA_CERT_DIR="/usr/share/ca-certificates"
 DEVICE_CERT_DIR="/etc/config/autocert"
@@ -51,10 +51,10 @@ softhsm_init() {
     fi
 
     # create device certificate
-    if [ ! -f $DEVICE_CERT_DIR/server.crt ]; then
-        openssl req -new -engine pkcs11 -keyform ENGINE -key "pkcs11:object=server-key;type=private" -out /tmp/server.csr -subj '/CN=prplOS.lan'
-        openssl x509 -req -in /tmp/server.csr -CA $CA_CERT_DIR/ca.crt -engine pkcs11 -CAkeyform ENGINE -CAkey "pkcs11:object=ca-key;type=private" -out $DEVICE_CERT_DIR/server.crt -days 36500 -sha256
-        rm /tmp/server.csr
+    if [ ! -f $DEVICE_CERT_DIR/cpe.crt ]; then
+        openssl req -new -engine pkcs11 -keyform ENGINE -key "pkcs11:object=$LABEL;type=private" -out /tmp/cpe.csr -subj '/CN=prplOS.lan'
+        openssl x509 -req -in /tmp/cpe.csr -CA $CA_CERT_DIR/ca.crt -engine pkcs11 -CAkeyform ENGINE -CAkey "pkcs11:object=ca-key;type=private" -out $DEVICE_CERT_DIR/cpe.crt -days 36500 -sha256
+        rm /tmp/cpe.csr
     fi
 }
 
