@@ -53,8 +53,8 @@ softhsm_init() {
 
     # create device certificate
     if [ ! -f $DEVICE_CERT_DIR/cpe.crt ]; then
-        openssl req -new -engine pkcs11 -keyform ENGINE -key "pkcs11:object=$LABEL;type=private" -out /tmp/cpe.csr -subj '/CN=prplOS.lan'
-        openssl x509 -req -in /tmp/cpe.csr -CA $CA_CERT_DIR/ca.crt -engine pkcs11 -CAkeyform ENGINE -CAkey "pkcs11:object=ca-key;type=private" -out $DEVICE_CERT_DIR/cpe.crt -days 36500 -sha256
+        openssl req -new -engine pkcs11 -keyform ENGINE -key "pkcs11:object=$LABEL;type=private" -out /tmp/cpe.csr -subj '/CN=prplOS.lan' -addext "subjectAltName=DNS:prplos.lan,IP:192.168.1.1"
+        openssl x509 -req -in /tmp/cpe.csr -CA $CA_CERT_DIR/ca.crt -engine pkcs11 -CAkeyform ENGINE -CAkey "pkcs11:object=ca-key;type=private" -out $DEVICE_CERT_DIR/cpe.crt -days 36500 -sha256 -extfile <(printf "subjectAltName=DNS:prplos.lan,IP:192.168.1.1")
         rm /tmp/cpe.csr
     fi
 
