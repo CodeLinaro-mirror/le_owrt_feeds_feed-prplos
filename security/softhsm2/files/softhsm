@@ -6,10 +6,11 @@ LABEL="cpe-key"
 CA_KEY_DIR="/root/certs"
 CA_CERT_DIR="/usr/share/ca-certificates"
 DEVICE_CERT_DIR="/etc/config/autocert"
+SOFTHSM_TOKEN_DIR="/etc/softhsm/tokens"
 
 softhsm_init() {
-    chown root:certificates $CA_CERT_DIR
-    chown root:certificates $DEVICE_CERT_DIR
+    chgrp certificates $SOFTHSM_TOKEN_DIR
+    chmod g+s $SOFTHSM_TOKEN_DIR
 
     # check if softHSM is not yet initialized (first boot)
     pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so --login --pin 1234 --list-objects 2>&1 | grep -q CKR_TOKEN_NOT_RECOGNIZED
@@ -56,6 +57,10 @@ softhsm_init() {
         openssl x509 -req -in /tmp/cpe.csr -CA $CA_CERT_DIR/ca.crt -engine pkcs11 -CAkeyform ENGINE -CAkey "pkcs11:object=ca-key;type=private" -out $DEVICE_CERT_DIR/cpe.crt -days 36500 -sha256
         rm /tmp/cpe.csr
     fi
+
+    # Allow the whole 'certificates' group to use softhsm
+    chmod -R g+r $SOFTHSM_TOKEN_DIR
+    find $SOFTHSM_TOKEN_DIR -type d -exec chmod g+x {} \;
 }
 
 start() {
