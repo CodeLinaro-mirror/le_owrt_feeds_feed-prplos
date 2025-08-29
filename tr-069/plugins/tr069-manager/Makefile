@@ -8,8 +8,8 @@ SHORT_DESCRIPTION:=TR069 Manager
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager.git
-PKG_SOURCE_VERSION:=d3ec3b7c8a1e8a59ccae37abe13d22dbc7c32db1
-PKG_MIRROR_HASH:=2e97a833805573a786fccb42dc4f1bc4f829b65dd9e24a2627747a10116b6b67
+PKG_SOURCE_VERSION:=4e56b7ae79a1d27fc918d1404e9d52a02be30a57
+PKG_MIRROR_HASH:=2159d18d04ad1f4ae079ba1a5248c0608e17afe914f7d9fb48ed738d8573335f
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.35.10
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
