@@ -6,8 +6,8 @@ SHORT_DESCRIPTION:=TR-181 compatible security plugin
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-security.git
-PKG_MIRROR_HASH:=9cbcc312721531297ee9f295ddd88e6fe1e659e3a3c7e4ef87831dc0a49a34dc
-PKG_SOURCE_VERSION:=3bb232f5ea1de3bf4763dbbfb3dd573ebcc3250e
+PKG_MIRROR_HASH:=ffc56515f8c2770d10c510dda6263c6b5f1988dbd86825b610aa23fc772ee456
+PKG_SOURCE_VERSION:=6c50cc3b6bd0f04c3e31ef1f0b87aa378f249a88
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-security-v0.4.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
