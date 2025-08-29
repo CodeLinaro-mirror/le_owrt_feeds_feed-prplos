@@ -39,6 +39,7 @@ define Package/softhsm2/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/softhsm2-util $(1)/usr/bin/
 	$(CP) ./files/softhsm2.conf $(1)/etc/softhsm2.conf
 	$(CP) ./files/softhsm $(1)/etc/init.d/
+	$(CP) ./files/certificate-uri $(1)/etc/init.d/
 	$(CP) ./files/ca.crt $(1)/usr/share/ca-certificates/
 	$(CP) ./files/ca.key $(1)/root/certs/
 endef
