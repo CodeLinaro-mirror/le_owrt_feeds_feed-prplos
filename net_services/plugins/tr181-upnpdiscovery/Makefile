@@ -44,7 +44,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +amxrt
   DEPENDS += +mod-fw-amx
   DEPENDS += +libipat
-  DEPENDS += +lib_tr181-hosts
+  DEPENDS += +libtr181-hosts
   DEPENDS += +curl
   MENU:=1
 endef
