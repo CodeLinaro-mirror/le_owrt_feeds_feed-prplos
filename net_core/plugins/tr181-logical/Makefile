@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-logical
-PKG_VERSION:=v1.1.0
+PKG_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
 SHORT_DESCRIPTION:=logical interface plugin
 
-PKG_SOURCE:=tr181-logical-v1.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-logical/-/archive/v1.1.0
-PKG_HASH:=63e3fef3a5ad3bcc3bffdfc507e963fc27894b8be0fe700723e3f66162ad209e
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-logical-v1.1.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-logical.git
+PKG_MIRROR_HASH:=48d67e87ee18fde92ee1309d961588d5258520c51fdaf7e1da7b43c34c80a09d
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
