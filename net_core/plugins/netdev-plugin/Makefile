@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netdev-plugin
-PKG_VERSION:=v1.14.0
+PKG_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
 SHORT_DESCRIPTION:=NetDev monitors the operating system's network devices
 
-PKG_SOURCE:=netdev-v1.14.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/netdev/-/archive/v1.14.0
-PKG_HASH:=29c7120fa91f01e06bcc2f5911764de80f35f1a403d609d38a07803a8751d2bb
-PKG_BUILD_DIR:=$(BUILD_DIR)/netdev-v1.14.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/netdev.git
+PKG_MIRROR_HASH:=e4e1b448ceea2790a633913d92674ffcc2f8a6e0dcbab9b98d9bf75d860229a1
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
