@@ -1,13 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dslite
-PKG_VERSION:=v0.10.6
+PKG_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
 SHORT_DESCRIPTION:=TR-181 compatible DSLite plugin
 
-PKG_SOURCE:=tr181-dslite-v0.10.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dslite/-/archive/v0.10.6
-PKG_HASH:=fb7e312811ae30c5d8c8762045d73e03e61f816168972f777315e5dfd8a26cdc
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dslite-v0.10.6
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dslite.git
+PKG_MIRROR_HASH:=143d01e1f152a2b735b2d8d525dfac37b42af80e8961e467547ee1a57c1a8e59
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
