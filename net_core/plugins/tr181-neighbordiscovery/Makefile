@@ -1,13 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-neighbordiscovery
-PKG_VERSION:=v1.1.10
+PKG_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
 SHORT_DESCRIPTION:=TR-181 compatible neighbordiscovery plugin
 
-PKG_SOURCE:=tr181-neighbordiscovery-v1.1.10.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-neighbordiscovery/-/archive/v1.1.10
-PKG_HASH:=cf20c083d368794c38b1036201bd581812a74221d285d747d65f4dd2646c9b62
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-neighbordiscovery-v1.1.10
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-neighbordiscovery.git
+PKG_MIRROR_HASH:=939a6e3c2af5b975432e25efe5526b75c6a7a32284d2462c72cdf9a8751b4442
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
