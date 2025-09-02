@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-bulkdata
-PKG_VERSION:=v0.2.5
+PKG_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-bulkdata-v0.2.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bulkdata/-/archive/v0.2.5
-PKG_HASH:=402aac33e3b07be20d546d592870688de842443f770c1521c4157c5323094173
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bulkdata-v0.2.5
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bulkdata.git
+PKG_MIRROR_HASH:=d41bf2e464c3c8608b9776189d42dc46585f0b8e536165cece51a4ba0baea6ec
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
