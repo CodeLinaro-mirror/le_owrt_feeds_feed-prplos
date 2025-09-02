@@ -3,11 +3,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-syslog
-PKG_VERSION:=feature/PCF-2001
+PKG_VERSION:=PCF-2001_feature
 SHORT_DESCRIPTION:=TR-181 compatible syslog
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=feature/PCF-2001
+PKG_SOURCE_VERSION:=PCF-2001_feature
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-syslog.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
