@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-captiveportal
-PKG_VERSION:=v0.6.0
+PKG_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
 SHORT_DESCRIPTION:=AMX Captive Portal plugin
 
-PKG_SOURCE:=tr181-captiveportal-v0.6.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-captiveportal/-/archive/v0.6.0
-PKG_HASH:=216da2dd87f4f636c89317d9a8e43e4c2fbeacdd1c02caeabd6d84934ae0c7ee
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-captiveportal-v0.6.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-captiveportal.git
+PKG_MIRROR_HASH:=ecfe66ab27fbdc4090612897b722fd81e587a1ddc74fb39ee2e5719046cb91c0
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
