@@ -1,13 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-mcastd
-PKG_VERSION:=v0.1.7
+PKG_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
 SHORT_DESCRIPTION:=mcastd main user space app
 
-PKG_SOURCE:=tr181-mcastd-v0.1.7.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mcastd/-/archive/v0.1.7
-PKG_HASH:=1d30310a18211cce3e31a792f1199794a5638d9c354134c590755601953bb315
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mcastd-v0.1.7
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mcastd.git
+PKG_MIRROR_HASH:=0a0dfbe63c1e678a05ba508f6416b8c948c110f6cbb27fe8985c36cb6ee35392
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
