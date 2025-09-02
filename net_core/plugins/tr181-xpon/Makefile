@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-xpon
-PKG_VERSION:=v1.8.0
+PKG_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
 SHORT_DESCRIPTION:=TR-181 XPON manager
 
-PKG_SOURCE:=tr181-xpon-v1.8.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-xpon/-/archive/v1.8.0
-PKG_HASH:=85f4ee5fc930825a34fbf1503833220da392ea077299d713624de920dcb3e3e7
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-xpon-v1.8.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-xpon.git
+PKG_MIRROR_HASH:=36d1014e8386309e8094e189f55bfdcb2b3c34f50de8005c4d78c741bb06c3d5
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
