@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-server
-PKG_VERSION:=v3.2.0
+PKG_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
 SHORT_DESCRIPTION:=Service implementing the gmap data model
 
-PKG_SOURCE:=gmap-server-v3.2.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-server/-/archive/v3.2.0
-PKG_HASH:=2e8f773efcc44f4e93d94c305602b8369cec604c8dec0d09622211e0a6789bb3
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-server-v3.2.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-server.git
+PKG_MIRROR_HASH:=c9fe0667f48646194f3b3e383f7b06abaadf53136cad265f49cb9e63e7d0d86a
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
