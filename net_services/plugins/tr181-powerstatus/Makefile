@@ -1,13 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-powerstatus
-PKG_VERSION:=v0.2.0
+PKG_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
 SHORT_DESCRIPTION:=tr181-powerstatus plugin
 
-PKG_SOURCE:=tr181-powerstatus-v0.2.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-powerstatus/-/archive/v0.2.0
-PKG_HASH:=79e86cc38a6a49b0d18b6ee9c35fb0627799839cab8dc89a92f4885494264c15
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-powerstatus-v0.2.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-powerstatus.git
+PKG_MIRROR_HASH:=87ca508c5b9278529f54d13380514036054340e03235acfa9533c0134a850e1b
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
