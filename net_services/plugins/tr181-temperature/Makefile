@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-temperature
-PKG_VERSION:=v0.6.1
+PKG_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
 SHORT_DESCRIPTION:=TR-181 compatible plugin for device temperature management
 
-PKG_SOURCE:=tr181-temperature-v0.6.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-temperature/-/archive/v0.6.1
-PKG_HASH:=156b5a02fc40bb312fe41422af5c683690964304a3a3f0bd9b0ba611992ff30f
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-temperature-v0.6.1
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-temperature.git
+PKG_MIRROR_HASH:=c9f49cf83e005eaf6f9e9fef6e0f4f72fb8c1efbdd1d66cd48671a6e02a1ca06
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
