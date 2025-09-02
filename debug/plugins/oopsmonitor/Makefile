@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=oopsmonitor
-PKG_VERSION:=v1.2.0
+PKG_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
 SHORT_DESCRIPTION:=Plugin to track kernel oopses
 
-PKG_SOURCE:=oopsmonitor-v1.2.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/oopsmonitor/-/archive/v1.2.0
-PKG_HASH:=3723f49bbfc5425e33b57642c1a14b6986b1f3a8740de9f18c3bd7a932c8e8c4
-PKG_BUILD_DIR:=$(BUILD_DIR)/oopsmonitor-v1.2.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/oopsmonitor.git
+PKG_MIRROR_HASH:=7bcbe7de63c72a4d4b5dd76c0bacdd6c31773218c8322c80362afc9941b4955e
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
