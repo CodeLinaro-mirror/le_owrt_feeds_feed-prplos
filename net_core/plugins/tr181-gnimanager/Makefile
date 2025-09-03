@@ -3,7 +3,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-gnimanager
-PKG_VERSION:=feature/PCF-2007
+PKG_VERSION:=PCF-2007
 SHORT_DESCRIPTION:=tr181-gnimanager plugin
 
 PKG_SOURCE_PROTO:=git
