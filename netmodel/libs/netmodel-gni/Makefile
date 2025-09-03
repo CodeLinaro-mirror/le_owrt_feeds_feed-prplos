@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-gni
-PKG_VERSION:=feature/PCF-2007
+PKG_VERSION:=PCF-2007
 SHORT_DESCRIPTION:=Network Model Generic Network Interface
 
 PKG_SOURCE_PROTO:=git
