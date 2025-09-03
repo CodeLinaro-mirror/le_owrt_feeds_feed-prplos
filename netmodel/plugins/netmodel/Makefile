@@ -3,11 +3,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel
-<<<<<<< HEAD
-PKG_VERSION:=feature/PCF-2007
-=======
 PKG_VERSION:=PCF-2007
->>>>>>> 7bb0f526 (tr181-gnimanager: Generic Network Interface Support in NetModel)
 SHORT_DESCRIPTION:=Network Model plugin
 
 PKG_SOURCE_PROTO:=git
