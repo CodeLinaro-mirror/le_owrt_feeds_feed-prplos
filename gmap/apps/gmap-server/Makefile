@@ -1,10 +1,11 @@
 include $(TOPDIR)/rules.mk
 
+PKG_NAME:=gmap-mod-ethernet-dev
+PKG_VERSION:=dev_PPW-714
+SHORT_DESCRIPTION:=gMap component that adds discovered devices to the gmap datamodel and links them to the correct interface
+
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=dev_PPW-714
-SHORT_DESCRIPTION:=Service implementing the gmap data model
-
-PKG_SOURCE:=gmap-server-v3.0.9.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-server/
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
