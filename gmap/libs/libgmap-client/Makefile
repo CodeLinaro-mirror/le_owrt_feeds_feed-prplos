@@ -13,6 +13,8 @@ PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
 
+PKG_RELEASE:=1
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
