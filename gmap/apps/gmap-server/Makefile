@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=gmap-server
-PKG_VERSION:=v3.0.9
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PPW-714
 SHORT_DESCRIPTION:=Service implementing the gmap data model
 
 PKG_SOURCE:=gmap-server-v3.0.9.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-server/-/archive/v3.0.9
-PKG_HASH:=8149cc93a91a5979845e4f8196db8bd15cebde1ffc75ccf998c4e32a0b9f4a09
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-server-v3.0.9
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-server/
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -35,7 +35,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=gMap
+  SUBMENU:=Ambiorix
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-server
   DEPENDS += +libamxc
