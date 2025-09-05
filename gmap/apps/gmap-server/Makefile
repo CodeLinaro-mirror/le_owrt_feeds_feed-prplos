@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=gmap-mod-ethernet-dev
+PKG_NAME:=gmap-server
 PKG_VERSION:=dev_PPW-714
 SHORT_DESCRIPTION:=gMap component that adds discovered devices to the gmap datamodel and links them to the correct interface
 
