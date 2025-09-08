@@ -1,0 +1,56 @@
+From 7c2e9a1f4db35608acde129b8f45a7c01ef9d234 Mon Sep 17 00:00:00 2001
+From: Roman Yaroshenko <r.yaroshenko@inango-systems.com>
+Date: Tue Sep 9 13:40:15 2025 +0300
+Subject: [PATCH 2/2] avoid global IPv6 address filtering
+
+Add another way as global IPv6 address in getting info from intefaces
+
+Upstream-Status: Inappropriate [prpl specific hack]
+Signed-off-by: Roman Yaroshenko <r.yaroshenko@inango-systems.com>
+---
+diff --git a/upnp/src/api/upnpapi.c b/upnp/src/api/upnpapi.c
+index d45dcbff..f7321408 100644
+--- a/upnp/src/api/upnpapi.c
++++ b/upnp/src/api/upnpapi.c
+@@ -3903,22 +3903,6 @@ int UpnpGetIfInfo(const char *IfName)
+ 					(struct sockaddr_in6
+ 							*)(ifa->ifa_netmask));
+ 				valid_v6ulagua_addr_found = 1;
+-			} else if (IN6_IS_ADDR_GLOBAL(
+-					   &((struct sockaddr_in6
+-							     *)(ifa->ifa_addr))
+-						    ->sin6_addr) &&
+-				   strlen(gIF_IPV6_ULA_GUA) == (size_t)0) {
+-				/* got a GUA, should store it
+-				 * while no ULA is found */
+-				memcpy(&v6ulagua_addr,
+-					&((struct sockaddr_in6
+-							  *)(ifa->ifa_addr))
+-						 ->sin6_addr,
+-					sizeof(v6ulagua_addr));
+-				v6ulagua_prefix = UpnpComputeIpv6PrefixLength(
+-					(struct sockaddr_in6
+-							*)(ifa->ifa_netmask));
+-				valid_v6ulagua_addr_found = 1;
+ 			} else if (IN6_IS_ADDR_LINKLOCAL(
+ 					   &((struct sockaddr_in6
+ 							     *)(ifa->ifa_addr))
+@@ -3932,6 +3916,18 @@ int UpnpGetIfInfo(const char *IfName)
+ 					(struct sockaddr_in6
+ 							*)(ifa->ifa_netmask));
+ 				valid_v6_addr_found = 1;
++			} else if (valid_v6ulagua_addr_found == 0) {
++				/* got a GUA, should store it
++				 * while no ULA is found */
++				memcpy(&v6ulagua_addr,
++					&((struct sockaddr_in6
++							  *)(ifa->ifa_addr))
++						 ->sin6_addr,
++					sizeof(v6ulagua_addr));
++				v6ulagua_prefix = UpnpComputeIpv6PrefixLength(
++					(struct sockaddr_in6
++							*)(ifa->ifa_netmask));
++				valid_v6ulagua_addr_found = 1;
+ 			}
+ 			break;
+ 		default:
