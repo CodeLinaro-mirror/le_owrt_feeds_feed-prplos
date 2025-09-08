@@ -3,11 +3,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-upnpdiscovery
-PKG_VERSION:=dev_PCF-1833
+PKG_VERSION:=dev_test_demo
 SHORT_DESCRIPTION:=upnp discovery manager
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=dev_PCF-1833
+PKG_SOURCE_VERSION:=dev_test_demo
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-upnpdiscovery.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
