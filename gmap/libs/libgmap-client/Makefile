@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-client/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libgmap-client
-PKG_VERSION:=v2.1.5
+PKG_VERSION:=v2.3.0
 SHORT_DESCRIPTION:=Client library for gmap modules
 
-PKG_SOURCE:=libgmap-client-v2.1.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-client/-/archive/v2.1.5
-PKG_HASH:=0a155dd153c122718f47a57d42dd7a958f212f7867b3c82d187aa5e829739610
-PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-client-v2.1.5
+PKG_SOURCE:=libgmap-client-v2.3.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-client/-/archive/v2.3.0
+PKG_HASH:=fc45a405f34e458b5cad8e1c9f15a7b0193319f9593c4fb9febf7ae4b5ad8c55
+PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-client-v2.3.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
