@@ -11,9 +11,13 @@ config SAH_AMX_GMAP_SERVER
     bool "Build gMap server"
     default y
 
-config SAH_AMX_GMAP_SERVER_ORDER
+config SAH_AMX_GMAP_SERVER_START_ORDER
     int "gMap server plugin startup order"
     default 71
+
+config SAH_AMX_GMAP_SERVER_STOP_ORDER
+    int "gMap server plugin shutdown order"
+    default 29
 
 endmenu
 
