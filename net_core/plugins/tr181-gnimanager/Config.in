@@ -1,0 +1,28 @@
+config PACKAGE_tr181-gnimanager
+    tristate
+    select SAH_AMX_TR181_GNIMANAGER
+
+if PACKAGE_tr181-gnimanager
+
+menu "Select tr181-gnimanager build options"
+    depends on PACKAGE_tr181-gnimanager
+
+config SAH_AMX_TR181_GNIMANAGER
+    bool "Build a gni-manager plugin"
+    default y
+
+config SAH_AMX_TR181_GNIMANAGER_ORDER
+    int "Start up order for the gni-manager plugin"
+    default 25
+
+config SAH_AMX_TR181_GNIMANAGER_RUN_AS_USER
+    string "User will be used for the gni-manager plugin"
+    default "tr181_app"
+
+config SAH_AMX_TR181_GNIMANAGER_RUN_AS_GROUP
+    string "Group will be used for the gni-manager plugin"
+    default "tr181_app"
+
+endmenu
+
+endif
