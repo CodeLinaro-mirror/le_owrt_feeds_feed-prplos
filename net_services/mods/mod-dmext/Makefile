@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/modules/mod-dmext/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-dmext
-PKG_VERSION:=v0.11.11
+PKG_VERSION:=v0.13.0
 SHORT_DESCRIPTION:=Data model extension module
 
-PKG_SOURCE:=mod-dmext-v0.11.11.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-dmext/-/archive/v0.11.11
-PKG_HASH:=6b9ce88c6bb32ed5b542a64da72d47df3767d9cdf3ec7fc88f9691ce3b66135c
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-dmext-v0.11.11
+PKG_SOURCE:=mod-dmext-v0.13.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-dmext/-/archive/v0.13.0
+PKG_HASH:=6c65f4002365adee624b0ce0215029a1002e5ac357257bdfe1c3fc025bb8beb6
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-dmext-v0.13.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
