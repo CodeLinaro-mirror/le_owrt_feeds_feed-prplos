@@ -3,11 +3,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libtr181-hosts
-PKG_VERSION:=dev_feat13
+PKG_VERSION:=dev_test_demo
 SHORT_DESCRIPTION:=tr181-hosts client library
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=dev_feat13
+PKG_SOURCE_VERSION:=dev_test_demo
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/lib_tr181-hosts.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
