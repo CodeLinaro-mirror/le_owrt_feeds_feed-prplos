@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-ext/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libgmap-ext
-PKG_VERSION:=v1.2.2
+PKG_VERSION:=v1.2.3
 SHORT_DESCRIPTION:=Functionality common for gmap clients (not server)
 
-PKG_SOURCE:=libgmap-ext-v1.2.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-ext/-/archive/v1.2.2
-PKG_HASH:=e7c16f5a9589394c972390dc5bd28dd1ea5849fd7d18adfaea22c7619f13b32f
-PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-ext-v1.2.2
+PKG_SOURCE:=libgmap-ext-v1.2.3.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-ext/-/archive/v1.2.3
+PKG_HASH:=1889cf9c5ff98f88f479509aee031e7dfd9701cb08d584b787f617e566ce9f5c
+PKG_BUILD_DIR:=$(BUILD_DIR)/libgmap-ext-v1.2.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
