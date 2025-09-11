@@ -1,11 +1,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libgmap-ext
-PKG_VERSION:=dev_PPW-714
+PKG_VERSION:=dev_test_demo
 SHORT_DESCRIPTION:=Functionality common for gmap clients (not server)
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=dev_PPW-714
+PKG_SOURCE_VERSION:=dev_test_demo
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/libraries/libgmap-ext/
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
