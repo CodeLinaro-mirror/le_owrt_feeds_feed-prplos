@@ -1,0 +1,28 @@
+config PACKAGE_tr181-flashmonitor
+    tristate
+    select SAH_AMX_TR181_FLASHMONITOR
+
+if PACKAGE_tr181-flashmonitor
+
+menu "Select tr181-flashmonitor build options"
+    depends on PACKAGE_tr181-flashmonitor
+
+config SAH_AMX_TR181_FLASHMONITOR
+    bool "Build a flash monitor plugin"
+    default y
+
+config SAH_AMX_TR181_FLASHMONITOR_ORDER
+    int "Start up order for the flash monitor plugin"
+    default 99
+
+config SAH_AMX_TR181_FLASHMONITOR_RUN_AS_USER
+    string "User will be used for the flash monitor plugin"
+    default "tr181_app"
+
+config SAH_AMX_TR181_FLASHMONITOR_RUN_AS_GROUP
+    string "Group will be used for the flash monitor plugin"
+    default "tr181_app"
+
+endmenu
+
+endif
