@@ -41,6 +41,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libnetmodel
   DEPENDS += +umdns
   DEPENDS += +rpcd
+  DEPENDS += +libtr181-hosts
   MENU:=1
 endef
 
