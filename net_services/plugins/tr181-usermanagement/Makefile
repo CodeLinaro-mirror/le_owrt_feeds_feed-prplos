@@ -8,8 +8,8 @@ SHORT_DESCRIPTION:=tr181 user management plugin
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usermanagement.git
-PKG_MIRROR_HASH:=c0a173a9b3107da66b2a24144d6b2890da820381fa56be4097f892e9e28a462e
-PKG_SOURCE_VERSION:=26f308a733bb04c4d34f7cf8f9822e8d83c86f5b
+PKG_MIRROR_HASH:=6f0236062fcbbc58201b1c1d3d20e85d90598fe341aef2dec18a36d85e929eaf
+PKG_SOURCE_VERSION:=8dc2599fda043d8e0462203551ed20caf7336726
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-usermanagement-v0.23.16
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
