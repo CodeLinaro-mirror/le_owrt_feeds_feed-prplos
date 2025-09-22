@@ -1,0 +1,5 @@
+config IMAGEGENERATOR_BOARD
+	string "Board to build images for"
+	default ""
+	help
+	  The board name is used to retrieve config files and build images
