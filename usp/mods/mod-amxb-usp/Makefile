@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-amxb-usp
-PKG_VERSION:=v5.3.0
+PKG_VERSION:=v5.5.0
 SHORT_DESCRIPTION:=USP backend implementation for amxb
 
-PKG_SOURCE:=amxb_usp-v5.3.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp/-/archive/v5.3.0
-PKG_HASH:=0d803359199f5abc51771b94ad6f659c2177046674449ffc7e9dea3552666740
-PKG_BUILD_DIR:=$(BUILD_DIR)/amxb_usp-v5.3.0
+PKG_SOURCE:=amxb_usp-v5.5.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp/-/archive/v5.5.0
+PKG_HASH:=8d158c6f3bc2283c7eb57a86c148fdb13298eca8d747879cd8f9495781cb2332
+PKG_BUILD_DIR:=$(BUILD_DIR)/amxb_usp-v5.5.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
