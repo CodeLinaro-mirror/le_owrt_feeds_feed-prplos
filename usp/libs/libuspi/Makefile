@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/libraries/libuspi/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libuspi
-PKG_VERSION:=v1.1.1
+PKG_VERSION:=v1.3.0
 SHORT_DESCRIPTION:=setting up and managing IMTP connections
 
-PKG_SOURCE:=libuspi-v1.1.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libuspi/-/archive/v1.1.1
-PKG_HASH:=382a2a193938560bd129c20746970527554f228159aab22e91d889f71b9ce1c8
-PKG_BUILD_DIR:=$(BUILD_DIR)/libuspi-v1.1.1
+PKG_SOURCE:=libuspi-v1.3.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libuspi/-/archive/v1.3.0
+PKG_HASH:=51d18e95d391e995656fb3048a311eb70d0fca5e560df28e019eba4605f2f53c
+PKG_BUILD_DIR:=$(BUILD_DIR)/libuspi-v1.3.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
