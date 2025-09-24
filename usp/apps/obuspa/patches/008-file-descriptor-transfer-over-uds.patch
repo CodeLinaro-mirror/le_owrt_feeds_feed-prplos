@@ -1,0 +1,2298 @@
+From 4c9bf34b0a1b8036b1213818bdd1c9af68ee87ef Mon Sep 17 00:00:00 2001
+From: Vitalii Popov <v.popov@inango-systems.com>
+Date: Fri, 8 Aug 2025 13:06:19 +0300
+Subject: [PATCH] obuspa: forwarding file descriptors via RPC and event
+ notifications
+
+* Modified UDS MTP to use `sendmsg` and `recvmsg` functions (instead of `send`
+and `recv`) to support forwarding of file descriptors in ancillary data
+(`struct msghdr` with type `SCM_RIGHTS`) attached to USP messages
+* Added global array of file descriptor buffers (with a set of utility
+functions `FD_VECTOR_*`) extracted from USP messages to temporarily store
+them during processing, in order to avoid unnecessary memory copying.
+Contents of file descriptor buffers are accessed only on receiving and sending
+USP messages to/from USP services
+* Modified processing of `OPERATE` and `OPERATE_RESP` USP messages to forward
+file descriptors attached to `OPERATE_RESP` messages of synchronous Commands.
+Commands with Search Expression Paths are not allowed to have file descriptors
+and return errors
+* Added error response for all USP messages with attached
+file descriptors except `OPERATE_RESP` and `NOTIFY`
+* Modified Notifications and Subscriptions processing to support forwarding
+`NOTIFY` USP messages with attached file descriptors
+* Modified Notification retry mechanism to close file descriptors attached
+to `NOTIFY` USP message only after successful delivery
+* Added error response for cases when Notification with attached file
+descriptors is forwarded via non-UDS MTP
+
+Signed-off-by: Vitalii Popov <v.popov@inango-systems.com>
+---
+ Makefile.am                    |   3 +-
+ src/core/cli_server.c          |   2 +-
+ src/core/data_model.c          |  24 ++-
+ src/core/data_model.h          |   3 +-
+ src/core/device.h              |   5 +
+ src/core/device_controller.c   |  15 +-
+ src/core/device_subscription.c | 110 +++++++++++-
+ src/core/dm_exec.c             |  45 ++++-
+ src/core/dm_exec.h             |   3 +-
+ src/core/fd_vector.c           | 299 +++++++++++++++++++++++++++++++++
+ src/core/fd_vector.h           |  26 +++
+ src/core/handle_operate.c      |  65 ++++++-
+ src/core/msg_handler.c         |  59 +++++++
+ src/core/msg_handler.h         |   4 +
+ src/core/mtp_exec.h            |   4 +
+ src/core/subs_retry.c          |  82 ++++++++-
+ src/core/subs_retry.h          |   3 +
+ src/core/uds.c                 | 212 +++++++++++++++++++----
+ src/core/uds.h                 |   2 +
+ src/core/usp_broker.c          | 138 ++++++++++++---
+ src/include/usp_api.h          |   2 +
+ src/vendor/vendor_defs.h       |   2 +
+ 22 files changed, 1023 insertions(+), 85 deletions(-)
+ create mode 100644 src/core/fd_vector.c
+ create mode 100644 src/core/fd_vector.h
+
+diff --git a/Makefile.am b/Makefile.am
+index 2e18704..00dde0f 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -100,7 +100,8 @@ SOURCES = src/core/main.c \
+                     src/core/device_uds.c \
+                     src/core/uds.c \
+                     src/core/usp_service.c \
+-                    src/core/usp_broker.c
++                    src/core/usp_broker.c \
++                    src/core/fd_vector.c
+ 
+ 
+ obuspa_SOURCES = $(SOURCES)
+diff --git a/src/core/cli_server.c b/src/core/cli_server.c
+index 742870b..4ae7cb0 100644
+--- a/src/core/cli_server.c
++++ b/src/core/cli_server.c
+@@ -1217,7 +1217,7 @@ int ExecuteCli_Operate(str_vector_t *args)
+ 
+         // Exit if unable to start the specified operation
+         KV_VECTOR_Init(&output_args);
+-        err = DATA_MODEL_Operate(operations.vector[i], &input_args, &output_args, "CLI-initiated", &instance);
++        err = DATA_MODEL_Operate(operations.vector[i], &input_args, &output_args, "CLI-initiated", &instance, NULL);
+         if (err != USP_ERR_OK)
+         {
+             SendCliResponse("ERROR: Operation failed");
+diff --git a/src/core/data_model.c b/src/core/data_model.c
+index e50492d..8cc28c9 100644
+--- a/src/core/data_model.c
++++ b/src/core/data_model.c
+@@ -4,6 +4,7 @@
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2016-2024  CommScope, Inc
+  * Copyright (C) 2020,  BT PLC
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -72,6 +73,7 @@
+ 
+ #ifdef ENABLE_UDS
+ #include "uds.h"
++#include "fd_vector.h"
+ #endif
+ 
+ #ifndef REMOVE_USP_BROKER
+@@ -1527,11 +1529,12 @@ int DATA_MODEL_NotifyInstanceDeleted(char *path)
+ ** \param   command_key - pointer to string used by controller to identify the operation in a notification
+ ** \param   instance - pointer to variable in which to return the instance number of an entry in the request table
+ **                     (if the operation was sync, then the variable will be set to invalid)
++** \param   fd_key - pointer to memory where key to file descriptor buffer recieved from operate reponse will be put
+ **
+ ** \return  USP_ERR_OK if successful
+ **
+ **************************************************************************/
+-int DATA_MODEL_Operate(char *path, kv_vector_t *input_args, kv_vector_t *output_args, char *command_key, int *instance)
++int DATA_MODEL_Operate(char *path, kv_vector_t *input_args, kv_vector_t *output_args, char *command_key, int *instance, unsigned int *fd_key)
+ {
+     dm_instances_t inst;
+     dm_node_t *node;
+@@ -1602,6 +1605,25 @@ int DATA_MODEL_Operate(char *path, kv_vector_t *input_args, kv_vector_t *output_
+                 USP_ERR_ReplaceEmptyMessage("%s: Synchronous operation (%s) failed", __FUNCTION__, path);
+                 goto exit;
+             }
++#ifdef ENABLE_UDS
++            // Set key of file descriptor buffer if caller provided
++            // where to put it.
++            // Otherwise if request contains file descriptors - close them all
++            if (fd_key != NULL)
++            {
++                (*fd_key) = req.fd_key;
++            }
++            else if (req.fd_key > 0)
++            {
++                int fd_count = 0;
++                int *fd_buffer = FD_VECTOR_Get(req.fd_key, &fd_count);
++                if (fd_count != 0)
++                {
++                    FD_VECTOR_Close(fd_buffer, fd_count);
++                    FD_VECTOR_Remove(req.fd_key);
++                }
++            }
++#endif
+ 
+             #ifdef VALIDATE_OUTPUT_ARG_NAMES
+             // Validate the names of the output arguments
+diff --git a/src/core/data_model.h b/src/core/data_model.h
+index 5cfea3e..e6b1f18 100644
+--- a/src/core/data_model.h
++++ b/src/core/data_model.h
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2019-2025, Broadband Forum
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2016-2024  CommScope, Inc
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -380,7 +381,7 @@ int DATA_MODEL_NotifyInstanceAdded(char *path);
+ int DATA_MODEL_NotifyInstanceDeleted(char *path);
+ int DATA_MODEL_GetParameterValue(char *path, char *buf, int len, unsigned flags);
+ int DATA_MODEL_SetParameterValue(char *path, char *new_value, unsigned flags);
+-int DATA_MODEL_Operate(char *path, kv_vector_t *input_args, kv_vector_t *output_args, char *command_key, int *instance);
++int DATA_MODEL_Operate(char *path, kv_vector_t *input_args, kv_vector_t *output_args, char *command_key, int *instance, unsigned int *fd_key);
+ int DATA_MODEL_ShouldOperationRestart(char *path, int instance, bool *is_restart, int *err_code, char *err_msg, int err_msg_len, kv_vector_t *output_args);
+ int DATA_MODEL_RestartAsyncOperation(char *path, kv_vector_t *input_args, int instance);
+ unsigned DATA_MODEL_GetPathProperties(char *path, combined_role_t *combined_role, unsigned short *permission_bitmask, int *group_id, unsigned *type_flags, unsigned exec_flags);
+diff --git a/src/core/device.h b/src/core/device.h
+index b8f6791..12d003f 100644
+--- a/src/core/device.h
++++ b/src/core/device.h
+@@ -4,6 +4,7 @@
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2016-2024  CommScope, Inc
+  * Copyright (C) 2020, BT PLC
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -164,6 +165,8 @@ typedef struct
+ {
+     unsigned conn_id;               // uniquely identifies the UDS connection on which this record was received
+     uds_path_t path_type;           // identifies whether the UDS connection on which this record was received was the Broker's controller socket or the Broker's Agent socket
++    unsigned int fd_key;            // key for file descriptors in global map
++    bool fd_res_exceeded;           // flag indicating that message contained file descriptors, but it not possible to create key
+ } from_uds_t;
+ #endif
+ 
+@@ -227,6 +230,7 @@ int DEVICE_CONTROLLER_QueueBinaryMessage(mtp_send_item_t *msi, char *endpoint_id
+ bool DEVICE_CONTROLLER_IsMTPConfigured(char *endpoint_id, mtp_protocol_t protocol);
+ char *DEVICE_CONTROLLER_FindEndpointIdByInstance(int instance);
+ char *DEVICE_CONTROLLER_FindEndpointByMTP(mtp_conn_t *mtpc);
++int DEVICE_CONTROLLER_CopyNotifyDestForEndpoint(char *endpoint_id, mtp_protocol_t protocol, Usp__Header__MsgType usp_msg_type, mtp_conn_t *dest);
+ #if defined(E2ESESSION_EXPERIMENTAL_USP_V_1_2)
+ e2e_session_t *DEVICE_CONTROLLER_FindE2ESessionByInstance(int instance);
+ e2e_session_t *DEVICE_CONTROLLER_FindE2ESessionByEndpointId(char *endpoint_id);
+@@ -354,6 +358,7 @@ int DEVICE_CONTROLLER_CountEnabledWebsockClientConnections(void);
+ 
+ #ifndef REMOVE_USP_BROKER
+ int DEVICE_SUBSCRIPTION_RouteNotification(Usp__Msg *usp, int instance, char *subscribed_path);
++int DEVICE_SUBSCRIPTION_RouteNotificationWithDescriptors(Usp__Msg *usp, int instance, char *subscribed_path, unsigned int fd_key);
+ bool DEVICE_SUBSCRIPTION_MarkVendorLayerSubs(int broker_instance, subs_notify_t notify_type, char *path, int group_id);
+ void DEVICE_SUBSCRIPTION_UnmarkVendorLayerSubs(int broker_instance, subs_notify_t notify_type, char *path, int group_id);
+ void DEVICE_SUBSCRIPTION_StartAllVendorLayerSubsForGroup(int group_id);
+diff --git a/src/core/device_controller.c b/src/core/device_controller.c
+index bf1e3fc..0787a70 100644
+--- a/src/core/device_controller.c
++++ b/src/core/device_controller.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2016-2024  CommScope, Inc
+  * Copyright (C) 2020,  BT PLC
+  * Copyright (C) 2022, Snom Technology GmbH
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -241,7 +242,6 @@ int ValidateMtpUniqueness(mtp_protocol_t protocol, int cont_inst, int mtp_inst);
+ int ValidateMtpResourceAvailable(mtp_protocol_t protocol, int cont_inst, int mtp_inst);
+ int CalcNotifyDest(char *endpoint_id, controller_t *cont, controller_mtp_t *mtp, mtp_conn_t *dest);
+ int QueueBinaryMessageOnMtp(mtp_send_item_t *msi, char *endpoint_id, char *usp_msg_id, mtp_conn_t *mtpc, time_t expiry_time);
+-int CopyNotifyDestForEndpoint(char *endpoint_id, mtp_protocol_t protocol, Usp__Header__MsgType usp_msg_type, mtp_conn_t *dest);
+ void StartAllMtpClients(void);
+ void PollCanMtpConnect(int id);
+ bool UpdateCanMtpConnect(void);
+@@ -948,13 +948,22 @@ int DEVICE_CONTROLLER_QueueBinaryMessage(mtp_send_item_t *msi, char *endpoint_id
+     // This is always the case for notifications, since they are not a response to any incoming USP message
+     if (mtpc->is_reply_to_specified == false)
+     {
+-        err = CopyNotifyDestForEndpoint(endpoint_id, mtpc->protocol, msi->usp_msg_type, &dest);
++        err = DEVICE_CONTROLLER_CopyNotifyDestForEndpoint(endpoint_id, mtpc->protocol, msi->usp_msg_type, &dest);
+         if (err != USP_ERR_OK)
+         {
+             return err;
+         }
+     }
+ 
++#ifdef ENABLE_UDS
++    // Notification with file descriptors send to destination which is on non-UDS MTP
++    // which is not allowed
++    if (dest.protocol != kMtpProtocol_UDS && msi->fd_key != 0)
++    {
++        return USP_ERR_REQUEST_DENIED;
++    }
++#endif
++
+     // Send the response
+     // NOTE: Ownership of msi->pbuf passes to the MTP, if successful
+     err = QueueBinaryMessageOnMtp(msi, endpoint_id, usp_msg_id, &dest, expiry_time);
+@@ -1938,7 +1947,7 @@ void UpdateNextPeriodicTime(void)
+ ** \return  USP_ERR_OK if successful
+ **
+ **************************************************************************/
+-int CopyNotifyDestForEndpoint(char *endpoint_id, mtp_protocol_t protocol, Usp__Header__MsgType usp_msg_type, mtp_conn_t *dest)
++int DEVICE_CONTROLLER_CopyNotifyDestForEndpoint(char *endpoint_id, mtp_protocol_t protocol, Usp__Header__MsgType usp_msg_type, mtp_conn_t *dest)
+ {
+     int err;
+     controller_t *cont;
+diff --git a/src/core/device_subscription.c b/src/core/device_subscription.c
+index 85980b9..b7c85d9 100644
+--- a/src/core/device_subscription.c
++++ b/src/core/device_subscription.c
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2019-2025, Broadband Forum
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2016-2024  CommScope, Inc
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -70,6 +71,10 @@
+ #include "usp_broker.h"
+ #endif
+ 
++#ifdef ENABLE_UDS
++#include "fd_vector.h"
++#endif
++
+ //------------------------------------------------------------------------------
+ // Uncomment the following define to turn on extra debug which helps with debugging issues related to object
+ // creation/deletion notifications not being sent
+@@ -190,6 +195,7 @@ void GetAllPathExpressionParameterValues(subs_t *sub, str_vector_t *path_express
+ char *SerializeToJSONObject(kv_vector_t *param_values);
+ void SendOperationCompleteNotify(subs_t *sub, char *command, char *command_key, int err_code, char *err_msg, kv_vector_t *output_args);
+ void SendNotify(Usp__Msg *req, subs_t *sub, char *path);
++void SendNotifyWithFileDescriptors(Usp__Msg *req, subs_t *sub, char *path, unsigned int fd_key);
+ bool DoesSubscriptionSendNotification(subs_t *sub, char *event_name);
+ bool DoesSubscriptionMatchEvent(subs_t *subs, char *event_name);
+ bool HasControllerGotNotificationPermission(int cont_instance, char *path, unsigned short mask);
+@@ -838,19 +844,21 @@ void DEVICE_SUBSCRIPTION_NotifyControllerDeleted(int cont_instance)
+ #ifndef REMOVE_USP_BROKER
+ /*********************************************************************//**
+ **
+-** DEVICE_SUBSCRIPTION_RouteNotification
++** DEVICE_SUBSCRIPTION_RouteNotificationWithDescriptors
+ **
+ ** Sends the specified USP notification to the controller that subscribed to it on the Broker
+ ** The USP notification was received from a USP Service and it will be modified so that it appears to have come from the USP Broker
++** Note: the same as DEVICE_SUBSCRIPTION_RouteNotification, but supports file descriptors attached to notification
+ **
+ ** \param   usp - pointer to parsed USP message structure. This will be freed by the caller (not this function)
+ ** \param   instance - instance number of the subscription in the Broker's Device.LocalAgent.Subscription.{i}
+ ** \param   subscribed_path - the relevant path from the subscription reference list
++** \param   fd_key - key of buffer with file descriptors in global file descriptors map
+ **
+ ** \return  USP_ERR_OK if successful
+ **
+ **************************************************************************/
+-int DEVICE_SUBSCRIPTION_RouteNotification(Usp__Msg *usp, int instance, char *subscribed_path)
++int DEVICE_SUBSCRIPTION_RouteNotificationWithDescriptors(Usp__Msg *usp, int instance, char *subscribed_path, unsigned int fd_key)
+ {
+     subs_t *sub;
+     Usp__Notify *notify;
+@@ -982,13 +990,56 @@ int DEVICE_SUBSCRIPTION_RouteNotification(Usp__Msg *usp, int instance, char *sub
+     // Modify the send_resp
+     notify->send_resp = sub->notification_retry;
+ 
++#ifdef ENABLE_UDS
++    // Exit if unable to determine the endpoint of the controller
++    // This could occur if the controller had been deleted
++    char *dest_endpoint = DEVICE_CONTROLLER_FindEndpointIdByInstance(sub->cont_instance);
++    if (dest_endpoint == NULL)
++    {
++        return USP_ERR_INTERNAL_ERROR;
++    }
++    mtp_conn_t dest;
++    err = DEVICE_CONTROLLER_CopyNotifyDestForEndpoint(dest_endpoint, kMtpProtocol_None, USP__HEADER__MSG_TYPE__NOTIFY, &dest);
++    if (err != USP_ERR_OK)
++    {
++        return err;
++    }
++    // If file descriptors attached to operation complete notification on non-UDS MTP
++    // return error as transfer file descriptors on non-UDS protocol is not supported
++    if (fd_key != 0
++            && notify->notification_case == USP__NOTIFY__NOTIFICATION_OPER_COMPLETE
++            && dest.protocol != kMtpProtocol_UDS)
++    {
++        return USP_ERR_VALUE_CONFLICT;
++    }
++#endif
++
+     // Send the Notify Request to the controller which set up the subscription on the Broker
+     // NOTE: This call also ensures that we now handle retries for this notification message to the originating controller
+-    SendNotify(usp, sub, path);
++    SendNotifyWithFileDescriptors(usp, sub, path, fd_key);
+ 
+     return USP_ERR_OK;
+ }
+ 
++/*********************************************************************//**
++**
++** DEVICE_SUBSCRIPTION_RouteNotification
++**
++** Sends the specified USP notification to the controller that subscribed to it on the Broker
++** The USP notification was received from a USP Service and it will be modified so that it appears to have come from the USP Broker
++**
++** \param   usp - pointer to parsed USP message structure. This will be freed by the caller (not this function)
++** \param   instance - instance number of the subscription in the Broker's Device.LocalAgent.Subscription.{i}
++** \param   subscribed_path - the relevant path from the subscription reference list
++**
++** \return  USP_ERR_OK if successful
++**
++**************************************************************************/
++int DEVICE_SUBSCRIPTION_RouteNotification(Usp__Msg *usp, int instance, char *subscribed_path)
++{
++    return DEVICE_SUBSCRIPTION_RouteNotificationWithDescriptors(usp, instance, subscribed_path, 0);
++}
++
+ /*********************************************************************//**
+ **
+ ** DEVICE_SUBSCRIPTION_MarkVendorLayerSubs
+@@ -3385,18 +3436,20 @@ void SendOperationCompleteNotify(subs_t *sub, char *command, char *command_key,
+ 
+ /*********************************************************************//**
+ **
+-** SendNotify
++** SendNotifyWithFileDescriptors
+ **
+ ** Sends the specified notify request message
++** Note: the same as SendNotify, but supports file descriptors attached to notification
+ **
+ ** \param   req - pointer to USP notify request message to send. This is always freed by the caller (not this function)
+ ** \param   sub - pointer to subscription that caused this notify to be triggered
+ ** \param   path - data model path of parameter, operation or event which we are notifying
++** \param   fd_key - key of buffer with file descriptors in global file descriptors map
+ **
+ ** \return  None
+ **
+ **************************************************************************/
+-void SendNotify(Usp__Msg *req, subs_t *sub, char *path)
++void SendNotifyWithFileDescriptors(Usp__Msg *req, subs_t *sub, char *path, unsigned int fd_key)
+ {
+     unsigned char *pbuf;
+     int pbuf_len;
+@@ -3407,6 +3460,7 @@ void SendNotify(Usp__Msg *req, subs_t *sub, char *path)
+     char *dest_endpoint;
+     mtp_conn_t mtp_conn = {0};  // Ensures mtp_conn.is_reply_to_specified=false
+     usp_send_item_t usp_send_item;
++    int err = 0;
+ 
+     // Exit if unable to determine the endpoint of the controller
+     // This could occur if the controller had been deleted
+@@ -3441,11 +3495,30 @@ void SendNotify(Usp__Msg *req, subs_t *sub, char *path)
+     usp_send_item.curr_e2e_session = DEVICE_CONTROLLER_FindE2ESessionByInstance(sub->cont_instance);
+     usp_send_item.usp_msg = req;
+ #endif
++#ifdef ENABLE_UDS
++    usp_send_item.fd_key = fd_key;
++#endif
+ 
+     // Send the message
+-    // NOTE: Intentionally ignoring error here. If the controller has been disabled or deleted, then
++    // NOTE: Intentionally ignoring other errors here except USP_ERR_REQUEST_DENIED. In case of USP_ERR_REQUEST_DENIED
++    // file descriptors should be closed immediately. If the controller has been disabled or deleted, then
+     // allow the subs retry code to remove any previous attempts from the retry array
+-    MSG_HANDLER_QueueUspRecord(&usp_send_item, dest_endpoint, req->header->msg_id, &mtp_conn, retry_expiry_time);
++    err = MSG_HANDLER_QueueUspRecord(&usp_send_item, dest_endpoint, req->header->msg_id, &mtp_conn, retry_expiry_time);
++#ifdef ENABLE_UDS
++    // Notification targeted to wrong MTP
++    if (err == USP_ERR_REQUEST_DENIED && fd_key != 0)
++    {
++        int fd_count = 0;
++        int* fd_buffer = FD_VECTOR_Get(fd_key, &fd_count);
++        if (fd_count != 0)
++        {
++            FD_VECTOR_Remove(fd_key);
++            FD_VECTOR_Close(fd_buffer, fd_count);
++        }
++        USP_FREE(pbuf);
++        return;
++    }
++#endif
+ 
+     // If the message should be retried until a NotifyResponse is received, then...
+     if (sub->notification_retry)
+@@ -3453,8 +3526,13 @@ void SendNotify(Usp__Msg *req, subs_t *sub, char *path)
+         // Add this message to the list of notification requests to retry
+         // NOTE: Ownership of the serialized USP message passes to the subs retry module
+         msg_id = req->header->msg_id;
++#ifdef ENABLE_UDS
++        SUBS_RETRY_AddWithDescriptors(sub->instance, msg_id, sub->subscription_id, dest_endpoint, path,
++                       pbuf, pbuf_len, retry_expiry_time, fd_key);
++#else
+         SUBS_RETRY_Add(sub->instance, msg_id, sub->subscription_id, dest_endpoint, path,
+                        pbuf, pbuf_len, retry_expiry_time);
++#endif
+     }
+     else
+     {
+@@ -3463,6 +3541,24 @@ void SendNotify(Usp__Msg *req, subs_t *sub, char *path)
+     }
+ }
+ 
++/*********************************************************************//**
++**
++** SendNotify
++**
++** Sends the specified notify request message
++**
++** \param   req - pointer to USP notify request message to send. This is always freed by the caller (not this function)
++** \param   sub - pointer to subscription that caused this notify to be triggered
++** \param   path - data model path of parameter, operation or event which we are notifying
++**
++** \return  None
++**
++**************************************************************************/
++void SendNotify(Usp__Msg *req, subs_t *sub, char *path)
++{
++    SendNotifyWithFileDescriptors(req, sub, path, 0);
++}
++
+ #ifndef REMOVE_DEVICE_BOOT_EVENT
+ /*********************************************************************//**
+ **
+diff --git a/src/core/dm_exec.c b/src/core/dm_exec.c
+index d9643da..98e54cd 100644
+--- a/src/core/dm_exec.c
++++ b/src/core/dm_exec.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2016-2024  CommScope, Inc
+  * Copyright (C) 2020,  BT PLC
+  * Copyright (C) 2022, Snom Technology GmbH
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -88,6 +89,10 @@
+ #include "usp_service.h"
+ #endif
+ 
++#ifdef ENABLE_UDS
++#include "fd_vector.h"
++#endif
++
+ //------------------------------------------------------------------------------
+ // Socket pair used to implement the main data model message queue
+ // One socket is always used for sending, and the other always used for receiving
+@@ -320,7 +325,7 @@ void ProcessMessageQueueSocketActivity(socket_set_t *set);
+ void FreeDmExecMessageArguments(dm_exec_msg_t *msg);
+ #ifndef REMOVE_USP_BROKER
+ void ForwardPendingMessagesOnFilterQueue(socket_set_t *set);
+-Usp__Msg *IsMatchingMsgId(dm_exec_msg_t *msg, char *msg_id, char *responder, Usp__Header__MsgType header_type, bool *is_handled);
++Usp__Msg *IsMatchingMsgId(dm_exec_msg_t *msg, char *msg_id, char *responder, Usp__Header__MsgType header_type, bool *is_handled, unsigned int *fd_key, bool *fd_res_exceeded);
+ #endif
+ #ifdef ENABLE_UDS
+ void HandleUdsHandshakeComplete(char *endpoint_id, uds_path_t path_type, unsigned conn_id);
+@@ -747,7 +752,7 @@ void DM_EXEC_PostUspRecord(unsigned char *pbuf, int pbuf_len, char *originator,
+     if (main_mq_tx_socket == -1)
+     {
+         USP_LOG_Error("%s is being called before data model has been initialised", __FUNCTION__);
+-        return;
++        goto error;
+     }
+ 
+     // Form message
+@@ -777,8 +782,22 @@ void DM_EXEC_PostUspRecord(unsigned char *pbuf, int pbuf_len, char *originator,
+         USP_LOG_Error("%s(%d): send failed : (err=%d) %s", __FUNCTION__, __LINE__, errno, USP_ERR_ToString(errno, buf, sizeof(buf)) );
+         USP_LOG_Error("%s: Discarding received USP Record", __FUNCTION__);
+         FreeDmExecMessageArguments(&msg);
+-        return;
++        goto error;
++    }
++    return;
++
++error:
++#ifdef ENABLE_UDS
++    if (mtpc->protocol == kMtpProtocol_UDS && mtpc->uds.fd_key != 0) {
++        int fd_count = 0;
++        int *fd_buffer = FD_VECTOR_Get(mtpc->uds.fd_key, &fd_count);
++        if (fd_count != 0)
++        {
++            FD_VECTOR_Close(fd_buffer, fd_count);
++            FD_VECTOR_Remove(mtpc->uds.fd_key);
++        }
+     }
++#endif
+ }
+ 
+ /*********************************************************************//**
+@@ -1291,6 +1310,7 @@ void DM_EXEC_CopyMTPConnection(mtp_conn_t *dst, mtp_conn_t *src)
+         case kMtpProtocol_UDS:
+             dst->uds.conn_id = src->uds.conn_id;
+             dst->uds.path_type = src->uds.path_type;
++            dst->uds.fd_key = src->uds.fd_key;
+             break;
+ #endif
+         default:
+@@ -1432,12 +1452,14 @@ void DM_EXEC_HandleScheduledExit(void)
+ ** \param   mtpc - details of where this USP message should be sent
+ ** \param   header_type - Type of response message that we are expecting in the USP Message header
+ ** \param   timeout - timeout (in seconds) for receiving a response message
++** \param   fd_key - pointer to memory where key to file descriptor buffer recieved from operate reponse will be put
++** \param   fd_res_exceeded - pointer to memory where to put flag indicating exceeded file descriptors buffers limit
+ **
+ ** \return  USP response message or NULL if timed out or an error occurred
+ **
+ **************************************************************************/
+ Usp__Msg *DM_EXEC_SendRequestAndWaitForResponse(char *endpoint_id, Usp__Msg *req, mtp_conn_t *mtpc,
+-                                                Usp__Header__MsgType header_type, int timeout)
++                                                Usp__Header__MsgType header_type, int timeout, unsigned int *fd_key, bool *fd_res_exceeded)
+ {
+     char wanted_msg_id[MAX_MSG_ID_LEN];
+     int timeout_ms;
+@@ -1497,9 +1519,8 @@ Usp__Msg *DM_EXEC_SendRequestAndWaitForResponse(char *endpoint_id, Usp__Msg *req
+                 }
+             }
+ #endif
+-
+             // Exit if we've received the response message we're waiting for, freeing the message from the queue
+-            resp = IsMatchingMsgId(&msg, wanted_msg_id, endpoint_id, header_type, &is_handled);
++            resp = IsMatchingMsgId(&msg, wanted_msg_id, endpoint_id, header_type, &is_handled, fd_key, fd_res_exceeded);
+             if (resp != NULL)
+             {
+                 divert_to_filter_queue = false;     // Switch back to posting to the main message queue
+@@ -2200,13 +2221,15 @@ void ForwardPendingMessagesOnFilterQueue(socket_set_t *set)
+ ** \param   responder - endpoint_id which we expect to receive the response from
+ ** \param   header_type - Type of response message in the header that we are expecting
+ ** \param   is_handled - pointer to variable in which to return whether the message was handled here or not
++** \param   fd_key - pointer to memory where key to file descriptor buffer recieved from operate reponse will be put
++** \param   fd_res_exceeded - pointer to memory where to put flag indicating exceeded file descriptors buffers limit
+ **
+ ** \return  pointer to unpacked USP message strcture, if this is the response message that we're waiting for
+ **          otherwise NULL if this is not the response message that we're waiting for, or an error occurred
+ **          NOTE that if NULL, the message may have been handled here or not, depending on the return value of is_handled
+ **
+ **************************************************************************/
+-Usp__Msg *IsMatchingMsgId(dm_exec_msg_t *msg, char *msg_id, char *responder, Usp__Header__MsgType header_type, bool *is_handled)
++Usp__Msg *IsMatchingMsgId(dm_exec_msg_t *msg, char *msg_id, char *responder, Usp__Header__MsgType header_type, bool *is_handled, unsigned int *fd_key, bool *fd_res_exceeded)
+ {
+     process_usp_record_msg_t *pur;
+     UspRecord__Record *rec = NULL;
+@@ -2231,6 +2254,14 @@ Usp__Msg *IsMatchingMsgId(dm_exec_msg_t *msg, char *msg_id, char *responder, Usp
+         goto exit;
+     }
+ 
++#ifdef ENABLE_UDS
++    // If source of message is UDS protocol - extract file descriptors key
++    if (fd_key != NULL && fd_res_exceeded && pur->mtp_conn.protocol == kMtpProtocol_UDS) {
++        (*fd_key) = pur->mtp_conn.uds.fd_key;
++        (*fd_res_exceeded) = pur->mtp_conn.uds.fd_res_exceeded;
++    }
++#endif
++
+     // Exit if this record is not supposed to be processed by us
+     local_endpoint_id = DEVICE_LOCAL_AGENT_GetEndpointID();
+     if ((rec->to_id == NULL) || (strcmp(rec->to_id, local_endpoint_id) != 0))
+diff --git a/src/core/dm_exec.h b/src/core/dm_exec.h
+index 6da0ffc..b971029 100644
+--- a/src/core/dm_exec.h
++++ b/src/core/dm_exec.h
+@@ -4,6 +4,7 @@
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2016-2024  CommScope, Inc
+  * Copyright (C) 2020, BT PLC
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -92,7 +93,7 @@ bool DM_EXEC_IsNotificationsEnabled(void);
+ void *DM_EXEC_Main(void *args);
+ #ifndef REMOVE_USP_BROKER
+ Usp__Msg *DM_EXEC_SendRequestAndWaitForResponse(char *endpoint_id, Usp__Msg *req, mtp_conn_t *mtpc,
+-                                                Usp__Header__MsgType header_type, int timeout);
++                                                Usp__Header__MsgType header_type, int timeout, unsigned int *fd_key, bool *fd_res_exceeded);
+ #endif
+ //------------------------------------------------------------------------------
+ 
+diff --git a/src/core/fd_vector.c b/src/core/fd_vector.c
+new file mode 100644
+index 0000000..1840438
+--- /dev/null
++++ b/src/core/fd_vector.c
+@@ -0,0 +1,299 @@
++/*
++ *
++ * Copyright (C) 2019-2025, Broadband Forum
++ * Copyright (C) 2024-2025, Vantiva Technologies SAS
++ * Copyright (C) 2016-2024  CommScope, Inc
++ * Copyright (C) 2025,  Inango
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ *
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * 3. Neither the name of the copyright holder nor the names of its
++ *    contributors may be used to endorse or promote products derived from
++ *    this software without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
++ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ * THE POSSIBILITY OF SUCH DAMAGE.
++ *
++ */
++
++#include <string.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <stdio.h>
++
++#include "fd_vector.h"
++#include "usp_mem.h"
++#include "usp_err.h"
++#include "usp_log.h"
++#include "vendor_defs.h"
++#include "os_utils.h"
++
++// Global vector to store file descriptor buffers
++static fd_vector_t global_vector = {
++    NULL,
++    0
++};
++
++// Stores key of last added file descriptor buffer in "global vector"
++static unsigned int global_fd_id = 0;
++
++static pthread_mutex_t fd_vector_mutex;
++
++/*********************************************************************//**
++**
++** FD_VECTOR_Close
++**
++** Closes and free given buffer of file descriptors
++**
++** \param   fd_buffer - pointer to the file descriptors buffer
++** \param   fd_count - number of descriptors in the buffer
++**
++** \return  None
++**
++**************************************************************************/
++void FD_VECTOR_Close(int* fd_buffer, int fd_count)
++{
++    if (fd_buffer != NULL) {
++        while (fd_count > 0) {
++            close(fd_buffer[--fd_count]);
++        }
++    }
++    USP_SAFE_FREE(fd_buffer);
++}
++
++/*********************************************************************//**
++**
++** FD_VECTOR_New_Key
++**
++** Take new key from global counter
++**
++** \return new key
++**
++**************************************************************************/
++unsigned int FD_VECTOR_New_Key()
++{
++    int key = 0;
++    int count = 0;
++
++    if (global_vector.num_entries >= MAX_FD_VECTOR_ENTRIES)
++    {
++        return 0;
++    }
++
++    if (global_fd_id == UINT32_MAX)
++    {
++        global_fd_id = 0;
++    }
++
++    do
++    {
++        key = ++global_fd_id;
++        if (key == 0)
++        {
++            continue;
++        }
++        FD_VECTOR_Get(key, &count);
++    }
++    while (count != 0);
++
++    return key;
++}
++
++/*********************************************************************//**
++**
++** FD_VECTOR_Add
++**
++** Add given buffer of file descriptors to global map under given key
++**
++** \param   key - key to assign file descriptors buffer in map
++** \param   fd_buffer - pointer to the file descriptors buffer
++** \param   fd_count - number of descriptors in the buffer
++**
++** \return  None
++**
++**************************************************************************/
++void FD_VECTOR_Add(const unsigned int key, int *buffer, int count)
++{
++    OS_UTILS_LockMutex(&fd_vector_mutex);
++    int new_num_entries;
++    fd_pair_t *pair;
++
++    new_num_entries = global_vector.num_entries + 1;
++    global_vector.vector = USP_REALLOC(global_vector.vector, new_num_entries * sizeof(fd_pair_t));
++
++    pair = &global_vector.vector[ global_vector.num_entries ];
++    pair->key = key;
++    pair->fd_buffer = buffer;
++    pair->fd_count = count;
++    pair->ref_count = 1;
++
++    global_vector.num_entries = new_num_entries;
++    OS_UTILS_UnlockMutex(&fd_vector_mutex);
++}
++
++/*********************************************************************//**
++**
++** FD_VECTOR_Get
++**
++** Get file descriptors buffer and number of file descriptors in that
++** buffer from global map by the key
++**
++** Note: count output must be checked after retrieving buffer as it may
++** contain -1 which indicate that some descriptors was received, but din't
++** fit into buffer/file descriptors table.
++** Descriptors at this point already closed, but error should be handled
++** appropriately.
++**
++** \param   key - key to search for file descriptors buffer in map
++** \param   fd_count - pointer to output number of descriptors found
++**
++** \return  pointer to file descriptors buffer or NULL if not available
++**
++**************************************************************************/
++int *FD_VECTOR_Get(const unsigned int key, int *count)
++{
++    OS_UTILS_LockMutex(&fd_vector_mutex);
++    int i;
++    fd_pair_t *pair;
++
++    // Iterate from start to end of array
++    for (i=0; i < global_vector.num_entries; i++)
++    {
++        pair = &global_vector.vector[i];
++        if (pair->key == key)
++        {
++            (*count) = pair->fd_count;
++            OS_UTILS_UnlockMutex(&fd_vector_mutex);
++            return pair->fd_buffer;
++        }
++    }
++
++    OS_UTILS_UnlockMutex(&fd_vector_mutex);
++    return NULL;
++}
++
++/*********************************************************************//**
++**
++** FD_VECTOR_Remove
++**
++** Remove file descriptors from global map by the given key
++**
++** Note: file descriptors must be taken out of map before
++** removing and closed/freed separately as this function does not
++** handle this
++**
++** \param   key - key to assign file descriptors buffer in map
++**
++** \return  None
++**
++**************************************************************************/
++void FD_VECTOR_Remove(const unsigned int key)
++{
++    OS_UTILS_LockMutex(&fd_vector_mutex);
++    int i, num_entries_after, new_num_entries;
++    fd_pair_t *pair;
++
++    // Iterate from start to end of array
++    for (i=0; i < global_vector.num_entries; i++)
++    {
++        pair = &global_vector.vector[i];
++        if (pair->key == key)
++        {
++            new_num_entries = global_vector.num_entries - 1;
++            num_entries_after = new_num_entries - i;
++            if (num_entries_after > 0) {
++                memmove(&global_vector.vector[i], &global_vector.vector[i + 1], sizeof(fd_pair_t) * num_entries_after);
++            }
++            if (new_num_entries > 0) {
++                global_vector.vector = USP_REALLOC(global_vector.vector, new_num_entries * sizeof(fd_pair_t));
++            } else {
++                USP_FREE(global_vector.vector);
++                global_vector.vector = NULL;
++            }
++            global_vector.num_entries = new_num_entries;
++            OS_UTILS_UnlockMutex(&fd_vector_mutex);
++            return;
++        }
++    }
++    OS_UTILS_UnlockMutex(&fd_vector_mutex);
++}
++
++/*********************************************************************//**
++**
++** FD_VECTOR_IncRef
++**
++** Increase amount of references for given entry
++**
++** \param   key - key to assign file descriptors buffer in map
++**
++** \return  amount of references to given buffer
++**
++**************************************************************************/
++int FD_VECTOR_IncRef(const unsigned int key)
++{
++    OS_UTILS_LockMutex(&fd_vector_mutex);
++    int i;
++    fd_pair_t *pair;
++
++    for (i=0; i < global_vector.num_entries; i++)
++    {
++        pair = &global_vector.vector[i];
++        if (pair->key == key)
++        {
++            pair->ref_count++;
++            OS_UTILS_UnlockMutex(&fd_vector_mutex);
++            return pair->ref_count;
++        }
++    }
++    OS_UTILS_UnlockMutex(&fd_vector_mutex);
++    return 0;
++}
++
++/*********************************************************************//**
++**
++** FD_VECTOR_DecRef
++**
++** Decrease amount of references for given entry
++**
++** \param   key - key to assign file descriptors buffer in map
++**
++** \return  amount of references to given buffer
++**
++**************************************************************************/
++int FD_VECTOR_DecRef(const unsigned int key)
++{
++    OS_UTILS_LockMutex(&fd_vector_mutex);
++    int i;
++    fd_pair_t *pair;
++
++    for (i=0; i < global_vector.num_entries; i++)
++    {
++        pair = &global_vector.vector[i];
++        if (pair->key == key)
++        {
++            pair->ref_count--;
++            OS_UTILS_UnlockMutex(&fd_vector_mutex);
++            return pair->ref_count;
++        }
++    }
++    OS_UTILS_UnlockMutex(&fd_vector_mutex);
++    return 0;
++}
+diff --git a/src/core/fd_vector.h b/src/core/fd_vector.h
+new file mode 100644
+index 0000000..09c1acc
+--- /dev/null
++++ b/src/core/fd_vector.h
+@@ -0,0 +1,26 @@
++#ifndef FD_VECTOR
++#define FD_VECTOR
++
++typedef struct
++{
++    unsigned int key; // key in map representing entry
++    int *fd_buffer;   // poniter to file descriptor buffer
++    int fd_count;     // amount of file descriptors in buffer
++    int ref_count;    // counter of references to this buffer
++} fd_pair_t;
++
++typedef struct
++{
++    fd_pair_t *vector; // pointer to first entry in map (or null if empty)
++    int num_entries;   // number of entries in map
++} fd_vector_t;
++
++unsigned int FD_VECTOR_New_Key();
++void FD_VECTOR_Add(const unsigned int key, int *buffer, int count);
++int *FD_VECTOR_Get(const unsigned int key, int *count);
++void FD_VECTOR_Remove(const unsigned int key);
++void FD_VECTOR_Close(int* fd_buffer, int fd_count);
++int FD_VECTOR_IncRef(const unsigned int key);
++int FD_VECTOR_DecRef(const unsigned int key);
++
++#endif // FD_VECTOR
+diff --git a/src/core/handle_operate.c b/src/core/handle_operate.c
+index 80dbf26..fff5aea 100644
+--- a/src/core/handle_operate.c
++++ b/src/core/handle_operate.c
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2019-2025, Broadband Forum
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2016-2024  CommScope, Inc
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -55,6 +56,10 @@
+ #include "usp_broker.h"
+ #include "se_cache.h"
+ 
++#ifdef ENABLE_UDS
++#include "fd_vector.h"
++#endif
++
+ //------------------------------------------------------------------------------
+ // Forward declarations. Note these are not static, because we need them in the symbol table for USP_LOG_Callstack() to show them
+ Usp__Msg *CreateOperResp(char *msg_id);
+@@ -92,6 +97,8 @@ void MSG_HANDLER_HandleOperate(Usp__Msg *usp, char *controller_endpoint, mtp_con
+     int instance;
+     combined_role_t combined_role;
+     char req_path[MAX_DM_PATH];
++    unsigned int fd_key = 0;
++    bool descriptors_found = false;
+ 
+     // Initialise all structures that may be freed on exit
+     KV_VECTOR_Init(&input_args);
+@@ -163,18 +170,60 @@ void MSG_HANDLER_HandleOperate(Usp__Msg *usp, char *controller_endpoint, mtp_con
+ 
+         KV_VECTOR_Init(&output_args);
+ 
+-#ifndef REMOVE_USP_BROKER
+-        // Perform the operation only if there is a subscription on the USP Service when this is an async cmd
+-        // This test is necessary because otherwise the Broker will not know when the USP Command has completed and hence will never delete the request from the Broker's Request table
+-        err = USP_BROKER_CheckAsyncCommandIsSubscribedTo(oper_path, &combined_role);
+-        if (err == USP_ERR_OK)
++        // If on previous iteration descriptors was found - skip any other iterations
++        // as multiple synchronous responses with file descriptors isn't supported
++        if (descriptors_found)
+         {
+-            err = DATA_MODEL_Operate(oper_path, &input_args, &output_args, oper->command_key, &instance);
++            err = USP_ERR_COMMAND_FAILURE;
++            USP_ERR_SetMessage("Command failure");
+         }
++        else
++        {
++#ifndef REMOVE_USP_BROKER
++            // Perform the operation only if there is a subscription on the USP Service when this is an async cmd
++            // This test is necessary because otherwise the Broker will not know when the USP Command has completed and hence will never delete the request from the Broker's Request table
++            err = USP_BROKER_CheckAsyncCommandIsSubscribedTo(oper_path, &combined_role);
++            if (err == USP_ERR_OK)
++            {
++                err = DATA_MODEL_Operate(oper_path, &input_args, &output_args, oper->command_key, &instance, &fd_key);
++            }
+ #else
+-        // Perform the operation
+-        err = DATA_MODEL_Operate(oper_path, &input_args, &output_args, oper->command_key, &instance);
++            // Perform the operation
++            err = DATA_MODEL_Operate(oper_path, &input_args, &output_args, oper->command_key, &instance, &fd_key);
++#endif
++
++#ifdef ENABLE_UDS
++            if (fd_key != 0) {
++                int fd_count = 0;
++                int* fd_buffer = FD_VECTOR_Get(fd_key, &fd_count);
++                if (fd_count != 0) {
++                    if (mtpc->protocol != kMtpProtocol_UDS || paths.num_entries > 1 || fd_count < 0) {
++                        FD_VECTOR_Close(fd_buffer, fd_count);
++                        if (err == USP_ERR_OK) {
++                            if (mtpc->protocol != kMtpProtocol_UDS) {
++                                err = USP_ERR_REQUEST_DENIED;
++                                USP_ERR_SetMessage("Request denied");
++                            } else if (paths.num_entries > 1) {
++                                err = USP_ERR_COMMAND_FAILURE;
++                                USP_ERR_SetMessage("Command failure");
++                            } else {
++                                err = USP_ERR_RESOURCES_EXCEEDED;
++                                USP_ERR_SetMessage("Resources exceeded");
++                            }
++                        }
++                        FD_VECTOR_Remove(fd_key);
++                        fd_key = 0;
++                    }
++                    descriptors_found = true;
++                }
++                if (mtpc->protocol == kMtpProtocol_UDS)
++                {
++                    mtpc->uds.fd_key = fd_key;
++                }
++            }
+ #endif
++        }
++
+         if (err != USP_ERR_OK)
+         {
+             // Operation failed
+diff --git a/src/core/msg_handler.c b/src/core/msg_handler.c
+index 10f03eb..63b9277 100644
+--- a/src/core/msg_handler.c
++++ b/src/core/msg_handler.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2016-2024  CommScope, Inc
+  * Copyright (C) 2020, BT PLC
+  * Copyright (C) 2022, Snom Technology GmbH
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -70,6 +71,10 @@
+ #include "e2e_context.h"
+ #endif
+ 
++#ifdef ENABLE_UDS
++#include "fd_vector.h"
++#endif
++
+ //------------------------------------------------------------------------
+ // Index of the controller that sent the current USP message being processed
+ // This is used to set the Originator in the Request table and used by E2E session context (each controller potentially has an associated E2E session)
+@@ -245,6 +250,17 @@ exit:
+     // Free the unpacked USP record
+     usp_record__record__free_unpacked(rec, pbuf_allocator);
+ 
++#ifdef ENABLE_UDS
++    if (err != USP_ERR_OK && mtpc->protocol == kMtpProtocol_UDS && mtpc->uds.fd_key != 0) {
++        int fd_count = 0;
++        int* fd_buffer = FD_VECTOR_Get(mtpc->uds.fd_key, &fd_count);
++        if (fd_count != 0) {
++            FD_VECTOR_Close(fd_buffer, fd_count);
++            FD_VECTOR_Remove(mtpc->uds.fd_key);
++        }
++    }
++#endif
++
+     return err;
+ }
+ 
+@@ -428,10 +444,17 @@ int MSG_HANDLER_QueueMessage(char *endpoint_id, Usp__Msg *usp, mtp_conn_t *mtpc)
+     int pbuf_len;
+     unsigned char *pbuf;
+     int size;
++#ifdef ENABLE_UDS
++    int fd_count = 0;
++    int* fd_buffer = NULL;
++#endif
+ 
+     // Exit if parameters not specified
+     if ((endpoint_id == NULL) || (usp == NULL))
+     {
++#ifdef ENABLE_UDS
++        FD_VECTOR_Close(fd_buffer, fd_count);
++#endif
+         USP_ERR_SetMessage("%s: invalid parameters", __FUNCTION__);
+         return USP_ERR_INTERNAL_ERROR;
+     }
+@@ -452,12 +475,26 @@ int MSG_HANDLER_QueueMessage(char *endpoint_id, Usp__Msg *usp, mtp_conn_t *mtpc)
+     usp_send_item.usp_msg = usp;
+ #endif
+ 
++#ifdef ENABLE_UDS
++    if (mtpc->protocol == kMtpProtocol_UDS) {
++        usp_send_item.fd_key = mtpc->uds.fd_key;
++    }
++#endif
+     // Encapsulate this message in a USP record, then queue the record, to send to a controller
+     err = MSG_HANDLER_QueueUspRecord(&usp_send_item, endpoint_id, usp->header->msg_id, mtpc, END_OF_TIME);
+ 
+     // Free the serialized USP Message because it is now encapsulated in USP Record messages.
+     USP_FREE(usp_send_item.msg_packed);
+ 
++#ifdef ENABLE_UDS
++    if (err != USP_ERR_OK && mtpc->protocol == kMtpProtocol_UDS && mtpc->uds.fd_key != 0) {
++        fd_buffer = FD_VECTOR_Get(mtpc->uds.fd_key, &fd_count);
++        if (fd_count != 0) {
++            FD_VECTOR_Remove(mtpc->uds.fd_key);
++            FD_VECTOR_Close(fd_buffer, fd_count);
++        }
++    }
++#endif
+     return err;
+ }
+ 
+@@ -693,6 +730,9 @@ void MSG_HANDLER_UspSendItem_Init(usp_send_item_t *usi)
+     usi->curr_e2e_session = NULL;
+     usi->usp_msg = NULL;
+ #endif
++#ifdef ENABLE_UDS
++    usi->fd_key = 0;
++#endif
+ }
+ 
+ /*********************************************************************//**
+@@ -1230,6 +1270,21 @@ int ValidateUspMsgType(Usp__Header__MsgType msg_type, char *endpoint_id, mtp_con
+             break;
+     }
+ 
++#ifdef ENABLE_UDS
++    // If message does contain attached file descriptors and not the type
++    // that supported for tranfer of file descriptors
++    if (mtpc->protocol == kMtpProtocol_UDS && mtpc->uds.fd_key > 0)
++    {
++        int fd_count = 0;
++        FD_VECTOR_Get(mtpc->uds.fd_key, &fd_count);
++        if (fd_count != 0 && msg_type != USP__HEADER__MSG_TYPE__OPERATE_RESP && msg_type != USP__HEADER__MSG_TYPE__NOTIFY)
++        {
++            USP_ERR_SetMessage("Request denied");
++            return USP_ERR_REQUEST_DENIED;
++        }
++    }
++#endif
++
+     // Exit if the received USP message can be accepted for processing
+     if (expected_sender_role & sender_role)
+     {
+@@ -1530,6 +1585,10 @@ int QueueUspNoSessionRecord(usp_send_item_t *usi, char *endpoint_id, char *usp_m
+         mtp_send_item.pbuf_len = len;
+     }
+ 
++#ifdef ENABLE_UDS
++    mtp_send_item.fd_key = usi->fd_key;
++#endif
++
+     // Exit if unable to queue the message, to send to a controller
+     // NOTE: If successful, ownership of the buffer passes to the MTP layer. If not successful, buffer is freed here
+     err = DEVICE_CONTROLLER_QueueBinaryMessage(&mtp_send_item, endpoint_id, usp_msg_id, mtpc, expiry_time);
+diff --git a/src/core/msg_handler.h b/src/core/msg_handler.h
+index b9eab6e..29f3a0d 100644
+--- a/src/core/msg_handler.h
++++ b/src/core/msg_handler.h
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2019-2025, Broadband Forum
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2016-2024  CommScope, Inc
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -68,6 +69,9 @@ typedef struct
+     e2e_session_t *curr_e2e_session;    // Associated E2E session values
+     Usp__Msg *usp_msg;                  // Used to log the protobuf message before segmentation, as this cannot be done by MTP at point of sending for a segmented USP message
+ #endif
++#ifdef ENABLE_UDS
++    unsigned int fd_key;                // Key of buffer with file descriptors in global file descriptors map
++#endif
+ } usp_send_item_t;
+ 
+ // Value of usp_msg_type when sending USP Records (e.g. E2E session initiation USP Record with empty payload)
+diff --git a/src/core/mtp_exec.h b/src/core/mtp_exec.h
+index 0356d7f..3751ff5 100644
+--- a/src/core/mtp_exec.h
++++ b/src/core/mtp_exec.h
+@@ -4,6 +4,7 @@
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2016-2024  CommScope, Inc
+  * Copyright (C) 2020, BT PLC
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -118,6 +119,9 @@ typedef struct
+     Usp__Header__MsgType usp_msg_type;  // USP Message type
+     uint8_t *pbuf;                      // Payload to be sent by the MTP (USP Record)
+     int pbuf_len;                       // Length of the payload
++#ifdef ENABLE_UDS
++    unsigned int fd_key;                // Key of buffer with file descriptors in global file descriptors map
++#endif
+ } mtp_send_item_t;
+ 
+ //------------------------------------------------------------------------------
+diff --git a/src/core/subs_retry.c b/src/core/subs_retry.c
+index a6d6ce0..388b7bf 100644
+--- a/src/core/subs_retry.c
++++ b/src/core/subs_retry.c
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2019-2025, Broadband Forum
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2016-2024  CommScope, Inc
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -43,6 +44,7 @@
+ #include <string.h>
+ #include <time.h>
+ #include <math.h>
++#include <unistd.h>
+ 
+ #include "common_defs.h"
+ #include "msg_handler.h"
+@@ -55,6 +57,10 @@
+ #include "e2e_context.h"
+ #endif
+ 
++#ifdef ENABLE_UDS
++#include "fd_vector.h"
++#endif
++
+ //------------------------------------------------------------------------
+ // Structure containing NotifyRequest message to retry sending and associated state machine
+ typedef struct
+@@ -75,6 +81,9 @@ typedef struct
+     unsigned interval_multiplier;// Interval multiplier parameter for RETRY_WAIT calculation
+ 
+     time_t next_retry_time;     // Time at which the message should next be retried to be sent
++#ifdef ENABLE_UDS
++    unsigned int fd_key;        // key to access file descriptor buffer (for further attach to payload)
++#endif
+ } subs_retry_t;
+ 
+ //------------------------------------------------------------------------
+@@ -149,9 +158,10 @@ void SUBS_RETRY_Stop(void)
+ 
+ /*********************************************************************//**
+ **
+-** SUBS_RETRY_Add
++** SUBS_RETRY_AddWithDescriptors
+ **
+ ** Adds the specified message to the list of messages to be retried if a response is not obtained
++** Note: the same as SUBS_RETRY_Add, but supports file descriptors attached to notification
+ **
+ ** \param   instance - Instance number of Subscription in Device.LocalAgent.Subscription.{i}
+ ** \param   msg_id - message_id allocated by this agent to uniquely identify this message
+@@ -164,12 +174,13 @@ void SUBS_RETRY_Stop(void)
+ **                 NOTE: Ownership of the serialized USP message passes to this module
+ ** \param   pbuf_len - length of protobuf binary message
+ ** \param   retry_expiry_time - time at which retrying to send this message should stop
++** \param   fd_key - index of buffer with file descriptors in global file descriptors map
+ **
+ ** \return  None
+ **
+ **************************************************************************/
+-void SUBS_RETRY_Add(int instance, char *msg_id, char *subscription_id, char *dest_endpoint, char *differentiator,
+-                    unsigned char *pbuf, int pbuf_len, time_t retry_expiry_time)
++void SUBS_RETRY_AddWithDescriptors(int instance, char *msg_id, char *subscription_id, char *dest_endpoint, char *differentiator,
++                    unsigned char *pbuf, int pbuf_len, time_t retry_expiry_time, unsigned int fd_key)
+ {
+     int err;
+     int new_num_entries;
+@@ -202,6 +213,9 @@ void SUBS_RETRY_Add(int instance, char *msg_id, char *subscription_id, char *des
+         subs_retry.vector = USP_REALLOC(subs_retry.vector, new_num_entries*sizeof(subs_retry_t));
+         sr = &subs_retry.vector[ subs_retry.num_entries ];
+         subs_retry.num_entries = new_num_entries;
++#ifdef ENABLE_UDS
++        sr->fd_key = 0;
++#endif
+     }
+     else
+     {
+@@ -231,7 +245,15 @@ void SUBS_RETRY_Add(int instance, char *msg_id, char *subscription_id, char *des
+     sr->retry_count = 1;
+     sr->min_wait_interval = min_wait_interval;
+     sr->interval_multiplier = interval_multiplier;
+-
++#ifdef ENABLE_UDS
++    if (fd_key != 0)
++    {
++        sr->fd_key = fd_key;
++        // Reference count increased because we are have adding new object that refers buffer
++        // and we need to hold descriptors until they successfully sent or retry is expired
++        FD_VECTOR_IncRef(sr->fd_key);
++    }
++#endif
+     sr->next_retry_time = CalcNextSubsRetryTime(sr);
+     USP_LOG_Info("Retrying sending notification (retry_count=%d) in %d seconds.", sr->retry_count, (int)(sr->next_retry_time-time(NULL)) );
+ 
+@@ -239,6 +261,33 @@ void SUBS_RETRY_Add(int instance, char *msg_id, char *subscription_id, char *des
+     UpdateFirstRetryTime();
+ }
+ 
++/*********************************************************************//**
++**
++** SUBS_RETRY_Add
++**
++** Adds the specified message to the list of messages to be retried if a response is not obtained
++**
++** \param   instance - Instance number of Subscription in Device.LocalAgent.Subscription.{i}
++** \param   msg_id - message_id allocated by this agent to uniquely identify this message
++** \param   subscription_id - id allocated by the controller, to uniquely identify the subscription
++** \param   dest_endpoint - controller to send this message to
++** \param   differentiator - string used to differentiate multiple messages being generated from the same subscription
++**                           eg for a value change subscription, multiple messages are differentiated by data model path
++**                           NOTE: This value might be NULL if the type of subscription cannot generate multiple messages
++** \param   pbuf - pointer to serialized USP message
++**                 NOTE: Ownership of the serialized USP message passes to this module
++** \param   pbuf_len - length of protobuf binary message
++** \param   retry_expiry_time - time at which retrying to send this message should stop
++**
++** \return  None
++**
++**************************************************************************/
++void SUBS_RETRY_Add(int instance, char *msg_id, char *subscription_id, char *dest_endpoint, char *differentiator,
++                    unsigned char *pbuf, int pbuf_len, time_t retry_expiry_time)
++{
++    SUBS_RETRY_AddWithDescriptors(instance, msg_id, subscription_id, dest_endpoint, differentiator, pbuf, pbuf_len, retry_expiry_time, 0);
++}
++
+ /*********************************************************************//**
+ **
+ ** SUBS_RETRY_Remove
+@@ -365,6 +414,16 @@ void SubsRetryExec(int id)
+                 usp_send_item.curr_e2e_session = DEVICE_CONTROLLER_FindE2ESessionByEndpointId(sr->dest_endpoint);
+                 usp_send_item.usp_msg = NULL;
+ #endif
++#ifdef ENABLE_UDS
++                if (sr->fd_key != 0)
++                {
++                    usp_send_item.fd_key = sr->fd_key;
++                    // References count increased because we still have reference in retry
++                    // while another in sending queue.
++                    // This allow to close descriptors when all referencing objects are cleared
++                    FD_VECTOR_IncRef(sr->fd_key);
++                }
++#endif
+ 
+                 // Try resending the saved serialized USP message
+                 MSG_HANDLER_QueueUspRecord(&usp_send_item, sr->dest_endpoint, sr->msg_id, &mtp_conn, sr->retry_expiry_time);
+@@ -504,6 +563,21 @@ void UpdateFirstRetryTime(void)
+ **************************************************************************/
+ void DestroySubsRetryEntry(subs_retry_t *sr)
+ {
++#ifdef ENABLE_UDS
++    if (sr->fd_key != 0)
++    {
++        if (FD_VECTOR_DecRef(sr->fd_key) <= 0) {
++            int fd_count = 0;
++            int *fd_buffer = FD_VECTOR_Get(sr->fd_key, &fd_count);
++            if (fd_count != 0)
++            {
++                FD_VECTOR_Close(fd_buffer, fd_count);
++                FD_VECTOR_Remove(sr->fd_key);
++            }
++        }
++    }
++#endif
++
+     // Free all dynamically allocated parts of this structure
+     USP_FREE(sr->msg_id);
+     USP_FREE(sr->subscription_id);
+diff --git a/src/core/subs_retry.h b/src/core/subs_retry.h
+index 2dfc5c5..905d63d 100644
+--- a/src/core/subs_retry.h
++++ b/src/core/subs_retry.h
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2019-2025, Broadband Forum
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2016-2024  CommScope, Inc
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -50,6 +51,8 @@
+ 
+ void SUBS_RETRY_Init(void);
+ void SUBS_RETRY_Stop(void);
++void SUBS_RETRY_AddWithDescriptors(int instance, char *msg_id, char *subscription_id, char *dest_endpoint, char *differentiator,
++                                   unsigned char *pbuf, int pbuf_len, time_t retry_expiry_time, unsigned int fd_key);
+ void SUBS_RETRY_Add(int instance, char *msg_id, char *subscription_id, char *dest_endpoint, char *differentiator,
+                     unsigned char *pbuf, int pbuf_len, time_t retry_expiry_time);
+ void SUBS_RETRY_Remove(char *msg_id, char *subscription_id);
+diff --git a/src/core/uds.c b/src/core/uds.c
+index 0747eea..c0b0ea3 100644
+--- a/src/core/uds.c
++++ b/src/core/uds.c
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2023-2025, Broadband Forum
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2023-2024  CommScope, Inc
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -63,6 +64,7 @@
+ #include "mtp_exec.h"
+ #include "os_utils.h"
+ #include "iso8601.h"
++#include "fd_vector.h"
+ 
+ //------------------------------------------------------------------------------
+ // R-UDS.5 - When a UNIX domain socket connection is closed or fails to be established, the USP Endpoint acting as a client MUST attempt to re-establish
+@@ -115,8 +117,6 @@ typedef struct
+     unsigned char *rx_buf;                       // transient buffer containing the USP message frame currently being received
+     char *endpoint_id;                           // Endpoint ID at the other end of this connection
+     double_linked_list_t usp_record_send_queue;  // Queue of USP Records to send to the endpoint
+-    unsigned char *tx_buf;                       // transient buffer containing the USP message frame currently being sent
+-    int tx_bytes_sent;                           // Counts the number of bytes sent of the current USP Record to tx (i.e. at the head of the usp_record_send_queue)
+     int tx_buf_len;                              // the length of the currently transmitting packet
+     uds_frame_t tx_buf_type;                     // type of the uds frame being transmitted
+     bool is_disconnect_record;                   // Is the transmitted usp message of disconnect record type
+@@ -126,6 +126,9 @@ typedef struct
+     scheduled_action_t schedule_reconnect;       // Sets whether a UDS reconnect is scheduled after the send queue has cleared
+     uds_conn_params_t next_conn_params;          // Connection parameters to use, the next time that a reconnect occurs
+     time_t handshake_timeout;                    // Close the connection if we don't receive a handshake response after timeout
++    struct msghdr *tx_msg;                       // Payload message containing USP message frame currently being send
++    int* fd_buffer;                              // File descriptors buffer that received with payload
++    int fd_count;                                // Amount of file descriptors
+ } uds_connection_t;
+ 
+ // Array of connections
+@@ -163,7 +166,7 @@ void SendUdsFrames(uds_connection_t *uc);
+ void ReadUdsFrames(uds_connection_t *uc);
+ int HandleUdsListeningSocketConnection(uds_server_t *us);
+ uds_connection_t *FindUdsConnectionByConnId(unsigned conn_id);
+-void PopUdsSendItem(uds_connection_t *uc);
++unsigned int PopUdsSendItem(uds_connection_t *uc);
+ unsigned CalcNextUdsConnectionId(void);
+ void RemoveUdsQueueItem(uds_connection_t *uc, uds_send_item_t *queued_msg);
+ void RemoveExpiredUdsMessages(uds_connection_t *uc);
+@@ -271,7 +274,7 @@ void UDS_UpdateAllSockSet(socket_set_t *set)
+                           // Determine if all responses have been sent on this connection, and update whether they have been sent on all connections
+                           // Also check that we've not started to receive a UDS frame
+                           responses_sent = ((uc->usp_record_send_queue.head == NULL) &&
+-                                            (uc->tx_buf == NULL) &&
++                                            (uc->tx_msg == NULL) &&
+                                             (uc->hdr_bytes_rxed==0));
+ 
+                           if (responses_sent == false)
+@@ -327,7 +330,7 @@ void UDS_UpdateAllSockSet(socket_set_t *set)
+                 // Determine if all responses have been sent on this connection, and update whether they have been sent on all connections
+                 // Also check that we've not started to receive a UDS frame
+                 responses_sent = ((uc->usp_record_send_queue.head == NULL) &&
+-                                  (uc->tx_buf == NULL) &&
++                                  (uc->tx_msg == NULL) &&
+                                   (uc->hdr_bytes_rxed==0));
+ 
+                 // If a reconnect is scheduled...
+@@ -363,7 +366,7 @@ void UDS_UpdateAllSockSet(socket_set_t *set)
+                 SOCKET_SET_AddSocketToReceiveFrom(uc->socket, MAX_SOCKET_TIMEOUT, set);
+ 
+                 // Only interested in writing if there are USP records in the queue/outgoing buffer
+-                if ((uc->usp_record_send_queue.head != NULL) || (uc->tx_buf != NULL))
++                if ((uc->usp_record_send_queue.head != NULL) || (uc->tx_msg != NULL))
+                 {
+                     SOCKET_SET_AddSocketToSendTo(uc->socket, MAX_SOCKET_TIMEOUT, set);
+                 }
+@@ -982,7 +985,7 @@ bool UDS_AreAllResponsesSent(void)
+             // Determine if all responses have been sent on this connection, and update whether they have been sent on all connections
+             // Also check that we've not started to receive a UDS frame
+             responses_sent = ((uc->usp_record_send_queue.head == NULL) &&
+-                              (uc->tx_buf == NULL) &&
++                              (uc->tx_msg == NULL) &&
+                               (uc->hdr_bytes_rxed==0));
+ 
+             if (responses_sent == false)
+@@ -1501,6 +1504,12 @@ void CloseUdsConnection(uds_connection_t *uc, bool retry)
+         uc->socket = INVALID;
+     }
+ 
++    if (uc->fd_buffer) {
++        FD_VECTOR_Close(uc->fd_buffer, uc->fd_count);
++        uc->fd_buffer = NULL;
++        uc->fd_count = 0;
++    }
++
+     // Inform the rest of the system that an endpoint has disconnected, unless this was a graceful shutdown
+     // We don't post the message for graceful shutdown, because we don't want any active requests to be removed from
+     // the request table, as the operation complete (indicating failure) will not be sent because UDS has shutdown
+@@ -1513,7 +1522,7 @@ void CloseUdsConnection(uds_connection_t *uc, bool retry)
+ 
+     // flush any rx/tx buffers
+     USP_SAFE_FREE(uc->rx_buf);
+-    USP_SAFE_FREE(uc->tx_buf);
++    USP_SAFE_FREE(uc->tx_msg);
+     USP_SAFE_FREE(uc->endpoint_id);
+ 
+     // Flush all queued outgoing USP messages
+@@ -1567,6 +1576,18 @@ void ReadUdsFrames(uds_connection_t *uc)
+ {
+     int i;
+     int num_bytes = 0;
++    struct msghdr bmsg = {0};
++    struct cmsghdr* cmsg;
++    struct iovec iov;
++    union {
++        struct cmsghdr align;
++        char buffer[CMSG_SPACE(sizeof(int) * MAX_UDS_FDS)];
++    } control_un;
++    bmsg.msg_iov = &iov;
++    bmsg.msg_iovlen = 1;
++    bmsg.msg_control = control_un.buffer;
++    bmsg.msg_controllen = CMSG_SPACE(sizeof(int) * MAX_UDS_FDS);
++    int fd_amount = 0;
+ 
+     USP_ASSERT(uc->socket != INVALID);
+ 
+@@ -1584,13 +1605,43 @@ void ReadUdsFrames(uds_connection_t *uc)
+         char buf[4];
+ 
+         bytes_outstanding = sizeof(uds_frame_sync_bytes) - uc->hdr_bytes_rxed;
+-        num_bytes = recv(uc->socket, buf, bytes_outstanding, 0);
++        iov.iov_base = buf;
++        iov.iov_len = bytes_outstanding;
++        num_bytes = recvmsg(uc->socket, &bmsg, 0);
+         if (num_bytes <= 0) // -1 = error, 0 = other end closed
+         {
+             USP_LOG_Warning("%s: Endpoint (%s) disconnected from %s", __FUNCTION__, EndpointIdForLog(uc), UDS_PathTypeToString(uc->path_type));
+             CloseUdsConnection(uc, RETRY_LATER);
+             return;
+         }
++        if (uc->fd_buffer == NULL) {
++            uc->fd_buffer = USP_MALLOC(sizeof(int) * MAX_UDS_FDS);
++            if (uc->fd_buffer == NULL) {
++                USP_LOG_Warning("%s: Failed to allocate buffer for file descriptors", __FUNCTION__);
++                SendUdsErrorFrame(uc, "Failed to allocate buffer for file descriptors");
++                CloseUdsConnection(uc, RETRY_LATER);
++                return;
++            }
++            for (cmsg = CMSG_FIRSTHDR(&bmsg); cmsg != NULL; cmsg = CMSG_NXTHDR(&bmsg, cmsg)) {
++                if (cmsg->cmsg_level == SOL_SOCKET && cmsg->cmsg_type == SCM_RIGHTS) {
++                    if (cmsg->cmsg_len >= CMSG_LEN(sizeof(int))) {
++                        fd_amount = (cmsg->cmsg_len - CMSG_LEN(0)) / sizeof(int);
++                        int* fd = (int *)CMSG_DATA(cmsg);
++                        for (uc->fd_count = 0; uc->fd_count < fd_amount; uc->fd_count++) {
++                            uc->fd_buffer[uc->fd_count] = *fd;
++                            fd++;
++                        }
++                    } else {
++                        break;
++                    }
++                }
++            }
++            if ((bmsg.msg_flags & MSG_CTRUNC) != 0) {
++                FD_VECTOR_Close(uc->fd_buffer, uc->fd_count);
++                uc->fd_buffer = NULL;
++                uc->fd_count = -1;
++            }
++        }
+ 
+         // Count the number of correct sync bytes received
+         // If any of the sync bytes are incorrect, then disconnect
+@@ -1748,6 +1799,7 @@ void ProcessUdsRecord(uds_connection_t *uc, uds_frame_t frame_type, unsigned cha
+     char time_buf[MAX_ISO8601_LEN];
+     char *validate_endpoint = NULL;
+     mtp_conn_t mtp_conn;
++    unsigned int fd_key = 0;
+ 
+     switch(frame_type)
+     {
+@@ -1813,6 +1865,11 @@ void ProcessUdsRecord(uds_connection_t *uc, uds_frame_t frame_type, unsigned cha
+                 send_item->type = kUdsFrameType_Handshake;
+                 DLLIST_LinkToHead(&uc->usp_record_send_queue, send_item);
+             }
++
++            if (uc->fd_count != 0)
++            {
++                SendUdsErrorFrame(uc, "File descriptors are not supported with handshake frame");
++            }
+             break;
+ 
+         case kUdsFrameType_Error:
+@@ -1823,6 +1880,11 @@ void ProcessUdsRecord(uds_connection_t *uc, uds_frame_t frame_type, unsigned cha
+             USP_LOG_Error("Received UDS ERROR from endpoint_id=%s on %s", EndpointIdForLog(uc), UDS_PathTypeToString(uc->path_type));
+             USP_LOG_Error("UDS ERROR is '%s'", buf);
+             drop_connection = true;
++
++            if (uc->fd_count != 0)
++            {
++                SendUdsErrorFrame(uc, "File descriptors are not supported with error frame");
++            }
+             break;
+ 
+         case kUdsFrameType_UspRecord:
+@@ -1841,6 +1903,17 @@ void ProcessUdsRecord(uds_connection_t *uc, uds_frame_t frame_type, unsigned cha
+             mtp_conn.protocol = kMtpProtocol_UDS;
+             mtp_conn.uds.conn_id = uc->conn_id;
+             mtp_conn.uds.path_type = uc->path_type;
++            if (uc->fd_count != 0) {
++                fd_key = FD_VECTOR_New_Key();
++                if (fd_key == 0) {
++                    mtp_conn.uds.fd_res_exceeded = true;
++                } else {
++                    mtp_conn.uds.fd_key = fd_key;
++                    FD_VECTOR_Add(mtp_conn.uds.fd_key, uc->fd_buffer, uc->fd_count);
++                    uc->fd_buffer = NULL;
++                    uc->fd_count = 0;
++                }
++            }
+             DM_EXEC_PostUspRecord(record, record_length, EndpointIdForLog(uc), ROLE_UDS, &mtp_conn);
+             break;
+ 
+@@ -1852,6 +1925,9 @@ void ProcessUdsRecord(uds_connection_t *uc, uds_frame_t frame_type, unsigned cha
+             break;
+     }
+ 
++    FD_VECTOR_Close(uc->fd_buffer, uc->fd_count);
++    uc->fd_buffer = NULL;
++    uc->fd_count = 0;
+ 
+     if (drop_connection)
+     {
+@@ -1888,6 +1964,7 @@ void SendUdsErrorFrame(uds_connection_t *uc, char* errorString)
+     msi.pbuf_len = strlen(errorString);
+     msi.pbuf = USP_MALLOC(msi.pbuf_len);
+     memcpy(msi.pbuf, errorString, msi.pbuf_len);
++    msi.fd_key = 0;
+ 
+     UDS_QueueBinaryMessage(&msi, &mtp_conn, END_OF_TIME, kUdsFrameType_Error);
+ 
+@@ -1970,6 +2047,9 @@ char *ValidateUdsEndpointID(char* endpointID, uds_path_t path_type)
+ void SendUdsFrames(uds_connection_t *uc)
+ {
+     int bytes_sent = 0;
++    unsigned int fd_key = 0;
++    int fd_count = 0;
++    int *fd_buffer = NULL;
+ 
+     if (uc->socket == INVALID)
+     {
+@@ -1979,22 +2059,33 @@ void SendUdsFrames(uds_connection_t *uc)
+     }
+ 
+     // Get the next frame, if not currently transmitting one
+-    if (uc->tx_buf == NULL)
++    if (uc->tx_msg == NULL)
+     {
+-        PopUdsSendItem(uc);
++        fd_key = PopUdsSendItem(uc);
+ 
+         // Exit if there's no more frames to send
+-        if (uc->tx_buf == NULL)
++        if (uc->tx_msg == NULL)
+         {
+             return;
+         }
+     }
+ 
+     // if we get here there has to be data in uc->tx_buf (either partial remaining frame, or a newly constructed frame)
+-    USP_ASSERT(uc->tx_buf != NULL);
++    USP_ASSERT(uc->tx_msg != NULL);
+ 
+     // Try sending the remaining data in the UDS frame
+-    bytes_sent = send(uc->socket, &uc->tx_buf[uc->tx_bytes_sent], (uc->tx_buf_len - uc->tx_bytes_sent), 0);
++    bytes_sent = sendmsg(uc->socket, uc->tx_msg, 0);
++    if (fd_key != 0)
++    {
++        // If no references left for this buffer (no notifications or subscriptions holding reference)
++        // it is need to be removed and closed
++        if (FD_VECTOR_DecRef(fd_key) <= 0)
++        {
++            fd_buffer = FD_VECTOR_Get(fd_key, &fd_count);
++            FD_VECTOR_Close(fd_buffer, fd_count);
++            FD_VECTOR_Remove(fd_key);
++        }
++    }
+     if (bytes_sent == -1)
+     {
+         USP_ERR_ERRNO("send", errno);
+@@ -2002,8 +2093,7 @@ void SendUdsFrames(uds_connection_t *uc)
+         return;
+     }
+ 
+-    uc->tx_bytes_sent += bytes_sent;
+-    if (uc->tx_bytes_sent == uc->tx_buf_len)
++    if (bytes_sent == uc->tx_buf_len)
+     {
+         // if we sent all the data then free the buffer.
+         // The next record in the queue will be popped on the next iteration
+@@ -2013,8 +2103,11 @@ void SendUdsFrames(uds_connection_t *uc)
+         {
+             CloseUdsConnection(uc, RETRY_LATER);
+         }
+-        USP_FREE(uc->tx_buf);
+-        uc->tx_buf = NULL;
++        USP_FREE(uc->tx_msg->msg_control);
++        USP_FREE(uc->tx_msg->msg_iov->iov_base);
++        USP_FREE(uc->tx_msg->msg_iov);
++        USP_FREE(uc->tx_msg);
++        uc->tx_msg = NULL;
+         uc->is_disconnect_record = false;
+     }
+ }
+@@ -2026,18 +2119,25 @@ void SendUdsFrames(uds_connection_t *uc)
+ ** Removes the first item, forms a UDS frame with it, and puts the frame into the outgoing buffer, pending sending
+ **
+ ** \param   uc - Pointer to uds_connection_t instance structure
++** \param   fd_count - Pointer to output amount of file descriptors returned by method
+ **
+-** \return  None
++** \return  key for file descriptor buffer in global map
+ **
+ **************************************************************************/
+-void PopUdsSendItem(uds_connection_t *uc)
++unsigned int PopUdsSendItem(uds_connection_t *uc)
+ {
+     int tlv_len = 0;
+     char *endpoint_id = "";  // NOTE: This is initialised to an empty string to prevent Clang static analyser from generating a false positive if it was initialised to NULL
+     int endpoint_len = 0;
+-    unsigned char *p;
++    unsigned char *p = NULL;
++    struct msghdr *bmsg = NULL;
++    struct cmsghdr* cmsg;
++    int *fd_buffer = NULL;
++    bool success = false;
++    unsigned int fd_key = 0;
++    int fd_count = 0;
+ 
+-    USP_ASSERT(uc->tx_buf == NULL);
++    USP_ASSERT(uc->tx_msg == NULL);
+ 
+     //Remove any queued messages that have expired
+     RemoveExpiredUdsMessages(uc);
+@@ -2046,7 +2146,7 @@ void PopUdsSendItem(uds_connection_t *uc)
+     uds_send_item_t *send_item = (uds_send_item_t *) uc->usp_record_send_queue.head;
+     if (send_item == NULL)
+     {
+-        return;
++        return fd_key;
+     }
+ 
+     // Calculate the length of the TLV payload
+@@ -2056,6 +2156,11 @@ void PopUdsSendItem(uds_connection_t *uc)
+             // Log the USP Record before we send the first chunk
+             MSG_HANDLER_LogMessageToSend(&send_item->item, kMtpProtocol_UDS, uc->endpoint_id, NULL);
+             tlv_len = 1 + 4 + send_item->item.pbuf_len;
++            if (send_item->item.fd_key != 0)
++            {
++                fd_buffer = FD_VECTOR_Get(send_item->item.fd_key, &fd_count);
++                fd_key = send_item->item.fd_key;
++            }
+             break;
+ 
+         case kUdsFrameType_Error:
+@@ -2076,13 +2181,39 @@ void PopUdsSendItem(uds_connection_t *uc)
+             break;
+     }
+ 
++    if (CMSG_SPACE(sizeof(int) * fd_count) > sizeof(struct cmsghdr)) {
++        cmsg = USP_MALLOC(CMSG_SPACE(sizeof(int) * fd_count));
++    } else {
++        cmsg = USP_MALLOC(sizeof(struct cmsghdr));
++    }
++
++    bmsg = USP_MALLOC(sizeof(struct msghdr));
++    if (bmsg == NULL) {
++        goto exit;
++    }
++    memset(bmsg, 0, sizeof(struct msghdr));
+     // frame consists of 4 sync bytes + 4 length bytes + payload
+     uc->tx_buf_len = 4 + 4 + tlv_len;
+-    uc->tx_buf = USP_MALLOC(uc->tx_buf_len);
+-    uc->tx_bytes_sent = 0;
++    p = USP_MALLOC(uc->tx_buf_len);
++    if (p == NULL) {
++        goto exit;
++    }
++
++    bmsg->msg_iov = USP_MALLOC(sizeof(struct iovec));
++    bmsg->msg_iov->iov_base = p;
++    bmsg->msg_iov->iov_len = uc->tx_buf_len;
++    bmsg->msg_iovlen = 1;
++    bmsg->msg_control = cmsg;
++    bmsg->msg_controllen = CMSG_SPACE(sizeof(int) * fd_count);
++
++    cmsg->cmsg_level = SOL_SOCKET;
++    cmsg->cmsg_type = SCM_RIGHTS;
++    cmsg->cmsg_len = CMSG_LEN(sizeof(int) * fd_count);
++    if (fd_buffer) {
++        memcpy(CMSG_DATA(cmsg), fd_buffer, sizeof(int) * fd_count);
++    }
+ 
+     // Construct frame header
+-    p = uc->tx_buf;
+     WRITE_N_BYTES(p, uds_frame_sync_bytes, sizeof(uds_frame_sync_bytes));
+     WRITE_4_BYTES(p, tlv_len);
+ 
+@@ -2117,16 +2248,27 @@ void PopUdsSendItem(uds_connection_t *uc)
+             TERMINATE_BAD_CASE(send_item->type);
+             break;
+     }
++    uc->tx_msg = bmsg;
+ 
+     //Update the type of frame being sent. This will be needed to close connection, if the frame being sent is of type Error
+     uc->tx_buf_type = send_item->type;
+     //Update if the usp message being sent is of disconnect record type. This will be needed to close connection, if disconnect record is being sent
+     uc->is_disconnect_record = (send_item->item.content_type == kMtpContentType_DisconnectRecord) ? true : false;
+-
+     // now we've converted the send item into a UDS frame
+     // free up the record and remove it from the tx queue
+     DLLIST_Unlink(&uc->usp_record_send_queue, send_item);
+     USP_FREE(send_item);
++    success = true;
++
++exit:
++    if (!success) {
++        if (bmsg != NULL) {
++            USP_SAFE_FREE(bmsg->msg_iov);
++        }
++        USP_SAFE_FREE(bmsg);
++        USP_SAFE_FREE(p);
++    }
++    return fd_key;
+ }
+ 
+ /*********************************************************************//**
+@@ -2259,6 +2401,19 @@ void RemoveExpiredUdsMessages(uds_connection_t *uc)
+ **************************************************************************/
+ void RemoveUdsQueueItem(uds_connection_t *uc, uds_send_item_t *queued_msg)
+ {
++    if (queued_msg->item.fd_key > 0)
++    {
++        if (FD_VECTOR_DecRef(queued_msg->item.fd_key) <= 0)
++        {
++            int fd_count = 0;
++            int* fd_buffer = FD_VECTOR_Get(queued_msg->item.fd_key, &fd_count);
++            if (fd_buffer != NULL && fd_count > 0)
++            {
++                FD_VECTOR_Close(fd_buffer, fd_count);
++            }
++        }
++    }
++
+     USP_ASSERT(queued_msg != NULL);
+ 
+     // Free all dynamically allocated member variables
+@@ -2386,8 +2541,7 @@ void InitialiseUdsConnection(uds_connection_t *uc)
+     uc->endpoint_id = NULL;
+     uc->usp_record_send_queue.head = NULL;
+     uc->usp_record_send_queue.tail = NULL;
+-    uc->tx_buf = NULL;
+-    uc->tx_bytes_sent = 0;
++    uc->tx_msg = NULL;
+     uc->tx_buf_len = 0;
+     uc->tx_buf_type = kUdsFrameType_Invalid;
+     uc->is_disconnect_record = false;
+diff --git a/src/core/uds.h b/src/core/uds.h
+index c85cffe..da523cf 100644
+--- a/src/core/uds.h
++++ b/src/core/uds.h
+@@ -41,6 +41,8 @@
+ #include "mtp_exec.h"
+ #include "device.h"
+ 
++#define MAX_UDS_FDS 8
++
+ //------------------------------------------------------------------------------
+ // Enumeration for Device.UnixDomainSockets.UnixDomainSocket.{i}.Mode
+ typedef enum
+diff --git a/src/core/usp_broker.c b/src/core/usp_broker.c
+index 5666a9b..ea255cc 100644
+--- a/src/core/usp_broker.c
++++ b/src/core/usp_broker.c
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2023-2025, Broadband Forum
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2023-2024  CommScope, Inc
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -61,6 +62,10 @@
+ #include "group_get_vector.h"
+ #include "se_cache.h"
+ 
++#ifdef ENABLE_UDS
++#include "fd_vector.h"
++#endif
++
+ #ifndef REMOVE_USP_BROKER
+ 
+ //------------------------------------------------------------------------------
+@@ -254,8 +259,8 @@ int UspService_RefreshInstances(usp_service_t *us, str_vector_t *paths, bool wit
+ int ProcessGetSubsResponse(usp_service_t *us, Usp__Msg *resp);
+ void ProcessGetSubsResponse_ResolvedPathResult(usp_service_t *us, Usp__GetResp__ResolvedPathResult *res, str_vector_t *subs_to_delete);
+ char *GetParamValueFromResolvedPathResult(Usp__GetResp__ResolvedPathResult *res, char *name);
+-int SendOperateAndProcessResponse(int group_id, char *path, bool is_sync, char *command_key, kv_vector_t *input_args, kv_vector_t *output_args, bool *is_complete);
+-int ProcessOperateResponse(Usp__Msg *resp, char *path, bool is_sync, kv_vector_t *output_args, bool *is_complete);
++int SendOperateAndProcessResponse(int group_id, char *path, bool is_sync, char *command_key, kv_vector_t *input_args, kv_vector_t *output_args, bool *is_complete, unsigned int *fd_key);
++int ProcessOperateResponse(Usp__Msg *resp, char *path, bool is_sync, kv_vector_t *output_args, bool *is_complete, bool fd_res_exceeded);
+ void DeleteMatchingOperateRequest(usp_service_t *us, char *obj_path, char *command_name, char *command_key);
+ void UpdateUspServiceMRT(usp_service_t *us, mtp_conn_t *mtpc);
+ void ProcessUniqueKeys(char *path, Usp__GetInstancesResp__CurrInstance__UniqueKeysEntry **unique_keys, int num_unique_keys);
+@@ -907,6 +912,7 @@ void USP_BROKER_HandleNotification(Usp__Msg *usp, char *endpoint_id, mtp_conn_t
+     Usp__Notify__OperationComplete *op;
+     int items_converted;
+     int broker_instance;
++    unsigned int fd_key = 0;
+ 
+     // Exit if message is invalid or failed to parse
+     // This code checks the parsed message enums and pointers for expectations and validity
+@@ -975,13 +981,61 @@ void USP_BROKER_HandleNotification(Usp__Msg *usp, char *endpoint_id, mtp_conn_t
+         goto exit;
+     }
+ 
++#ifdef ENABLE_UDS
++    if (mtpc->protocol == kMtpProtocol_UDS)
++    {
++        fd_key = mtpc->uds.fd_key;
++        int fd_count = 0;
++        FD_VECTOR_Get(mtpc->uds.fd_key, &fd_count);
++        if ((fd_count < 0 || mtpc->uds.fd_res_exceeded) &&
++            notify->notification_case != USP__NOTIFY__NOTIFICATION_OPER_COMPLETE)
++        {
++            // If we have truncated file descriptors or we reached limit for keys
++            USP_ERR_SetMessage("Resources exceeded");
++            err = USP_ERR_RESOURCES_EXCEEDED;
++            goto error_cmd;
++        } else if (fd_count > 0 &&
++            notify->notification_case != USP__NOTIFY__NOTIFICATION_OPER_COMPLETE &&
++            notify->notification_case != USP__NOTIFY__NOTIFICATION_EVENT)
++        {
++            // File descriptors supported only in OperationComplete and Event notifications
++            USP_ERR_SetMessage("Request denied");
++            err = USP_ERR_REQUEST_DENIED;
++            goto exit;
++        }
++    }
++#endif
++
+     // Forward the notification back to the controller that set up the subscription on the Broker
+-    err = DEVICE_SUBSCRIPTION_RouteNotification(usp, broker_instance, smap->path);
++    err = DEVICE_SUBSCRIPTION_RouteNotificationWithDescriptors(usp, broker_instance, smap->path, fd_key);
+ 
+     // If this is an OperationComplete notification, then delete the associated request
+     // in the Broker's Request table and from this USP Service's request mapping table
+     if (notify->notification_case == USP__NOTIFY__NOTIFICATION_OPER_COMPLETE)
+     {
++error_cmd:
++#ifdef ENABLE_UDS
++        // This type of error means that the USP message NOTIFY with file
++        // descriptors in output arguments is being sent to the controller over
++        // non-UDS MTP
++        if (err == USP_ERR_VALUE_CONFLICT || err == USP_ERR_RESOURCES_EXCEEDED)
++        {
++            char command_path[MAX_DM_PATH];
++
++            // Form the full path to the USP Command
++            USP_SNPRINTF(command_path, sizeof(command_path), "%s%s", notify->oper_complete->obj_path, notify->oper_complete->command_name);
++            req_map_t *rmap = ReqMap_Find(&us->req_map, command_path, notify->oper_complete->command_key);
++            if (rmap == NULL)
++            {
++                err = USP_ERR_INTERNAL_ERROR;
++                goto exit;
++            }
++            USP_SIGNAL_OperationComplete(rmap->request_instance, err, USP_ERR_UspErrToString(err), NULL);
++            err = USP_ERR_REQUEST_DENIED;
++            goto exit;
++        }
++#endif
++
+         op = notify->oper_complete;
+         DeleteMatchingOperateRequest(us, op->obj_path, op->command_name, op->command_key);
+     }
+@@ -990,6 +1044,18 @@ exit:
+     // Send a USP ERROR response if an error was detected (as per R-MTP.5)
+     if (err != USP_ERR_OK)
+     {
++#ifdef ENABLE_UDS
++        if (fd_key != 0)
++        {
++            int fd_count = 0;
++            int* fd_buffer = FD_VECTOR_Get(fd_key, &fd_count);
++            if (fd_count != 0)
++            {
++                FD_VECTOR_Close(fd_buffer, fd_count);
++                FD_VECTOR_Remove(fd_key);
++            }
++        }
++#endif
+         MSG_HANDLER_QueueErrorMessage(err, endpoint_id, mtpc, usp->header->msg_id);
+     }
+ }
+@@ -1928,7 +1994,7 @@ int USP_BROKER_ExecuteCli_Service(str_vector_t *args)
+ 
+     // Send the request and wait for a response
+     // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
+-    resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp, resp_type, RESPONSE_TIMEOUT);
++    resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp, resp_type, RESPONSE_TIMEOUT, NULL, NULL);
+ 
+     // Exit if timed out waiting for a response
+     if (resp == NULL)
+@@ -2024,7 +2090,7 @@ void USP_BROKER_WatchTable(char *table, int *subs_instances)
+     // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
+     resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
+                                                  USP__HEADER__MSG_TYPE__ADD_RESP,
+-                                                 RESPONSE_TIMEOUT);
++                                                 RESPONSE_TIMEOUT, NULL, NULL);
+ 
+     // Exit if timed out waiting for a response
+     if (resp == NULL)
+@@ -2155,7 +2221,7 @@ int USP_BROKER_ResolveSeInstance(int group_id, char *table, char *param, char *v
+     // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
+     resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
+                                                  USP__HEADER__MSG_TYPE__GET_RESP,
+-                                                 RESPONSE_TIMEOUT);
++                                                 RESPONSE_TIMEOUT, NULL, NULL);
+ 
+     // Exit if timed out waiting for a response
+     if (resp == NULL)
+@@ -3157,7 +3223,7 @@ int Broker_GroupGet(int group_id, kv_vector_t *kvv)
+     // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
+     resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
+                                                  USP__HEADER__MSG_TYPE__GET_RESP,
+-                                                 RESPONSE_TIMEOUT);
++                                                 RESPONSE_TIMEOUT, NULL, NULL);
+ 
+     // Exit if timed out waiting for a response
+     if (resp == NULL)
+@@ -3219,7 +3285,7 @@ int Broker_GroupSet(int group_id, kv_vector_t *params, unsigned *param_types, in
+     // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
+     resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
+                                                  USP__HEADER__MSG_TYPE__SET_RESP,
+-                                                 RESPONSE_TIMEOUT);
++                                                 RESPONSE_TIMEOUT, NULL, NULL);
+ 
+     // Exit if timed out waiting for a response
+     if (resp == NULL)
+@@ -3280,7 +3346,7 @@ int Broker_GroupAdd(int group_id, char *path, int *instance)
+     // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
+     resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
+                                                  USP__HEADER__MSG_TYPE__ADD_RESP,
+-                                                 RESPONSE_TIMEOUT);
++                                                 RESPONSE_TIMEOUT, NULL, NULL);
+ 
+     // Exit if timed out waiting for a response
+     if (resp == NULL)
+@@ -3439,7 +3505,7 @@ int Broker_CreateObj(int group_id, char *path, group_add_param_t *params, int nu
+     // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
+     resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
+                                                  USP__HEADER__MSG_TYPE__ADD_RESP,
+-                                                 RESPONSE_TIMEOUT);
++                                                 RESPONSE_TIMEOUT, NULL, NULL);
+ 
+     // Exit if timed out waiting for a response
+     if (resp == NULL)
+@@ -3477,7 +3543,7 @@ int Broker_SyncOperate(dm_req_t *req, char *command_key, kv_vector_t *input_args
+ 
+     #define IS_SYNC true
+     #define IS_ASYNC false
+-    err = SendOperateAndProcessResponse(req->group_id, req->path, IS_SYNC, command_key, input_args, output_args, &is_complete);
++    err = SendOperateAndProcessResponse(req->group_id, req->path, IS_SYNC, command_key, input_args, output_args, &is_complete, &req->fd_key);
+ 
+     return err;
+ }
+@@ -3532,7 +3598,7 @@ int Broker_AsyncOperate(dm_req_t *req, kv_vector_t *input_args, int instance)
+ 
+     // Exit if an error occurred whilst trying to send the Operate Request and receive the Operate Response
+     output_args = USP_ARG_Create();
+-    err = SendOperateAndProcessResponse(req->group_id, req->path, IS_ASYNC, command_key, input_args, output_args, &is_complete);
++    err = SendOperateAndProcessResponse(req->group_id, req->path, IS_ASYNC, command_key, input_args, output_args, &is_complete, NULL);
+     if (err != USP_ERR_OK)
+     {
+         USP_ARG_Delete(output_args);
+@@ -3683,7 +3749,7 @@ int Broker_GroupSubscribe(int broker_instance, int group_id, subs_notify_t notif
+     // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
+     resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
+                                                  USP__HEADER__MSG_TYPE__ADD_RESP,
+-                                                 RESPONSE_TIMEOUT);
++                                                 RESPONSE_TIMEOUT, NULL, NULL);
+ 
+     // Exit if timed out waiting for a response
+     if (resp == NULL)
+@@ -3891,7 +3957,7 @@ int SyncSubscriptions(usp_service_t *us)
+     // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
+     resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
+                                                  USP__HEADER__MSG_TYPE__GET_RESP,
+-                                                 RESPONSE_TIMEOUT);
++                                                 RESPONSE_TIMEOUT, NULL, NULL);
+ 
+     // Exit if timed out waiting for a response
+     if (resp == NULL)
+@@ -4242,7 +4308,7 @@ int UspService_DeleteInstances(usp_service_t *us, bool allow_partial, str_vector
+     // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
+     resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
+                                                  USP__HEADER__MSG_TYPE__DELETE_RESP,
+-                                                 RESPONSE_TIMEOUT);
++                                                 RESPONSE_TIMEOUT, NULL, NULL);
+ 
+     // Exit if timed out waiting for a response
+     if (resp == NULL)
+@@ -4297,7 +4363,7 @@ int UspService_RefreshInstances(usp_service_t *us, str_vector_t *paths, bool wit
+     // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
+     resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
+                                                  USP__HEADER__MSG_TYPE__GET_INSTANCES_RESP,
+-                                                 RESPONSE_TIMEOUT);
++                                                 RESPONSE_TIMEOUT, NULL, NULL);
+ 
+     // Exit if timed out waiting for a response
+     if (resp == NULL)
+@@ -4361,7 +4427,7 @@ void UspService_GetAllParamsForPath(usp_service_t *us, str_vector_t *usp_service
+     // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
+     resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
+                                                  USP__HEADER__MSG_TYPE__GET_RESP,
+-                                                 RESPONSE_TIMEOUT);
++                                                 RESPONSE_TIMEOUT, NULL, NULL);
+ 
+     // Exit if timed out waiting for a response
+     if (resp == NULL)
+@@ -5137,11 +5203,12 @@ int ProcessDeleteResponse(Usp__Msg *resp, str_vector_t *paths, int *failure_inde
+ ** \param   is_complete - pointer to variable in which to return whether the operate response was indicating that the operate had completed
+ **                        or NULL if this information is not required
+ **                        This argument is only needed for async commands to differentiate an operate response containing an operate result from one not containing an operate result
++** \param   fd_key - pointer to memory where key to file descriptor buffer recieved from operate reponse will be put
+ **
+ ** \return  USP_ERR_OK if successful
+ **
+ **************************************************************************/
+-int SendOperateAndProcessResponse(int group_id, char *path, bool is_sync, char *command_key, kv_vector_t *input_args, kv_vector_t *output_args, bool *is_complete)
++int SendOperateAndProcessResponse(int group_id, char *path, bool is_sync, char *command_key, kv_vector_t *input_args, kv_vector_t *output_args, bool *is_complete, unsigned int *fd_key)
+ {
+     int err;
+     Usp__Msg *req;
+@@ -5149,6 +5216,7 @@ int SendOperateAndProcessResponse(int group_id, char *path, bool is_sync, char *
+     usp_service_t *us;
+     char msg_id[MAX_MSG_ID_LEN];
+     bool modified_num_entries = false;
++    bool fd_res_exceeded = false;
+ 
+     // Find USP Service associated with the group_id
+     us = FindUspServiceByGroupId(group_id);
+@@ -5183,7 +5251,7 @@ int SendOperateAndProcessResponse(int group_id, char *path, bool is_sync, char *
+     // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
+     resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
+                                                  USP__HEADER__MSG_TYPE__OPERATE_RESP,
+-                                                 RESPONSE_TIMEOUT);
++                                                 RESPONSE_TIMEOUT, fd_key, &fd_res_exceeded);
+ 
+     // Exit if timed out waiting for a response
+     if (resp == NULL)
+@@ -5192,7 +5260,7 @@ int SendOperateAndProcessResponse(int group_id, char *path, bool is_sync, char *
+     }
+ 
+     // Process the operate response, determining if it was successful or not
+-    err = ProcessOperateResponse(resp, path, is_sync, output_args, is_complete);
++    err = ProcessOperateResponse(resp, path, is_sync, output_args, is_complete, fd_res_exceeded);
+ 
+     // Free the operate response, since we've finished with it
+     usp__msg__free_unpacked(resp, pbuf_allocator);
+@@ -5213,11 +5281,12 @@ int SendOperateAndProcessResponse(int group_id, char *path, bool is_sync, char *
+ ** \param   is_complete - pointer to variable in which to return whether the operate response was indicating that the operate had completed
+ **                        or NULL if this information is not required
+ **                        This argument is only needed for async commands to differentiate an operate response containing an operate result from one not containing an operate result
++** \param   fd_res_exceeded - flag indicating exceeded limit for file descriptor buffers
+ **
+ ** \return  USP_ERR_OK if successful
+ **
+ **************************************************************************/
+-int ProcessOperateResponse(Usp__Msg *resp, char *path, bool is_sync, kv_vector_t *output_args, bool *is_complete)
++int ProcessOperateResponse(Usp__Msg *resp, char *path, bool is_sync, kv_vector_t *output_args, bool *is_complete, bool fd_res_exceeded)
+ {
+     int i;
+     int err;
+@@ -5282,6 +5351,11 @@ int ProcessOperateResponse(Usp__Msg *resp, char *path, bool is_sync, kv_vector_t
+             break;
+ 
+         case USP__OPERATE_RESP__OPERATION_RESULT__OPERATION_RESP_REQ_OUTPUT_ARGS:
++            if (fd_res_exceeded) {
++                err = USP_ERR_RESOURCES_EXCEEDED;
++                USP_ERR_SetMessage("Resourced exceeded");
++                break;
++            }
+             // Operation succeeded: Copy across output arguments
+             args = res->req_output_args;
+             for (i=0; i < args->n_output_args; i++)
+@@ -7396,6 +7470,7 @@ bool AttemptPassThruForNotification(Usp__Msg *usp, char *endpoint_id, mtp_conn_t
+     subs_map_t *smap;
+     int broker_instance;
+     int items_converted;
++    unsigned int fd_key = 0;
+ 
+     // Exit if message was badly formed - the error will be handled by the normal handlers
+     if ((usp->body == NULL) || (usp->body->msg_body_case != USP__BODY__MSG_BODY_REQUEST) ||
+@@ -7477,10 +7552,29 @@ bool AttemptPassThruForNotification(Usp__Msg *usp, char *endpoint_id, mtp_conn_t
+     }
+     USP_LOG_Info("Passthru NOTIFY");
+ 
++#ifdef ENABLE_UDS
++    if (mtpc->protocol == kMtpProtocol_UDS)
++    {
++        fd_key = mtpc->uds.fd_key;
++    }
++#endif
++
+     // Forward the notification back to the controller that set up the subscription on the Broker
+-    err = DEVICE_SUBSCRIPTION_RouteNotification(usp, broker_instance, smap->path);
++    err = DEVICE_SUBSCRIPTION_RouteNotificationWithDescriptors(usp, broker_instance, smap->path, fd_key);
+     if (err != USP_ERR_OK)
+     {
++#ifdef ENABLE_UDS
++        if (fd_key != 0)
++        {
++            int fd_count = 0;
++            int* fd_buffer = FD_VECTOR_Get(fd_key, &fd_count);
++            if (fd_count != 0)
++            {
++                FD_VECTOR_Remove(fd_key);
++                FD_VECTOR_Close(fd_buffer, fd_count);
++            }
++        }
++#endif
+         return false;
+     }
+ 
+diff --git a/src/include/usp_api.h b/src/include/usp_api.h
+index 72fd5d7..e287df0 100644
+--- a/src/include/usp_api.h
++++ b/src/include/usp_api.h
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2019-2025, Broadband Forum
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2016-2024  CommScope, Inc
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -141,6 +142,7 @@ typedef struct
+     dm_req_instances_t *inst;   // Pointer to instances information for the parameter or object
+     dm_val_union_t val_union;   // When performing a Set Parameter Value, stores the new value converted to it's native type
+     int group_id;       // group_id of the data model provider component implementing the data model path (or NON_GROUPED if implemented internally)
++    unsigned int fd_key; // key for file descriptors in global map
+ } dm_req_t;
+ 
+ //------------------------------------------------------------------------------
+diff --git a/src/vendor/vendor_defs.h b/src/vendor/vendor_defs.h
+index 97bcc52..31dc679 100644
+--- a/src/vendor/vendor_defs.h
++++ b/src/vendor/vendor_defs.h
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2016-2024  CommScope, Inc
+  * Copyright (C) 2020, BT PLC
+  * Copyright (C) 2022, Snom Technology GmbH
++ * Copyright (c) 2025 Inango
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -73,6 +74,7 @@
+ #define MAX_WEBSOCKET_CLIENTS (MAX_CONTROLLERS)  // Maximum number of WebSocket controllers which an agent sends to, or receives from
+ #define MAX_NODE_MAP_BUCKETS  1024  // Maximum number of buckets in the data model node map. This should be set to at least the number of registered parameters and objects in the data model
+ #define USP_LOG_MAXLEN  (10*1024)   // Maximum number of characters in a single log statement
++#define MAX_FD_VECTOR_ENTRIES (MAX_USP_SERVICES * MAX_UDS_SERVERS)  // Maximum number of file descriptor buffers that can be in global map
+ 
+ // Uncomment and change the following define to override the severity level of messages sent to syslog.
+ // Refer to the syslog documentation and its priority argument to know the possible values.
+-- 
+2.25.1
+
