@@ -11,13 +11,13 @@ config SAH_AMX_FAULTMONITOR
     bool "Build faultmonitor plugin"
     default y
 
-config SAH_AMX_FAULTMONITOR_ORDER
-    int "Start up order"
+config SAH_AMX_FAULTMONITOR_START_ORDER
+    int "Faultmonitor plugin start up order"
     default 15
 
 config SAH_AMX_FAULTMONITOR_STOP_ORDER
-    int "Stop order"
-    default 99
+    int "Faultmonitor plugin shutdown order"
+    default 89
 
 config SAH_AMX_FAULTMONITOR_RUN_AS_USER
     string "User will be used for the amx-faultmonitor plugin"
