@@ -8,8 +8,8 @@ SHORT_DESCRIPTION:=TR-181 HTTPAccess model plugin
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-httpaccess.git
-PKG_MIRROR_HASH:=7dd9daf4fa81eaa316ba687acc7ab43cd091efd498f9b1bb3b46600fd6824e7e
-PKG_SOURCE_VERSION:=6e45d6804569b2056900e41566bc9fa262d98521
+PKG_MIRROR_HASH:=a1aff5e011354ba845dbc42efef8036d89c3be64cbfbd50deb89fefd833fc7c4
+PKG_SOURCE_VERSION:=8b9d0a549149a3181f08bb773f0f1af03b4bad9f
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-httpaccess-v0.15.16
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent

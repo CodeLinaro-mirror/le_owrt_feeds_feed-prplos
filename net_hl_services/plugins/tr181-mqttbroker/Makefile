@@ -8,8 +8,8 @@ SHORT_DESCRIPTION:=TR-181 compatible MQTT broker
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mqttbroker.git
-PKG_MIRROR_HASH:=d4eee44b636ed3c503e1429cd7cc7a38b6381d7fab8391d997a51ad0b6c5fecf
-PKG_SOURCE_VERSION:=6b566ca6506ca04474d4c9618ff2dbb6e252669e
+PKG_MIRROR_HASH:=a7153155f111ff303826624c6bc2d8834c8b0c4474e8d2185e4cea42c376ee73
+PKG_SOURCE_VERSION:=9ab1286c6ae02bc2953c37e359eaf4347fc6bf77
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mqttbroker-v0.1.3
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
