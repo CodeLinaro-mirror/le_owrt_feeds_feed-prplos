@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-routing-dhcp
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=v0.1.1
 SHORT_DESCRIPTION:=Routing module to fetch dhcp options
 
-PKG_SOURCE:=mod-routing-dhcp-v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-routing-dhcp/-/archive/v0.1.0
-PKG_HASH:=a8bfefe3943444acc9a122e556805ac94cc1afbf85a7807c6ae83c5038131099
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-routing-dhcp-v0.1.0
+PKG_SOURCE:=mod-routing-dhcp-v0.1.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-routing-dhcp/-/archive/v0.1.1
+PKG_HASH:=511eba5f0cc5d21cc38b9b0e4dfaee8404a398ee6dbac95133334a6a74e97515
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-routing-dhcp-v0.1.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
