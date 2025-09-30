@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-button
-PKG_VERSION:=v0.3.0
+PKG_VERSION:=v0.3.1
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-button-v0.3.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-button/-/archive/v0.3.0
-PKG_HASH:=6fe36fe994fe7eac4f886b7c5a4d87f1eae6dfbb581d4ee34d3916320c0b466f
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-button-v0.3.0
+PKG_SOURCE:=tr181-button-v0.3.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-button/-/archive/v0.3.1
+PKG_HASH:=83d69470e0fdc605d6b6b32eb27cd1df5cc5fb2416f3d54e1ad4d23a4c3be119
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-button-v0.3.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -28,7 +28,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=Plugins
+  SUBMENU:=Ambiorix
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-button
   DEPENDS += +amxrt
