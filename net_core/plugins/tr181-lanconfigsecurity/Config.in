@@ -1,0 +1,24 @@
+config PACKAGE_tr181-lanconfigsecurity
+    tristate
+    select SAH_AMX_TR181_LAN_CONFIG_SECURITY
+
+if PACKAGE_tr181-lanconfigsecurity
+
+menu "Select tr181-lanconfigsecurity build options"
+    depends on PACKAGE_tr181-lanconfigsecurity
+
+config SAH_AMX_TR181_LAN_CONFIG_SECURITY
+    bool "Configuration plug-in to allow LAN access to protected auto-configuration services"
+    default y
+
+config SAH_AMX_TR181_LAN_CONFIG_SECURITY_START_ORDER
+    int "Start up order for the LANConfigSecurity plugin"
+    default 99
+
+config SAH_AMX_TR181_LAN_CONFIG_SECURITY_STOP_ORDER
+    string "Shutdown order for the LANConfigSecurity plugin"
+    default "01"
+
+endmenu
+
+endif
