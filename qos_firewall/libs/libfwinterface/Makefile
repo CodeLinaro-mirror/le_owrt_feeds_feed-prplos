@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/libraries/libfwinterface/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libfwinterface
-PKG_VERSION:=v1.7.0
+PKG_VERSION:=v1.9.0
 SHORT_DESCRIPTION:=A library providing interfaces between lib_fwrules and netfilter
 
-PKG_SOURCE:=libfwinterface-v1.7.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfwinterface/-/archive/v1.7.0
-PKG_HASH:=5de6eb79ae9b5e3549b83cb0f8f220b94742cde6ab48d87595194ae54ae503fa
-PKG_BUILD_DIR:=$(BUILD_DIR)/libfwinterface-v1.7.0
+PKG_SOURCE:=libfwinterface-v1.9.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfwinterface/-/archive/v1.9.0
+PKG_HASH:=effd0eacc360e53071492445c3c43f418153e87349d45c7997addd3f8c1e0a9d
+PKG_BUILD_DIR:=$(BUILD_DIR)/libfwinterface-v1.9.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -25,7 +27,8 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxc
   DEPENDS += +libsahtrace
   DEPENDS += +libfwrules
-  DEPENDS += +!DEFAULT_firewall4:libip4tc +!DEFAULT_firewall4:libip6tc
+  DEPENDS += +!DEFAULT_firewall4:libip4tc
+  DEPENDS += +!DEFAULT_firewall4:libip6tc
   DEPENDS += +iptables
   DEPENDS += +kmod-ifb
   DEPENDS += +kmod-ip6tables
