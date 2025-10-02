@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-dhcpv6
-PKG_VERSION:=v1.5.0
+PKG_VERSION:=v1.5.1
 SHORT_DESCRIPTION:=Network Model DHCPv6client client
 
-PKG_SOURCE:=netmodel-dhcpv6-v1.5.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv6/-/archive/v1.5.0
-PKG_HASH:=06ac75a9ff7280763e31348e8a9e62321d56c28594084f5313f20d27b7611731
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-dhcpv6-v1.5.0
+PKG_SOURCE:=netmodel-dhcpv6-v1.5.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-dhcpv6/-/archive/v1.5.1
+PKG_HASH:=175245a301dcc8d6ea680cfe66f6442c61f5920624b884b0df7c99cf6e1a1b3a
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-dhcpv6-v1.5.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
