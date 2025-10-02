@@ -1,6 +1,6 @@
 %config {
     %global usp.translate = {
-        "'PeriodicFileUpload.'" = "Device.X_PRPLWARE-COM_PeriodicFileUpload."
+        "'PeriodicFileTransfer.'" = "Device.PeriodicFileTransfer."
     };
 
     %global backend-dir = [ "/usr/bin/mods/usp", "/usr/bin/mods/amxb" ];
