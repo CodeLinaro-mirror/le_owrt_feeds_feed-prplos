@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-ipdiagnostics
-PKG_VERSION:=v0.11.0
+PKG_VERSION:=v0.12.0
 SHORT_DESCRIPTION:=Speedtest plugin
 
-PKG_SOURCE:=tr181-ipdiagnostics-v0.11.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ipdiagnostics/-/archive/v0.11.0
-PKG_HASH:=f3b7424f48a26be2a02ffd2d3c62628cddbadd70fba06108a21ec9e02bc2c8cb
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ipdiagnostics-v0.11.0
+PKG_SOURCE:=tr181-ipdiagnostics-v0.12.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ipdiagnostics/-/archive/v0.12.0
+PKG_HASH:=07a9e07dadff78a7e5a185c325d863583710230d3c34bb9bf91b4cefa0c6c8dd
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ipdiagnostics-v0.12.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -45,6 +45,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +iputils-ping
   DEPENDS += +curl
   DEPENDS += +libopenssl
+  DEPENDS += +obudpst
   MENU:=1
 endef
 
