@@ -22,7 +22,7 @@ index 97bcc52..2de5345
 +#define MAX_COMPOUND_KEY_PARAMS 8   // Maximum number of parameters in a compound unique key
  #define MAX_SEARCH_KEYS 10          // Maximum number of parameters in a search expression
  
- #define MAX_CONTROLLERS 5           // Maximum number of controllers which may be present in the DB (Device.LocalAgent.Controller.{i})
+ #define MAX_CONTROLLERS 200         // Maximum number of controllers which may be present in the DB (Device.LocalAgent.Controller.{i})
 -- 
 2.7.4
 

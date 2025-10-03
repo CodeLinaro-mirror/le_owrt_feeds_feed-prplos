@@ -2,7 +2,7 @@ diff --git a/src/vendor/vendor_defs.h b/src/vendor/vendor_defs.h
 index 77c672b..28778c5 100755
 --- a/src/vendor/vendor_defs.h
 +++ b/src/vendor/vendor_defs.h
-@@ -57,11 +57,11 @@
+@@ -58,11 +58,11 @@
  #define MAX_COMPOUND_KEY_PARAMS 4   // Maximum number of parameters in a compound unique key
  #define MAX_SEARCH_KEYS 10          // Maximum number of parameters in a search expression
  
