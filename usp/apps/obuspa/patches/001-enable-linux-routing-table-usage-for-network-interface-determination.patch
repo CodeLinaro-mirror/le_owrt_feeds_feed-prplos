@@ -20,7 +20,7 @@ diff --git a/src/vendor/vendor_defs.h b/src/vendor/vendor_defs.h
 index 2bcb224..e1ef480 100644
 --- a/src/vendor/vendor_defs.h
 +++ b/src/vendor/vendor_defs.h
-@@ -150,7 +150,7 @@
+@@ -155,7 +155,7 @@
  // Comment out the following define if you want to let the Linux routing tables decide which network interface to use for USP connections
  // Letting the Linux routing tables decide is better for devices that can connect to the STOMP server through either
  // WiFi or ethernet, and either of these interfaces could be down at any one time
