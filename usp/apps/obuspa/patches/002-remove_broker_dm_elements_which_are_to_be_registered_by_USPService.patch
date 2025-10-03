@@ -28,7 +28,7 @@ diff --git a/src/vendor/vendor_defs.h b/src/vendor/vendor_defs.h
 index 42ae4c2..0784554 100644
 --- a/src/vendor/vendor_defs.h
 +++ b/src/vendor/vendor_defs.h
-@@ -127,16 +127,16 @@
+@@ -131,17 +131,17 @@
  
  //-----------------------------------------------------------------------------------------
  // Uncomment the following to remove code and features from the standard build
@@ -42,11 +42,13 @@ index 42ae4c2..0784554 100644
 -//#define REMOVE_DEVICE_FACTORY_RESET      // Removes Device.FactoryReset() from the core data model
 -//#define REMOVE_DEVICE_SCHEDULE_TIMER     // Removes Device.ScheduleTimer() from the core data model
 -//#define REMOVE_DEVICE_BOOT_EVENT         // Removes Device.Boot! from the core data model
+-//#define REMOVE_DEVICE_SECURITY           // Removes all certificate and TLS related code. Removes DM elements Device.Security, Device.LocalAgent.Certificate and ControllerTrust Challenge/Response mechanism
 +#define REMOVE_DEVICE_REBOOT             // Removes Device.Reboot() from the core data model
 +#define REMOVE_DEVICE_FACTORY_RESET      // Removes Device.FactoryReset() from the core data model
 +#define REMOVE_DEVICE_SCHEDULE_TIMER     // Removes Device.ScheduleTimer() from the core data model
 +#define REMOVE_DEVICE_BOOT_EVENT         // Removes Device.Boot! from the core data model
- //#define REMOVE_DEVICE_SECURITY           // Removes Device.Security, Device.LocalAgent.Certificate and ControllerTrust Challenge/Response mechanism
++//#define REMOVE_DEVICE_SECURITY           // Removes Device.Security, Device.LocalAgent.Certificate and ControllerTrust Challenge/Response mechanism
+ //#define REMOVE_DEVICE_SECURITY_CERTIFICATE    // Removes Device.Security.Certificate and Device.Security from the core data model
 -//#define REMOVE_SELF_TEST_DIAG_EXAMPLE    // Removes Self Test diagnostics example code
 +#define REMOVE_SELF_TEST_DIAG_EXAMPLE    // Removes Self Test diagnostics example code
  
