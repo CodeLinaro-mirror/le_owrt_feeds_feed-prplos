@@ -1,0 +1,11 @@
+%populate {
+    object "Bridging.Bridge.lan" {
+        parameter STPController = "mod-stp-sysfs";
+        object "STP" {
+            parameter Enable = 1;
+            parameter HelloTime = 100; // 1s in centiseconds
+            parameter ForwardingDelay = 4;
+            parameter MaxAge = 2000; // 20s in centiseconds
+        }
+    }
+}
