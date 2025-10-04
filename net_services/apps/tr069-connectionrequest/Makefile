@@ -19,7 +19,7 @@ define Package/$(PKG_NAME)
 	CATEGORY:=prpl Foundation
 	SUBMENU:=Utilities
 	TITLE:=TR-069 Connection Request
-	DEPENDS += +libupnp
+	DEPENDS += +libupnp-prpl
 	DEPENDS += +libamxb
 	DEPENDS += +libamxc
 	DEPENDS += +libamxp
