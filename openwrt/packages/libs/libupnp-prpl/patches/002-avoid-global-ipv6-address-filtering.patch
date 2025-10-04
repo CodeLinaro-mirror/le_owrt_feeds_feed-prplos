@@ -9,10 +9,10 @@ Upstream-Status: Inappropriate [prpl specific hack]
 Signed-off-by: Roman Yaroshenko <r.yaroshenko@inango-systems.com>
 ---
 diff --git a/upnp/src/api/upnpapi.c b/upnp/src/api/upnpapi.c
-index 2e95bbf..1ce41e5 100644
+index d45dcbff..f7321408 100644
 --- a/upnp/src/api/upnpapi.c
 +++ b/upnp/src/api/upnpapi.c
-@@ -3825,22 +3825,6 @@ int UpnpGetIfInfo(const char *IfName)
+@@ -3903,22 +3903,6 @@ int UpnpGetIfInfo(const char *IfName)
  					(struct sockaddr_in6
  							*)(ifa->ifa_netmask));
  				valid_v6ulagua_addr_found = 1;
@@ -35,7 +35,7 @@ index 2e95bbf..1ce41e5 100644
  			} else if (IN6_IS_ADDR_LINKLOCAL(
  					   &((struct sockaddr_in6
  							     *)(ifa->ifa_addr))
-@@ -3854,6 +3838,18 @@ int UpnpGetIfInfo(const char *IfName)
+@@ -3932,6 +3916,18 @@ int UpnpGetIfInfo(const char *IfName)
  					(struct sockaddr_in6
  							*)(ifa->ifa_netmask));
  				valid_v6_addr_found = 1;
