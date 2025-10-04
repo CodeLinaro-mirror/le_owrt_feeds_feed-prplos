@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libupnp-prpl
-PKG_VERSION:=1.14.12
+PKG_VERSION:=1.14.18
 PKG_RELEASE:=1
 
 PKG_SOURCE:=libupnp-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=@SF/pupnp
-PKG_HASH:=091c80aada1e939c2294245c122be2f5e337cc932af7f7d40504751680b5b5ac
+PKG_HASH:=16a7cee93ce2868ae63ab1a8164dc7de43577c59983b9f61293a310d6888dceb
 PKG_BUILD_DIR:=$(BUILD_DIR)/libupnp-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Ted Hess <thess@kitschensync.net>
@@ -74,6 +74,7 @@ CMAKE_OPTIONS += \
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/upnp $(1)/usr/include/
+	$(CP) $(PKG_BUILD_DIR)/upnp/inc/ithread.h $(1)/usr/include/
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/lib{ixml,upnp}.{a,so*} $(1)/usr/lib/
 	$(INSTALL_DIR) $(1)/usr/lib/cmake
