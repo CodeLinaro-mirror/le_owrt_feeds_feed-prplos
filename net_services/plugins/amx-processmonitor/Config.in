@@ -1,0 +1,24 @@
+config PACKAGE_amx-processmonitor
+    tristate
+    select SAH_AMX_PROCESSMONITOR
+
+if PACKAGE_amx-processmonitor
+
+menu "Select amx-processmonitor build options"
+    depends on PACKAGE_amx-processmonitor
+
+config SAH_AMX_PROCESSMONITOR
+    bool "Build processmonitor plugin"
+    default y
+
+config SAH_AMX_PROCESSMONITOR_START_ORDER
+    int "Start up order"
+    default 99
+
+config SAH_AMX_PROCESSMONITOR_STOP_ORDER
+    int "Stop order"
+    default 0
+
+endmenu
+
+endif
