@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=v1.38.2
+PKG_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
 SHORT_DESCRIPTION:=TR069 Manager
 
-PKG_SOURCE:=tr069-manager-v1.38.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.38.2
-PKG_HASH:=192c92c42e38591df215a63c9855ebe69eb3d0903fd97e26acf48389749e2216
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.38.2
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=feature-PCF-1990-enable-auto-respawn-via-procd
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager.git
+PKG_MIRROR_HASH:=13b180e91b7ac4903d589b0ae2ee6c6ffe7305b8f37eea445b2ce2acbf1c1111
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
