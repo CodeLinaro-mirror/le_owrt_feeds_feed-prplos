@@ -12,8 +12,27 @@ board_init() {
 
 	case "$board_name" in
 	"prpl,freedom")
-		efr32_gpio_reset=437      # EFR32 RESETn pin connected to P05 pin on TCA6416 GPIO expander
-		efr32_gpio_fwupgrade=468  # EFR32 PC04 pin connected to IPQ GPIO pin 21
+		local soc_base expander_base
+
+		for chip in /sys/class/gpio/gpiochip*; do
+			if [ -f "$chip/label" ]; then
+				local label="$(cat "$chip/label")"
+				local base="$(cat "$chip/base")"
+				if [ "$label" = "1000000.pinctrl" ]; then
+					soc_base="$base"
+				else
+					expander_base="$base"
+				fi
+			fi
+		done
+
+		if [ -z "$soc_base" ] || [ -z "$expander_base" ]; then
+			echo "Error: Failed to detect soc_base or expander_base." >&2
+			exit 1
+		fi
+
+		efr32_gpio_reset=$((expander_base + 6))      # EFR32 RESETn pin connected to P05 pin on TCA6416 GPIO expander
+		efr32_gpio_fwupgrade=$((soc_base + 21))      # EFR32 PC04 pin connected to IPQ GPIO pin 21
 		;;
 	"mxl,lgm")
 		efr32_gpio_reset=967      # EFR32 RESETn pin connected to MxL GPIO 39
