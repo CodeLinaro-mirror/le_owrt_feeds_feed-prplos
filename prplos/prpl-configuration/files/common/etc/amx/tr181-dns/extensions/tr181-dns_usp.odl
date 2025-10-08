@@ -11,7 +11,8 @@
         "Device.DNS.Diagnostics.",
         "Device.DNS.Relay.",
         "Device.DNS.X_PRPLWARE-COM_Host.",
-        "Device.DNS.X_PRPLWARE-COM_RebindProtection."
+        "Device.DNS.X_PRPLWARE-COM_RebindProtection.",
+        "Device.DNS.Zone."
     ];
 
     %global backend-dir = [ "/usr/bin/mods/usp", "/usr/bin/mods/amxb" ];
