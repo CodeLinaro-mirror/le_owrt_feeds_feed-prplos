@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=miniupnpd-prpl
-PKG_VERSION:=2.3.y
+PKG_VERSION:=stable-2.3.y
 PKG_RELEASE:=2
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/miniupnpd.git
-PKG_SOURCE_VERSION:=eb288add03126934726472c887fb08fb34e7a2c9
+PKG_SOURCE_VERSION:=stable-2.3.y
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
