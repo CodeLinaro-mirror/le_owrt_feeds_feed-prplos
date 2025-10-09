@@ -8,15 +8,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=miniupnpd-prpl
-PKG_VERSION:=stable-2.3.y.PCF-1833
-PKG_RELEASE:=2
+PKG_VERSION:=stable-2.3.y-dev
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/miniupnpd.git
-PKG_SOURCE_VERSION:=prpl/stable-2.3.y.PCF-1833
+PKG_SOURCE_VERSION:=445e82ffd6cd05fe1219ba10fabd417d4956d145
 PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=
 
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
 
@@ -27,15 +28,15 @@ define Package/miniupnpd-prpl
   SECTION:=net
   CATEGORY:=Network
   DEPENDS:= \
-	+libcap-ng \
-	+libmnl \
-	+libuuid \
-	+libamxb \
-	+libamxc \
-	+libamxd \
-	+libamxo \
-	+libamxp \
-	+tr181-firewall
+    +libcap-ng \
+    +libmnl \
+    +libuuid \
+    +libamxb \
+    +libamxc \
+    +libamxd \
+    +libamxo \
+    +libamxp \
+    +tr181-firewall
   PROVIDES:=miniupnpd-iptables
   CONFLICTS:=miniupnpd-iptables miniupnpd-nftables
   TITLE:=Lightweight UPnP IGD, NAT-PMP & PCP daemon
