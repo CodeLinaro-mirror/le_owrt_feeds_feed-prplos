@@ -10,6 +10,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=odhcpd
 PKG_RELEASE:=1
 
+PKG_SOURCE_PROTO:=git
 PKG_VERSION:=dev_hex_options
 PKG_SOURCE_VERSION:=dev_hex_options
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/odhcpd.git
