@@ -16,6 +16,7 @@ PKG_SOURCE_VERSION:=dev_hex_options
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/odhcpd.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=
 
 PKG_MAINTAINER:=Hans Dedecker <dedeckeh@gmail.com>
 PKG_LICENSE:=GPL-2.0
