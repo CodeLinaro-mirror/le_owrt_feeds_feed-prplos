@@ -12,7 +12,7 @@ PKG_RELEASE:=1
 
 PKG_VERSION:=dev_hex_options
 PKG_SOURCE_VERSION:=dev_hex_options
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/odhcpd/
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/odhcpd.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
