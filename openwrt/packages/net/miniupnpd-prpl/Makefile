@@ -8,18 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=miniupnpd-prpl
+PKG_VERSION:=2.3.y
 PKG_RELEASE:=2
 
-PKG_VERSION:=2.3.3
-PKG_SOURCE:=miniupnpd-prpl-stable-2.3.y_v0.2.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/soft.at.home/forks/miniupnpd/-/archive/prpl/stable-2.3.y_v0.2.0
-PKG_HASH:=5881dac662e7fdd911823449013ff7ba44884b2a67f4b3b6e2def583bf2d8405
-PKG_BUILD_DIR:=$(BUILD_DIR)/miniupnpd-prpl-stable-2.3.y_v0.2.0
-
-PKG_MAINTAINER:=
-PKG_LICENSE:=BSD-3-Clause
-PKG_LICENSE_FILES:=LICENSE
-PKG_CPE_ID:=cpe:/a:miniupnp_project:miniupnpd
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/miniupnpd.git
+PKG_SOURCE_VERSION:=eb288add03126934726472c887fb08fb34e7a2c9
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
@@ -34,7 +30,6 @@ define Package/miniupnpd-prpl
 	+libcap-ng \
 	+libmnl \
 	+libuuid \
-	+libamxrt \
 	+libamxb \
 	+libamxc \
 	+libamxd \
@@ -67,7 +62,6 @@ MAKE_PATH = $(CONFIGURE_PATH)
 
 TARGET_CFLAGS += $(FPIC) -flto
 TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
-TARGET_CPPFLAGS += -DRANDOMIZE_URLS
 
 ifeq ($(ALLOW_RESERVED_ADDR),y)
 	TARGET_CFLAGS += -DALLOW_RESERVED_ADDR

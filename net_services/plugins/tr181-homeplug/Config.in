@@ -1,0 +1,24 @@
+config PACKAGE_tr181-homeplug
+    tristate
+    select SAH_AMX_TR181_HOMEPLUG
+
+if PACKAGE_tr181-homeplug
+
+menu "Select tr181-homeplug build options"
+    depends on PACKAGE_tr181-homeplug
+
+config SAH_AMX_TR181_HOMEPLUG
+    bool "Build a tr181 compatible homeplug plugin"
+    default y
+
+config SAH_AMX_TR181_HOMEPLUG_START_ORDER
+    int "Start up order for the tr181 homeplug plugin"
+    default 31
+
+config SAH_AMX_TR181_HOMEPLUG_STOP_ORDER
+    int "Shutdown order for the tr181 homeplug plugin"
+    default 69
+
+endmenu
+
+endif

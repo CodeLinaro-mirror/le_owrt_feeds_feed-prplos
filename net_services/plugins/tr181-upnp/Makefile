@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-upnp
-PKG_VERSION:=v0.12.1
+PKG_VERSION:=dev_PCF-2090
 SHORT_DESCRIPTION:=upnp manager
 
-PKG_SOURCE:=tr181-upnp-v0.12.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-upnp/-/archive/v0.12.1
-PKG_HASH:=c1e4ce908d37f51c8e7317aa7dac4b99c74c2cdc7921b4d3194d0cd6abdaf739
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-upnp-v0.12.1
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PCF-2090
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-upnp/
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -28,7 +29,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=TR-181 Managers
+  SUBMENU:=Ambiorix
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-upnp
   DEPENDS += +libamxb
@@ -42,7 +43,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +amxrt
   DEPENDS += +mod-fw-amx
   DEPENDS += +rpcd
-  DEPENDS += +libupnp-prpl
+  DEPENDS += +libupnp
   MENU:=1
 endef
 
