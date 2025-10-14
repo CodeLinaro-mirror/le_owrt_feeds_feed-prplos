@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-qos
-PKG_VERSION:=v4.9.0
+PKG_VERSION:=v4.10.0
 SHORT_DESCRIPTION:=TR-181 QoS model plugin
 
-PKG_SOURCE:=tr181-qos-v4.9.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-qos/-/archive/v4.9.0
-PKG_HASH:=57b541c6e86ccad14fd60f65b4f1ba4e7b5b6ffa5d3b3f175658ef857cdcf073
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-qos-v4.9.0
+PKG_SOURCE:=tr181-qos-v4.10.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-qos/-/archive/v4.10.0
+PKG_HASH:=ffad31ab302c6cd1b8cf0258f93eb0dab27bc4a589dd53b2f8d90a5d6f6733c9
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-qos-v4.10.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
