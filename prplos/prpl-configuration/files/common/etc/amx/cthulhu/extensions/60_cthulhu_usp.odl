@@ -1,4 +1,7 @@
 %config {
+    // Set USP backend with higher priority
+    %global backend-order = [ "usp", "ubus" ];
+
     %global usp.registrations = [];
 
     %global backend-dir = [ "/usr/bin/mods/usp", "/usr/bin/mods/amxb" ];
