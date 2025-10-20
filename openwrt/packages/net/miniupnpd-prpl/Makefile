@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=miniupnpd-prpl
-PKG_RELEASE:=3
+PKG_RELEASE:=4
 
 PKG_VERSION:=2.3.3
-PKG_SOURCE:=miniupnpd-prpl-stable-2.3.y_v0.3.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/miniupnpd/-/archive/prpl/stable-2.3.y_v0.3.0
-PKG_HASH:=f3159c20be0fe6109d42c7ddd98169e54f32475e39ab163188c26da8537be5d3
-PKG_BUILD_DIR:=$(BUILD_DIR)/miniupnpd-prpl-stable-2.3.y_v0.3.0
+PKG_SOURCE:=miniupnpd-prpl-stable-2.3.y_v0.3.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/miniupnpd/-/archive/prpl/stable-2.3.y_v0.3.1
+PKG_HASH:=6dd1064ce1ebb62ac43858c7af062138aa114d85355f3171cf064f9a12bc27a7
+PKG_BUILD_DIR:=$(BUILD_DIR)/miniupnpd-prpl-stable-2.3.y_v0.3.1
 
 PKG_MAINTAINER:=
 PKG_LICENSE:=BSD-3-Clause
