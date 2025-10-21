@@ -1,0 +1,32 @@
+config PACKAGE_tr181-cpu
+    tristate
+    select SAH_AMX_TR181_CPU
+
+if PACKAGE_tr181-cpu
+
+menu "Select tr181-cpu build options"
+    depends on PACKAGE_tr181-cpu
+
+config SAH_AMX_TR181_CPU
+    bool "Build a tr181 cpu"
+    default y
+
+config SAH_AMX_TR181_CPU_START_ORDER
+    int "TR181 cpu plugin start up order"
+    default 99
+
+config SAH_AMX_TR181_CPU_STOP_ORDER
+    int "TR181 cpu plugin shutdown order"
+    default 1
+
+config SAH_AMX_TR181_CPU_RUN_AS_USER
+    string "User will be used for the tr181-cpu plugin"
+    default "tr181_app"
+
+config SAH_AMX_TR181_CPU_RUN_AS_GROUP
+    string "Group will be used for the tr181-cpu plugin"
+    default "tr181_app"
+
+endmenu
+
+endif
