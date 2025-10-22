@@ -1,0 +1,73 @@
+config PACKAGE_libmfg
+    tristate
+    select SAH_LIB_MFG
+
+if PACKAGE_libmfg
+
+menu "Select libmfg build options"
+    depends on PACKAGE_libmfg
+
+config SAH_LIB_MFG
+    bool "build SAH_LIB_MFG component"
+    default y
+
+config SAH_LIB_MFG_RO_PART_FILE
+    string "MFG data read-only partition file or ubi volume name"
+    default "/etc/rip_ro"
+	help
+	  MFG data read-only file.
+	  May be a ubi device and volume name separated by ':' (e.g. ubi1:factoryparams),
+	  or a path to any other file (e.g. /etc/rip_ro, /dev/ubi0_65)
+
+config SAH_LIB_MFG_RW_PART_FILE
+    string "Optional MFG data read-write, standard linux file"
+    default ""
+	help
+	  Even if global signature is enabled it is ignored for the RW MFG.
+
+config SAH_LIB_MFG_ROOT_NODE_NAME
+    string "MFG data root node name"
+    default "MFG_DATA"
+
+config SAH_LIB_MFG_SECURE_MFG_SUPPORT
+    bool "Support MFG data field encryption and/or signature that requires decryption by mfg_decrypt"
+    default n
+
+config SAH_LIB_MFG_PUBLIC_PEM_FILE
+    string "Public key PEM file use to verify the signature of the SMFG data"
+    default ""
+    depends on SAH_LIB_MFG_SECURE_MFG_SUPPORT
+
+config SAH_LIB_MFG_GLOBAL_SIGNATURE
+    bool "Support (and require) a U-boot style signature on the MFG DTB"
+    default n
+
+config SAH_LIB_MFG_GLOBAL_SIGNATURE_PUBLIC_PEM_FILE
+    string "Path to the public key PEM file (within config dir) used to verify the MFG DTB signature"
+    default "/security/mfg.pem"
+    depends on SAH_LIB_MFG_GLOBAL_SIGNATURE
+
+config SAH_LIB_MFG_GLOBAL_SIGNATURE_PADDING_MODE
+    string "Padding mode for global MFG signature"
+    default "pss"
+    depends on SAH_LIB_MFG_GLOBAL_SIGNATURE
+
+config SAH_LIB_MFG_SECURE_MFG_KERNEL_KEYRING_SUPPORT
+    bool "Support field encryption with the keys provided by the kernel keyring."
+    default n
+	help
+	  MFG contains secured fields. To decrypt those fields, keys from the kernel keyring are used.
+
+config SAH_LIB_MFG_SECURE_MFG_KERNEL_KEYRING_KEY_NAME
+    string "The name of the keyring key that should be used"
+    default "prplmfg:0"
+    depends on SAH_LIB_MFG_SECURE_MFG_KERNEL_KEYRING_SUPPORT
+
+config SAH_LIB_MFG_SECURE_MFG_KERNEL_KEYRING_IV_FILE
+    string "The location of the iv key hex file"
+    default "/security/Kmfg-aes-iv.hex"
+    depends on SAH_LIB_MFG_SECURE_MFG_KERNEL_KEYRING_SUPPORT
+
+endmenu
+
+endif
