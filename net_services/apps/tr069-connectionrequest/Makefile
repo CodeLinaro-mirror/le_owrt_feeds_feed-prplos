@@ -1,14 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-connectionrequest
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=v0.3.0
 PKG_RELEASE:=1
 PKG_LICENSE:=BSD-2-Clause-Patent
 
-PKG_SOURCE:=tr069-connectionrequest-v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-connectionrequest/-/archive/v0.1.0
-PKG_HASH:=508823c6d60a921ad9ba6ba28632abf0f50ef26d2b8ef2f109968bb0a3868d7a
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-connectionrequest-v0.1.0
+PKG_SOURCE:=tr069-connectionrequest-v0.3.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-connectionrequest/-/archive/v0.3.0
+PKG_HASH:=f497cf9a760ee130cf6e916794b5fb0dcb299f072e26d85399ed250c9e2e40f9
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-connectionrequest-v0.3.0
 
 COMPONENT:=tr069-connectionrequest
 BIN_NAME:=tr069-connectionrequest
