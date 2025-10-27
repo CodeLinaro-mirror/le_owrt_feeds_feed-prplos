@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-sfp
-PKG_VERSION:=v0.2.1
+PKG_VERSION:=v0.4.0
 SHORT_DESCRIPTION:=TR-181 compatible plugin for SFP
 
-PKG_SOURCE:=tr181-sfp-v0.2.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-sfp/-/archive/v0.2.1
-PKG_HASH:=839ad4f3763bd73f3c50ffa70be08955e2dcdc86988ebcd6614400e9d9f8a710
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-sfp-v0.2.1
+PKG_SOURCE:=tr181-sfp-v0.4.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-sfp/-/archive/v0.4.0
+PKG_HASH:=3613a5885e1b0177df835fab0d1bcb4b6a64adee245986c608a0be2a0dd73768
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-sfp-v0.4.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
