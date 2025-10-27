@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dhcpv6s-manager
-PKG_VERSION:=v0.22.0
+PKG_VERSION:=v0.24.0
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-dhcpv6s-v0.22.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6s/-/archive/v0.22.0
-PKG_HASH:=e90618f274be1a4681ce3db17716ec6b36a727758e474821b4c60ae5676b74a7
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6s-v0.22.0
+PKG_SOURCE:=tr181-dhcpv6s-v0.24.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6s/-/archive/v0.24.0
+PKG_HASH:=e9ac82e0b70c6bc15cc3f5e004dac4324c2335ad95a9e30333d4c569cad18f46
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6s-v0.24.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -28,7 +28,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=Ambiorix
+  SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6s
   DEPENDS += +amxrt
