@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-temperature
-PKG_VERSION:=v0.6.2
+PKG_VERSION:=v0.4.15
 SHORT_DESCRIPTION:=TR-181 compatible plugin for device temperature management
 
-PKG_SOURCE:=tr181-temperature-v0.6.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-temperature/-/archive/v0.6.2
-PKG_HASH:=1b82f279b0b801477242332a4d22bdadd5efc10234804d660579e37618cba1b2
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-temperature-v0.6.2
+PKG_SOURCE:=tr181-temperature-v0.4.15.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-temperature/-/archive/v0.4.15
+PKG_HASH:=7df258dbfd43f164986653b71dbf88a81ceefd8981e1339dfbbceffd784859a5
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-temperature-v0.4.15
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
