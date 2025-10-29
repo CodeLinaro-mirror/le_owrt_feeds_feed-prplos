@@ -21,8 +21,11 @@ register_service()
 
 	boardserial=$(source /etc/environment 2>/dev/null ; echo $SERIALNUMBER)
 	boardoui=$(source /etc/environment 2>/dev/null ; echo $MANUFACTUREROUI)
+	truststore=$(source /etc/environment 2>/dev/null ; echo $OBUSPA_TRUST_STORE)
+	config_file=$(source /etc/environment 2>/dev/null ; echo $OBUSPA_CONFIGURATION_FILE)
 	procd_set_param env USP_BOARD_SERIAL="${boardserial}" \
-						USP_BOARD_OUI="${boardoui}"
+						USP_BOARD_OUI="${boardoui}" \
+						CONFIGURATION_FILE="${config_file}"
 
 	# -p Enables trace logging of the USP protocol messages. Enable setting -p option to utilize prototracing
 	# procd_append_param command -p
@@ -31,9 +34,9 @@ register_service()
 	# procd_append_param command -l /var/log/obuspa
 
 	# -v Sets the debug verbosity log level: 0=Off, 1=Error(default), 2=Warning, 3=Info
-	# procd_append_param command -v 2
-	if [ -f "${CERT}" ]; then
-		procd_append_param command -t ${CERT}
+	procd_append_param command -v 2
+	if [ -n "${truststore}" ]; then
+		procd_append_param command -t ${truststore}
 	fi
 	procd_append_param command -r ${RESET_FILE} -f ${SQL_DB_FILE}
 	procd_set_param respawn \
