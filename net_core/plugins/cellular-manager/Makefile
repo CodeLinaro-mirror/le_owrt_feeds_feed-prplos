@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cellular-manager
-PKG_VERSION:=v1.3.1
+PKG_VERSION:=v1.3.2
 SHORT_DESCRIPTION:=Cellular plugin
 
-PKG_SOURCE:=cellular-manager-v1.3.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/cellular-manager/-/archive/v1.3.1
-PKG_HASH:=e0ab91db2756d0cf1060e16743aac8b3dc90a8509821aa48a8121cccc09c2a07
-PKG_BUILD_DIR:=$(BUILD_DIR)/cellular-manager-v1.3.1
+PKG_SOURCE:=cellular-manager-v1.3.2.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/cellular-manager/-/archive/v1.3.2
+PKG_HASH:=8a8fc9f37d9b11bd16c888c6919c628c438d94b3d682abda66fc99304e2d595f
+PKG_BUILD_DIR:=$(BUILD_DIR)/cellular-manager-v1.3.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
