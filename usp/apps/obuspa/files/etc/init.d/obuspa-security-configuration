@@ -1,0 +1,86 @@
+#!/bin/sh /etc/rc.common
+
+START=91
+STOP=03
+USE_PROCD=1
+
+NAME=obuspa-security-configuration
+MAX_RETRIES=10
+SLEEP_INTERVAL=2
+
+
+get_certificate_number() {
+	ret=$(ba-cli "Device.Security.CertificateNumberOfEntries?")
+	error=$(echo "$ret" | grep "ERROR")
+	if [ -n "$error" ]; then
+		echo -1
+	else
+		echo "$ret" | grep -oE '[0-9]+'
+	fi
+}
+
+get_uris() {
+	ba-cli -jl "${1}GetCertificateURI()" | grep '"CertificateURI"'
+}
+
+WHERE_TO_LOG="logger"
+#WHERE_TO_LOG="tmp"
+log_security_config() {
+	if [ "$WHERE_TO_LOG" == "logger" ]; then
+		logger -t ${NAME} "$1"
+	else
+		echo "$1" >> /tmp/obuspa-security-configuration.log
+	fi
+}
+
+obuspa_security_configuration() {
+
+	device_cert=$(source /etc/environment 2>/dev/null ; echo $OBUSPA_DEVICE_CERT)
+	config_file=$(source /etc/environment 2>/dev/null ; echo $OBUSPA_CONFIGURATION_FILE)
+
+	log_security_config "OBUSPA_DEVICE_CERT: ${device_cert}"
+	log_security_config "OBUSPA_CONFIGURATION_FILE: ${config_file}"
+
+	count=0
+	while true; do
+		n=$(get_certificate_number)
+		if [ "$n" -gt 0 ]; then
+			log_security_config "Device.Security.Certificate is now available in data model. (count=$count/$MAX_RETRIES)"
+			URIS=$(get_uris "${device_cert}")
+			log_security_config "URIS=$URIS"
+			cert_uri=$(echo "$URIS" | sed 's/.\+"CertificateURI":"\([^"]*\)".\+/\1/g')
+			key_uri=$(echo "$URIS" | sed 's/.\+"PrivateKeyURI":"\([^"]*\)".\+/\1/g')
+			log_security_config "CertificateURI: $cert_uri"
+			log_security_config "PrivateKeyURI: $key_uri"
+			if [ -z "$cert_uri" ] || [ -z "$key_uri" ]; then
+				log_security_config "Failed to parse CertificateURI ($cert_uri) or PrivateKeyURI ($key_uri)."
+			else
+				break
+			fi
+		elif [ "$n" -lt 0 ]; then
+			log_security_config "Waiting for Device.Security.Certificate to be available in data model... $count/$MAX_RETRIES"
+		elif [ "$n" -eq 0 ]; then
+			log_security_config "No certificates found in Device.Security.Certificate. Exiting."
+			break
+		fi
+		count=$((count+1))
+		if [ "$count" -ge $MAX_RETRIES ]; then
+			log_security_config "Giving up waiting for Device.Security.Certificate after $MAX_RETRIES attempts."
+			break
+		fi
+		log_security_config "Sleeping for $SLEEP_INTERVAL seconds before retry..."
+		sleep $SLEEP_INTERVAL
+	done
+
+	# Write the values to the configuration file
+	echo "CertificateURI=$cert_uri" > "$config_file"
+	echo "PrivateKeyURI=$key_uri" >> "$config_file"
+
+	log_security_config "Wrote obuspa security configuration to $config_file"
+}
+
+
+start_service() {
+	log_security_config "obuspa-security-configuration init script: start_service"
+	obuspa_security_configuration &
+}
