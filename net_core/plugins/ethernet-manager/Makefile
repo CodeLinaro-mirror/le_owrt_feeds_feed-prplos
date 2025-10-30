@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ethernet-manager
-PKG_VERSION:=v1.29.3
+PKG_VERSION:=v1.29.4
 SHORT_DESCRIPTION:=Ethernet plugin
 
-PKG_SOURCE:=tr181-ethernet-v1.29.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ethernet/-/archive/v1.29.3
-PKG_HASH:=e21cbd27ad12af7fd161527d6ac201e74bfcbcb1fefd0251d8d424dfc1929188
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ethernet-v1.29.3
+PKG_SOURCE:=tr181-ethernet-v1.29.4.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ethernet/-/archive/v1.29.4
+PKG_HASH:=023b5606c5c12b349abb4ac246ee7e406bfbcd6ebc74552d195d463c0ad95ac7
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ethernet-v1.29.4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
