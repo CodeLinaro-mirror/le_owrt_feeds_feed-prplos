@@ -6,8 +6,8 @@ SHORT_DESCRIPTION:=Kernel module to expose IO registers to sysfs
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=master_v1.0.0
-PKG_SOURCE_URL:=git@gitlab.com:prpl-foundation/components/utilities/sysregister.git
-PKG_MIRROR_HASH:=skip
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/sysregister.git
+PKG_MIRROR_HASH:=2138d4d1b1f97bf20d5f236a895f6a6367ff12c5bbff0370e4ef3d84e5cc7ca7
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=GPL-2.0-or-later
