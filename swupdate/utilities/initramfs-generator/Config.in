@@ -1,0 +1,55 @@
+config PACKAGE_initramfs-generator
+    tristate
+    select INITRAMFS_GENERATOR
+
+if PACKAGE_initramfs-generator
+
+menu "Select initramfs-generator build options"
+    depends on PACKAGE_initramfs-generator
+
+config INITRAMFS_GENERATOR
+    bool "Build initramfs-generator"
+    default y
+	help
+	  Provide tools to build a pivoting initramfs.
+    depends on KERNEL_DEVTMPFS && BUSYBOX_CONFIG_MODPROBE && BUSYBOX_CONFIG_MODPROBE_SMALL && BUSYBOX_CONFIG_FEATURE_MODPROBE_SMALL_CHECK_ALREADY_LOADED && PACKAGE_kmod-dm && PACKAGE_blkid && PACKAGE_blockdev && PACKAGE_lvm2
+
+config INITRAMFS_GENERATOR_DEBUG
+    bool "debug mode"
+    default n
+	help
+	  Debugging mode. Will enable more traces, and a fail during startup will drop
+	  the user in a rescue shell instead of rebooting.
+
+choice
+    prompt "Choose the flash type: eMMC or NAND"
+    default INITRAMFS_GENERATOR_FLASH_TYPE_EMMC
+
+config INITRAMFS_GENERATOR_FLASH_TYPE_EMMC
+    bool "Select eMMC as flash type"
+
+config INITRAMFS_GENERATOR_FLASH_TYPE_NAND
+    bool "Select NAND as flash type"
+
+endchoice
+
+config INITRAMFS_GENERATOR_ROOTFS_SIG_PRELOAD
+    bool "support rootfs pre-load signature"
+    default y
+	help
+	  Support rootfs signature with U-boot pre-load method (see
+	  https://github.com/u-boot/u-boot/blob/master/tools/binman/etype/pre_load.py).
+    depends on BUSYBOX_CONFIG_HEXDUMP && BUSYBOX_CONFIG_SHA256SUM && BUSYBOX_CONFIG_DD && PACKAGE_openssl-util
+
+config INITRAMFS_GENERATOR_ROOTFS_SIG_PRELOAD_MANDATORY
+    bool "make pre-load signature mandatory on rootfs FIT"
+    default n
+	help
+	  With this option, rootfs SHOULD be signed with U-boot pre-load signature. If
+	  the corresponding magic is not found, instead of skipping signature verification,
+	  the boot will fail this image.
+    depends on INITRAMFS_GENERATOR_ROOTFS_SIG_PRELOAD
+
+endmenu
+
+endif
