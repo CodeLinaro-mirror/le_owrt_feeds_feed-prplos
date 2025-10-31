@@ -5,7 +5,7 @@ PKG_VERSION:=1.0
 SHORT_DESCRIPTION:=Provide tools to build various format of images
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=dev_FEAT_29
+PKG_SOURCE_VERSION:=dev_FEAT-29/PCF-1893
 PKG_SOURCE_URL:=git@gitlab.com:prpl-foundation/components/utilities/imagegenerator.git
 PKG_MIRROR_HASH:=skip
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
