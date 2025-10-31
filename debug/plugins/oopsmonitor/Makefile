@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=oopsmonitor
-PKG_VERSION:=v1.2.2
+PKG_VERSION:=v1.0.13
 SHORT_DESCRIPTION:=Plugin to track kernel oopses
 
-PKG_SOURCE:=oopsmonitor-v1.2.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/oopsmonitor/-/archive/v1.2.2
-PKG_HASH:=f7450449a5871d03b95e4901ec40bc64d0853a3ab52e0e82d840f6eb5fc783de
-PKG_BUILD_DIR:=$(BUILD_DIR)/oopsmonitor-v1.2.2
+PKG_SOURCE:=oopsmonitor-v1.0.13.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/oopsmonitor/-/archive/v1.0.13
+PKG_HASH:=fe5d4e49845ca8b5e1a1f2ab44d86ba60b6d4383a0c820301531754a1d19b421
+PKG_BUILD_DIR:=$(BUILD_DIR)/oopsmonitor-v1.0.13
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -28,7 +28,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=Plugins
+  SUBMENU:=Ambiorix
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/plugins/oopsmonitor
   DEPENDS += +libamxb
