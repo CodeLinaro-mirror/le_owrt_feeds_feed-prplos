@@ -2,11 +2,11 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=initramfs-generator
 
-PKG_VERSION:=dev_SBL-1496
+PKG_VERSION:=dev_FEAT-29_PCF-1893
 SHORT_DESCRIPTION:=Provide tools to build a pivoting initramfs
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=dev_SBL-1496
+PKG_SOURCE_VERSION:=dev_FEAT-29/PCF-1893
 PKG_SOURCE_URL:=git@gitlab.com:prpl-foundation/components/utilities/initramfs-generator.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
