@@ -1,0 +1,32 @@
+config PACKAGE_tr181-schedules
+    tristate
+    select SAH_AMX_TR181_SCHEDULES
+
+if PACKAGE_tr181-schedules
+
+menu "Select tr181-schedules build options"
+    depends on PACKAGE_tr181-schedules
+
+config SAH_AMX_TR181_SCHEDULES
+    bool "Build TR-181 Schedules plugin"
+    default y
+
+config SAH_AMX_TR181_SCHEDULES_START_ORDER
+    int "tr181 schedules plugin start up order"
+    default 20
+
+config SAH_AMX_TR181_SCHEDULES_STOP_ORDER
+    int "tr181 schedules plugin shutdown order"
+    default 80
+
+config SAH_AMX_TR181_SCHEDULES_RUN_AS_USER
+    string "User will be used for the TR-181 schedules plugin"
+    default "tr181_app"
+
+config SAH_AMX_TR181_SCHEDULES_RUN_AS_GROUP
+    string "Group will be used for the TR-181 schedules plugin"
+    default "tr181_app"
+
+endmenu
+
+endif
