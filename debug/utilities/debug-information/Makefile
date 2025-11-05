@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=debug-information
-PKG_VERSION:=v0.7.0
+PKG_VERSION:=v0.7.1
 SHORT_DESCRIPTION:=Scripts to provide debug Information for a running system
 
-PKG_SOURCE:=debug-information-v0.7.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/debug-information/-/archive/v0.7.0
-PKG_HASH:=26cf5c22d6b2ad7ffae01b48aa32d079657bb07cc13b30244775ccf0dc519c2f
-PKG_BUILD_DIR:=$(BUILD_DIR)/debug-information-v0.7.0
+PKG_SOURCE:=debug-information-v0.7.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/debug-information/-/archive/v0.7.1
+PKG_HASH:=b2ed78a1fe56c1f22b1d03d3eee34c65f3caae4d293c44287c22f36e0dc64b93
+PKG_BUILD_DIR:=$(BUILD_DIR)/debug-information-v0.7.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
