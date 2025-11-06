@@ -8,16 +8,17 @@ PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=dev_FEAT_29
 PKG_SOURCE_URL:=git@gitlab.com:prpl-foundation/components/utilities/imagegenerator.git
 PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=SAH BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE.SAH LICENSE.BSD
 
 PKG_RELEASE:=1
-PKG_BUILD_DEPENDS += uboot-hosttools/host
-PKG_BUILD_DEPENDS += swugenerator/host
+HOST_BUILD_DEPENDS += uboot-hosttools/host
+HOST_BUILD_DEPENDS += swugenerator/host
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/host-build.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=SoftAtHome
@@ -34,18 +35,14 @@ define Package/$(PKG_NAME)/config
 	source "$(SOURCE)/Config.in"
 endef
 
-define Build/Compile
+define Host/Compile
 	@echo "Selected board: $(CONFIG_IMAGEGENERATOR_BOARD)"
 endef
 
-define Build/Install
-	$(MAKE) -C $(PKG_BUILD_DIR) BOARD=$(CONFIG_IMAGEGENERATOR_BOARD) \
-	    STAGINGDIR=$(STAGING_DIR) install DESTDIR=$(1)
-endef
-
-define Build/InstallDev
-	mkdir -p $(BIN_DIR)/tmp
-	cp -r $(STAGING_DIR)/imagegenerator $(BIN_DIR)/tmp/
+define Host/Install
+	$(MAKE) -C $(HOST_BUILD_DIR) BOARD=$(CONFIG_IMAGEGENERATOR_BOARD) \
+	    STAGINGDIR=$(STAGING_DIR_HOST) install DESTDIR=$(1)
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
+$(eval $(call HostBuild))
