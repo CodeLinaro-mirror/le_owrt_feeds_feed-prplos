@@ -9,7 +9,6 @@ PKG_SOURCE_VERSION:=v2025.04
 PKG_SOURCE_URL:=https://github.com/u-boot/u-boot
 PKG_MIRROR_HASH:=979c88d50c323877a270fcac46e4fa615bb7887798a4dd0af883420df9533428
 PKG_BUILD_DEPENDS:=libopenssl
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=GPL-2.0-or-later
 PKG_LICENSE_FILES:=LICENSE
@@ -56,7 +55,7 @@ endef
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
 
 define Host/Compile
-	$(MAKE) STAGINGDIR=$(STAGING_DIR) \
+	$(MAKE) STAGINGDIR=$(STAGING_DIR_HOST) \
 	-C $(HOST_BUILD_DIR) \
 	tools-only_defconfig \
 	tools-only
