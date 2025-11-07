@@ -1,0 +1,64 @@
+From 02082a1e33b2d08a25ad44e13aa54e54006ab856 Mon Sep 17 00:00:00 2001
+From: Sergio Panseri <sergio.panseri@consult.red>
+Date: Wed, 3 Dec 2025 14:36:17 +0000
+Subject: [PATCH] OBUSPA-409: use the vendor hook for BulkData as well as for
+ MTPs
+
+---
+ src/core/bdc_exec.c | 26 ++++++++++++++++++++++----
+ 1 file changed, 22 insertions(+), 4 deletions(-)
+
+diff --git a/src/core/bdc_exec.c b/src/core/bdc_exec.c
+index 2a41160..37fdf5a 100644
+--- a/src/core/bdc_exec.c
++++ b/src/core/bdc_exec.c
+@@ -54,6 +54,7 @@
+ #include "os_utils.h"
+ #include "device.h"
+ #include "rfc1123.h"
++#include "data_model.h"
+ 
+ //------------------------------------------------------------------------------
+ // Structure containing the connection details for the specified profile
+@@ -947,7 +948,8 @@ CURLcode LoadBulkDataTrustStore(CURL *curl, void *curl_sslctx, void *parm)
+ {
+     SSL_CTX *curl_ssl_ctx;
+     X509_STORE *curl_trust_store;
+-    int err;
++    int err_trust_store, err_vendor_hook;
++    update_ssl_ctx_cb_t update_ssl_ctx_cb;
+ 
+     // Exit if unable to obtain curl's trust store
+     curl_ssl_ctx = (SSL_CTX *) curl_sslctx;
+@@ -958,9 +960,25 @@ CURLcode LoadBulkDataTrustStore(CURL *curl, void *curl_sslctx, void *parm)
+         return CURLE_ABORTED_BY_CALLBACK;
+     }
+ 
+-    // Exit if unable to load the trust store and client cert into curl's SSL context
+-    err = DEVICE_SECURITY_LoadTrustStore(curl_ssl_ctx, SSL_VERIFY_PEER, DEVICE_SECURITY_NoSaveTrustCertVerifyCallback);
+-    if (err != USP_ERR_OK)
++    err_trust_store = DEVICE_SECURITY_LoadTrustStore(curl_ssl_ctx, SSL_VERIFY_PEER, DEVICE_SECURITY_NoSaveTrustCertVerifyCallback);
++
++    update_ssl_ctx_cb = vendor_hook_callbacks.update_ssl_ctx_cb;
++    if (update_ssl_ctx_cb != NULL)
++    {
++        USP_LOG_Info("%s: Calling vendor hook to update SSL settings", __FUNCTION__);
++        err_vendor_hook = update_ssl_ctx_cb(curl_sslctx);
++        if (err_vendor_hook != USP_ERR_OK)
++        {
++            USP_LOG_Error("%s: Vendor hook update_ssl_ctx_cb() failed", __FUNCTION__);
++        }
++    }
++    else
++    {
++        err_vendor_hook = USP_ERR_INTERNAL_ERROR;
++    }
++
++    // Exit if unable to load the trust store and client cert into curl's SSL context either by the default method or the vendor hook
++    if ((err_trust_store != USP_ERR_OK) && (err_vendor_hook != USP_ERR_OK))
+     {
+         return CURLE_ABORTED_BY_CALLBACK;
+     }
+-- 
+2.43.0
+

@@ -1,0 +1,13 @@
+%populate {
+    object Security.CABundle {
+        instance add (0) {
+            parameter Enable = true;
+            parameter Name = "TheBundle";
+            parameter CACertificates = "Device.Security.Certificate.1.";
+            parameter CADirURI = "file:///usr/share/ca-certificates/";
+            parameter CAFileURI = "file:///usr/share/ca-certificates/ca.crt";
+
+        }
+    }
+}
+
