@@ -24,14 +24,6 @@ config SAH_AMX_TR181_DHCPV6CLIENT_SENTOPTION_17
     string "Vendor-Identifying Vendor-Specific Information Option to sent in DHCP requests"
     default ""
 
-config PRPL_CPE_OPMODE_EXTENDER
-    bool ""
-    default n
-
-config PRPL_CPE_OPMODE_GATEWAY
-    bool ""
-    default y
-
 endmenu
 
 endif
