@@ -6,10 +6,10 @@ PKG_NAME:=mod-amxb-usp
 PKG_VERSION:=v5.6.0
 SHORT_DESCRIPTION:=USP backend implementation for amxb
 
-PKG_SOURCE:=amxb_usp-v5.6.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp/-/archive/v5.6.0
-PKG_HASH:=9c448641df884deb98f2e2f02deea6db6eae61b758548519548bcaa670bef66d
-PKG_BUILD_DIR:=$(BUILD_DIR)/amxb_usp-v5.6.0
+PKG_SOURCE:=amxb_usp-PPW-1140_fix_USP_registration.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp/-/archive/PPW-1140_fix_USP_registration
+PKG_HASH:=77a3036d47fb84a17f413df4918bc069f1830751e07bf18469ae3a7472fdc9fb
+PKG_BUILD_DIR:=$(BUILD_DIR)/amxb_usp-PPW-1140_fix_USP_registration
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
