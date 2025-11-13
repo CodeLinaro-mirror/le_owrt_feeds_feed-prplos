@@ -1,0 +1,67 @@
+From 702d0c86580e5d9414e1cbe65856f3f655f8de0d Mon Sep 17 00:00:00 2001
+From: Danyil Zubok <d.zubok@inango-systems.com>
+Date: Fri, 15 Aug 2025 14:42:21 +0300
+Subject: [PATCH] miniupnpd: Fix random url prefix generation
+
+* properly use RANDOM_URL_MAX_LEN to generate random url prefix,
+  before it was hardcoded to generate 8 bytes length of [0-9a-f] chars
+* use UUID value as random url prefix
+
+References: PCF-1995
+Signed-off-by: Danyil Zubok <d.zubok@inango-systems.com>
+---
+ miniupnpd/miniupnpd.c       | 4 +++-
+ miniupnpd/testupnpdescgen.c | 2 +-
+ miniupnpd/upnpglobalvars.c  | 4 ++--
+ 3 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index fe0aa03..6cb84ea 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -2000,7 +2000,9 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 	/* initialize random number generator */
+ 	srandom((unsigned int)time(NULL));
+ #ifdef RANDOMIZE_URLS
+-	snprintf(random_url, RANDOM_URL_MAX_LEN, "%08lx", random());
++	const char *uuid = &uuidvalue_igd[5]; /* skip "uuid:" prefix */
++	strncpy(random_url, uuid, RANDOM_URL_MAX_LEN);
++	random_url[RANDOM_URL_MAX_LEN] = '\0';
+ #endif /* RANDOMIZE_URLS */
+ 
+ 	/* initialize redirection engine (and pinholes) */
+diff --git miniupnpd/testupnpdescgen.c miniupnpd/testupnpdescgen.c
+index 2fc019d..6dcf689 100644
+--- miniupnpd/testupnpdescgen.c
++++ miniupnpd/testupnpdescgen.c
+@@ -37,7 +37,7 @@ char model_description[] = ROOTDEV_MODELDESCRIPTION;
+ char model_url[] = ROOTDEV_MODELURL;
+ #endif /* ENABLE_MANUFACTURER_INFO_CONFIGURATION */
+ #ifdef RANDOMIZE_URLS
+-char random_url[RANDOM_URL_MAX_LEN] = "RANDOM";
++char random_url[RANDOM_URL_MAX_LEN + 1] = "RANDOM";
+ #endif /* RANDOMIZE_URLS */
+ unsigned int upnp_configid = 666;
+ 
+diff --git miniupnpd/upnpglobalvars.c miniupnpd/upnpglobalvars.c
+index 6d2e73c..9910b17 100644
+--- miniupnpd/upnpglobalvars.c
++++ miniupnpd/upnpglobalvars.c
+@@ -168,11 +168,11 @@ unsigned int upnp_bootid = 1;      /* BOOTID.UPNP.ORG */
+ unsigned int upnp_configid = 1337; /* CONFIGID.UPNP.ORG */
+ 
+ #ifdef RANDOMIZE_URLS
+-char random_url[RANDOM_URL_MAX_LEN] = "random";
++char random_url[RANDOM_URL_MAX_LEN + 1] = "random";
+ #endif /* RANDOMIZE_URLS */
+ 
+ #ifdef DYNAMIC_OS_VERSION
+ char * os_version = NULL;
+ #endif /* DYNAMIC_OS_VERSION */
+ 
+-unsigned int allow_reserved_addr = 0;
+\ No newline at end of file
++unsigned int allow_reserved_addr = 0;
+-- 
+2.34.1
+

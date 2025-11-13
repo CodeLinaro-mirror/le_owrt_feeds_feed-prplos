@@ -1,0 +1,114 @@
+From de7c86c665548d27d4d5c20303113d5998a92765 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Th=C3=A9o-Paul=20Bodin?= <theo-paul.bodin@softathome.com>
+Date: Thu, 5 Dec 2024 19:42:50 +0100
+Subject: [PATCH] miniupnpd: [DSLITE] upnp GetExternalIPAddress action fails
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Problem: GetExternalIPAddress returns wrong address in DSLite config
+
+Cause: miniupnpd uses getifaddr to get external ip address
+
+Solution: Use the PCP datamodel to get the PCP server external IP address
+
+Issue: [DSLITE] upnp GetExternalIPAddress action fails
+
+References: PCF-1833, FEAT-13
+
+Signed-off-by: Théo-Paul Bodin <theo-paul.bodin@softathome.com>
+---
+ miniupnpd/amx/amxmisc.c | 33 +++++++++++++++++++++++++++++++++
+ miniupnpd/amx/amxmisc.h |  2 ++
+ miniupnpd/miniupnpd.c   |  3 +++
+ miniupnpd/upnpsoap.c    |  6 ++++++
+ 4 files changed, 44 insertions(+)
+
+diff --git miniupnpd/amx/amxmisc.c miniupnpd/amx/amxmisc.c
+index ef9e27d..7c7710a 100644
+--- miniupnpd/amx/amxmisc.c
++++ miniupnpd/amx/amxmisc.c
+@@ -576,3 +576,36 @@ int amx_is_wan_ppp(void) {
+     }
+     return netmodel_hasFlag(ip_interface, "ppp", "", "down");
+ }
++
++int ext_is_dslite(void) {
++    int rv = 0;
++    amxc_var_t ret;
++
++    amxc_var_init(&ret);
++    rv = amxb_get(bus_ctx, "DSLite.InterfaceSetting.[Status=='Enabled'].", 0, &ret, 1);
++    if(rv != 0) {
++        syslog(LOG_ERR, "Couldn't search for a valid DSLite interface assuming it's not (%d)", rv);
++        rv = 0;
++        goto exit;
++    }
++    if(GETP_ARG(&ret, "0.0.") != NULL) {
++        rv = 1;
++    }
++exit:
++    syslog(LOG_DEBUG, "ext_is_dslite: %d", rv);
++    return rv;
++}
++
++void get_dslite_external_ip(char* ext_ip_addr) {
++    int rv = 0;
++    amxc_var_t ret;
++
++    amxc_var_init(&ret);
++    rv = amxb_get(bus_ctx, "PCP.Client.[Status=='Enabled'].Server.[Status=='Enabled']", 0, &ret, 1);
++    if((rv == 0) && (GETP_ARG(&ret, "0.0.") != NULL)) {
++        strncpy(ext_ip_addr, GETP_CHAR(&ret, "0.0.ExternalIPAddress"), INET_ADDRSTRLEN);
++    } else {
++        strcpy(ext_ip_addr, "");
++    }
++    amxc_var_clean(&ret);
++}
+diff --git miniupnpd/amx/amxmisc.h miniupnpd/amx/amxmisc.h
+index 3b974e3..48bdd61 100644
+--- miniupnpd/amx/amxmisc.h
++++ miniupnpd/amx/amxmisc.h
+@@ -120,5 +120,7 @@ int amx_del_portmapping_sub(amxb_bus_ctx_t* bus_ctx);
+  */
+ int amx_get_dummy(void);
+ 
++int ext_is_dslite(void);
++void get_dslite_external_ip(char*);
+ #endif
+ 
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index 09b06ae..7924ebf 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -2672,6 +2672,9 @@ main(int argc, char * * argv)
+ 			clean_snatpmp(&snatpmp, addr_count);
+ 			clear_lan_addrs();
+ 			parselanaddr_wrapper();
++			#ifdef USE_AMX
++				ext_is_ppp = amx_is_wan_ppp();
++			#endif
+ 			addr_count = 0;
+ 			for(lan_addr = lan_addrs.lh_first; lan_addr != NULL; lan_addr = lan_addr->list.le_next)
+ 				addr_count++;
+diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
+index 119d5b2..ca28fb4 100644
+--- miniupnpd/upnpsoap.c
++++ miniupnpd/upnpsoap.c
+@@ -368,7 +368,13 @@ GetExternalIPAddress(struct upnphttp * h, const char * action, const char * ns)
+ 	else
+ 	{
+ 		struct in_addr addr;
++#ifdef USE_AMX
++		if (ext_is_dslite()) {
++			get_dslite_external_ip(ext_ip_addr);
++		} else if (getifaddr(ext_if_name, ext_ip_addr, INET_ADDRSTRLEN, &addr, NULL) < 0)
++#else
+ 		if(getifaddr(ext_if_name, ext_ip_addr, INET_ADDRSTRLEN, &addr, NULL) < 0)
++#endif
+ 		{
+ 			syslog(LOG_ERR, "Failed to get ip address for interface %s",
+ 				ext_if_name);
+-- 
+2.34.1
+

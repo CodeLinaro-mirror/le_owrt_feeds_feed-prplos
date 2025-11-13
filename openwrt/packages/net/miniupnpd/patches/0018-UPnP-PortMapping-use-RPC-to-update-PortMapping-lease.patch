@@ -1,0 +1,203 @@
+From 087e14f1222213f3bf9dac7ad0503f23d13c70d3 Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Mon, 15 Jul 2024 15:10:55 +0200
+Subject: [PATCH] UPnP/PortMapping: use RPC to update PortMapping lease
+ (HOP-7095)
+
+Problem: amxb_set isn't updating LeaseTime for PortMapping
+
+Cause: amx doesn't trigger callback when no changes are detect in DM
+
+Solution: Use the newly implemented RPC to refresh PortMapping lease
+
+Issue: HOP-7095 - [UPNP-IGD][Miniupnpd] Update port mapping lease isn't working
+GitOrigin-RevId: d347c752ff7d6aa5047cbc53887c4ee01b8af44c
+---
+ miniupnpd/amx/amxmisc.c |  5 +++-
+ miniupnpd/amx/amxpmp.c  | 58 ++++++++++++++++++-----------------------
+ 2 files changed, 30 insertions(+), 33 deletions(-)
+
+diff --git miniupnpd/amx/amxmisc.c miniupnpd/amx/amxmisc.c
+index f57307b..3805d90 100644
+--- miniupnpd/amx/amxmisc.c
++++ miniupnpd/amx/amxmisc.c
+@@ -184,12 +184,15 @@ int amx_is_wan_up(void) {
+     amxc_string_t wan_ip_path;
+     amxd_path_t path;
+ 
++    if(!bus_ctx) {
++        init_amx();
++    }
+     amxc_var_init(&ret);
+     amxc_var_init(&wan_obj);
+     amxc_string_init(&wan_ip_path, 0);
+     amxd_path_init(&path, "Device.Logical.Interface.[Alias=='wan'].X_PRPL-COM_WAN.");
+     rv = amxb_resolve(bus_ctx, &path, &ret);
+-    when_failed_status(rv, exit, syslog(LOG_ERR, "Couldn't resolve Device.Logical.Interface.[Alias=='wan'].X_PRPL-COM_WAN. to a fix path (%d)", rv));
++    when_failed_status(rv, exit, syslog(LOG_ERR, "Couldn't resolve Device.Logical.Interface.[Alias=='wan'].X_PRPL-COM_WAN. to a fix path (%d) bus_ctx: %p", rv, bus_ctx));
+     when_false(amxc_var_type_of(&ret) != AMXC_VAR_ID_NULL, exit);
+     rv = amxb_get(bus_ctx, GETI_CHAR(&ret, 0), 0, &wan_obj, 1);
+     when_failed_status(rv, exit, syslog(LOG_ERR, "Couldn't get Logical interface %s data (%d))", GETI_CHAR(&ret, 0), rv));
+diff --git miniupnpd/amx/amxpmp.c miniupnpd/amx/amxpmp.c
+index 31de866..5c690a9 100644
+--- miniupnpd/amx/amxpmp.c
++++ miniupnpd/amx/amxpmp.c
+@@ -146,9 +146,10 @@ int add_pm_rule(amxb_bus_ctx_t* bus_ctx, const char* ifname, const char* rhost,
+             }
+         } while(strcmp(GETP_CHAR(&rule, "0.0.Status"), "Disabled") == 0 && ++nb_try < MAX_NB_TRY && usleep(100));
+     }
+-    syslog(LOG_WARNING, "redirecting port %hu to %s:%hu protocol %s for %s: %d", eport, iaddr, iport, proto_itoa(proto), desc, r);
++
+     amxc_var_clean(&rule);
+     amxc_var_clean(&ret);
++    syslog(LOG_WARNING, "redirecting port %hu to %s:%hu protocol %s for %s: %d (%d)", eport, iaddr, iport, proto_itoa(proto), desc, r, rv);
+     return r;
+ }
+ 
+@@ -168,15 +169,15 @@ int get_redirect_rule_pm(amxb_bus_ctx_t* bus_ctx,
+     amxc_string_t rule;
+ 
+     (void) ifname;
+-    (void) packets;
+-    (void) bytes;
++    (packets) ? *packets = 0 : (void) packets;
++    (bytes) ? *bytes = 0 : (void) bytes;
+     amxc_var_init(&ret);
+     amxc_string_init(&rule, 0);
+     amxc_string_appendf(&rule, "NAT.PortMapping.[Protocol == \"%s\" && ExternalPort == %hu && Origin == \"UPnP_IWF\"].", proto_itoa(proto), eport);
+     amxb_get(bus_ctx, amxc_string_get(&rule, 0), 0, &ret, 1);
+     tmp = GETP_ARG(&ret, "0.0.");
+     if(tmp != NULL) {
+-        amxc_var_log(tmp);
++        int remaining_lease_time = GET_UINT32(tmp, "RemainingLeaseTime");
+         r = 0;
+         *iport = (uint16_t) GET_UINT32(tmp, "InternalPort");
+         if(iaddr) {
+@@ -186,7 +187,7 @@ int get_redirect_rule_pm(amxb_bus_ctx_t* bus_ctx,
+             strncpy(desc, GET_CHAR(tmp, "Description"), desclen);
+         }
+         if(timestamp) {
+-            *timestamp = GET_UINT32(tmp, "LeaseDuration");
++            *timestamp = upnp_time() + remaining_lease_time;
+         }
+         if(rhost) {
+             strncpy(rhost, GET_CHAR(tmp, "RemoteHost"), rhostlen);
+@@ -214,14 +215,15 @@ int get_redirect_rule_by_index_pm(amxb_bus_ctx_t* bus_ctx, int index,
+     amxc_string_t rule;
+ 
+     (void) ifname;
+-    (void) packets;
+-    (void) bytes;
++    (packets) ? *packets = 0 : (void) packets;
++    (bytes) ? *bytes = 0 : (void) bytes;
+     amxc_var_init(&ret);
+     amxc_string_init(&rule, 0);
+     amxc_string_appendf(&rule, "NAT.PortMapping.[Origin == \"UPnP_IWF\"].");
+     amxb_get(bus_ctx, amxc_string_get(&rule, 0), 0, &ret, 1);
+     amxc_var_for_each(r, GETP_ARG(&ret, "0.")) {
+         if(index == i) {
++            int remaining_lease_time = GET_UINT32(r, "RemainingLeaseTime");
+             rv = 0;
+             *iport = (uint16_t) GET_UINT32(r, "InternalPort");
+             *eport = (uint16_t) GET_UINT32(r, "ExternalPort");
+@@ -233,7 +235,7 @@ int get_redirect_rule_by_index_pm(amxb_bus_ctx_t* bus_ctx, int index,
+                 strncpy(desc, GET_CHAR(r, "Description"), desclen);
+             }
+             if(timestamp) {
+-                *timestamp = GET_UINT32(r, "LeaseDuration");
++                *timestamp = upnp_time() + remaining_lease_time;
+             }
+             if(rhost) {
+                 strncpy(rhost, GET_CHAR(r, "RemoteHost"), rhostlen);
+@@ -248,7 +250,7 @@ int get_redirect_rule_by_index_pm(amxb_bus_ctx_t* bus_ctx, int index,
+     return rv;
+ }
+ 
+-/* delete_redirect_rule() for PCP
++/* delete_redirect_rule() for PMP
+ * return value : 0 success (found)
+ * -1 = error or rule not found */
+ int delete_redirect_rule_pm(amxb_bus_ctx_t* bus_ctx, const char* ifname, unsigned short eport, int proto) {
+@@ -320,25 +322,21 @@ int update_portmapping_pm(amxb_bus_ctx_t* bus_ctx, const char* ifname, unsigned
+     int r = -1;
+     amxc_var_t rule;
+     amxc_var_t ret;
+-    amxc_string_t rule_path;
+     unsigned int lease_duration;
+ 
+     (void) ifname;
+     amxc_var_init(&ret);
+-    amxc_string_init(&rule_path, 0);
+-    amxc_string_appendf(&rule_path, "NAT.PortMapping.[Protocol == \"%s\" && ExternalPort == %hu && Origin == \"UPnP_IWF\"].", proto_itoa(proto), eport);
+     lease_duration = (timestamp > 0) ? timestamp - upnp_time() : 0;
+     amxc_var_init(&rule);
+     amxc_var_init(&ret);
+     amxc_var_set_type(&rule, AMXC_VAR_ID_HTABLE);
+-    amxc_var_add_key(uint16_t, &rule, "InternalPort", iport);
+-    amxc_var_add_key(uint32_t, &rule, "LeaseDuration", lease_duration);
+-    amxc_var_add_key(cstring_t, &rule, "Description", desc);
+-    amxb_set(bus_ctx, amxc_string_get(&rule_path, 0), &rule, &ret, 1);
+-    if(GETP_ARG(&ret, "0.0.") != NULL) {
+-        r = 0;
+-    }
+-    amxc_string_clean(&rule_path);
++    amxc_var_add_key(cstring_t, &rule, "protocol", proto_itoa(proto));
++    amxc_var_add_key(cstring_t, &rule, "origin", "UPnP_IWF");
++    amxc_var_add_key(uint16_t, &rule, "externalPort", eport);
++    amxc_var_add_key(uint16_t, &rule, "internalPort", iport);
++    amxc_var_add_key(uint32_t, &rule, "leaseDuration", lease_duration);
++    amxc_var_add_key(cstring_t, &rule, "description", desc);
++    r = amxb_call(bus_ctx, "NAT.", "updatePortMapping", &rule, &ret, 1);
+     amxc_var_clean(&rule);
+     amxc_var_clean(&ret);
+     syslog(LOG_ERR, "update_portmapping: %d", r);
+@@ -351,24 +349,20 @@ int update_portmapping_desc_timestamp_pm(amxb_bus_ctx_t* bus_ctx, const char* if
+     int r = -1;
+     amxc_var_t rule;
+     amxc_var_t ret;
+-    amxc_string_t rule_path;
+     unsigned int lease_duration;
+ 
+     (void) ifname;
+     amxc_var_init(&ret);
+-    amxc_string_init(&rule_path, 0);
+-    amxc_string_appendf(&rule_path, "NAT.PortMapping.[Protocol == \"%s\" && ExternalPort == %hu && Origin == \"UPnP_IWF\"].", proto_itoa(proto), eport);
+     lease_duration = (timestamp > 0) ? timestamp - upnp_time() : 0;
+     amxc_var_init(&rule);
+     amxc_var_init(&ret);
+     amxc_var_set_type(&rule, AMXC_VAR_ID_HTABLE);
+-    amxc_var_add_key(uint32_t, &rule, "LeaseDuration", lease_duration);
+-    amxc_var_add_key(cstring_t, &rule, "Description", desc);
+-    amxb_set(bus_ctx, amxc_string_get(&rule_path, 0), &rule, &ret, 1);
+-    if(GETP_ARG(&ret, "0.0.") != NULL) {
+-        r = 0;
+-    }
+-    amxc_string_clean(&rule_path);
++    amxc_var_add_key(cstring_t, &rule, "protocol", proto_itoa(proto));
++    amxc_var_add_key(cstring_t, &rule, "origin", "UPnP_IWF");
++    amxc_var_add_key(uint16_t, &rule, "externalPort", eport);
++    amxc_var_add_key(uint32_t, &rule, "leaseDuration", lease_duration);
++    amxc_var_add_key(cstring_t, &rule, "description", desc);
++    r = amxb_call(bus_ctx, "NAT.", "updatePortMapping", &rule, &ret, 1);
+     amxc_var_clean(&rule);
+     amxc_var_clean(&ret);
+     syslog(LOG_ERR, "update_portmapping_desc_timestamp: %d", r);
+@@ -410,7 +404,7 @@ void delete_all_port_mapping_entries(amxb_bus_ctx_t* bus_ctx) {
+ 
+         rv = amxb_del(bus_ctx, "NAT.PortMapping.", index, NULL, &ret_amxb_del, 1);
+         if((rv != 0) || STRING_EMPTY(GETI_CHAR(&ret_amxb_del, 0))) {
+-            syslog(LOG_ERR, "Failed to delete %s", amxc_var_key(pm_var));
++            syslog(LOG_ERR, "Failed to delete %s (%d)", amxc_var_key(pm_var), rv);
+             goto exit;
+         }
+     }
+@@ -419,4 +413,4 @@ exit:
+     amxc_var_clean(&ret);
+     amxc_var_clean(&ret_amxb_del);
+     amxc_string_clean(&key_index);
+-}
+\ No newline at end of file
++}
+-- 
+2.34.1
+

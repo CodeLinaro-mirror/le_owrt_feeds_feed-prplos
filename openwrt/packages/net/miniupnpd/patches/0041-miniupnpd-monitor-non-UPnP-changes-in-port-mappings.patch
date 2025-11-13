@@ -1,0 +1,415 @@
+From 9ab24380f988019c51df4cf36f6edc92cd6b5562 Mon Sep 17 00:00:00 2001
+From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+Date: Tue, 5 Aug 2025 13:30:09 +0300
+Subject: [PATCH] miniupnpd: monitor non-UPnP changes in port mappings
+
+miniupnpd tracks changes to the PortMapping object only from internal
+functions when processing add and delete rules. Therefore,
+when a user changes the model via the bus, miniupnd does not
+receive any information about this change.
+
+Solution:
+* Add start of ambiorix event loop in separate thread to handle bus
+  notifications
+* Add subscription to NAT object changes to generate notify event when
+  changes are performed not over UPnP
+* Add dummy request into bus in miniupnd main loop to force the ambiorix
+  loop to process bus notifications
+
+References: PCF-1996
+Signed-Off-By: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+---
+ miniupnpd/amx/amxmisc.c  | 141 +++++++++++++++++++++++++++++++++++++--
+ miniupnpd/amx/amxmisc.h  |  44 ++++++++++++
+ miniupnpd/amx/amxpmp.c   |   1 +
+ miniupnpd/configure      |   2 +-
+ miniupnpd/miniupnpd.c    |  16 +++++
+ miniupnpd/upnpevents.c   |   8 +++
+ miniupnpd/upnpredirect.c |  13 ++++
+ 7 files changed, 217 insertions(+), 8 deletions(-)
+
+diff --git miniupnpd/amx/amxmisc.c miniupnpd/amx/amxmisc.c
+index f68f0fc..0497629 100644
+--- miniupnpd/amx/amxmisc.c
++++ miniupnpd/amx/amxmisc.c
+@@ -3,6 +3,7 @@
+ ** SPDX-License-Identifier: BSD-2-Clause-Patent
+ **
+ ** SPDX-FileCopyrightText: Copyright (c) 2023 SoftAtHome
++** SPDX-FileCopyrightText: Copyright (c) 2025 Inango
+ **
+ ** Redistribution and use in source and binary forms, with or
+ ** without modification, are permitted provided that the following
+@@ -62,16 +63,24 @@
+ 
+ #include <string.h>
+ #include <syslog.h>
+-#include <netmodel/client.h>
++#include <amxrt/amxrt.h>
+ #include <amxc/amxc.h>
+ #include <amxc/amxc_macros.h>
+ #include <amxp/amxp.h>
+ #include <amxd/amxd_object.h>
+ #include <amxd/amxd_path.h>
+ #include <amxb/amxb.h>
++#include <netmodel/client.h>
++#include <pthread.h>
++#include <stdatomic.h>
+ #include "config.h"
+ #include "../upnpglobalvars.h"
+ 
++#define NAT_OBJECT_PATH "NAT."
++
++pthread_t amxrt_thread_id;
++atomic_bool upnp_notify_needed = false;
++
+ static amxb_bus_ctx_t* bus_ctx = NULL;
+ 
+ static void init_loglevel(void) {
+@@ -99,24 +108,142 @@ static void init_loglevel(void) {
+     amxc_var_clean(&arg);
+ }
+ 
++/**
++ * @brief Get the current state of the UPnP notification needed flag
++ * and set it to the new value.
++ *
++ * This function atomically exchanges the value of the `upnp_notify_needed`
++ * flag. Used to check if a UPnP notification is needed and set it to a new value.
++ *
++ * @param needed The new value to set the `upnp_notify_needed` flag to.
++ * @return The current value of the `upnp_notify_needed` flag before the exchange.
++ */
++bool exchange_upnp_notify_needed(bool needed) {
++    return atomic_exchange(&upnp_notify_needed, needed);
++}
++
++/**
++ * @brief Callback function for port mapping entries change event.
++ *
++ * This function is called when the number of port mappings
++ * changes in the bus. It creates a notification
++ * to inform the subscribers about the change.
++ */
++static void portmapping_entries_changed(const char* const sig_name,
++                                        const amxc_var_t* const data,
++                                        void* const priv) {
++    /* Raise a flag to indicate that a UPnP notification is needed.
++     * Notification will be processed in the main loop */
++    exchange_upnp_notify_needed(true);
++    syslog(LOG_INFO, "Port mapping entries changed, notification needed");
++}
++
++int amx_add_portmapping_sub(amxb_bus_ctx_t* bus_ctx) {
++    int res = amxb_subscribe(bus_ctx, NAT_OBJECT_PATH,
++                             "(notification == 'dm:object-changed') && \
++                                (contains('parameters.PortMappingNumberOfEntries'))",
++                             portmapping_entries_changed, NULL);
++    if (res != 0) {
++        syslog(LOG_ERR,
++               "Failed to subscribe to object-changed event for "
++               "'%s' object: res '%d'",
++               NAT_OBJECT_PATH, res);
++        return res;
++    }
++    syslog(LOG_INFO, "Subscribed to portmapping notifications");
++    return res;
++}
++
++int amx_del_portmapping_sub(amxb_bus_ctx_t* bus_ctx) {
++    int res = amxb_unsubscribe(bus_ctx, NAT_OBJECT_PATH,
++                               portmapping_entries_changed, NULL);
++    if (res != 0) {
++        syslog(LOG_ERR,
++               "Failed to unsubscribe from object-changed event for "
++               "'%s' object: res '%d'",
++               NAT_OBJECT_PATH, res);
++    }
++
++    syslog(LOG_INFO, "Unsubscribed from portmapping notifications");
++    return res;
++}
++
++void* amxrt_thread(void* arg) {
++    int r = -1;
++
++    amxrt_new();
++
++    r = amxb_be_load(ubus_backend_url);
++    if (r != 0) {
++        syslog(LOG_ERR, "Failed to load AMX backend at %s: %d",
++               ubus_backend_url, r);
++        return r;
++    }
++    r = amxb_connect(&bus_ctx, ubus_sock_url);
++    if (r != 0) {
++        syslog(LOG_ERR, "Failed to connect to AMX bus at %s: %d", ubus_sock_url,
++               r);
++        return r;
++    }
++
++    r = amxrt_el_create();
++    if (r != 0) {
++        syslog(LOG_ERR, "Failed to create AMX event loop: %d", r);
++        return NULL;
++    }
++
++    r = amx_add_portmapping_sub(bus_ctx);
++    if (r != 0) {
++        syslog(LOG_ERR, "Failed to add portmapping subscription: %d", r);
++        return NULL;
++    }
++
++    r = amxrt_el_start();  // will block until amxrt_el_stop is called
++    if (r != 0) {
++        syslog(LOG_ERR, "AMX event loop failed to start: %d", r);
++    } else {
++        syslog(LOG_INFO, "AMX event loop stopped successfully");
++    }
++    amxb_disconnect(bus_ctx);
++    amxrt_stop();
++    amxrt_delete();
++    return NULL;
++}
++
++int amx_get_dummy(void) {
++    return amxb_get(bus_ctx, "NAT.PortMappingNumberOfEntries", 0, NULL, 0);
++}
++
+ int init_amx(void) {
+     int r = -1;
++    int count = 0;
+     if(bus_ctx != NULL) {
+         r = 0;
+     } else {
+-        r = amxb_be_load(ubus_backend_url);
+-        if(r == 0) {
+-            r = amxb_connect(&bus_ctx, ubus_sock_url);
+-            netmodel_initialize();
+-            init_loglevel();
++        r = pthread_create(&amxrt_thread_id, NULL, amxrt_thread, NULL);
++        if (r != 0) {
++            syslog(LOG_ERR, "Failed to create AMX event loop thread: %d", r);
++            return r;
+         }
++        while (bus_ctx == NULL) {
++            // Wait for the bus context to be initialized
++            sleep(1);  // Sleep for 1 second
++            if (++count > 10) {
++                syslog(LOG_ERR,
++                       "AMX bus context not initialized after 10 seconds");
++                return -1;
++            }
++        }
++        netmodel_initialize();
++        init_loglevel();
+     }
+     return r;
+ }
+ 
+ void shutdown_amx(void) {
+     netmodel_cleanup();
+-    amxb_disconnect(bus_ctx);
++    amxrt_el_stop();
++    pthread_join(amxrt_thread_id, NULL);
+     bus_ctx = NULL;
+     return;
+ }
+diff --git miniupnpd/amx/amxmisc.h miniupnpd/amx/amxmisc.h
+index 024d804..f90a63c 100644
+--- miniupnpd/amx/amxmisc.h
++++ miniupnpd/amx/amxmisc.h
+@@ -3,6 +3,7 @@
+ ** SPDX-License-Identifier: BSD-2-Clause-Patent
+ **
+ ** SPDX-FileCopyrightText: Copyright (c) 2023 SoftAtHome
++** SPDX-FileCopyrightText: Copyright (c) 2025 Inango
+ **
+ ** Redistribution and use in source and binary forms, with or
+ ** without modification, are permitted provided that the following
+@@ -68,11 +69,54 @@
+ #include <amxb/amxb.h>
+ 
+ void shutdown_amx(void);
++
++/**
++ * @brief Initializes the AMX runtime and bus context.
++ *
++ * This function starts the AMX runtime thread with
++ * event loop and initializes the bus context.
++ */
+ int init_amx(void);
+ amxb_bus_ctx_t* get_amx_bus_ctx(void);
+ int are_addresses_from_same_host(const char*, const char*);
+ int amx_is_wan_up(void);
+ int amx_is_wan_ppp(void);
+ 
++/**
++ * @brief 
++ */
++bool exchange_upnp_notify_needed(bool needed);
++
++/**
++ * @brief Adds a subscription for changes in
++ * "NAT.PortMappingNumberOfEntries" parameter.
++ * 
++ * This subscription is used to notify the UPnP subscribers
++ * that total number of port mappings has changed.
++ *
++ * @param bus_ctx The AMX bus context.
++ * @return 0 on success, error code on failure.
++ */
++int amx_add_portmapping_sub(amxb_bus_ctx_t* bus_ctx);
++
++/**
++ * @brief Deletes the subscription for changes in
++ * "NAT.PortMappingNumberOfEntries" parameter
++ * 
++ * @param bus_ctx The AMX bus context.
++ * @return 0 on success, error code on failure.
++ */
++int amx_del_portmapping_sub(amxb_bus_ctx_t* bus_ctx);
++
++/**
++ * @brief Performs a dummy operation to force the Ambiorix to
++ * process the bus notification in the event loop.
++ *
++ * This function is used as workaround because without bus
++ * operation, the event loop does not process the bus
++ * notifications.
++ */
++int amx_get_dummy(void);
++
+ #endif
+ 
+diff --git miniupnpd/amx/amxpmp.c miniupnpd/amx/amxpmp.c
+index 0a91933..092b431 100644
+--- miniupnpd/amx/amxpmp.c
++++ miniupnpd/amx/amxpmp.c
+@@ -65,6 +65,7 @@
+ #include <string.h>
+ #include <stdlib.h>
+ #include "../macros.h"
++#include "../upnpevents.h"
+ #include "../upnpglobalvars.h"
+ #include "amxpmp.h"
+ #include "amxrdr.h"
+diff --git miniupnpd/configure miniupnpd/configure
+index fb93d03..3291485 100755
+--- miniupnpd/configure
++++ miniupnpd/configure
+@@ -600,7 +600,7 @@ case $FW in
+ 		echo "# generated by $0 on `date`" > config.mk
+ 		echo "SRCDIR = ${BASEDIR}" >> config.mk
+ 		echo "CPPFLAGS += -I." >> config.mk
+-		echo "LDLIBS += -lsahtrace -lamxc -lamxp -lamxd -lamxb -lamxo -lnetmodel" >> config.mk
++		echo "LDLIBS += -lsahtrace -lamxrt -lamxc -lamxp -lamxd -lamxb -lamxo -lnetmodel" >> config.mk
+ 		echo 'STAGING_LIBDIR = $(if $(STAGING_DIR), -L$(STAGING_DIR)/lib) $(if $(STAGING_DIR), -L$(STAGING_DIR)/usr/lib)' >> config.mk
+ 		echo 'LDFLAGS += $(STAGING_LIBDIR)' >> config.mk
+ 		;;
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index 0a810f6..f89d4e0 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -2597,6 +2597,9 @@ main(int argc, char * * argv)
+ 	/* main loop */
+ 	while(!quitting)
+ 	{
++#ifdef USE_AMX
++		bool should_send_upnp_notify = exchange_upnp_notify_needed(false);
++#endif /* USE_AMX */
+ #ifdef USE_TIME_AS_BOOTID
+ 		/* Correct startup_time if it was set with a RTC close to 0 */
+ 		if((upnp_bootid<60*60*24) && (time(NULL)>60*60*24))
+@@ -2659,6 +2662,12 @@ main(int argc, char * * argv)
+ 			if(GETFLAG(ENABLEUPNPMASK))
+ 			{
+ 				upnp_event_var_change_notify(EWanIPC);
++#ifdef USE_AMX
++				/* If notify is sent, then
++				 * we can skip sending notify messages
++				 * in this loop iteration */
++				should_send_upnp_notify = false;
++#endif /* USE_AMX */
+ 			}
+ #endif
+ #ifdef ENABLE_PCP
+@@ -2865,6 +2874,13 @@ main(int argc, char * * argv)
+ #endif
+ 
+ #ifdef ENABLE_EVENTS
++#ifdef USE_AMX
++		if(should_send_upnp_notify)
++		{
++			syslog(LOG_INFO, "should_send_upnp_notify is set, sending notifications");
++			upnp_event_var_change_notify(EWanIPC);
++		}
++#endif /* USE_AMX */
+ 		upnpevents_selectfds(&readset, &writeset, &max_fd);
+ #endif
+ 
+diff --git miniupnpd/upnpevents.c miniupnpd/upnpevents.c
+index dc609ec..9e81114 100644
+--- miniupnpd/upnpevents.c
++++ miniupnpd/upnpevents.c
+@@ -233,6 +233,7 @@ void
+ upnp_event_var_change_notify(enum subscriber_service_enum service)
+ {
+ 	struct subscriber * sub;
++	
+ 	for(sub = subscriberlist.lh_first; sub != NULL; sub = sub->entries.le_next) {
+ 		if(sub->service == service && sub->notify == NULL)
+ 			upnp_event_create_notify(sub);
+@@ -670,6 +671,13 @@ void upnpevents_processfds(fd_set *readset, fd_set *writeset)
+ 		}
+ 		sub = subnext;
+ 	}
++#ifdef USE_AMX
++	/* Perform request to the bus to force Ambiorix event loop
++	 * to process bus notification. This is workaround because
++	 * now event loop does not process bus notification
++	 * if there is no request to the bus. */
++	amx_get_dummy();
++#endif /* USE_AMX */
+ }
+ 
+ #ifdef USE_MINIUPNPDCTL
+diff --git miniupnpd/upnpredirect.c miniupnpd/upnpredirect.c
+index 0da114f..222966a 100644
+--- miniupnpd/upnpredirect.c
++++ miniupnpd/upnpredirect.c
+@@ -475,10 +475,16 @@ upnp_redirect_internal(const char * rhost, unsigned short eport,
+ 		if(!nextruletoclean_timestamp || (timestamp < nextruletoclean_timestamp))
+ 			nextruletoclean_timestamp = timestamp;
+ 	}
++
+ #ifdef ENABLE_EVENTS
++	/* We do not need to notify the subscribers
++	 * in AMX mode, because the notify will be
++	 * send from AMX event loop */
++#ifndef USE_AMX
+ 	/* the number of port mappings changed, we must
+ 	 * inform the subscribers */
+ 	upnp_event_var_change_notify(EWanIPC);
++#endif /* !USE_AMX */
+ #endif
+ 	return 0;
+ }
+@@ -575,7 +581,14 @@ _upnp_delete_redir(unsigned short eport, int proto)
+ #endif
+ 
+ #ifdef ENABLE_EVENTS
++	/* We do not need to notify the subscribers
++	 * in AMX mode, because the notify will be
++	 * send from AMX event loop */
++#ifndef USE_AMX
++	/* the number of port mappings changed, we must
++	 * inform the subscribers */
+ 	upnp_event_var_change_notify(EWanIPC);
++#endif /* !USE_AMX */
+ #endif
+ 	return r;
+ }
+-- 
+2.34.1
+

@@ -1,0 +1,165 @@
+From 7ae287699df4ace45a8cddc7030154568725e907 Mon Sep 17 00:00:00 2001
+From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+Date: Wed, 27 Aug 2025 18:32:54 +0300
+Subject: [PATCH] miniupnpd: support WAN PPP events
+
+miniupnpd does not send events in WANPPPConnection service mode
+
+Solution:
+* Add new service type for subscriber to support events in
+  WANPPPConnection mode
+* Update SERVICE_TYPE_WANPPPC to use version "1" instead of incorrect
+  version "2"
+* Add mechanism to determine current WAN mode to handle notifications
+
+References: PCF-1996
+Signed-off-by: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+---
+ miniupnpd/miniupnpd.c    | 15 +++++++++++++--
+ miniupnpd/upnpevents.c   | 16 ++++++++++++++++
+ miniupnpd/upnpevents.h   | 18 ++++++++++++++++++
+ miniupnpd/upnpredirect.c |  4 ++--
+ miniupnpd/upnpurns.h     |  2 +-
+ 5 files changed, 50 insertions(+), 5 deletions(-)
+
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index 74f2622..0f91b71 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -1899,6 +1899,17 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 
+ #ifdef USE_AMX
+ 	ext_is_ppp = amx_is_wan_ppp();
++#ifdef ENABLE_EVENTS
++#ifdef ADVERTISE_WANPPPCONN
++	/* By the default miniupnpd runs in WANIPConnection mode,
++	 * but if the WAN interface is PPP, then switch to
++	 * WANPPPConnection mode and setup the notification service */
++	if(ext_is_ppp == 1) {
++		syslog(LOG_INFO, "Running in PPP WAN mode");
++		set_current_service_type(EWanPPP);
++	}
++#endif /* ADVERTISE_WANPPPCONN */
++#endif /* ENABLE_EVENTS */
+ #endif
+ 
+ #ifndef NO_BACKGROUND_NO_PIDFILE
+@@ -2665,7 +2676,7 @@ main(int argc, char * * argv)
+ #ifdef ENABLE_EVENTS
+ 			if(GETFLAG(ENABLEUPNPMASK))
+ 			{
+-				upnp_event_var_change_notify(EWanIPC);
++				upnp_event_var_change_notify(get_current_service_type());
+ #ifdef USE_AMX
+ 				/* If notify is sent, then
+ 				 * we can skip sending notify messages
+@@ -2882,7 +2893,7 @@ main(int argc, char * * argv)
+ 		if(should_send_upnp_notify)
+ 		{
+ 			syslog(LOG_INFO, "should_send_upnp_notify is set, sending notifications");
+-			upnp_event_var_change_notify(EWanIPC);
++			upnp_event_var_change_notify(get_current_service_type());
+ 		}
+ #endif /* USE_AMX */
+ 		upnpevents_selectfds(&readset, &writeset, &max_fd);
+diff --git miniupnpd/upnpevents.c miniupnpd/upnpevents.c
+index 9e81114..12cda24 100644
+--- miniupnpd/upnpevents.c
++++ miniupnpd/upnpevents.c
+@@ -74,6 +74,18 @@ struct upnp_event_notify {
+ 	char portstr[8];
+ };
+ 
++static enum subscriber_service_enum current_service = EWanIPC;
++
++void set_current_service_type(enum subscriber_service_enum s)
++{
++	current_service = s;
++}
++
++enum subscriber_service_enum get_current_service_type(void)
++{
++	return current_service;
++}
++
+ /* prototypes */
+ static void
+ upnp_event_create_notify(struct subscriber * sub);
+@@ -98,6 +110,10 @@ newSubscriber(const char * eventurl, const char * callback, int callbacklen)
+ 		tmp->service = EWanCFG;
+ 	else if(strcmp(eventurl, WANIPC_EVENTURL)==0)
+ 		tmp->service = EWanIPC;
++#ifdef ADVERTISE_WANPPPCONN
++	else if(strcmp(eventurl, WANPPPC_EVENTURL)==0)
++		tmp->service = EWanPPP;
++#endif /* ADVERTISE_WANPPPCONN */
+ #ifdef ENABLE_L3F_SERVICE
+ 	else if(strcmp(eventurl, L3F_EVENTURL)==0)
+ 		tmp->service = EL3F;
+diff --git miniupnpd/upnpevents.h miniupnpd/upnpevents.h
+index d6b6ccc..173b37c 100644
+--- miniupnpd/upnpevents.h
++++ miniupnpd/upnpevents.h
+@@ -30,6 +30,24 @@ enum subscriber_service_enum {
+ #endif
+ };
+ 
++/**
++ * @brief Set the current service type for event notifications.
++ * @param s The service type to set, as defined in the subscriber_service_enum.
++ *
++ * This function is used to specify in which mode miniupnpd is operating,
++ * affecting how event notifications are handled.
++ */
++void set_current_service_type(enum subscriber_service_enum s);
++
++/**
++ * @brief Get the current service type for event notifications.
++ * @return The current service type, as defined in the subscriber_service_enum.
++ * 
++ * This function retrieves the service type that miniupnpd is currently
++ * operating in to ensure correct event notification handling.
++ */
++enum subscriber_service_enum get_current_service_type(void);
++
+ void
+ upnp_event_var_change_notify(enum subscriber_service_enum service);
+ 
+diff --git miniupnpd/upnpredirect.c miniupnpd/upnpredirect.c
+index 222966a..2447dc4 100644
+--- miniupnpd/upnpredirect.c
++++ miniupnpd/upnpredirect.c
+@@ -483,7 +483,7 @@ upnp_redirect_internal(const char * rhost, unsigned short eport,
+ #ifndef USE_AMX
+ 	/* the number of port mappings changed, we must
+ 	 * inform the subscribers */
+-	upnp_event_var_change_notify(EWanIPC);
++	upnp_event_var_change_notify(get_current_service_type());
+ #endif /* !USE_AMX */
+ #endif
+ 	return 0;
+@@ -587,7 +587,7 @@ _upnp_delete_redir(unsigned short eport, int proto)
+ #ifndef USE_AMX
+ 	/* the number of port mappings changed, we must
+ 	 * inform the subscribers */
+-	upnp_event_var_change_notify(EWanIPC);
++	upnp_event_var_change_notify(get_current_service_type());
+ #endif /* !USE_AMX */
+ #endif
+ 	return r;
+diff --git miniupnpd/upnpurns.h miniupnpd/upnpurns.h
+index d834f15..4761474 100644
+--- miniupnpd/upnpurns.h
++++ miniupnpd/upnpurns.h
+@@ -16,7 +16,7 @@
+ #define DEVICE_TYPE_WAN     "urn:schemas-upnp-org:device:WANDevice:2"
+ #define DEVICE_TYPE_WANC    "urn:schemas-upnp-org:device:WANConnectionDevice:2"
+ #define SERVICE_TYPE_WANIPC "urn:schemas-upnp-org:service:WANIPConnection:2"
+-#define SERVICE_TYPE_WANPPPC "urn:schemas-upnp-org:service:WANPPPConnection:2"
++#define SERVICE_TYPE_WANPPPC "urn:schemas-upnp-org:service:WANPPPConnection:1"
+ #define SERVICE_ID_WANIPC   "urn:upnp-org:serviceId:WANIPConn1"
+ #define SERVICE_ID_WANPPPC   "urn:upnp-org:serviceId:WANPPPConn1"
+ #else
+-- 
+2.34.1
+

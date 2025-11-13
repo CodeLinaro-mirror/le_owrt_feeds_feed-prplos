@@ -1,0 +1,137 @@
+From 66671f14d032ba53ab33c21066118e7d24fef6d6 Mon Sep 17 00:00:00 2001
+From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+Date: Tue, 29 Jul 2025 19:09:25 +0300
+Subject: [PATCH] miniupnpd: fix error codes for DeletePortMapping action
+
+miniupnpd does not contain check on who created PortMapping entry, and
+immediately tried to delete the rule that contains "UPnP_IWF" (created
+by miniupnpd) origin. Therefore, the rule was not found in the model and
+the error "NoSuchEntryInArray" was returned
+
+Add handling of Origin type of PortMapping entries to validate that
+  miniupnpd removes only its own rules
+
+References: PCF-1957
+Signed-Off-By: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+---
+ miniupnpd/amx/amxpmp.c | 49 ++++++++++++++++++++++++++++++++++++++++--
+ miniupnpd/upnpsoap.c   | 20 +++++++++++------
+ 2 files changed, 60 insertions(+), 9 deletions(-)
+
+diff --git miniupnpd/amx/amxpmp.c miniupnpd/amx/amxpmp.c
+index 16599c7..e06c7a1 100644
+--- miniupnpd/amx/amxpmp.c
++++ miniupnpd/amx/amxpmp.c
+@@ -3,6 +3,7 @@
+ ** SPDX-License-Identifier: BSD-2-Clause-Patent
+ **
+ ** SPDX-FileCopyrightText: Copyright (c) 2023 SoftAtHome
++** SPDX-FileCopyrightText: Copyright (c) 2025 Inango
+ **
+ ** Redistribution and use in source and binary forms, with or
+ ** without modification, are permitted provided that the following
+@@ -253,22 +254,66 @@ int get_redirect_rule_by_index_pm(amxb_bus_ctx_t* bus_ctx, int index,
+ 
+ /* delete_redirect_rule() for PMP
+ * return value : 0 success (found)
+-* -1 = error or rule not found */
++* -1 = unexpected error,
++* -2 = rule is not found
++* -3 = no authority to delete rule */
+ int delete_redirect_rule_pm(amxb_bus_ctx_t* bus_ctx, const char* ifname, unsigned short eport, int proto) {
+     int r = -1;
+     amxc_string_t rule;
+     amxc_var_t ret;
++    amxc_var_t *entry;
++    const char* origin;
+     const char* alias;
+ 
+     (void) ifname;
+     amxc_var_init(&ret);
+     amxc_string_init(&rule, 0);
+-    amxc_string_appendf(&rule, "NAT.PortMapping.[Protocol == \"%s\" && ExternalPort == %hu && Origin == \"UPnP_IWF\"].", proto_itoa(proto), eport);
++
++    // First we need to check if the rule exists, if not,
++    // we return error code -2
++    amxc_string_setf(&rule,
++                     "NAT.PortMapping.[Protocol == \"%s\" &&"
++                     "ExternalPort == %hu].",
++                     proto_itoa(proto), eport);
++    amxb_get(bus_ctx, amxc_string_get(&rule, 0), 0, &ret, 1);
++    entry = amxc_var_get_first(GETP_ARG(&ret, "0."));
++    if (!entry) {
++        syslog(LOG_ERR,
++               "delete_redirect_rule_pm: no entry found"
++               " for port '%hu' and protocol '%s'",
++               eport, proto_itoa(proto));
++        r = -2;
++        goto exit;
++    }
++
++    /* Now we check the origin of the rule, we can only delete rules that
++     * were created by us and its origin is "UPnP_IWF".
++     * If origin is not "UPnP_IWF", we return error code -3
++     * to indicate that we have no authority to delete this rule */
++    origin = GET_CHAR(entry, "Origin");
++    if (!origin) {
++        syslog(LOG_ERR,
++               "delete_redirect_rule_pm: failed to get Origin parameter"
++               " from PortMapping entry for port '%hu' and protocol '%s'",
++               eport, proto_itoa(proto));
++        r = -1;
++        goto exit;
++    }
++    if (strcmp(origin, "UPnP_IWF") != 0) {
++        syslog(LOG_ERR,
++               "delete_redirect_rule_pm: Origin is not 'UPnP_IWF' for"
++               " port '%hu' and protocol '%s', have no authority to delete",
++               eport, proto_itoa(proto));
++        r = -3;
++        goto exit;
++    }
++
+     amxb_del(bus_ctx, amxc_string_get(&rule, 0), 0, NULL, &ret, 1);
+     alias = GETI_CHAR(&ret, 0);
+     if(alias && (alias[0] != '\0')) {
+         r = 0;
+     }
++exit:
+     amxc_string_clean(&rule);
+     amxc_var_clean(&ret);
+     syslog(LOG_WARNING, "delete_redirect_rule: %d", r);
+diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
+index 90a00e9..47f024f 100644
+--- miniupnpd/upnpsoap.c
++++ miniupnpd/upnpsoap.c
+@@ -1008,15 +1008,21 @@ DeletePortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 
+ 	r = upnp_delete_redirection(eport, protocol);
+ 
+-	if(r < 0)
++	switch (r)
+ 	{
+-		SoapError(h, 714, "NoSuchEntryInArray");
+-	}
+-	else
+-	{
+-		bodylen = snprintf(body, sizeof(body), resp,
+-		                   action, ns, action);
++	case 0: /* success */
++		bodylen = snprintf(body, sizeof(body), resp, action, ns, action);
+ 		BuildSendAndCloseSoapResp(h, body, bodylen);
++		break;
++	case -2: /* not found */
++		SoapError(h, 714, "NoSuchEntryInArray");
++		break;
++	case -3: /* not permitted */
++		SoapError(h, 606, "Action not authorized");
++		break;
++	default: /* error */
++		SoapError(h, 501, "ActionFailed");
++		break;
+ 	}
+ 
+ 	ClearNameValueList(&data);
+-- 
+2.34.1
+

@@ -1,0 +1,33 @@
+From f211fc1452271293ac7c1912a62d711229b96308 Mon Sep 17 00:00:00 2001
+From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+Date: Mon, 28 Jul 2025 16:54:38 +0300
+Subject: [PATCH] miniupnpd: fix server header fingerprint
+
+miniupnpd adds its fingerprint to the message header, but UPnP IGD DCP
+MUST NOT add custom tags in the HTTP request
+
+Remove the miniupnp fingerprint from http server header because http
+server must not add custom tags in the HTTP request
+
+References: PCF-1949
+Signed-Off-By: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+---
+ miniupnpd/upnphttp.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git miniupnpd/upnphttp.h miniupnpd/upnphttp.h
+index 3bc7215..0be5d5d 100644
+--- miniupnpd/upnphttp.h
++++ miniupnpd/upnphttp.h
+@@ -21,7 +21,7 @@
+ #define UPNP_VERSION_STRING "UPnP/" UPNP_VERSION_MAJOR_STR "." UPNP_VERSION_MINOR_STR
+ 
+ /* server: HTTP header returned in all HTTP responses : */
+-#define MINIUPNPD_SERVER_STRING	OS_VERSION " " UPNP_VERSION_STRING " MiniUPnPd/" MINIUPNPD_VERSION
++#define MINIUPNPD_SERVER_STRING	OS_VERSION " " UPNP_VERSION_STRING " Unknown/Unknown"
+ 
+ /*
+  states :
+-- 
+2.34.1
+

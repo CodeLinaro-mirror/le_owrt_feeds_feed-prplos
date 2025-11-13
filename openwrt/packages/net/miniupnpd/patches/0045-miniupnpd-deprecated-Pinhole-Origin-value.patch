@@ -1,0 +1,50 @@
+From 62511338a938910a717bd41fd5b3dd13dfee43ad Mon Sep 17 00:00:00 2001
+From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+Date: Thu, 21 Aug 2025 13:11:25 +0300
+Subject: [PATCH] miniupnpd: deprecated Pinhole Origin value
+
+miniupnpd creates Pinhole instances with an outdated value for the Origin
+parameter, which makes created rules persistent across reboots
+
+* Modified Origin value for Pinhole entries from
+  deprecated "Controller" value to "UPnP"
+
+References: PPW-846
+Signed-off-by: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+---
+ miniupnpd/amx/amxpinhole.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git miniupnpd/amx/amxpinhole.c miniupnpd/amx/amxpinhole.c
+index ad16def..b2e977d 100644
+--- miniupnpd/amx/amxpinhole.c
++++ miniupnpd/amx/amxpinhole.c
+@@ -3,6 +3,7 @@
+ ** SPDX-License-Identifier: BSD-2-Clause-Patent
+ **
+ ** SPDX-FileCopyrightText: Copyright (c) 2023 SoftAtHome
++** SPDX-FileCopyrightText: Copyright (c) 2025 Inango
+ **
+ ** Redistribution and use in source and binary forms, with or
+ ** without modification, are permitted provided that the following
+@@ -149,7 +150,7 @@ int add_pinhole(UNUSED const char* ifname,
+     syslog(LOG_NOTICE, "Interface open for upnp pinhole %s", ip_interface);
+ 
+     amxc_var_add_key(cstring_t, &args, "alias", "");
+-    amxc_var_add_key(cstring_t, &args, "origin", "Controller");
++    amxc_var_add_key(cstring_t, &args, "origin", "UPnP");
+     amxc_var_add_key(cstring_t, &args, "interface", ip_interface);
+     amxc_string_setf(&tmp, "%hu", rem_port);
+     amxc_var_add_key(cstring_t, &args, "sourcePort", amxc_string_get(&tmp, 0));
+@@ -274,7 +275,7 @@ update_pinhole(unsigned short uid, unsigned int timestamp) {
+     amxc_string_setf(&tmp, "%s%hd", pinhole_prefix, uid);
+     amxc_var_set_type(&args, AMXC_VAR_ID_HTABLE);
+     amxc_var_add_key(cstring_t, &args, "alias", amxc_string_get(&tmp, 0));
+-    amxc_var_add_key(cstring_t, &args, "origin", "Controller");
++    amxc_var_add_key(cstring_t, &args, "origin", "UPnP");
+     amxc_var_add_key(uint32_t, &args, "leaseDuration", timestamp - upnp_time());
+     rv = amxb_call(bus_ctx, "Firewall.", "updatePinhole", &args, &ret, 1);
+     if(rv == 0) {
+-- 
+2.34.1
+

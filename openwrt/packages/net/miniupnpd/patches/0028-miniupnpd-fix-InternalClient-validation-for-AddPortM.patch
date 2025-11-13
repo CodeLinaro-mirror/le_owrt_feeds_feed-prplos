@@ -1,0 +1,88 @@
+From cf7f75ee42ce1ab63fa99756a6cbe8dd67c9d180 Mon Sep 17 00:00:00 2001
+From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+Date: Fri, 25 Jul 2025 21:06:46 +0300
+Subject: [PATCH] miniupnpd: fix InternalClient validation for AddPortMapping
+ action
+
+In the AddPortMapping handler in miniupnpd, validation is incorrect,
+causing error codes that did not match the specification.
+
+Add check for InternalClient is not contain DNS host name
+Modify error code for InternalClient is empty validation case
+according to specification
+Modify error code for InternalClient is a different from IP address
+of Control Point
+
+References: PCF-1953
+Signed-Off-By: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+---
+ miniupnpd/upnpsoap.c | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
+
+diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
+index 46f5db3..61825de 100644
+--- miniupnpd/upnpsoap.c
++++ miniupnpd/upnpsoap.c
+@@ -411,10 +411,10 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	char * r_host;
+ 	unsigned short iport, eport;
+ 
++	struct in_addr result_ip;/*unsigned char result_ip[16];*/ /* inet_pton() */
+ #ifndef USE_AMX
+ 	struct hostent *hp; /* getbyhostname() */
+ 	char ** ptr; /* getbyhostname() */
+-	struct in_addr result_ip;/*unsigned char result_ip[16];*/ /* inet_pton() */
+ #endif
+ 
+ 	ParseNameValue(h->req_buf + h->req_contentoff, h->req_contentlen, &data);
+@@ -428,9 +428,15 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	if (!int_ip || int_ip[0] == '\0')
+ 	{
+ 		ClearNameValueList(&data);
+-		SoapError(h, 402, "Invalid Args");
++		SoapError(h, 715, "WildCardNotPermittedInSrcIP");
+ 		return;
+ 	}
++
++	if (inet_pton(AF_INET, int_ip, &result_ip) <= 0)
++	{
++		ClearNameValueList(&data);
++		SoapError(h, 600, "Argument Value Invalid");
++	}
+ #endif
+ 
+ 	/* IGD 2 MUST support both wildcard and specific IP address values
+@@ -500,7 +506,7 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 			syslog(LOG_WARNING, "Client %s tried to redirect port to %s",
+ 			       inet_ntoa(h->clientaddr), int_ip);
+ 			ClearNameValueList(&data);
+-			SoapError(h, 718, "ConflictInMappingEntry");
++			SoapError(h, 606, "Action not authorized");
+ 			return;
+ 		}
+ 	}
+@@ -643,6 +649,21 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	if(leaseduration == 0)
+ 		leaseduration = 604800;
+ 
++#ifdef UPNP_STRICT
++	if (!int_ip || int_ip[0] == '\0')
++	{
++		ClearNameValueList(&data);
++		SoapError(h, 715, "WildCardNotPermittedInSrcIP");
++		return;
++	}
++
++	if (inet_pton(AF_INET, int_ip, &result_ip) <= 0)
++	{
++		ClearNameValueList(&data);
++		SoapError(h, 600, "Argument Value Invalid");
++	}
++#endif
++
+ 	if (!int_ip || !ext_port || !int_port || !protocol)
+ 	{
+ 		ClearNameValueList(&data);
+-- 
+2.34.1
+

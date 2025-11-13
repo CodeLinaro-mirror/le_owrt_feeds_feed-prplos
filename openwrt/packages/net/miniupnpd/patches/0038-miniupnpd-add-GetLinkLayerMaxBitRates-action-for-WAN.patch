@@ -1,0 +1,194 @@
+From c1bbbed33dacf08409c853f228d0390d9b0e4049 Mon Sep 17 00:00:00 2001
+From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+Date: Mon, 11 Aug 2025 14:15:21 +0300
+Subject: [PATCH] miniupnpd: add GetLinkLayerMaxBitRates action for WANPPP
+
+miniupnpd does not contain a GetLinkLayerMaxBitRates action for
+WANPPConnection service
+
+Solution:
+* Add GetLinkLayerMaxBitRates action into WANPPP service description
+  because it is a required action according to the UPnP specification
+* Implement GetLinkLayerMaxBitRated action to get upstream and
+  downstream bitrates
+
+References: PCF-1985
+Signed-off-by: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+---
+ miniupnpd/upnpdescgen.c | 94 ++++++++++++++++++++++++++++++++++++++---
+ miniupnpd/upnpsoap.c    | 32 ++++++++++++++
+ 2 files changed, 121 insertions(+), 5 deletions(-)
+
+diff --git miniupnpd/upnpdescgen.c miniupnpd/upnpdescgen.c
+index 014d60d..3f5693b 100644
+--- miniupnpd/upnpdescgen.c
++++ miniupnpd/upnpdescgen.c
+@@ -710,10 +710,94 @@ static const struct stateVar WANIPCnVars[] =
+ static const struct serviceDesc scpdWANIPCn =
+ { WANIPCnActions, WANIPCnVars };
+ 
+-/* Missing actions are: GetLinkLayerMaxBitRates, GetPPPEncryptionProtocol, GETPPPCompressionProtocol, ...
+- * GetPPPAuthenticationProtocol, GetUserName, GetPassword */
++/**
++ * List of arguments for GetLinkLayerMaxBitRates action
++ * This action contains two arguments from WANPPPCnVars array:
++ * - out: UpstreamMaxBitRate (index 17)
++ * - out: DownstreamMaxBitRate (index 18)
++ */
++static const struct argument GetLinkLayerMaxBitRatesArgs[] =
++{
++	{2, 17},
++	{2, 18},
++	{0, 0}
++};
++
++/**
++ * List of supported actions for WANPPPConnection service
++ */
++static const struct action WANPPPCnActions[] = {
++    {"SetConnectionType", SetConnectionTypeArgs}, /* Required */
++    {"GetConnectionTypeInfo", GetConnectionTypeInfoArgs}, /* Required */
++    {"RequestConnection", 0}, /* Required */
++    {"ForceTermination", 0}, /* Required */
++    {"GetStatusInfo", GetStatusInfoArgs}, /* Required */
++    {"GetNATRSIPStatus", GetNATRSIPStatusArgs}, /* Required */
++    {"GetGenericPortMappingEntry", GetGenericPortMappingEntryArgs},   /* Required */
++    {"GetSpecificPortMappingEntry", GetSpecificPortMappingEntryArgs}, /* Required */
++    {"AddPortMapping", AddPortMappingArgs}, /* Required */
++    {"DeletePortMapping", DeletePortMappingArgs}, /* Required */
++    {"GetExternalIPAddress", GetExternalIPAddressArgs}, /* Required */
++    {"GetLinkLayerMaxBitRates", GetLinkLayerMaxBitRatesArgs}, /* Required */
++    {0, 0}
++};
++
++/**
++ * List of state variables for WANPPPConnection service
++ *
++ * Description of stateVar structure:
++ * {name, itype, idefault, iallowedlist, ieventvalue}
++ * - name: Name of the state variable
++ * - itype: index of the type in `upnptypes` array,
++ * 0=string, 1=boolean, 2=ui2, 3=ui4, 4=bin.base64
++ * - idefault: default value index in `upnpdefaultvalues` array
++ * - iallowedlist: index of the allowed values in `upnpallowedvalues` array
++ * - ieventvalue: 1 if the state variable is evented, 0 if not.
++ */
++static const struct stateVar WANPPPCnVars[] =
++{
++	{"ConnectionType", 0, 1, 0, 15}, /* required */
++	{"PossibleConnectionTypes", 0|0x80, 0, 14, 15},
++	 /* Required
++	  * Allowed values : Unconfigured / IP_Routed / IP_Bridged */
++	{"ConnectionStatus", 0|0x80, 3, 18,
++	 CONNECTIONSTATUS_MAGICALVALUE }, /* required */
++	 /* Allowed Values : Unconfigured / Connecting(opt) / Connected
++	  *                  PendingDisconnect(opt) / Disconnecting (opt)
++	  *                  Disconnected */
++	{"Uptime", 3, 0},	/* Required */
++	{"LastConnectionError", 0, 6, 25},	/* required : */
++	 /* Allowed Values : ERROR_NONE(req) / ERROR_COMMAND_ABORTED(opt)
++	  *                  ERROR_NOT_ENABLED_FOR_INTERNET(opt)
++	  *                  ERROR_USER_DISCONNECT(opt)
++	  *                  ERROR_ISP_DISCONNECT(opt)
++	  *                  ERROR_IDLE_DISCONNECT(opt)
++	  *                  ERROR_FORCED_DISCONNECT(opt)
++	  *                  ERROR_NO_CARRIER(opt)
++	  *                  ERROR_IP_CONFIGURATION(opt)
++	  *                  ERROR_UNKNOWN(opt) */
++	{"RSIPAvailable", 1, 4}, /* required */
++	{"NATEnabled", 1, 5},    /* required */
++	{"ExternalIPAddress", 0|0x80, 0, 0,
++	 EXTERNALIPADDRESS_MAGICALVALUE}, /* required. Default : empty string */
++	{"PortMappingNumberOfEntries", 2|0x80, 0, 0,
++	 PORTMAPPINGNUMBEROFENTRIES_MAGICALVALUE}, /* required >= 0 */
++	{"PortMappingEnabled", 1, 0}, /* Required */
++/* 10 */
++	{"PortMappingLeaseDuration", 3, 2, 1}, /* required */
++	{"RemoteHost", 0, 0},   /* required. Default : empty string */
++	{"ExternalPort", 2, 0}, /* required */
++	{"InternalPort", 2, 0, 3}, /* required */
++	{"PortMappingProtocol", 0, 0, 11}, /* required allowedValues: TCP/UDP */
++	{"InternalClient", 0, 0}, /* required */
++	{"PortMappingDescription", 0, 0}, /* required default: empty string */
++	{"UpstreamMaxBitRate", 3, 2}, /* required */
++	{"DownstreamMaxBitRate", 3, 2}, /* required */
++	{0, 0}
++};
++
+ static const struct serviceDesc scpdWANPPPCn =
+-{ WANIPCnActions, WANIPCnVars };
++{ WANPPPCnActions, WANPPPCnVars };
+ 
+ /* WANCfg.xml */
+ /* See UPnP_IGD_WANCommonInterfaceConfig 1.0.pdf */
+@@ -1387,7 +1471,7 @@ genWANIPCn(int * len, int force_igd1)
+ char *
+ genWANPPPCn(int * len, int force_igd1)
+ {
+-	return genServiceDesc(len, &scpdWANIPCn, force_igd1);
++	return genServiceDesc(len, &scpdWANPPPCn, force_igd1);
+ }
+ #endif
+ 
+@@ -1543,7 +1627,7 @@ char *
+ getVarsWANPPPCn(int * l)
+ {
+ 	return genEventVars(l,
+-                        &scpdWANIPCn);
++                        &scpdWANPPPCn);
+ }
+ #endif
+ 
+diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
+index 47f024f..de6be01 100644
+--- miniupnpd/upnpsoap.c
++++ miniupnpd/upnpsoap.c
+@@ -2369,6 +2369,34 @@ GetAssignedRoles(struct upnphttp * h, const char * action, const char * ns)
+ }
+ #endif
+ 
++#ifdef ADVERTISE_WANPPPCONN
++static void GetLinkLayerMaxBitRates(struct upnphttp *h, const char *action,
++                                    const char *ns) {
++    static const char resp[] =
++        "<u:%sResponse "
++        "xmlns:u=\"%s\">"
++        "<NewUpstreamMaxBitRate>%lu</NewUpstreamMaxBitRate>"
++        "<NewDownstreamMaxBitRate>%lu</NewDownstreamMaxBitRate>"
++        "</u:%sResponse>";
++
++    char body[2048];
++    int bodylen;
++    struct ifdata data;
++
++    if ((downstream_bitrate == 0) || (upstream_bitrate == 0)) {
++        if (getifstats(ext_if_name, &data) >= 0) {
++            if (downstream_bitrate == 0) downstream_bitrate = data.baudrate;
++            if (upstream_bitrate == 0) upstream_bitrate = data.baudrate;
++        }
++    }
++    bodylen = snprintf(
++        body, sizeof(body), resp, action,
++        ns, /* was "urn:schemas-upnp-org:service:WANPPPConnection:1" */
++        upstream_bitrate, downstream_bitrate, action);
++    BuildSendAndCloseSoapResp(h, body, bodylen);
++}
++#endif /* ADVERTISE_WANPPPCONN */
++
+ /* Windows XP as client send the following requests :
+  * GetConnectionTypeInfo
+  * GetNATRSIPStatus
+@@ -2432,6 +2460,10 @@ soapMethods[] =
+ 	{ "GetSupportedProtocols", GetSupportedProtocols},	/* Required */
+ 	{ "GetAssignedRoles", GetAssignedRoles},	/* Required */
+ #endif
++#ifdef ADVERTISE_WANPPPCONN
++	/* WANPPPConnection */
++	{ "GetLinkLayerMaxBitRates", GetLinkLayerMaxBitRates},
++#endif /* ADVERTISE_WANPPPCONN */
+ 	{ 0, 0 }
+ };
+ 
+-- 
+2.34.1
+

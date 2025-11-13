@@ -1,0 +1,31 @@
+From fd3af7c3aa5993bf5491395821dd7e3f24750b4e Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Mon, 7 Oct 2024 14:32:13 +0200
+Subject: [PATCH] UPnP/PPP: WANPPPConnection isn't advertised (HOP-7453)
+
+Cause: Strict mode is activated and WANPPPConnection is disabled by default
+
+Solution: Remove the condition on strict mode
+
+Issue: HOP-7453 - [UPnP][REG]The DUT Advertise WANIPConnection instead of WANPPPConnection [change]
+GitOrigin-RevId: 807948fb0adc75c64221ec6001cf7165616c49ca
+---
+ miniupnpd/configure | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git miniupnpd/configure miniupnpd/configure
+index 4081a5e..fb93d03 100755
+--- miniupnpd/configure
++++ miniupnpd/configure
+@@ -788,7 +788,7 @@ echo "" >> ${CONFIGFILE}
+ 
+ echo "/* define ADVERTISE_WANPPPCONN to allow buggy Control Point to use" >> ${CONFIGFILE}
+ echo " * WANPPPConnection instead of WANIPConnection. */" >>  ${CONFIGFILE}
+-if [ -n "$STRICT" ] || [ -n "$DISABLEPPPCONN" ] ; then
++if [ -n "$DISABLEPPPCONN" ] ; then
+ 	echo "/*#define ADVERTISE_WANPPPCONN*/" >> ${CONFIGFILE}
+ else
+ 	echo "#define ADVERTISE_WANPPPCONN" >> ${CONFIGFILE}
+-- 
+2.34.1
+

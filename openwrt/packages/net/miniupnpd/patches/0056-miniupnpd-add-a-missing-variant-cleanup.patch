@@ -1,0 +1,25 @@
+From 5b635985a12f15beb61e411b5f828fba0e9823b7 Mon Sep 17 00:00:00 2001
+From: Florian Rouzaud <florian.rouzaud@softathome.com>
+Date: Fri, 3 Oct 2025 10:03:55 +0000
+Subject: [PATCH] miniupnpd: add a missing variant cleanup
+
+Signed-off-by: Vitalii Popov <v.popov@inango-systems.com>
+---
+ miniupnpd/amx/amxmisc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git miniupnpd/amx/amxmisc.c miniupnpd/amx/amxmisc.c
+index 072756e..4ad933e 100644
+--- miniupnpd/amx/amxmisc.c
++++ miniupnpd/amx/amxmisc.c
+@@ -628,6 +628,7 @@ int ext_is_dslite(void) {
+     }
+ exit:
+     syslog(LOG_DEBUG, "ext_is_dslite: %d", rv);
++    amxc_var_clean(&ret);
+     return rv;
+ }
+ 
+-- 
+2.34.1
+

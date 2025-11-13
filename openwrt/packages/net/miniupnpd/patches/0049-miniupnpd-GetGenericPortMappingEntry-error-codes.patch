@@ -1,0 +1,881 @@
+From ed1292344bba1d5ca96b81c82c9556c071a981ad Mon Sep 17 00:00:00 2001
+From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+Date: Tue, 2 Sep 2025 23:20:40 +0300
+Subject: [PATCH] miniupnpd: GetGenericPortMappingEntry error codes
+
+miniupnpd does not process all redirect rules from the system bus,
+but only collects information for rules with Origin=UPnP.
+So when the user requests index for rule that is not Origin=UPnP,
+miniupnpd gets nothing from bus and returns
+"SpecifiedArrayIndexInvalid" error
+
+Solution:
+* Modify `get_redirect_rule_by_index_pm` to pass the `is_upnp_rule`
+ variable so that users can determine the received rules were created
+ by UPnP
+
+References: PCF-2043
+
+Signed-off-by: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+---
+ miniupnpd/amx/amxpmp.c                 | 165 ++++++++++++++++---------
+ miniupnpd/amx/amxpmp.h                 |  11 +-
+ miniupnpd/amx/amxrdr.c                 |   5 +-
+ miniupnpd/commonrdr.h                  |  10 +-
+ miniupnpd/ipf/ipfrdr.c                 |   5 +-
+ miniupnpd/ipfw/ipfwrdr.c               |   5 +-
+ miniupnpd/ipfw/testipfwrdr.c           |   4 +-
+ miniupnpd/miniupnpd.c                  |  18 ++-
+ miniupnpd/natpmp.c                     |   8 +-
+ miniupnpd/netfilter/iptcrdr.c          |   4 +-
+ miniupnpd/netfilter/testiptcrdr.c      |   5 +-
+ miniupnpd/netfilter/testiptcrdr_dscp.c |   3 +-
+ miniupnpd/netfilter/testiptcrdr_peer.c |   4 +-
+ miniupnpd/netfilter_nft/nftnlrdr.c     |   4 +-
+ miniupnpd/netfilter_nft/nftnlrdr.h     |   3 +-
+ miniupnpd/netfilter_nft/testnftnlrdr.c |   4 +-
+ miniupnpd/pcpserver.c                  |   8 +-
+ miniupnpd/pf/obsdrdr.c                 |   5 +-
+ miniupnpd/pf/testobsdrdr.c             |   4 +-
+ miniupnpd/upnpredirect.c               |  42 +++++--
+ miniupnpd/upnpredirect.h               |   8 +-
+ miniupnpd/upnpsoap.c                   |  27 ++--
+ 22 files changed, 246 insertions(+), 106 deletions(-)
+
+diff --git miniupnpd/amx/amxpmp.c miniupnpd/amx/amxpmp.c
+index 0aa76a0..38a57cc 100644
+--- miniupnpd/amx/amxpmp.c
++++ miniupnpd/amx/amxpmp.c
+@@ -275,7 +275,7 @@ int get_redirect_rule_pm(amxb_bus_ctx_t* bus_ctx,
+                 (strcmp(alias + strlen(alias) - strlen(PM_ALIAS_STATIC_SUFFIX),
+                         PM_ALIAS_STATIC_SUFFIX) == 0)) {
+                 syslog(LOG_INFO,
+-                       "get_redirect_rule_by_index_pm: find static rule, "
++                       "get_redirect_rule_pm: find static rule, "
+                        "setting timestamp to 0");
+                 *timestamp = 0;
+             } else {
+@@ -292,69 +292,120 @@ int get_redirect_rule_pm(amxb_bus_ctx_t* bus_ctx,
+     return r;
+ }
+ 
+-/* get_redirect_rule_by_index() for PortMapping
+- * return value : 0 success (found)
+- * -1 = error or rule not found */
+ int get_redirect_rule_by_index_pm(amxb_bus_ctx_t* bus_ctx, int index,
+-                                  char* ifname, unsigned short* eport,
+-                                  char* iaddr, int iaddrlen, unsigned short* iport,
+-                                  int* proto, char* desc, int desclen,
+-                                  char* rhost, int rhostlen,
+-                                  unsigned int* timestamp,
+-                                  u_int64_t* packets, u_int64_t* bytes) {
++                                      char* ifname, unsigned short* eport,
++                                      char* iaddr, int iaddrlen,
++                                      unsigned short* iport, int* proto,
++                                      char* desc, int desclen, char* rhost,
++                                      int rhostlen, unsigned int* timestamp,
++                                      u_int64_t* packets, u_int64_t* bytes,
++                                      u_int8_t* is_upnp_rule) {
+     int rv = -1;
+-    int i = 0;
++    const char* origin = NULL;
++    int remaining_lease_time = 0;
++    uint32_t size = 0;
+     amxc_var_t ret;
+-    amxc_string_t rule;
+-
+-    (void) ifname;
+-    (packets) ? *packets = 0 : (void) packets;
+-    (bytes) ? *bytes = 0 : (void) bytes;
++    amxc_array_t* rule_paths;
++    const amxc_htable_t* htable_rules;
++    amxc_htable_it_t* hit;
++    amxc_var_t* rule;
++    amxc_string_t search_path;
++
++    (void)ifname;
++    (packets) ? * packets = 0 : (void)packets;
++    (bytes) ? * bytes = 0 : (void)bytes;
++    (is_upnp_rule) ? * is_upnp_rule = 0 : (void)is_upnp_rule;
+     amxc_var_init(&ret);
+-    amxc_string_init(&rule, 0);
+-    amxc_string_appendf(&rule, "NAT.PortMapping.[Origin == \"UPnP\"].");
+-    amxb_get(bus_ctx, amxc_string_get(&rule, 0), 0, &ret, 1);
+-    amxc_var_for_each(r, GETP_ARG(&ret, "0.")) {
+-        if(index == i) {
+-            int remaining_lease_time = GET_UINT32(r, "RemainingLeaseTime");
+-            rv = 0;
+-            *iport = (uint16_t) GET_UINT32(r, "InternalPort");
+-            *eport = (uint16_t) GET_UINT32(r, "ExternalPort");
+-            *proto = proto_atoi(GET_CHAR(r, "Protocol"));
+-            if(iaddr) {
+-                strncpy(iaddr, GET_CHAR(r, "InternalClient"), iaddrlen);
+-            }
+-            if(desc) {
+-                strncpy(desc, GET_CHAR(r, "Description"), desclen);
+-            }
+-            if (timestamp) {
+-                /* If Alias parameter contains the '-static' suffix,
+-                 * it indicates that the rule was created with LeaseDuration=0,
+-                 * so we need to return LeaseDuration=0, even if this is not
+-                 * the real value of the lease duration */
+-                const char* alias = GET_CHAR(r, "Alias");
+-                if (alias && (strlen(alias) > strlen(PM_ALIAS_STATIC_SUFFIX)) &&
+-                    (strcmp(
+-                         alias + strlen(alias) - strlen(PM_ALIAS_STATIC_SUFFIX),
+-                         PM_ALIAS_STATIC_SUFFIX) == 0)) {
+-                    syslog(LOG_INFO,
+-                           "get_redirect_rule_by_index_pm: find static rule, "
+-                           "setting timestamp to 0");
+-                    *timestamp = 0;
+-                } else {
+-                    *timestamp = upnp_time() + remaining_lease_time;
+-                }
+-            }
+-            if(rhost) {
+-                strncpy(rhost, GET_CHAR(r, "RemoteHost"), rhostlen);
+-            }
+-            break;
++    amxc_string_init(&search_path, 0);
++
++    amxc_string_appendf(&search_path, "NAT.PortMapping.*.");
++    rv = amxb_get(bus_ctx, amxc_string_get(&search_path, 0), 0, &ret, 1);
++    if(rv != 0) {
++        syslog(LOG_ERR,
++               "get_redirect_rule_by_index_pm: failed to get PortMapping "
++               "entries");
++        rv = -1;
++        goto exit;
++    }
++
++    htable_rules = amxc_var_constcast(amxc_htable_t, GETP_ARG(&ret, "0."));
++    /* We need to sort retrieved keys, because htable iteration is not ordered */
++    rule_paths = amxc_htable_get_sorted_keys(htable_rules);
++    size = amxc_array_size(rule_paths);
++    if(size == 0 || index >= size) {
++        syslog(
++            LOG_WARNING,
++            "get_redirect_rule_by_index_pm: rule with index %d not found",
++            index);
++        rv = -2;
++        goto exit;
++    }
++
++    hit = amxc_htable_get(
++        htable_rules, (const char*)amxc_array_get_data_at(rule_paths, index));
++    rule = amxc_var_from_htable_it(hit);
++    if(!rule) {
++        syslog(LOG_ERR,
++               "get_redirect_rule_by_index_pm: failed to get PortMapping "
++               "entry at index %d",
++               index);
++        rv = -1;
++        goto exit;
++    }
++
++    origin = GET_CHAR(rule, "Origin");
++    if(!origin) {
++        syslog(
++            LOG_ERR,
++            "get_redirect_rule_by_index_pm: failed to get Origin parameter"
++            " from PortMapping entry at index %d",
++            index);
++        rv = -1;
++        goto exit;
++    }
++    if(strcmp(origin, "UPnP") == 0) {
++        if(is_upnp_rule) {
++            *is_upnp_rule = 1;
+         }
+-        ++i;
+     }
+-    amxc_string_clean(&rule);
++
++    remaining_lease_time = GET_UINT32(rule, "RemainingLeaseTime");
++    *iport = (uint16_t)GET_UINT32(rule, "InternalPort");
++    *eport = (uint16_t)GET_UINT32(rule, "ExternalPort");
++    *proto = proto_atoi(GET_CHAR(rule, "Protocol"));
++    if(iaddr) {
++        strncpy(iaddr, GET_CHAR(rule, "InternalClient"), iaddrlen);
++    }
++    if(desc) {
++        strncpy(desc, GET_CHAR(rule, "Description"), desclen);
++    }
++    if(timestamp) {
++        /* If Alias parameter contains the '-static' suffix,
++         * it indicates that the rule was created with LeaseDuration=0,
++         * so we need to return LeaseDuration=0, even if this is not
++         * the real value of the lease duration */
++        const char* alias = GET_CHAR(rule, "Alias");
++        if(alias && (strlen(alias) > strlen(PM_ALIAS_STATIC_SUFFIX)) &&
++           (strcmp(alias + strlen(alias) - strlen(PM_ALIAS_STATIC_SUFFIX),
++                   PM_ALIAS_STATIC_SUFFIX) == 0)) {
++            syslog(LOG_INFO,
++                   "get_redirect_rule_by_index_pm: find static rule, "
++                   "setting timestamp to 0");
++            *timestamp = 0;
++        } else {
++            *timestamp = upnp_time() + remaining_lease_time;
++        }
++    }
++    if(rhost) {
++        strncpy(rhost, GET_CHAR(rule, "RemoteHost"), rhostlen);
++    }
++
++    rv = 0;
++exit:
++    amxc_array_delete(&rule_paths, NULL);
++    amxc_string_clean(&search_path);
+     amxc_var_clean(&ret);
+-    syslog(LOG_INFO, "get_redirect_rule_by_index: %d", rv);
++    syslog(LOG_INFO, "get_redirect_rule_by_index_pm: %d", rv);
+     return rv;
+ }
+ 
+diff --git miniupnpd/amx/amxpmp.h miniupnpd/amx/amxpmp.h
+index a93e38e..6a7f3f8 100644
+--- miniupnpd/amx/amxpmp.h
++++ miniupnpd/amx/amxpmp.h
+@@ -83,13 +83,22 @@ int get_redirect_rule_pm(amxb_bus_ctx_t* bus_ctx, const char* ifname, unsigned s
+                          unsigned int* timestamp,
+                          u_int64_t* packets, u_int64_t* bytes);
+ 
++/**
++ * @brief Get any redirect rule by index, regardless of its origin.
++ * This function retrieves a port mapping rule by its index, allowing iteration
++ * over all rules, including those not created over UPnP.
++ *
++ * @returns 0 on success, -1 on unexpected error, -2 if rule with
++ * specified index is not found
++ */
+ int get_redirect_rule_by_index_pm(amxb_bus_ctx_t* bus_ctx, int index,
+                                   char* ifname, unsigned short* eport,
+                                   char* iaddr, int iaddrlen, unsigned short* iport,
+                                   int* proto, char* desc, int desclen,
+                                   char* rhost, int rhostlen,
+                                   unsigned int* timestamp,
+-                                  u_int64_t* packets, u_int64_t* bytes);
++                                  u_int64_t* packets, u_int64_t* bytes,
++                                  u_int8_t* is_upnp_rule);
+ 
+ int delete_redirect_rule_pm(amxb_bus_ctx_t* bus_ctx, const char* ifname, unsigned short eport,
+                             int proto);
+diff --git miniupnpd/amx/amxrdr.c miniupnpd/amx/amxrdr.c
+index e0568c2..6991274 100644
+--- miniupnpd/amx/amxrdr.c
++++ miniupnpd/amx/amxrdr.c
+@@ -205,7 +205,8 @@ int get_redirect_rule_by_index(int index,
+                                int* proto, char* desc, int desclen,
+                                char* rhost, int rhostlen,
+                                unsigned int* timestamp,
+-                               u_int64_t* packets, u_int64_t* bytes) {
++                               u_int64_t* packets, u_int64_t* bytes,
++                               u_int8_t* is_upnp_rule) {
+     int r = -1;
+     amxc_string_t* pcp_server = 0;
+ 
+@@ -214,7 +215,7 @@ int get_redirect_rule_by_index(int index,
+     if(is_dslite(&pcp_server)) {
+         r = get_redirect_rule_by_index_pcp(bus_ctx, index, ifname, eport, iaddr, iaddrlen, iport, proto, desc, desclen, rhost, rhostlen, timestamp, packets, bytes, amxc_string_get(pcp_server, 0));
+     } else {
+-        r = get_redirect_rule_by_index_pm(bus_ctx, index, ifname, eport, iaddr, iaddrlen, iport, proto, desc, desclen, rhost, rhostlen, timestamp, packets, bytes);
++        r = get_redirect_rule_by_index_pm(bus_ctx, index, ifname, eport, iaddr, iaddrlen, iport, proto, desc, desclen, rhost, rhostlen, timestamp, packets, bytes, is_upnp_rule);
+     }
+ 
+     amxc_string_delete(&pcp_server);
+diff --git miniupnpd/commonrdr.h miniupnpd/commonrdr.h
+index d36e284..c55d5b8 100644
+--- miniupnpd/commonrdr.h
++++ miniupnpd/commonrdr.h
+@@ -39,9 +39,10 @@ get_redirect_rule(const char * ifname, unsigned short eport, int proto,
+                   u_int64_t * packets, u_int64_t * bytes);
+ 
+ /* get_redirect_rule_by_index()
+- * return values :
+- *  0 success (rule found)
+- * -1 error or rule not found */
++ * return values:
++ * 0 on success,
++ * -1 on unexpected error,
++ * -2 if rule with specified index is not found */
+ int
+ get_redirect_rule_by_index(int index,
+                            char * ifname, unsigned short * eport,
+@@ -49,7 +50,8 @@ get_redirect_rule_by_index(int index,
+                            int * proto, char * desc, int desclen,
+                            char * rhost, int rhostlen,
+                            unsigned int * timestamp,
+-                           u_int64_t * packets, u_int64_t * bytes);
++                           u_int64_t * packets, u_int64_t * bytes,
++                           u_int8_t * is_upnp_rule);
+ 
+ /* return an (malloc'ed) array of "external" port for which there is
+  * a port mapping. number is the size of the array */
+diff --git miniupnpd/ipf/ipfrdr.c miniupnpd/ipf/ipfrdr.c
+index 4b10c31..e00a0f5 100644
+--- miniupnpd/ipf/ipfrdr.c
++++ miniupnpd/ipf/ipfrdr.c
+@@ -406,13 +406,16 @@ get_redirect_rule_by_index(int index,
+     int * proto, char * desc, int desclen,
+     char * rhost, int rhostlen,
+     unsigned int * timestamp,
+-    u_int64_t * packets, u_int64_t * bytes)
++    u_int64_t * packets, u_int64_t * bytes,
++	u_int8_t * is_upnp_rule)
+ {
+ 	ipfgeniter_t iter;
+ 	ipfobj_t obj;
+ 	ipnat_t ipn;
+ 	int n, r;
+ 
++	*is_upnp_rule = 1;
++
+ 	if (index < 0)
+ 		return -1;
+ 
+diff --git miniupnpd/ipfw/ipfwrdr.c miniupnpd/ipfw/ipfwrdr.c
+index a2fa695..e7c4ff6 100644
+--- miniupnpd/ipfw/ipfwrdr.c
++++ miniupnpd/ipfw/ipfwrdr.c
+@@ -370,11 +370,14 @@ int get_redirect_rule_by_index(
+ 	int rhostlen,
+ 	unsigned int * timestamp,
+ 	u_int64_t * packets,
+-	u_int64_t * bytes)
++	u_int64_t * bytes,
++	u_int8_t * is_upnp_rule)
+ {
+ 	int total_rules = 0;
+ 	struct ip_fw * rules = NULL;
+ 
++	*is_upnp_rule = 1;
++
+ 	if (index < 0) /* TODO shouldn't we also validate the maximum? */
+ 		return -1;
+ 
+diff --git miniupnpd/ipfw/testipfwrdr.c miniupnpd/ipfw/testipfwrdr.c
+index d6791d2..e2f42fc 100644
+--- miniupnpd/ipfw/testipfwrdr.c
++++ miniupnpd/ipfw/testipfwrdr.c
+@@ -28,6 +28,7 @@ list_port_mappings(void)
+ 	char rhost[32];
+ 	unsigned int timestamp;
+ 	u_int64_t packets, bytes;
++	u_int8_t is_upnp_rule = 0;
+ 
+ 	printf("== Port Mapping List ==\n");
+ 	for(i = 0;; i++) {
+@@ -40,7 +41,8 @@ list_port_mappings(void)
+ 		if(get_redirect_rule_by_index(i, 0/*ifname*/, &eport, iaddr, sizeof(iaddr),
+ 		                              &iport, &proto, desc, sizeof(desc),
+ 		                              rhost, sizeof(rhost),
+-		                              &timestamp, &packets, &bytes) < 0)
++		                              &timestamp, &packets, &bytes,
++									  &is_upnp_rule) < 0)
+ 			break;
+ 		printf("%2d - %5hu=>%15s:%5hu %d '%s' '%s' %u %" PRIu64 " %" PRIu64 "\n",
+ 		       i, eport, iaddr, iport, proto, desc, rhost, timestamp,
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index 0f91b71..0485218 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -156,6 +156,7 @@ tomato_save(const char *fname)
+ 	char iaddr[32];
+ 	char desc[64];
+ 	char rhost[32];
++	u_int8_t is_upnp_rule = 0;
+ 	int n;
+ 	FILE *f;
+ 	int t;
+@@ -167,10 +168,13 @@ tomato_save(const char *fname)
+ 		if ((f = fdopen(t, "w")) != NULL)
+ 		{
+ 			n = 0;
+-			while (upnp_get_redirection_infos_by_index(n, &eport, proto, &iport, iaddr, sizeof(iaddr), desc, sizeof(desc), rhost, sizeof(rhost), &leaseduration) == 0)
++			while (upnp_get_redirection_infos_by_index(n, &eport, proto, &iport, iaddr, sizeof(iaddr), desc, sizeof(desc), rhost, sizeof(rhost), &leaseduration, &is_upnp_rue) == 0)
+ 			{
+-				timestamp = (leaseduration > 0) ? time(NULL) + leaseduration : 0;
+-				fprintf(f, "%s %u %s %u [%s] %u\n", proto, eport, iaddr, iport, desc, timestamp);
++				/* Handle the rule only if it created by UPnP */
++				if(is_upnp_rule) {
++					timestamp = (leaseduration > 0) ? time(NULL) + leaseduration : 0;
++					fprintf(f, "%s %u %s %u [%s] %u\n", proto, eport, iaddr, iport, desc, timestamp);
++				}
+ 				++n;
+ 			}
+ 			fclose(f);
+@@ -249,6 +253,7 @@ tomato_delete(void)
+ 	char iaddr[32];
+ 	char desc[64];
+ 	char rhost[32];
++	u_int8_t is_upnp_rule = 0;
+ 	int n;
+ 
+ 	if ((f = fopen("/etc/upnp/delete", "r")) != NULL)
+@@ -263,9 +268,12 @@ tomato_delete(void)
+ 					n = upnp_get_portmapping_number_of_entries();
+ 					while (--n >= 0)
+ 					{
+-						if (upnp_get_redirection_infos_by_index(n, &eport, proto, &iport, iaddr, sizeof(iaddr), desc, sizeof(desc), rhost, sizeof(rhost), &leaseduration) == 0)
++						if (upnp_get_redirection_infos_by_index(n, &eport, proto, &iport, iaddr, sizeof(iaddr), desc, sizeof(desc), rhost, sizeof(rhost), &leaseduration, &is_upnp_rule) == 0)
+ 						{
+-							upnp_delete_redirection(eport, proto);
++							/* Delete the rule only if it created by UPnP */
++							if(is_upnp_rule) {
++								upnp_delete_redirection(eport, proto);
++							}
+ 						}
+ 					}
+ 					break;
+diff --git miniupnpd/natpmp.c miniupnpd/natpmp.c
+index 7f20fda..2a2d4ae 100644
+--- miniupnpd/natpmp.c
++++ miniupnpd/natpmp.c
+@@ -301,11 +301,17 @@ void ProcessIncomingNATPMPPacket(int s, unsigned char *msg_buff, int len,
+ 				int proto2;
+ 				char desc[64];
+ 				eport = 0; /* to indicate correct removing of port mapping */
++				u_int8_t is_upnp_rule = 0;
+ 				while(get_redirect_rule_by_index(index, 0,
+ 				          &eport2, iaddr2, sizeof(iaddr2),
+ 						  &iport2, &proto2,
+ 						  desc, sizeof(desc),
+-				          0, 0, &timestamp, 0, 0) >= 0) {
++				          0, 0, &timestamp, 0, 0, &is_upnp_rule) >= 0) {
++					if(!is_upnp_rule) {
++						/* skip non-UPnP rules */
++						++index;
++						continue;
++					}
+ 					syslog(LOG_DEBUG, "%d %d %hu->'%s':%hu '%s'",
+ 					       index, proto2, eport2, iaddr2, iport2, desc);
+ 					if(0 == strcmp(iaddr2, senderaddrstr)
+diff --git miniupnpd/netfilter/iptcrdr.c miniupnpd/netfilter/iptcrdr.c
+index 1a028d2..990d355 100644
+--- miniupnpd/netfilter/iptcrdr.c
++++ miniupnpd/netfilter/iptcrdr.c
+@@ -441,7 +441,8 @@ get_redirect_rule_by_index(int index,
+                            int * proto, char * desc, int desclen,
+                            char * rhost, int rhostlen,
+                            unsigned int * timestamp,
+-                           u_int64_t * packets, u_int64_t * bytes)
++                           u_int64_t * packets, u_int64_t * bytes,
++                           u_int8_t * is_upnp_rule)
+ {
+ 	int r = -1;
+ 	int i = 0;
+@@ -451,6 +452,7 @@ get_redirect_rule_by_index(int index,
+ 	const struct ip_nat_multi_range * mr;
+ 	const struct ipt_entry_match *match;
+ 	UNUSED(ifname);
++	*is_upnp_rule = 1;
+ 
+ 	h = iptc_init("nat");
+ 	if(!h)
+diff --git miniupnpd/netfilter/testiptcrdr.c miniupnpd/netfilter/testiptcrdr.c
+index 59663f7..4226f6f 100644
+--- miniupnpd/netfilter/testiptcrdr.c
++++ miniupnpd/netfilter/testiptcrdr.c
+@@ -64,14 +64,15 @@ main(int argc, char ** argv)
+ 		char rhost[256];
+ 		unsigned int timestamp;
+ 		u_int64_t packets, bytes;
+-
++		u_int8_t is_upnp_rule = 0;
+ 		desc[0] = '\0';
+ 		if(get_redirect_rule_by_index(0, "", &p1,
+ 		                              addr, sizeof(addr), &p2,
+ 		                              &proto2, desc, sizeof(desc),
+ 		                              rhost, sizeof(rhost),
+ 		                              &timestamp,
+-									  &packets, &bytes) < 0)
++									  &packets, &bytes,
++									  &is_upnp_rule) < 0)
+ 		{
+ 			printf("rule not found\n");
+ 		}
+diff --git miniupnpd/netfilter/testiptcrdr_dscp.c miniupnpd/netfilter/testiptcrdr_dscp.c
+index 4ad56d7..1aa31c5 100644
+--- miniupnpd/netfilter/testiptcrdr_dscp.c
++++ miniupnpd/netfilter/testiptcrdr_dscp.c
+@@ -47,6 +47,7 @@ main(int argc, char ** argv)
+ 		char rhost[256];
+ 		unsigned int timestamp;
+ 		u_int64_t packets, bytes;
++		u_int8_t is_upnp_rule = 0;
+ 
+ 		desc[0] = '\0';
+ 		if(get_redirect_rule_by_index(0, "", &p1,
+@@ -54,7 +55,7 @@ main(int argc, char ** argv)
+ 									  &proto2, desc, sizeof(desc),
+ 									  rhost, sizeof(rhost),
+ 									  &timestamp,
+-									  &packets, &bytes) < 0)
++									  &packets, &bytes, &is_upnp_rule) < 0)
+ 		{
+ 			printf("rule not found\n");
+ 		}
+diff --git miniupnpd/netfilter/testiptcrdr_peer.c miniupnpd/netfilter/testiptcrdr_peer.c
+index 6e1d175..cc834eb 100644
+--- miniupnpd/netfilter/testiptcrdr_peer.c
++++ miniupnpd/netfilter/testiptcrdr_peer.c
+@@ -48,6 +48,7 @@ main(int argc, char ** argv)
+ 		char rhost[256];
+ 		unsigned int timestamp;
+ 		u_int64_t packets, bytes;
++		u_int8_t is_upnp_rule = 0;
+ 
+ 		desc[0] = '\0';
+ 		if(get_redirect_rule_by_index(0, "", &p1,
+@@ -55,7 +56,8 @@ main(int argc, char ** argv)
+ 									  &proto2, desc, sizeof(desc),
+ 									  rhost, sizeof(rhost),
+ 									  &timestamp,
+-									  &packets, &bytes) < 0)
++									  &packets, &bytes,
++									  &is_upnp_rule) < 0)
+ 		{
+ 			printf("rule not found\n");
+ 		}
+diff --git miniupnpd/netfilter_nft/nftnlrdr.c miniupnpd/netfilter_nft/nftnlrdr.c
+index 7ad72bc..5f4c97e 100644
+--- miniupnpd/netfilter_nft/nftnlrdr.c
++++ miniupnpd/netfilter_nft/nftnlrdr.c
+@@ -501,10 +501,12 @@ get_redirect_rule_by_index(int index,
+ 			   int * proto, char * desc, int desclen,
+ 			   char * rhost, int rhostlen,
+ 			   unsigned int * timestamp,
+-			   u_int64_t * packets, u_int64_t * bytes)
++			   u_int64_t * packets, u_int64_t * bytes,
++			   u_int8_t * is_upnp_rule)
+ {
+ 	rule_t *r;
+ 	int i = 0;
++	*is_upnp_rule = 1;
+ 
+ 	d_printf(("get_redirect_rule_by_index()\n"));
+ 	refresh_nft_cache_redirect();
+diff --git miniupnpd/netfilter_nft/nftnlrdr.h miniupnpd/netfilter_nft/nftnlrdr.h
+index 50448d6..f0c83c0 100644
+--- miniupnpd/netfilter_nft/nftnlrdr.h
++++ miniupnpd/netfilter_nft/nftnlrdr.h
+@@ -71,7 +71,8 @@ get_redirect_rule_by_index(int index,
+ 			   int * proto, char * desc, int desclen,
+ 			   char * rhost, int rhostlen,
+ 			   unsigned int * timestamp,
+-			   u_int64_t * packets, u_int64_t * bytes);
++			   u_int64_t * packets, u_int64_t * bytes,
++			   u_int8_t * is_upnp_rule);
+ 
+ unsigned short *
+ get_portmappings_in_range(unsigned short startport, unsigned short endport,
+diff --git miniupnpd/netfilter_nft/testnftnlrdr.c miniupnpd/netfilter_nft/testnftnlrdr.c
+index 1005d51..9e4e61f 100644
+--- miniupnpd/netfilter_nft/testnftnlrdr.c
++++ miniupnpd/netfilter_nft/testnftnlrdr.c
+@@ -77,6 +77,7 @@ main(int argc, char ** argv)
+ 		char rhost[256];
+ 		unsigned int timestamp;
+ 		u_int64_t packets, bytes;
++		u_int8_t is_upnp_rule = 0;
+ 
+ 		desc[0] = '\0';
+ 		printf("test0\n");
+@@ -85,7 +86,8 @@ main(int argc, char ** argv)
+ 		                              &proto2, desc, sizeof(desc),
+ 		                              rhost, sizeof(rhost),
+ 		                              &timestamp,
+-					      &packets, &bytes) < 0)
++		                              &packets, &bytes,
++		                              &is_upnp_rule) < 0)
+ 		{
+ 			printf("rule not found\n");
+ 		}
+diff --git miniupnpd/pcpserver.c miniupnpd/pcpserver.c
+index 4aeb024..a70bd92 100644
+--- miniupnpd/pcpserver.c
++++ miniupnpd/pcpserver.c
+@@ -1101,6 +1101,7 @@ static void DeletePCPMap(pcp_info_t *pcp_msg_info)
+ 	int proto2;
+ 	char desc[64];
+ 	unsigned int timestamp;
++	u_int8_t is_upnp_rule;
+ 
+ 	syslog(LOG_DEBUG, "is_fw=%d addr=%s iport=%hu proto=%d",
+ 	       pcp_msg_info->is_fw,  pcp_msg_info->mapped_str, iport, (int)proto);
+@@ -1112,8 +1113,13 @@ static void DeletePCPMap(pcp_info_t *pcp_msg_info)
+ 					 &eport2, iaddr2, sizeof(iaddr2),
+ 					 &iport2, &proto2,
+ 					 desc, sizeof(desc),
+-					 0, 0, &timestamp, 0, 0) >= 0;
++					 0, 0, &timestamp, 0, 0,
++					 &is_upnp_rule) >= 0;
+ 		     index++) {
++			if(!is_upnp_rule) {
++				/* skip non-UPnP rules */
++				continue;
++			}
+ 			syslog(LOG_DEBUG, "%d: %s %hu %d", index, iaddr2, iport2, proto2);
+ 			if(0 == strcmp(iaddr2, pcp_msg_info->mapped_str)
+ 			   && (proto2==proto)
+diff --git miniupnpd/pf/obsdrdr.c miniupnpd/pf/obsdrdr.c
+index 86c67f2..7d93237 100644
+--- miniupnpd/pf/obsdrdr.c
++++ miniupnpd/pf/obsdrdr.c
+@@ -1204,13 +1204,16 @@ get_redirect_rule_by_index(int index,
+                            int * proto, char * desc, int desclen,
+                            char * rhost, int rhostlen,
+                            unsigned int * timestamp,
+-                           u_int64_t * packets, u_int64_t * bytes)
++                           u_int64_t * packets, u_int64_t * bytes,
++                           u_int8_t * is_upnp_rule)
+ {
+ 	int n;
+ 	struct pfioc_rule pr;
+ #ifndef PF_NEWSTYLE
+ 	struct pfioc_pooladdr pp;
+ #endif
++	*is_upnp_rule = 1;
++
+ 	if(index < 0)
+ 		return -1;
+ 	if(dev<0) {
+diff --git miniupnpd/pf/testobsdrdr.c miniupnpd/pf/testobsdrdr.c
+index 543369a..25f783b 100644
+--- miniupnpd/pf/testobsdrdr.c
++++ miniupnpd/pf/testobsdrdr.c
+@@ -51,13 +51,15 @@ test_index(void)
+ 	unsigned short eport = 0;
+ 	int proto = 0;
+ 	unsigned int timestamp;
++	u_int8_t is_upnp_rule = 0;
+ 	ifname[0] = '\0';
+ 	iaddr[0] = '\0';
+ 	rhost[0] = '\0';
+ 	if(get_redirect_rule_by_index(0, ifname, &eport, iaddr, sizeof(iaddr),
+ 	                              &iport, &proto, desc, sizeof(desc),
+ 	                              rhost, sizeof(rhost),
+-                                  &timestamp, 0, 0) < 0)
++                                  &timestamp, 0, 0,
++								  &is_upnp_rule) < 0)
+ 	{
+ 		printf("get.._by_index : no rule\n");
+ 	}
+diff --git miniupnpd/upnpredirect.c miniupnpd/upnpredirect.c
+index 2447dc4..771b6e5 100644
+--- miniupnpd/upnpredirect.c
++++ miniupnpd/upnpredirect.c
+@@ -309,6 +309,7 @@ void lease_file_rewrite(void)
+ 	char desc[64];
+ 	char rhost[40];
+ 	unsigned int timestamp;
++	u_int8_t is_upnp_rule = 0;
+ 
+ 	if (lease_file == NULL) return;
+ 	remove(lease_file);
+@@ -316,10 +317,11 @@ void lease_file_rewrite(void)
+ 		if(get_redirect_rule_by_index(index, 0/*ifname*/, &eport, iaddr, sizeof(iaddr),
+ 		                              &iport, &proto, desc, sizeof(desc),
+ 		                              rhost, sizeof(rhost), &timestamp,
+-		                              0, 0) < 0)
+-			break;
+-		if(lease_file_add(eport, iaddr, iport, proto, desc, timestamp) < 0)
++		                              0, 0, &is_upnp_rule) < 0)
+ 			break;
++		if(is_upnp_rule)
++			if(lease_file_add(eport, iaddr, iport, proto, desc, timestamp) < 0)
++				break;
+ 	}
+ }
+ #endif
+@@ -529,22 +531,25 @@ upnp_get_redirection_infos_by_index(int index,
+                                     char * iaddr, int iaddrlen,
+                                     char * desc, int desclen,
+                                     char * rhost, int rhostlen,
+-                                    unsigned int * leaseduration)
++                                    unsigned int * leaseduration,
++                                    u_int8_t * is_upnp_rule)
+ {
+ 	/*char ifname[IFNAMSIZ];*/
+ 	int proto = 0;
+ 	unsigned int timestamp;
+ 	time_t current_time;
++	int r = 0;
+ 
+ 	if(desc && (desclen > 0))
+ 		desc[0] = '\0';
+ 	if(rhost && (rhostlen > 0))
+ 		rhost[0] = '\0';
+-	if(get_redirect_rule_by_index(index, 0/*ifname*/, eport, iaddr, iaddrlen,
++	r = get_redirect_rule_by_index(index, 0/*ifname*/, eport, iaddr, iaddrlen,
+ 	                              iport, &proto, desc, desclen,
+ 	                              rhost, rhostlen, &timestamp,
+-	                              0, 0) < 0)
+-		return -1;
++	                              0, 0, is_upnp_rule);
++	if(r < 0)
++		return r;
+ 	else
+ 	{
+ 		current_time = upnp_time();
+@@ -611,13 +616,15 @@ upnp_get_portmapping_number_of_entries()
+ 	unsigned short eport, iport;
+ 	char protocol[8], iaddr[32], desc[64], rhost[32];
+ 	unsigned int leaseduration;
++	u_int8_t is_upnp_rule = 0;
+ 	do {
+ 		protocol[0] = '\0'; iaddr[0] = '\0'; desc[0] = '\0';
+ 		r = upnp_get_redirection_infos_by_index(n, &eport, protocol, &iport,
+ 		                                        iaddr, sizeof(iaddr),
+ 		                                        desc, sizeof(desc),
+ 		                                        rhost, sizeof(rhost),
+-		                                        &leaseduration);
++		                                        &leaseduration,
++		                                        &is_upnp_rule);
+ 		n++;
+ 	} while(r==0);
+ 	return (n-1);
+@@ -638,6 +645,7 @@ get_upnp_rules_state_list(int max_rules_number_target)
+ 	struct rule_state * * p;
+ 	int i = 0;
+ 	time_t current_time;
++	u_int8_t is_upnp_rule = 0;
+ 
+ 	/*ifname[0] = '\0';*/
+ 	tmp = malloc(sizeof(struct rule_state));
+@@ -647,8 +655,14 @@ get_upnp_rules_state_list(int max_rules_number_target)
+ 	nextruletoclean_timestamp = 0;
+ 	while(get_redirect_rule_by_index(i, /*ifname*/0, &tmp->eport, 0, 0,
+ 	                              &iport, &proto, 0, 0, 0,0, &timestamp,
+-								  &tmp->packets, &tmp->bytes) >= 0)
++								  &tmp->packets, &tmp->bytes,
++								  &is_upnp_rule) >= 0)
+ 	{
++		++i;
++		if(!is_upnp_rule) {
++			/* skip non-UPnP rules */
++			continue;
++		}
+ 		tmp->to_remove = 0;
+ 		if(timestamp > 0) {
+ 			/* need to remove this port mapping ? */
+@@ -663,7 +677,6 @@ get_upnp_rules_state_list(int max_rules_number_target)
+ 		tmp->next = list;
+ 		list = tmp;
+ 		/* prepare next iteration */
+-		i++;
+ 		tmp = malloc(sizeof(struct rule_state));
+ 		if(!tmp)
+ 			break;
+@@ -790,14 +803,20 @@ write_ruleset_details(int s)
+ 	int i = 0;
+ 	char buffer[256];
+ 	int n;
++	u_int8_t is_upnp_rule = 0;
+ 
+ 	write(s, "Ruleset :\n", 10);
+ 	while(get_redirect_rule_by_index(i, 0/*ifname*/, &eport, iaddr, sizeof(iaddr),
+ 	                                 &iport, &proto, desc, sizeof(desc),
+ 	                                 rhost, sizeof(rhost),
+ 	                                 &timestamp,
+-	                                 &packets, &bytes) >= 0)
++	                                 &packets, &bytes
++									 &is_upnp_rule) >= 0)
+ 	{
++		++i;
++		if(!is_upnp_rule) {
++			continue;
++		}
+ 		n = snprintf(buffer, sizeof(buffer),
+ 		             "%2d %s %s:%hu->%s:%hu "
+ 		             "'%s' %u %" PRIu64 " %" PRIu64 "\n",
+@@ -805,7 +824,6 @@ write_ruleset_details(int s)
+ 		             i, proto_itoa(proto), rhost,
+ 		             eport, iaddr, iport, desc, timestamp, packets, bytes);
+ 		write(s, buffer, n);
+-		i++;
+ 	}
+ }
+ #endif
+diff --git miniupnpd/upnpredirect.h miniupnpd/upnpredirect.h
+index bb105de..4a49c06 100644
+--- miniupnpd/upnpredirect.h
++++ miniupnpd/upnpredirect.h
+@@ -54,8 +54,9 @@ upnp_get_redirection_infos(unsigned short eport, const char * protocol,
+                            unsigned int * leaseduration);
+ 
+ /* upnp_get_redirection_infos_by_index()
+- * returns : 0 on success
+- *           -1 failed to get the port mapping or index out of range */
++ * returns : 0 on success,
++ * -1 on unexpected error,
++ * -2 if rule with specified index is not found, */
+ int
+ upnp_get_redirection_infos_by_index(int index,
+                                     unsigned short * eport, char * protocol,
+@@ -63,7 +64,8 @@ upnp_get_redirection_infos_by_index(int index,
+                                     char * iaddr, int iaddrlen,
+                                     char * desc, int desclen,
+                                     char * rhost, int rhostlen,
+-                                    unsigned int * leaseduration);
++                                    unsigned int * leaseduration,
++                                    u_int8_t * is_upnp_rule);
+ 
+ /* upnp_delete_redirection()
+  * returns: 0 on success
+diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
+index 2bdac6f..8ecbe12 100644
+--- miniupnpd/upnpsoap.c
++++ miniupnpd/upnpsoap.c
+@@ -1215,6 +1215,7 @@ GetGenericPortMappingEntry(struct upnphttp * h, const char * action, const char
+ 	char rhost[40];
+ 	unsigned int leaseduration = 0;
+ 	struct NameValueParserData data;
++	u_int8_t is_upnp_rule = 0;
+ 
+ 	ParseNameValue(h->req_buf + h->req_contentoff, h->req_contentlen, &data);
+ 	m_index = GetValueFromNameValueList(&data, "NewPortMappingIndex");
+@@ -1249,21 +1250,33 @@ GetGenericPortMappingEntry(struct upnphttp * h, const char * action, const char
+                                             iaddr, sizeof(iaddr),
+ 	                                        desc, sizeof(desc),
+ 	                                        rhost, sizeof(rhost),
+-	                                        &leaseduration);
++	                                        &leaseduration, &is_upnp_rule);
+ 
+-	if(r < 0)
+-	{
+-		SoapError(h, 713, "SpecifiedArrayIndexInvalid");
+-	}
+-	else
++	switch (r)
+ 	{
++	case 0: /* success */
+ 		int bodylen;
+ 		char body[2048];
++
++		if(!is_upnp_rule) {
++			syslog(LOG_WARNING, "%s: index %d is not a UPnP created rule",
++				   action, (int)index);
++			SoapError(h, 606, "Action not authorized");
++			break;
++		}
++
+ 		bodylen = snprintf(body, sizeof(body), resp,
+ 			action, ns, /*SERVICE_TYPE_WANIPC,*/ rhost,
+ 			(unsigned int)eport, protocol, (unsigned int)iport, iaddr, desc,
+-		    leaseduration, action);
++			leaseduration, action);
+ 		BuildSendAndCloseSoapResp(h, body, bodylen);
++		break;
++	case -2: /* not found */
++		SoapError(h, 713, "SpecifiedArrayIndexInvalid");
++		break;
++	default: /* error */
++		SoapError(h, 501, "ActionFailed");
++		break;
+ 	}
+ 
+ 	ClearNameValueList(&data);
+-- 
+2.34.1
+

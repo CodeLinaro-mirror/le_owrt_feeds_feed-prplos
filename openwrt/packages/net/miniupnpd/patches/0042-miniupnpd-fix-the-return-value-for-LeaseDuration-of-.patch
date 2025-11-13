@@ -1,0 +1,264 @@
+From 520570a33f3f8f0f38729c6fb0135aff79836cb6 Mon Sep 17 00:00:00 2001
+From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+Date: Thu, 31 Jul 2025 11:59:22 +0300
+Subject: [PATCH] miniupnpd: fix the return value for LeaseDuration of static
+ rules
+
+The specification of UPNP v2 specifies that if a user create a
+PortMapping where LeaseDuration 0, this value should be interpreted as
+604800 seconds (1 week lifetime), so there are no "static" rules with
+LeaseDuration0 in the current version of miniupnpd and that is
+why the returned values do not match expectations
+
+Solution:
+* Add mechanism that marks rules in which user specified LeaseDuration
+  to 0 as static rule
+* Add Alias generation for static rules with static suffix to identify
+  statis rules in Get actions
+
+References: PCF-2004
+
+Signed-off-by: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+---
+ miniupnpd/amx/amxpmp.c | 111 +++++++++++++++++++++++++++++++++++++++--
+ miniupnpd/amx/amxpmp.h |  18 +++++++
+ miniupnpd/upnpsoap.c   |  17 +++++++
+ 3 files changed, 143 insertions(+), 3 deletions(-)
+
+diff --git miniupnpd/amx/amxpmp.c miniupnpd/amx/amxpmp.c
+index 092b431..abe65ce 100644
+--- miniupnpd/amx/amxpmp.c
++++ miniupnpd/amx/amxpmp.c
+@@ -72,6 +72,65 @@
+ 
+ time_t upnp_time(void);
+ 
++int current_rule_is_static = false;
++
++void mark_current_rule_as_static(int is_static) {
++    current_rule_is_static = is_static;
++}
++
++int is_current_rule_static(void) {
++    return current_rule_is_static;
++}
++
++/**
++ * @brief Generates a Alias field for PortMapping instance
++ * To ensure uniqueness, the alias is generated with a UUID.
++ *
++ * @return A newly allocated string containing the alias
++ * The caller is responsible for freeing the returned string.
++ */
++static char* generate_alias_for_pm() {
++    int fd = -1;
++    char uuid_str[UUID_LEN + 1] = {0};
++    char* alias = NULL;
++    size_t alias_len = 0;
++
++    // Generate a UUID
++    fd = open("/proc/sys/kernel/random/uuid", O_RDONLY);
++    if(fd < 0) {
++        syslog(LOG_ERR,
++               "generate_alias_for_pm: failed to open "
++               "/proc/sys/kernel/random/uuid");
++        return NULL;
++    }
++
++    if(read(fd, uuid_str, UUID_LEN) <= 0) {
++        syslog(LOG_ERR,
++               "generate_alias_for_pm: failed to read UUID from "
++               "/proc/sys/kernel/random/uuid");
++        close(fd);
++        return NULL;
++    }
++    uuid_str[UUID_LEN] = '\0';
++    close(fd);
++
++    /* Allocate memory for the final alias
++     * Alias template: "PortMapping-<uuid_str>-static" */
++    alias_len = strlen(PM_ALIAS_BASENAME) + strlen(uuid_str) +
++                strlen(PM_ALIAS_STATIC_SUFFIX) + 1;
++    alias = (char*)malloc(alias_len);
++    if(!alias) {
++        syslog(LOG_ERR,
++               "generate_alias_for_pm: failed to allocate memory for alias");
++        return NULL;
++    }
++
++    // Format the alias
++    snprintf(alias, alias_len, "%s%s%s", PM_ALIAS_BASENAME, uuid_str,
++             PM_ALIAS_STATIC_SUFFIX);
++    return alias;
++}
++
+ const char* proto_itoa(int proto) {
+     const char* protocol;
+     switch(proto) {
+@@ -137,6 +196,22 @@ int add_pm_rule(amxb_bus_ctx_t* bus_ctx, const char* ifname, const char* rhost,
+     amxc_var_add_key(uint32_t, &rule, "InactivityTimeout", (uint32_t) ruleset_timeout);
+     amxc_var_add_key(cstring_t, &rule, "Description", desc);
+ 
++    /* If the current rule is static, we generate an alias that
++     * contains the '-static' suffix.
++     * This alias is used to identify the rule as static for Get actions */
++    if(is_current_rule_static()) {
++        char* alias = generate_alias_for_pm();
++        if(!alias) {
++            syslog(
++                LOG_ERR,
++                "add_pm_rule: failed to generate alias for PortMapping rule");
++            goto exit;
++        }
++        syslog(LOG_INFO, "add_pm_rule: generated alias: %s", alias);
++        amxc_var_add_key(cstring_t, &rule, "Alias", alias);
++        free(alias);
++    }
++
+     rv = amxb_add(bus_ctx, "NAT.PortMapping.", 0, NULL, &rule, &ret, 1);
+     if((rv == AMXB_STATUS_OK) && (GETP_ARG(&ret, "0.path") != NULL)) {
+         r = 0;
+@@ -150,6 +225,7 @@ int add_pm_rule(amxb_bus_ctx_t* bus_ctx, const char* ifname, const char* rhost,
+         } while(strcmp(GETP_CHAR(&rule, "0.0.Status"), "Disabled") == 0 && ++nb_try < MAX_NB_TRY && usleep(100));
+     }
+ 
++exit:
+     amxc_var_clean(&rule);
+     amxc_var_clean(&ret);
+     syslog(LOG_WARNING, "redirecting port %hu to %s:%hu protocol %s for %s: %d (%d)", eport, iaddr, iport, proto_itoa(proto), desc, r, rv);
+@@ -190,7 +266,21 @@ int get_redirect_rule_pm(amxb_bus_ctx_t* bus_ctx,
+             strncpy(desc, GET_CHAR(tmp, "Description"), desclen);
+         }
+         if(timestamp) {
+-            *timestamp = upnp_time() + remaining_lease_time;
++            /* If Alias parameter contains the '-static' suffix,
++             * it indicates that the rule was created with LeaseDuration=0,
++             * so we need to return LeaseDuration=0, even if this is not
++             * the real value of the lease duration */
++            const char* alias = GET_CHAR(tmp, "Alias");
++            if (alias && (strlen(alias) > strlen(PM_ALIAS_STATIC_SUFFIX)) &&
++                (strcmp(alias + strlen(alias) - strlen(PM_ALIAS_STATIC_SUFFIX),
++                        PM_ALIAS_STATIC_SUFFIX) == 0)) {
++                syslog(LOG_INFO,
++                       "get_redirect_rule_by_index_pm: find static rule, "
++                       "setting timestamp to 0");
++                *timestamp = 0;
++            } else {
++                *timestamp = upnp_time() + remaining_lease_time;
++            }
+         }
+         if(rhost) {
+             strncpy(rhost, GET_CHAR(tmp, "RemoteHost"), rhostlen);
+@@ -237,8 +327,23 @@ int get_redirect_rule_by_index_pm(amxb_bus_ctx_t* bus_ctx, int index,
+             if(desc) {
+                 strncpy(desc, GET_CHAR(r, "Description"), desclen);
+             }
+-            if(timestamp) {
+-                *timestamp = upnp_time() + remaining_lease_time;
++            if (timestamp) {
++                /* If Alias parameter contains the '-static' suffix,
++                 * it indicates that the rule was created with LeaseDuration=0,
++                 * so we need to return LeaseDuration=0, even if this is not
++                 * the real value of the lease duration */
++                const char* alias = GET_CHAR(r, "Alias");
++                if (alias && (strlen(alias) > strlen(PM_ALIAS_STATIC_SUFFIX)) &&
++                    (strcmp(
++                         alias + strlen(alias) - strlen(PM_ALIAS_STATIC_SUFFIX),
++                         PM_ALIAS_STATIC_SUFFIX) == 0)) {
++                    syslog(LOG_INFO,
++                           "get_redirect_rule_by_index_pm: find static rule, "
++                           "setting timestamp to 0");
++                    *timestamp = 0;
++                } else {
++                    *timestamp = upnp_time() + remaining_lease_time;
++                }
+             }
+             if(rhost) {
+                 strncpy(rhost, GET_CHAR(r, "RemoteHost"), rhostlen);
+diff --git miniupnpd/amx/amxpmp.h miniupnpd/amx/amxpmp.h
+index 7f8783a..a93e38e 100644
+--- miniupnpd/amx/amxpmp.h
++++ miniupnpd/amx/amxpmp.h
+@@ -3,6 +3,7 @@
+ ** SPDX-License-Identifier: BSD-2-Clause-Patent
+ **
+ ** SPDX-FileCopyrightText: Copyright (c) 2023 SoftAtHome
++** SPDX-FileCopyrightText: Copyright (c) 2025 Inango
+ **
+ ** Redistribution and use in source and binary forms, with or
+ ** without modification, are permitted provided that the following
+@@ -67,6 +68,10 @@
+ #include <amxd/amxd_object.h>
+ #include <amxb/amxb.h>
+ 
++#define PM_ALIAS_BASENAME "PortMapping-"
++#define PM_ALIAS_STATIC_SUFFIX "-static"
++#define UUID_LEN 36
++
+ int add_pm_rule(amxb_bus_ctx_t* bus_ctx, const char* ifname, const char* rhost,
+                 unsigned short eport, const char* iaddr, unsigned short iport,
+                 int proto, const char* desc, unsigned int timestamp);
+@@ -104,5 +109,18 @@ int update_portmapping_desc_timestamp_pm(amxb_bus_ctx_t* bus_ctx, const char* if
+ void delete_all_port_mapping_entries(amxb_bus_ctx_t* bus_ctx);
+ 
+ const char* proto_itoa(int proto);
++
++/**
++ * @brief Marks the current rule as static or not.
++ * @param is_static 1 if the rule is static, 0 otherwise.
++ */
++void mark_current_rule_as_static(int is_static);
++
++/**
++ * @brief Checks if the current rule is static.
++ * @return 1 if the current rule is static, 0 otherwise.
++ */
++int is_current_rule_static(void);
++
+ #endif
+ 
+diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
+index c0c02b7..c31f869 100644
+--- miniupnpd/upnpsoap.c
++++ miniupnpd/upnpsoap.c
+@@ -36,6 +36,7 @@
+ #include "upnputils.h"
+ #ifdef USE_AMX
+ #include "amx/amxmisc.h"
++#include "amx/amxpmp.h"
+ #endif
+ 
+ /* utility function */
+@@ -573,6 +574,20 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 
+ 	leaseduration = leaseduration_str ? atoi(leaseduration_str) : 0;
+ #ifdef IGD_V2
++	/* Requirement:
++	 * To solve interoperability issues with legacy UPnP IGD Control Points,
++	 * when returning a static NAT rule to a CP through
++	 * GetGenericPortMappingEntry, GetSpecificPortMappingEntry or
++	 * GetListsOfPortMappings actions, the residential gateway MUST return a
++	 * NewLeaseDuration of 0 (even if this is not the real value of the
++	 * lease duration). */
++	if(leaseduration == 0) {
++		// Mark the current rule as static rule
++		mark_current_rule_as_static(1);
++		syslog(LOG_INFO, "Marked static port mapping for '%hu' to '%s:%hu' protocol '%s' for: '%s'",
++		       eport, int_ip, iport, protocol, desc);
++	}
++
+ 	/* PortMappingLeaseDuration can be either a value between 1 and
+ 	 * 604800 seconds or the zero value (for infinite lease time).
+ 	 * Note that an infinite lease time can be only set by out-of-band
+@@ -592,6 +607,8 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	r = upnp_redirect(r_host, eport, int_ip, iport, protocol, desc, leaseduration);
+ 
+ 	ClearNameValueList(&data);
++	// Clean up the current rule state
++	mark_current_rule_as_static(0);
+ 
+ 	/* possible error codes for AddPortMapping :
+ 	 * 402 - Invalid Args
+-- 
+2.34.1
+

@@ -1,0 +1,1447 @@
+From f54c927ef83bc435a1d577e124b6dd1c81fc3196 Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Mon, 18 Sep 2023 14:09:47 +0200
+Subject: [PATCH] Issue: HOP-3136 [UPnP-IGD][PCP] When PCP is enabled UPNP
+ AddPortMapping must be translated to PCP requests [new]
+
+GitOrigin-RevId: 18ed34fc2f0fa16e4bd65f0f5747703929589c6e
+---
+ miniupnpd/Makefile.linux_amx |   2 +-
+ miniupnpd/amx/amxpcp.c       | 347 ++++++++++++++++++++++++++++++++
+ miniupnpd/amx/amxpcp.h       | 105 ++++++++++
+ miniupnpd/amx/amxpmp.c       | 374 +++++++++++++++++++++++++++++++++++
+ miniupnpd/amx/amxpmp.h       | 105 ++++++++++
+ miniupnpd/amx/amxrdr.c       | 333 ++++++++++---------------------
+ miniupnpd/amx/amxrdr.h       |  14 +-
+ 7 files changed, 1045 insertions(+), 235 deletions(-)
+ create mode 100644 miniupnpd/amx/amxpcp.c
+ create mode 100644 miniupnpd/amx/amxpcp.h
+ create mode 100644 miniupnpd/amx/amxpmp.c
+ create mode 100644 miniupnpd/amx/amxpmp.h
+
+diff --git miniupnpd/Makefile.linux_amx miniupnpd/Makefile.linux_amx
+index 7968228..39e72a9 100644
+--- miniupnpd/Makefile.linux_amx
++++ miniupnpd/Makefile.linux_amx
+@@ -56,7 +56,7 @@ include $(SRCDIR)/gitrev.mk
+ include $(SRCDIR)/objects.mk
+ 
+ # sources in amx/ directory
+-AMXOBJS = amxrdr.o amxmisc.o amxpinhole.o
++AMXOBJS = amxrdr.o amxpcp.o amxpmp.o amxmisc.o amxpinhole.o 
+ 
+ ALLOBJS = $(BASEOBJS) $(LNXOBJS) $(AMXOBJS)
+ 
+diff --git miniupnpd/amx/amxpcp.c miniupnpd/amx/amxpcp.c
+new file mode 100644
+index 0000000..bba1607
+--- /dev/null
++++ miniupnpd/amx/amxpcp.c
+@@ -0,0 +1,347 @@
++/****************************************************************************
++**
++** SPDX-License-Identifier: BSD-2-Clause-Patent
++**
++** SPDX-FileCopyrightText: Copyright (c) 2023 SoftAtHome
++**
++** Redistribution and use in source and binary forms, with or
++** without modification, are permitted provided that the following
++** conditions are met:
++**
++** 1. Redistributions of source code must retain the above copyright
++** notice, this list of conditions and the following disclaimer.
++**
++** 2. Redistributions in binary form must reproduce the above
++** copyright notice, this list of conditions and the following
++** disclaimer in the documentation and/or other materials provided
++** with the distribution.
++**
++** Subject to the terms and conditions of this license, each
++** copyright holder and contributor hereby grants to those receiving
++** rights under this license a perpetual, worldwide, non-exclusive,
++** no-charge, royalty-free, irrevocable (except for failure to
++** satisfy the conditions of this license) patent license to make,
++** have made, use, offer to sell, sell, import, and otherwise
++** transfer this software, where such license applies only to those
++** patent claims, already acquired or hereafter acquired, licensable
++** by such copyright holder or contributor that are necessarily
++** infringed by:
++**
++** (a) their Contribution(s) (the licensed copyrights of copyright
++** holders and non-copyrightable additions of contributors, in
++** source or binary form) alone; or
++**
++** (b) combination of their Contribution(s) with the work of
++** authorship to which such Contribution(s) was added by such
++** copyright holder or contributor, if, at the time the Contribution
++** is added, such addition causes such combination to be necessarily
++** infringed. The patent license shall not apply to any other
++** combinations which include the Contribution.
++**
++** Except as expressly stated above, no rights or licenses from any
++** copyright holder or contributor is granted under this license,
++** whether expressly, by implication, estoppel or otherwise.
++**
++** DISCLAIMER
++**
++** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
++** CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
++** INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++** DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
++** CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
++** USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
++** AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
++** ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++** POSSIBILITY OF SUCH DAMAGE.
++**
++****************************************************************************/
++
++#include <syslog.h>
++#include <string.h>
++#include <stdlib.h>
++#include "amxpcp.h"
++#include "amxrdr.h"
++
++time_t upnp_time(void);
++
++int add_pcp_rule(amxb_bus_ctx_t* bus_ctx, const char* ifname, const char* rhost,
++                 unsigned short eport, const char* iaddr, unsigned short iport,
++                 int proto, const char* desc, unsigned int timestamp, const char* pcp_server) {
++    int r = -1;
++    int rv = -1;
++    amxc_var_t rule;
++    amxc_var_t ret;
++    amxc_string_t path_inbound;
++    unsigned int lease_duration;
++    uint32_t nb_try = 0;
++
++    (void) ifname;
++    lease_duration = (timestamp > 0) ? timestamp - upnp_time() : 0;
++    amxc_var_init(&rule);
++    amxc_var_init(&ret);
++    amxc_string_init(&path_inbound, 0);
++    amxc_var_set_type(&rule, AMXC_VAR_ID_HTABLE);
++    amxc_var_add_key(bool, &rule, "Enable", true);
++    amxc_var_add_key(cstring_t, &rule, "Origin", "UPnP_IWF");
++    amxc_var_add_key(uint32_t, &rule, "Lifetime", lease_duration);
++    amxc_var_add_key(cstring_t, &rule, "SuggestedExternalIPAddress", rhost);
++    amxc_var_add_key(uint32_t, &rule, "SuggestedExternalPort", eport);
++    amxc_var_add_key(uint32_t, &rule, "InternalPort", iport);
++    amxc_var_add_key(int32_t, &rule, "ProtocolNumber", proto);
++    amxc_var_add_key(cstring_t, &rule, "ThirdPartyAddress", iaddr);
++    amxc_var_add_key(cstring_t, &rule, "Description", desc);
++
++    amxc_string_setf(&path_inbound, "%sInboundMapping.", pcp_server);
++
++    rv = amxb_add(bus_ctx, amxc_string_get(&path_inbound, 0), 0, NULL, &rule, &ret, 1);
++    if((rv == AMXB_STATUS_OK) && (GETP_ARG(&ret, "0.path") != NULL)) {
++        r = 0;
++        do {
++            syslog(LOG_DEBUG, "Check if InboundMapping is enabled");
++            r = amxb_get(bus_ctx, GETP_CHAR(&ret, "0.path"), 0, &rule, 0);
++            if((r != 0)) {
++                r = -1;
++                break;
++            }
++        } while(strcmp(GETP_CHAR(&rule, "0.0.Status"), "Disabled") == 0 && ++nb_try < MAX_NB_TRY && usleep(100));
++    }
++
++    amxc_var_clean(&rule);
++    amxc_var_clean(&ret);
++    amxc_string_clean(&path_inbound);
++    syslog(LOG_WARNING, "redirecting port %hu to %s:%hu for %s: %d (using PCP)", eport, iaddr, iport, desc, r);
++    return r;
++}
++
++/* get_redirect_rule() for PCP
++ * return value : 0 success (found)
++ * -1 = error or rule not found */
++int get_redirect_rule_pcp(amxb_bus_ctx_t* bus_ctx, const char* ifname, unsigned short eport, int proto,
++                          char* iaddr, int iaddrlen, unsigned short* iport,
++                          char* desc, int desclen,
++                          char* rhost, int rhostlen,
++                          unsigned int* timestamp,
++                          u_int64_t* packets, u_int64_t* bytes, const char* pcp_server) {
++    int r = -1;
++    amxc_var_t ret;
++    amxc_var_t* tmp;
++    amxc_string_t rule;
++    amxc_string_t rule_name;
++    amxc_string_t path_inbound;
++
++    (void) ifname;
++    (void) packets;
++    (void) bytes;
++    amxc_var_init(&ret);
++    amxc_string_init(&rule, 0);
++    amxc_string_init(&rule_name, 0);
++    amxc_string_init(&path_inbound, 0);
++
++    amxc_string_appendf(&rule, "%sInboundMapping.[ProtocolNumber == %d && SuggestedExternalPort == %hu && Origin == \"UPnP_IWF\"].", pcp_server, proto, eport);
++    amxb_get(bus_ctx, amxc_string_get(&rule, 0), 0, &ret, 1);
++    tmp = GETP_ARG(&ret, "0.0.");
++    if(tmp != NULL) {
++        amxc_var_log(tmp);
++        r = 0;
++        *iport = (uint16_t) GET_UINT32(tmp, "InternalPort");
++        if(iaddr) {
++            strncpy(iaddr, GET_CHAR(tmp, "ThirdPartyAddress"), iaddrlen);
++        }
++        if(desc) {
++            strncpy(desc, GET_CHAR(tmp, "Description"), desclen);
++        }
++        if(timestamp) {
++            *timestamp = GET_UINT32(tmp, "Lifetime");
++        }
++        if(rhost) {
++            strncpy(rhost, GET_CHAR(tmp, "SuggestedExternalIPAddress"), rhostlen);
++        }
++    }
++    amxc_var_clean(&ret);
++    amxc_string_clean(&rule);
++    syslog(LOG_WARNING, "get_redirect_rule: %d (using PCP)", r);
++    return r;
++}
++
++/* get_redirect_rule_by_index() for PCP
++ * return value : 0 success (found)
++ * -1 = error or rule not found */
++int get_redirect_rule_by_index_pcp(amxb_bus_ctx_t* bus_ctx, int index,
++                                   char* ifname, unsigned short* eport,
++                                   char* iaddr, int iaddrlen, unsigned short* iport,
++                                   int* proto, char* desc, int desclen,
++                                   char* rhost, int rhostlen,
++                                   unsigned int* timestamp,
++                                   u_int64_t* packets, u_int64_t* bytes, const char* pcp_server) {
++    int rv = -1;
++    int i = 0;
++    amxc_var_t ret;
++    amxc_string_t rule;
++
++    (void) ifname;
++    (void) packets;
++    (void) bytes;
++    amxc_var_init(&ret);
++    amxc_string_init(&rule, 0);
++    amxc_string_appendf(&rule, "%sInboundMapping.[Origin == \"UPnP_IWF\"].", pcp_server);
++    amxb_get(bus_ctx, amxc_string_get(&rule, 0), 0, &ret, 1);
++    amxc_var_for_each(r, GETP_ARG(&ret, "0.")) {
++        if(index == i) {
++            rv = 0;
++            *iport = (uint16_t) GET_UINT32(r, "InternalPort");
++            *eport = (uint16_t) GET_UINT32(r, "SuggestedExternalPort");
++            *proto = GET_INT32(r, "ProtocolNumber");
++            if(iaddr) {
++                strncpy(iaddr, GET_CHAR(r, "ThirdPartyAddress"), iaddrlen);
++            }
++            if(desc) {
++                strncpy(desc, GET_CHAR(r, "Description"), desclen);
++            }
++            if(timestamp) {
++                *timestamp = GET_UINT32(r, "Lifetime");
++            }
++            if(rhost) {
++                strncpy(rhost, GET_CHAR(r, "SuggestedExternalIPAddress"), rhostlen);
++            }
++            break;
++        }
++        ++i;
++    }
++    amxc_string_clean(&rule);
++    amxc_var_clean(&ret);
++    syslog(LOG_WARNING, "get_redirect_rule_by_index: %d (using PCP)", rv);
++    return rv;
++}
++
++/* delete_redirect_rule() for PCP
++* return value : 0 success (found)
++* -1 = error or rule not found */
++int delete_redirect_rule_pcp(amxb_bus_ctx_t* bus_ctx, const char* ifname, unsigned short eport,
++                             int proto, const char* pcp_server) {
++    int r = -1;
++    amxc_string_t rule;
++    amxc_var_t ret;
++    const char* alias;
++
++    (void) ifname;
++    amxc_var_init(&ret);
++    amxc_string_init(&rule, 0);
++    amxc_string_appendf(&rule, "%sInboundMapping.[ProtocolNumber == %d && SuggestedExternalPort == %hu && Origin == \"UPnP_IWF\"].", pcp_server, proto, eport);
++    amxb_del(bus_ctx, amxc_string_get(&rule, 0), 0, NULL, &ret, 1);
++    alias = GETI_CHAR(&ret, 0);
++    if(alias && (alias[0] != '\0')) {
++        r = 0;
++    }
++    amxc_string_clean(&rule);
++    amxc_var_clean(&ret);
++    syslog(LOG_WARNING, "delete_redirect_rule: %d (using PCP)", r);
++    return r;
++}
++
++unsigned short*
++get_portmappings_in_range_pcp(amxb_bus_ctx_t* bus_ctx, unsigned short startport, unsigned short endport,
++                              int proto, unsigned int* number, const char* pcp_server) {
++    unsigned short* array = NULL;
++    unsigned short* tmp;
++    unsigned int capacity = 0;
++    unsigned short eport;
++    amxc_var_t rules;
++    amxc_string_t rule;
++
++    *number = 0;
++    amxc_var_init(&rules);
++    amxc_string_init(&rule, 0);
++    amxc_string_appendf(&rule, "%sInboundMapping.[Origin == \"UPnP_IWF\"].", pcp_server);
++    amxb_get(bus_ctx, amxc_string_get(&rule, 0), 0, &rules, 1);
++    amxc_var_for_each(r, GETP_ARG(&rules, "0.")) {
++        eport = GET_UINT32(r, "SuggestedExternalPort");
++        if((proto == GET_INT32(r, "ProtocolNumber")) &&
++           (eport >= startport) && (eport <= endport)) {
++            if(*number >= capacity) {
++                capacity += 128;
++                tmp = realloc(array, capacity * sizeof(*array));
++                if(!tmp) {
++                    syslog(LOG_ERR, "get_portmappings_in_range() : realloc(%u) error",
++                           (unsigned) sizeof(unsigned short) * capacity);
++                    *number = 0;
++                    free(array);
++                    array = NULL;
++                    break;
++                }
++                array = tmp;
++            }
++            array[*number] = eport;
++            ++(*number);
++        }
++    }
++    amxc_var_clean(&rules);
++    amxc_string_clean(&rule);
++    syslog(LOG_WARNING, "get_portmappings_in_range: %d (using PCP)", *number);
++    return array;
++}
++
++int update_portmapping_pcp(amxb_bus_ctx_t* bus_ctx, const char* ifname, unsigned short eport, int proto,
++                           unsigned short iport, const char* desc,
++                           unsigned int timestamp, const char* pcp_server) {
++    int r = -1;
++    amxc_var_t rule;
++    amxc_var_t ret;
++    amxc_string_t rule_path;
++    unsigned int lease_duration;
++
++    (void) ifname;
++    amxc_var_init(&ret);
++    amxc_string_init(&rule_path, 0);
++    amxc_string_appendf(&rule_path, "%sInboundMapping.[ProtocolNumber == %d && SuggestedExternalPort == %hu && Origin == \"UPnP_IWF\"].", pcp_server, proto, eport);
++    lease_duration = (timestamp > 0) ? timestamp - upnp_time() : 0;
++    amxc_var_init(&rule);
++    amxc_var_init(&ret);
++    amxc_var_set_type(&rule, AMXC_VAR_ID_HTABLE);
++    amxc_var_add_key(uint16_t, &rule, "InternalPort", iport);
++    amxc_var_add_key(uint32_t, &rule, "Lifetime", lease_duration);
++    amxc_var_add_key(cstring_t, &rule, "Description", desc);
++    amxb_set(bus_ctx, amxc_string_get(&rule_path, 0), &rule, &ret, 1);
++    if(GETP_ARG(&ret, "0.0.") != NULL) {
++        r = 0;
++    }
++    amxc_string_clean(&rule_path);
++    amxc_var_clean(&rule);
++    amxc_var_clean(&ret);
++    syslog(LOG_ERR, "update_portmapping: %d (using PCP)", r);
++    return r;
++}
++
++int update_portmapping_desc_timestamp_pcp(amxb_bus_ctx_t* bus_ctx, const char* ifname,
++                                          unsigned short eport, int proto,
++                                          const char* desc, unsigned int timestamp, const char* pcp_server) {
++    int r = -1;
++    amxc_var_t rule;
++    amxc_var_t ret;
++    amxc_string_t rule_path;
++    unsigned int lease_duration;
++
++    (void) ifname;
++    amxc_var_init(&ret);
++    amxc_string_init(&rule_path, 0);
++    amxc_string_appendf(&rule_path, "%sInboundMapping.[ProtocolNumber == %d && SuggestedExternalPort == %hu && Origin == \"UPnP_IWF\"].", pcp_server, proto, eport);
++    lease_duration = (timestamp > 0) ? timestamp - upnp_time() : 0;
++    amxc_var_init(&rule);
++    amxc_var_init(&ret);
++    amxc_var_set_type(&rule, AMXC_VAR_ID_HTABLE);
++    amxc_var_add_key(uint32_t, &rule, "Lifetime", lease_duration);
++    amxc_var_add_key(cstring_t, &rule, "Description", desc);
++    amxb_set(bus_ctx, amxc_string_get(&rule_path, 0), &rule, &ret, 1);
++    if(GETP_ARG(&ret, "0.0.") != NULL) {
++        r = 0;
++    }
++    amxc_string_clean(&rule_path);
++    amxc_var_clean(&rule);
++    amxc_var_clean(&ret);
++    syslog(LOG_ERR, "update_portmapping_desc_timestamp: %d (using PCP)", r);
++    return r;
++}
++
+diff --git miniupnpd/amx/amxpcp.h miniupnpd/amx/amxpcp.h
+new file mode 100644
+index 0000000..a216680
+--- /dev/null
++++ miniupnpd/amx/amxpcp.h
+@@ -0,0 +1,105 @@
++/****************************************************************************
++**
++** SPDX-License-Identifier: BSD-2-Clause-Patent
++**
++** SPDX-FileCopyrightText: Copyright (c) 2023 SoftAtHome
++**
++** Redistribution and use in source and binary forms, with or
++** without modification, are permitted provided that the following
++** conditions are met:
++**
++** 1. Redistributions of source code must retain the above copyright
++** notice, this list of conditions and the following disclaimer.
++**
++** 2. Redistributions in binary form must reproduce the above
++** copyright notice, this list of conditions and the following
++** disclaimer in the documentation and/or other materials provided
++** with the distribution.
++**
++** Subject to the terms and conditions of this license, each
++** copyright holder and contributor hereby grants to those receiving
++** rights under this license a perpetual, worldwide, non-exclusive,
++** no-charge, royalty-free, irrevocable (except for failure to
++** satisfy the conditions of this license) patent license to make,
++** have made, use, offer to sell, sell, import, and otherwise
++** transfer this software, where such license applies only to those
++** patent claims, already acquired or hereafter acquired, licensable
++** by such copyright holder or contributor that are necessarily
++** infringed by:
++**
++** (a) their Contribution(s) (the licensed copyrights of copyright
++** holders and non-copyrightable additions of contributors, in
++** source or binary form) alone; or
++**
++** (b) combination of their Contribution(s) with the work of
++** authorship to which such Contribution(s) was added by such
++** copyright holder or contributor, if, at the time the Contribution
++** is added, such addition causes such combination to be necessarily
++** infringed. The patent license shall not apply to any other
++** combinations which include the Contribution.
++**
++** Except as expressly stated above, no rights or licenses from any
++** copyright holder or contributor is granted under this license,
++** whether expressly, by implication, estoppel or otherwise.
++**
++** DISCLAIMER
++**
++** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
++** CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
++** INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++** DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
++** CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
++** USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
++** AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
++** ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++** POSSIBILITY OF SUCH DAMAGE.
++**
++****************************************************************************/
++#ifndef AMXPCP_H_INCLUDED
++#define AMXPCP_H_INCLUDED
++
++#include <amxc/amxc.h>
++#include <amxp/amxp.h>
++#include <amxd/amxd_object.h>
++#include <amxb/amxb.h>
++
++int add_pcp_rule(amxb_bus_ctx_t* bus_ctx, const char* ifname, const char* rhost,
++                 unsigned short eport, const char* iaddr, unsigned short iport,
++                 int proto, const char* desc, unsigned int timestamp, const char* pcp_server);
++
++int get_redirect_rule_pcp(amxb_bus_ctx_t* bus_ctx, const char* ifname, unsigned short eport, int proto,
++                          char* iaddr, int iaddrlen, unsigned short* iport,
++                          char* desc, int desclen,
++                          char* rhost, int rhostlen,
++                          unsigned int* timestamp,
++                          u_int64_t* packets, u_int64_t* bytes, const char* pcp_server);
++
++int get_redirect_rule_by_index_pcp(amxb_bus_ctx_t* bus_ctx, int index,
++                                   char* ifname, unsigned short* eport,
++                                   char* iaddr, int iaddrlen, unsigned short* iport,
++                                   int* proto, char* desc, int desclen,
++                                   char* rhost, int rhostlen,
++                                   unsigned int* timestamp,
++                                   u_int64_t* packets, u_int64_t* bytes, const char* pcp_server);
++
++int delete_redirect_rule_pcp(amxb_bus_ctx_t* bus_ctx, const char* ifname, unsigned short eport,
++                             int proto, const char* pcp_server);
++
++unsigned short*
++get_portmappings_in_range_pcp(amxb_bus_ctx_t* bus_ctx, unsigned short startport, unsigned short endport,
++                              int proto, unsigned int* number, const char* pcp_server);
++
++int update_portmapping_pcp(amxb_bus_ctx_t* bus_ctx, const char* ifname, unsigned short eport, int proto,
++                           unsigned short iport, const char* desc,
++                           unsigned int timestamp, const char* pcp_server);
++
++int update_portmapping_desc_timestamp_pcp(amxb_bus_ctx_t* bus_ctx, const char* ifname,
++                                          unsigned short eport, int proto,
++                                          const char* desc, unsigned int timestamp, const char* pcp_server);
++
++#endif
++
+diff --git miniupnpd/amx/amxpmp.c miniupnpd/amx/amxpmp.c
+new file mode 100644
+index 0000000..9981094
+--- /dev/null
++++ miniupnpd/amx/amxpmp.c
+@@ -0,0 +1,374 @@
++/****************************************************************************
++**
++** SPDX-License-Identifier: BSD-2-Clause-Patent
++**
++** SPDX-FileCopyrightText: Copyright (c) 2023 SoftAtHome
++**
++** Redistribution and use in source and binary forms, with or
++** without modification, are permitted provided that the following
++** conditions are met:
++**
++** 1. Redistributions of source code must retain the above copyright
++** notice, this list of conditions and the following disclaimer.
++**
++** 2. Redistributions in binary form must reproduce the above
++** copyright notice, this list of conditions and the following
++** disclaimer in the documentation and/or other materials provided
++** with the distribution.
++**
++** Subject to the terms and conditions of this license, each
++** copyright holder and contributor hereby grants to those receiving
++** rights under this license a perpetual, worldwide, non-exclusive,
++** no-charge, royalty-free, irrevocable (except for failure to
++** satisfy the conditions of this license) patent license to make,
++** have made, use, offer to sell, sell, import, and otherwise
++** transfer this software, where such license applies only to those
++** patent claims, already acquired or hereafter acquired, licensable
++** by such copyright holder or contributor that are necessarily
++** infringed by:
++**
++** (a) their Contribution(s) (the licensed copyrights of copyright
++** holders and non-copyrightable additions of contributors, in
++** source or binary form) alone; or
++**
++** (b) combination of their Contribution(s) with the work of
++** authorship to which such Contribution(s) was added by such
++** copyright holder or contributor, if, at the time the Contribution
++** is added, such addition causes such combination to be necessarily
++** infringed. The patent license shall not apply to any other
++** combinations which include the Contribution.
++**
++** Except as expressly stated above, no rights or licenses from any
++** copyright holder or contributor is granted under this license,
++** whether expressly, by implication, estoppel or otherwise.
++**
++** DISCLAIMER
++**
++** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
++** CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
++** INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++** DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
++** CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
++** USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
++** AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
++** ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++** POSSIBILITY OF SUCH DAMAGE.
++**
++****************************************************************************/
++
++#include <syslog.h>
++#include <string.h>
++#include <stdlib.h>
++#include "../macros.h"
++#include "../upnpglobalvars.h"
++#include "amxpmp.h"
++#include "amxrdr.h"
++
++time_t upnp_time(void);
++
++static const char* proto_itoa(int proto) {
++    const char* protocol;
++    switch(proto) {
++    case IPPROTO_UDP:
++        protocol = "UDP";
++        break;
++    case IPPROTO_TCP:
++        protocol = "TCP";
++        break;
++#ifdef IPPROTO_UDPLITE
++    case IPPROTO_UDPLITE:
++        protocol = "UDPLITE";
++        break;
++#endif /* IPPROTO_UDPLITE */
++    default:
++        protocol = "*UNKNOWN*";
++    }
++    return protocol;
++}
++
++/* proto_atoi()
++ * convert the string "UDP" or "TCP" to IPPROTO_UDP and IPPROTO_UDP */
++static int proto_atoi(const char* protocol) {
++    int proto = IPPROTO_TCP;
++    if(strcasecmp(protocol, "UDP") == 0) {
++        proto = IPPROTO_UDP;
++    }
++#ifdef IPPROTO_UDPLITE
++    else if(strcasecmp(protocol, "UDPLITE") == 0) {
++        proto = IPPROTO_UDPLITE;
++    }
++#endif /* IPPROTO_UDPLITE */
++    return proto;
++}
++
++int add_pm_rule(amxb_bus_ctx_t* bus_ctx, const char* ifname, const char* rhost,
++                unsigned short eport, const char* iaddr, unsigned short iport,
++                int proto, const char* desc, unsigned int timestamp) {
++    int r = -1;
++    int rv = -1;
++    amxc_var_t rule;
++    amxc_var_t ret;
++    unsigned int lease_duration;
++    uint32_t nb_try = 0;
++
++    (void) ifname;
++    lease_duration = (timestamp > 0) ? timestamp - upnp_time() : 0;
++    amxc_var_init(&rule);
++    amxc_var_init(&ret);
++    amxc_var_set_type(&rule, AMXC_VAR_ID_HTABLE);
++    amxc_var_add_key(bool, &rule, "Enable", true);
++    amxc_var_add_key(cstring_t, &rule, "Origin", "UPnP_IWF");
++    amxc_var_add_key(cstring_t, &rule, "Interface", "IP.Interface.2.");
++    amxc_var_add_key(cstring_t, &rule, "RemoteHost", rhost);
++    amxc_var_add_key(cstring_t, &rule, "InternalClient", iaddr);
++    amxc_var_add_key(uint16_t, &rule, "ExternalPort", eport);
++    amxc_var_add_key(uint16_t, &rule, "InternalPort", iport);
++    amxc_var_add_key(cstring_t, &rule, "Protocol", proto_itoa(proto));
++    amxc_var_add_key(uint32_t, &rule, "LeaseDuration", lease_duration);
++    amxc_var_add_key(cstring_t, &rule, "Description", desc);
++
++    rv = amxb_add(bus_ctx, "NAT.PortMapping.", 0, NULL, &rule, &ret, 1);
++    if((rv == AMXB_STATUS_OK) && (GETP_ARG(&ret, "0.path") != NULL)) {
++        r = 0;
++        do {
++            syslog(LOG_DEBUG, "Check if PortMapping is enabled");
++            r = amxb_get(bus_ctx, GETP_CHAR(&ret, "0.path"), 0, &rule, 0);
++            if((r != 0)) {
++                r = -1;
++                break;
++            }
++        } while(strcmp(GETP_CHAR(&rule, "0.0.Status"), "Disabled") == 0 && ++nb_try < MAX_NB_TRY && usleep(100));
++    }
++
++    amxc_var_clean(&rule);
++    amxc_var_clean(&ret);
++    syslog(LOG_WARNING, "redirecting port %hu to %s:%hu protocol %s for %s: %d", eport, iaddr, iport, proto_itoa(proto), desc, r);
++    return r;
++}
++
++/* get_redirect_rule() for PortMapping
++ * return value : 0 success (found)
++ * -1 = error or rule not found */
++int get_redirect_rule_pm(amxb_bus_ctx_t* bus_ctx,
++                         const char* ifname, unsigned short eport, int proto,
++                         char* iaddr, int iaddrlen, unsigned short* iport,
++                         char* desc, int desclen,
++                         char* rhost, int rhostlen,
++                         unsigned int* timestamp,
++                         u_int64_t* packets, u_int64_t* bytes) {
++    int r = -1;
++    amxc_var_t ret;
++    amxc_var_t* tmp;
++    amxc_string_t rule;
++
++    (void) ifname;
++    (void) packets;
++    (void) bytes;
++    amxc_var_init(&ret);
++    amxc_string_init(&rule, 0);
++    amxc_string_appendf(&rule, "NAT.PortMapping.[Protocol == \"%s\" && ExternalPort == %hu && Origin == \"UPnP_IWF\"].", proto_itoa(proto), eport);
++    amxb_get(bus_ctx, amxc_string_get(&rule, 0), 0, &ret, 1);
++    tmp = GETP_ARG(&ret, "0.0.");
++    if(tmp != NULL) {
++        amxc_var_log(tmp);
++        r = 0;
++        *iport = (uint16_t) GET_UINT32(tmp, "InternalPort");
++        if(iaddr) {
++            strncpy(iaddr, GET_CHAR(tmp, "InternalClient"), iaddrlen);
++        }
++        if(desc) {
++            strncpy(desc, GET_CHAR(tmp, "Description"), desclen);
++        }
++        if(timestamp) {
++            *timestamp = GET_UINT32(tmp, "LeaseDuration");
++        }
++        if(rhost) {
++            strncpy(rhost, GET_CHAR(tmp, "RemoteHost"), rhostlen);
++        }
++    }
++    amxc_var_clean(&ret);
++    amxc_string_clean(&rule);
++    syslog(LOG_WARNING, "get_redirect_rule: %d", r);
++    return r;
++}
++
++/* get_redirect_rule_by_index() for PortMapping
++ * return value : 0 success (found)
++ * -1 = error or rule not found */
++int get_redirect_rule_by_index_pm(amxb_bus_ctx_t* bus_ctx, int index,
++                                  char* ifname, unsigned short* eport,
++                                  char* iaddr, int iaddrlen, unsigned short* iport,
++                                  int* proto, char* desc, int desclen,
++                                  char* rhost, int rhostlen,
++                                  unsigned int* timestamp,
++                                  u_int64_t* packets, u_int64_t* bytes) {
++    int rv = -1;
++    int i = 0;
++    amxc_var_t ret;
++    amxc_string_t rule;
++
++    (void) ifname;
++    (void) packets;
++    (void) bytes;
++    amxc_var_init(&ret);
++    amxc_string_init(&rule, 0);
++    amxc_string_appendf(&rule, "NAT.PortMapping.[Origin == \"UPnP_IWF\"].");
++    amxb_get(bus_ctx, amxc_string_get(&rule, 0), 0, &ret, 1);
++    amxc_var_for_each(r, GETP_ARG(&ret, "0.")) {
++        if(index == i) {
++            rv = 0;
++            *iport = (uint16_t) GET_UINT32(r, "InternalPort");
++            *eport = (uint16_t) GET_UINT32(r, "ExternalPort");
++            *proto = proto_atoi(GET_CHAR(r, "Protocol"));
++            if(iaddr) {
++                strncpy(iaddr, GET_CHAR(r, "InternalClient"), iaddrlen);
++            }
++            if(desc) {
++                strncpy(desc, GET_CHAR(r, "Description"), desclen);
++            }
++            if(timestamp) {
++                *timestamp = GET_UINT32(r, "LeaseDuration");
++            }
++            if(rhost) {
++                strncpy(rhost, GET_CHAR(r, "RemoteHost"), rhostlen);
++            }
++            break;
++        }
++        ++i;
++    }
++    amxc_string_clean(&rule);
++    amxc_var_clean(&ret);
++    syslog(LOG_WARNING, "get_redirect_rule_by_index: %d", rv);
++    return rv;
++}
++
++/* delete_redirect_rule() for PCP
++* return value : 0 success (found)
++* -1 = error or rule not found */
++int delete_redirect_rule_pm(amxb_bus_ctx_t* bus_ctx, const char* ifname, unsigned short eport, int proto) {
++    int r = -1;
++    amxc_string_t rule;
++    amxc_var_t ret;
++    const char* alias;
++
++    (void) ifname;
++    amxc_var_init(&ret);
++    amxc_string_init(&rule, 0);
++    amxc_string_appendf(&rule, "NAT.PortMapping.[Protocol == \"%s\" && ExternalPort == %hu && Origin == \"UPnP_IWF\"].", proto_itoa(proto), eport);
++    amxb_del(bus_ctx, amxc_string_get(&rule, 0), 0, NULL, &ret, 1);
++    alias = GETI_CHAR(&ret, 0);
++    if(alias && (alias[0] != '\0')) {
++        r = 0;
++    }
++    amxc_string_clean(&rule);
++    amxc_var_clean(&ret);
++    syslog(LOG_WARNING, "delete_redirect_rule: %d", r);
++    return r;
++}
++
++unsigned short*
++get_portmappings_in_range_pm(amxb_bus_ctx_t* bus_ctx, unsigned short startport, unsigned short endport,
++                             int proto, unsigned int* number) {
++    unsigned short* array = NULL;
++    unsigned short* tmp;
++    unsigned int capacity = 0;
++    unsigned short eport;
++    amxc_var_t rules;
++    amxc_string_t rule;
++
++    *number = 0;
++    amxc_var_init(&rules);
++    amxc_string_init(&rule, 0);
++    amxc_string_appendf(&rule, "NAT.PortMapping.[Origin == \"UPnP_IWF\"].");
++    amxb_get(bus_ctx, amxc_string_get(&rule, 0), 0, &rules, 1);
++    amxc_var_for_each(r, GETP_ARG(&rules, "0.")) {
++        eport = GET_UINT32(r, "ExternalPort");
++        if((proto == proto_atoi(GET_CHAR(r, "Protocol"))) &&
++           (eport >= startport) && (eport <= endport)) {
++            if(*number >= capacity) {
++                capacity += 128;
++                tmp = realloc(array, capacity * sizeof(*array));
++                if(!tmp) {
++                    syslog(LOG_ERR, "get_portmappings_in_range() : realloc(%u) error",
++                           (unsigned) sizeof(unsigned short) * capacity);
++                    *number = 0;
++                    free(array);
++                    array = NULL;
++                    break;
++                }
++                array = tmp;
++            }
++            array[*number] = eport;
++            ++(*number);
++        }
++    }
++    amxc_var_clean(&rules);
++    amxc_string_clean(&rule);
++    syslog(LOG_WARNING, "get_portmappings_in_range: %d", *number);
++    return array;
++}
++
++int update_portmapping_pm(amxb_bus_ctx_t* bus_ctx, const char* ifname, unsigned short eport, int proto,
++                          unsigned short iport, const char* desc,
++                          unsigned int timestamp) {
++    int r = -1;
++    amxc_var_t rule;
++    amxc_var_t ret;
++    amxc_string_t rule_path;
++    unsigned int lease_duration;
++
++    (void) ifname;
++    amxc_var_init(&ret);
++    amxc_string_init(&rule_path, 0);
++    amxc_string_appendf(&rule_path, "NAT.PortMapping.[Protocol == \"%s\" && ExternalPort == %hu && Origin == \"UPnP_IWF\"].", proto_itoa(proto), eport);
++    lease_duration = (timestamp > 0) ? timestamp - upnp_time() : 0;
++    amxc_var_init(&rule);
++    amxc_var_init(&ret);
++    amxc_var_set_type(&rule, AMXC_VAR_ID_HTABLE);
++    amxc_var_add_key(uint16_t, &rule, "InternalPort", iport);
++    amxc_var_add_key(uint32_t, &rule, "LeaseDuration", lease_duration);
++    amxc_var_add_key(cstring_t, &rule, "Description", desc);
++    amxb_set(bus_ctx, amxc_string_get(&rule_path, 0), &rule, &ret, 1);
++    if(GETP_ARG(&ret, "0.0.") != NULL) {
++        r = 0;
++    }
++    amxc_string_clean(&rule_path);
++    amxc_var_clean(&rule);
++    amxc_var_clean(&ret);
++    syslog(LOG_ERR, "update_portmapping: %d", r);
++    return r;
++}
++
++int update_portmapping_desc_timestamp_pm(amxb_bus_ctx_t* bus_ctx, const char* ifname,
++                                         unsigned short eport, int proto,
++                                         const char* desc, unsigned int timestamp) {
++    int r = -1;
++    amxc_var_t rule;
++    amxc_var_t ret;
++    amxc_string_t rule_path;
++    unsigned int lease_duration;
++
++    (void) ifname;
++    amxc_var_init(&ret);
++    amxc_string_init(&rule_path, 0);
++    amxc_string_appendf(&rule_path, "NAT.PortMapping.[Protocol == \"%s\" && ExternalPort == %hu && Origin == \"UPnP_IWF\"].", proto_itoa(proto), eport);
++    lease_duration = (timestamp > 0) ? timestamp - upnp_time() : 0;
++    amxc_var_init(&rule);
++    amxc_var_init(&ret);
++    amxc_var_set_type(&rule, AMXC_VAR_ID_HTABLE);
++    amxc_var_add_key(uint32_t, &rule, "LeaseDuration", lease_duration);
++    amxc_var_add_key(cstring_t, &rule, "Description", desc);
++    amxb_set(bus_ctx, amxc_string_get(&rule_path, 0), &rule, &ret, 1);
++    if(GETP_ARG(&ret, "0.0.") != NULL) {
++        r = 0;
++    }
++    amxc_string_clean(&rule_path);
++    amxc_var_clean(&rule);
++    amxc_var_clean(&ret);
++    syslog(LOG_ERR, "update_portmapping_desc_timestamp: %d", r);
++    return r;
++}
+diff --git miniupnpd/amx/amxpmp.h miniupnpd/amx/amxpmp.h
+new file mode 100644
+index 0000000..0a63555
+--- /dev/null
++++ miniupnpd/amx/amxpmp.h
+@@ -0,0 +1,105 @@
++/****************************************************************************
++**
++** SPDX-License-Identifier: BSD-2-Clause-Patent
++**
++** SPDX-FileCopyrightText: Copyright (c) 2023 SoftAtHome
++**
++** Redistribution and use in source and binary forms, with or
++** without modification, are permitted provided that the following
++** conditions are met:
++**
++** 1. Redistributions of source code must retain the above copyright
++** notice, this list of conditions and the following disclaimer.
++**
++** 2. Redistributions in binary form must reproduce the above
++** copyright notice, this list of conditions and the following
++** disclaimer in the documentation and/or other materials provided
++** with the distribution.
++**
++** Subject to the terms and conditions of this license, each
++** copyright holder and contributor hereby grants to those receiving
++** rights under this license a perpetual, worldwide, non-exclusive,
++** no-charge, royalty-free, irrevocable (except for failure to
++** satisfy the conditions of this license) patent license to make,
++** have made, use, offer to sell, sell, import, and otherwise
++** transfer this software, where such license applies only to those
++** patent claims, already acquired or hereafter acquired, licensable
++** by such copyright holder or contributor that are necessarily
++** infringed by:
++**
++** (a) their Contribution(s) (the licensed copyrights of copyright
++** holders and non-copyrightable additions of contributors, in
++** source or binary form) alone; or
++**
++** (b) combination of their Contribution(s) with the work of
++** authorship to which such Contribution(s) was added by such
++** copyright holder or contributor, if, at the time the Contribution
++** is added, such addition causes such combination to be necessarily
++** infringed. The patent license shall not apply to any other
++** combinations which include the Contribution.
++**
++** Except as expressly stated above, no rights or licenses from any
++** copyright holder or contributor is granted under this license,
++** whether expressly, by implication, estoppel or otherwise.
++**
++** DISCLAIMER
++**
++** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
++** CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
++** INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++** DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
++** CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
++** USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
++** AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
++** ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++** POSSIBILITY OF SUCH DAMAGE.
++**
++****************************************************************************/
++#ifndef AMXPORTMAPPING_H_INCLUDED
++#define AMXPORTMAPPING_H_INCLUDED
++
++#include <amxc/amxc.h>
++#include <amxp/amxp.h>
++#include <amxd/amxd_object.h>
++#include <amxb/amxb.h>
++
++int add_pm_rule(amxb_bus_ctx_t* bus_ctx, const char* ifname, const char* rhost,
++                unsigned short eport, const char* iaddr, unsigned short iport,
++                int proto, const char* desc, unsigned int timestamp);
++
++int get_redirect_rule_pm(amxb_bus_ctx_t* bus_ctx, const char* ifname, unsigned short eport, int proto,
++                         char* iaddr, int iaddrlen, unsigned short* iport,
++                         char* desc, int desclen,
++                         char* rhost, int rhostlen,
++                         unsigned int* timestamp,
++                         u_int64_t* packets, u_int64_t* bytes);
++
++int get_redirect_rule_by_index_pm(amxb_bus_ctx_t* bus_ctx, int index,
++                                  char* ifname, unsigned short* eport,
++                                  char* iaddr, int iaddrlen, unsigned short* iport,
++                                  int* proto, char* desc, int desclen,
++                                  char* rhost, int rhostlen,
++                                  unsigned int* timestamp,
++                                  u_int64_t* packets, u_int64_t* bytes);
++
++int delete_redirect_rule_pm(amxb_bus_ctx_t* bus_ctx, const char* ifname, unsigned short eport,
++                            int proto);
++
++unsigned short*
++get_portmappings_in_range_pm(amxb_bus_ctx_t* bus_ctx, unsigned short startport, unsigned short endport,
++                             int proto, unsigned int* number);
++
++int update_portmapping_pm(amxb_bus_ctx_t* bus_ctx, const char* ifname, unsigned short eport, int proto,
++                          unsigned short iport, const char* desc,
++                          unsigned int timestamp);
++
++int update_portmapping_desc_timestamp_pm(amxb_bus_ctx_t* bus_ctx, const char* ifname,
++                                         unsigned short eport, int proto,
++                                         const char* desc, unsigned int timestamp);
++
++#endif
++
+diff --git miniupnpd/amx/amxrdr.c miniupnpd/amx/amxrdr.c
+index bdba883..2f74d9f 100644
+--- miniupnpd/amx/amxrdr.c
++++ miniupnpd/amx/amxrdr.c
+@@ -68,51 +68,14 @@
+ #include <amxd/amxd_object.h>
+ #include <amxb/amxb.h>
+ #include "config.h"
+-#include "../macros.h"
+-#include "../upnpglobalvars.h"
+ #include "amxmisc.h"
+ #include "amxrdr.h"
+-
+-time_t upnp_time(void);
++#include "amxpcp.h"
++#include "amxpmp.h"
+ 
+ static amxb_bus_ctx_t* bus_ctx = NULL;
+ static bool state_add_rdr = false;
+ 
+-static const char* proto_itoa(int proto) {
+-    const char* protocol;
+-    switch(proto) {
+-    case IPPROTO_UDP:
+-        protocol = "UDP";
+-        break;
+-    case IPPROTO_TCP:
+-        protocol = "TCP";
+-        break;
+-#ifdef IPPROTO_UDPLITE
+-    case IPPROTO_UDPLITE:
+-        protocol = "UDPLITE";
+-        break;
+-#endif /* IPPROTO_UDPLITE */
+-    default:
+-        protocol = "*UNKNOWN*";
+-    }
+-    return protocol;
+-}
+-
+-/* proto_atoi()
+- * convert the string "UDP" or "TCP" to IPPROTO_UDP and IPPROTO_UDP */
+-static int proto_atoi(const char* protocol) {
+-    int proto = IPPROTO_TCP;
+-    if(strcasecmp(protocol, "UDP") == 0) {
+-        proto = IPPROTO_UDP;
+-    }
+-#ifdef IPPROTO_UDPLITE
+-    else if(strcasecmp(protocol, "UDPLITE") == 0) {
+-        proto = IPPROTO_UDPLITE;
+-    }
+-#endif /* IPPROTO_UDPLITE */
+-    return proto;
+-}
+-
+ int init_redirect(void) {
+     int r = -1;
+ 
+@@ -131,47 +94,60 @@ void shutdown_redirect(void) {
+     return;
+ }
+ 
++static bool is_dslite(amxc_string_t** output_pcp_server) {
++    amxc_var_t ret;
++    amxc_var_t* pcp_servers = NULL;
++    const char* pcp_server = NULL;
++    bool use_pcp = false;
++
++    amxc_var_init(&ret);
++
++    amxb_get(bus_ctx, "DSLite.InterfaceSetting.[Status == \"Enabled\"].", 0, &ret, 1);
++    if(GETP_ARG(&ret, "0.0.") != NULL) {
++        amxb_get(bus_ctx, "PCP.Client.*.Server.[Status == \"Enabled\"].", 0, &ret, 1);
++        if(GETP_ARG(&ret, "0.0.") == NULL) {
++            syslog(LOG_WARNING, "Failed to get the PCP Server object");
++            goto exit;
++        }
++        pcp_servers = GETP_ARG(&ret, "0.");
++    }
++
++    if(pcp_servers != NULL) {
++        pcp_server = amxc_var_key(GETI_ARG(pcp_servers, 0));
++        if(pcp_server == NULL) {
++            syslog(LOG_WARNING, "Failed to get the PCP Server path");
++            goto exit;
++        }
++        amxc_string_setf(*output_pcp_server, "%s", pcp_server);
++        if(amxc_string_text_length(*output_pcp_server) == 0) {
++            syslog(LOG_WARNING, "PCP Server is empty.");
++            goto exit;
++        }
++        use_pcp = true;
++    }
++exit:
++    amxc_var_clean(&ret);
++    return use_pcp;
++}
++
+ int add_redirect_rule2(const char* ifname, const char* rhost,
+                        unsigned short eport, const char* iaddr, unsigned short iport,
+                        int proto, const char* desc, unsigned int timestamp) {
+     int r = -1;
+-    amxc_var_t rule;
+-    amxc_var_t ret;
+-    unsigned int lease_duration;
+-    uint32_t nb_try = 0;
++    amxc_string_t* pcp_server = 0;
+ 
+-    (void) ifname;
+-    lease_duration = (timestamp > 0) ? timestamp - upnp_time() : 0;
+-    amxc_var_init(&rule);
+-    amxc_var_init(&ret);
+-    amxc_var_set_type(&rule, AMXC_VAR_ID_HTABLE);
+-    amxc_var_add_key(bool, &rule, "Enable", true);
+-    amxc_var_add_key(cstring_t, &rule, "Interface", "IP.Interface.2.");
+-    amxc_var_add_key(cstring_t, &rule, "RemoteHost", rhost);
+-    amxc_var_add_key(cstring_t, &rule, "InternalClient", iaddr);
+-    amxc_var_add_key(uint16_t, &rule, "ExternalPort", eport);
+-    amxc_var_add_key(uint16_t, &rule, "InternalPort", iport);
+-    amxc_var_add_key(cstring_t, &rule, "Protocol", proto_itoa(proto));
+-    amxc_var_add_key(uint32_t, &rule, "LeaseDuration", lease_duration);
+-    amxc_var_add_key(cstring_t, &rule, "Description", desc);
+-    amxb_add(bus_ctx, "NAT.PortMapping.", 0, NULL, &rule, &ret, 1);
+-    if(GETP_ARG(&ret, "0.path") != NULL) {
+-        r = 0;
+-        do {
+-            syslog(LOG_DEBUG, "Check if PortMapping is enabled");
+-            r = amxb_get(bus_ctx, GETP_CHAR(&ret, "0.path"), 0, &rule, 0);
+-            if((r != 0)) {
+-                r = -1;
+-                break;
+-            }
+-        } while(strcmp(GETP_CHAR(&rule, "0.0.Status"), "Disabled") == 0 && ++nb_try < MAX_NB_TRY && usleep(100));
++    amxc_string_new(&pcp_server, 0);
++
++    if(is_dslite(&pcp_server)) {
++        r = add_pcp_rule(bus_ctx, ifname, rhost, eport, iaddr, iport, proto, desc, timestamp, amxc_string_get(pcp_server, 0));
++    } else {
++        r = add_pm_rule(bus_ctx, ifname, rhost, eport, iaddr, iport, proto, desc, timestamp);
+     }
+     if(r == 0) {
+         state_add_rdr = true;
+     }
+-    amxc_var_clean(&rule);
+-    amxc_var_clean(&ret);
+-    syslog(LOG_WARNING, "redirecting port %hu to %s:%hu protocol %s for %s: %d", eport, iaddr, iport, proto_itoa(proto), desc, r);
++
++    amxc_string_delete(&pcp_server);
+     return r;
+ }
+ 
+@@ -185,42 +161,20 @@ int get_redirect_rule(const char* ifname, unsigned short eport, int proto,
+                       unsigned int* timestamp,
+                       u_int64_t* packets, u_int64_t* bytes) {
+     int r = -1;
+-    amxc_var_t ret;
+-    amxc_var_t* tmp;
+-    amxc_string_t rule;
++    amxc_string_t* pcp_server = 0;
+ 
+-    (void) ifname;
+-    (void) packets;
+-    (void) bytes;
+-    amxc_var_init(&ret);
+-    amxc_string_init(&rule, 0);
+-    amxc_string_appendf(&rule, "NAT.PortMapping.[Protocol == \"%s\" && ExternalPort == %hu].", proto_itoa(proto), eport);
+-    amxb_get(bus_ctx, amxc_string_get(&rule, 0), 0, &ret, 1);
+-    tmp = GETP_ARG(&ret, "0.0.");
+-    if(tmp != NULL) {
+-        amxc_var_log(tmp);
+-        r = 0;
+-        *iport = (uint16_t) GET_UINT32(tmp, "InternalPort");
+-        if(iaddr) {
+-            strncpy(iaddr, GET_CHAR(tmp, "InternalClient"), iaddrlen);
+-        }
+-        if(desc) {
+-            strncpy(desc, GET_CHAR(tmp, "Description"), desclen);
+-        }
+-        if(timestamp) {
+-            *timestamp = GET_UINT32(tmp, "LeaseDuration");
+-        }
+-        if(rhost) {
+-            strncpy(rhost, GET_CHAR(tmp, "RemoteHost"), rhostlen);
+-        }
++    amxc_string_new(&pcp_server, 0);
++
++    if(is_dslite(&pcp_server)) {
++        r = get_redirect_rule_pcp(bus_ctx, ifname, eport, proto, iaddr, iaddrlen, iport, desc, desclen, rhost, rhostlen, timestamp, packets, bytes, amxc_string_get(pcp_server, 0));
++    } else {
++        r = get_redirect_rule_pm(bus_ctx, ifname, eport, proto, iaddr, iaddrlen, iport, desc, desclen, rhost, rhostlen, timestamp, packets, bytes);
+     }
+-    amxc_var_clean(&ret);
+-    amxc_string_clean(&rule);
+-    syslog(LOG_WARNING, "get_redirect_rule: %d", r);
++
++    amxc_string_delete(&pcp_server);
+     return r;
+ }
+ 
+-
+ int get_redirect_rule_by_index(int index,
+                                char* ifname, unsigned short* eport,
+                                char* iaddr, int iaddrlen, unsigned short* iport,
+@@ -228,64 +182,34 @@ int get_redirect_rule_by_index(int index,
+                                char* rhost, int rhostlen,
+                                unsigned int* timestamp,
+                                u_int64_t* packets, u_int64_t* bytes) {
+-    int rv = -1;
+-    int i = 0;
+-    amxc_var_t ret;
+-    amxc_string_t rule;
++    int r = -1;
++    amxc_string_t* pcp_server = 0;
+ 
+-    (void) ifname;
+-    (void) packets;
+-    (void) bytes;
+-    amxc_var_init(&ret);
+-    amxc_string_init(&rule, 0);
+-    amxc_string_appendf(&rule, "NAT.PortMapping.*.");
+-    amxb_get(bus_ctx, amxc_string_get(&rule, 0), 0, &ret, 1);
+-    amxc_var_for_each(r, GETP_ARG(&ret, "0.")) {
+-        if(index == i) {
+-            rv = 0;
+-            *iport = (uint16_t) GET_UINT32(r, "InternalPort");
+-            *eport = (uint16_t) GET_UINT32(r, "ExternalPort");
+-            *proto = proto_atoi(GET_CHAR(r, "Protocol"));
+-            if(iaddr) {
+-                strncpy(iaddr, GET_CHAR(r, "InternalClient"), iaddrlen);
+-            }
+-            if(desc) {
+-                strncpy(desc, GET_CHAR(r, "Description"), desclen);
+-            }
+-            if(timestamp) {
+-                *timestamp = GET_UINT32(r, "LeaseDuration");
+-            }
+-            if(rhost) {
+-                strncpy(rhost, GET_CHAR(r, "RemoteHost"), rhostlen);
+-            }
+-            break;
+-        }
+-        ++i;
++    amxc_string_new(&pcp_server, 0);
++
++    if(is_dslite(&pcp_server)) {
++        r = get_redirect_rule_by_index_pcp(bus_ctx, index, ifname, eport, iaddr, iaddrlen, iport, proto, desc, desclen, rhost, rhostlen, timestamp, packets, bytes, amxc_string_get(pcp_server, 0));
++    } else {
++        r = get_redirect_rule_by_index_pm(bus_ctx, index, ifname, eport, iaddr, iaddrlen, iport, proto, desc, desclen, rhost, rhostlen, timestamp, packets, bytes);
+     }
+-    amxc_string_clean(&rule);
+-    amxc_var_clean(&ret);
+-    syslog(LOG_WARNING, "get_redirect_rule_by_index: %d", rv);
+-    return rv;
++
++    amxc_string_delete(&pcp_server);
++    return r;
+ }
+ 
+ int delete_redirect_rule(const char* ifname, unsigned short eport, int proto) {
+     int r = -1;
+-    amxc_string_t rule;
+-    amxc_var_t ret;
+-    const char* alias;
++    amxc_string_t* pcp_server = 0;
+ 
+-    (void) ifname;
+-    amxc_var_init(&ret);
+-    amxc_string_init(&rule, 0);
+-    amxc_string_appendf(&rule, "NAT.PortMapping.[Protocol == \"%s\" && ExternalPort == %hu].", proto_itoa(proto), eport);
+-    amxb_del(bus_ctx, amxc_string_get(&rule, 0), 0, NULL, &ret, 1);
+-    alias = GETI_CHAR(&ret, 0);
+-    if(alias && (alias[0] != '\0')) {
+-        r = 0;
++    amxc_string_new(&pcp_server, 0);
++
++    if(is_dslite(&pcp_server)) {
++        r = delete_redirect_rule_pcp(bus_ctx, ifname, eport, proto, amxc_string_get(pcp_server, 0));
++    } else {
++        r = delete_redirect_rule_pm(bus_ctx, ifname, eport, proto);
+     }
+-    amxc_string_clean(&rule);
+-    amxc_var_clean(&ret);
+-    syslog(LOG_WARNING, "delete_redirect_rule: %d", r);
++
++    amxc_string_delete(&pcp_server);
+     return r;
+ }
+ 
+@@ -321,69 +245,36 @@ int delete_filter_rule(const char* ifname, unsigned short eport, int proto) {
+ unsigned short*
+ get_portmappings_in_range(unsigned short startport, unsigned short endport,
+                           int proto, unsigned int* number) {
+-    unsigned short* array = NULL;
+-    unsigned short* tmp;
+-    unsigned int capacity = 0;
+-    unsigned short eport;
+-    amxc_var_t rules;
+-
+-    *number = 0;
+-    amxc_var_init(&rules);
+-    amxb_get(bus_ctx, "NAT.PortMapping.", 0, &rules, 1);
+-    amxc_var_for_each(rule, &rules) {
+-        eport = GET_UINT32(rule, "ExternalPort");
+-        if((proto == proto_atoi(GET_CHAR(rule, "Protocol"))) &&
+-           (eport >= startport) && (eport <= endport)) {
+-            if(*number >= capacity) {
+-                capacity += 128;
+-                tmp = realloc(array, capacity * sizeof(*array));
+-                if(!tmp) {
+-                    syslog(LOG_ERR, "get_portmappings_in_range() : realloc(%u) error",
+-                           (unsigned) sizeof(unsigned short) * capacity);
+-                    *number = 0;
+-                    free(array);
+-                    array = NULL;
+-                    break;
+-                }
+-                array = tmp;
+-            }
+-            array[*number] = eport;
+-            ++(*number);
+-        }
++    unsigned short* r = NULL;
++    amxc_string_t* pcp_server = 0;
++
++    amxc_string_new(&pcp_server, 0);
++
++    if(is_dslite(&pcp_server)) {
++        r = get_portmappings_in_range_pcp(bus_ctx, startport, endport, proto, number, amxc_string_get(pcp_server, 0));
++    } else {
++        r = get_portmappings_in_range_pm(bus_ctx, startport, endport, proto, number);
+     }
+-    amxc_var_clean(&rules);
+-    syslog(LOG_WARNING, "get_portmappings_in_range: %d", *number);
+-    return array;
++
++    amxc_string_delete(&pcp_server);
++    return r;
+ }
+ 
+ int update_portmapping(const char* ifname, unsigned short eport, int proto,
+                        unsigned short iport, const char* desc,
+                        unsigned int timestamp) {
+     int r = -1;
+-    amxc_var_t rule;
+-    amxc_var_t ret;
+-    amxc_string_t rule_path;
+-    unsigned int lease_duration;
++    amxc_string_t* pcp_server = 0;
+ 
+-    (void) ifname;
+-    amxc_var_init(&ret);
+-    amxc_string_init(&rule_path, 0);
+-    amxc_string_appendf(&rule_path, "NAT.PortMapping.[Protocol == \"%s\" && ExternalPort == %hu].", proto_itoa(proto), eport);
+-    lease_duration = (timestamp > 0) ? timestamp - upnp_time() : 0;
+-    amxc_var_init(&rule);
+-    amxc_var_init(&ret);
+-    amxc_var_set_type(&rule, AMXC_VAR_ID_HTABLE);
+-    amxc_var_add_key(uint16_t, &rule, "InternalPort", iport);
+-    amxc_var_add_key(uint32_t, &rule, "LeaseDuration", lease_duration);
+-    amxc_var_add_key(cstring_t, &rule, "Description", desc);
+-    amxb_set(bus_ctx, amxc_string_get(&rule_path, 0), &rule, &ret, 1);
+-    if(GETP_ARG(&ret, "0.0.") != NULL) {
+-        r = 0;
++    amxc_string_new(&pcp_server, 0);
++
++    if(is_dslite(&pcp_server)) {
++        r = update_portmapping_pcp(bus_ctx, ifname, eport, proto, iport, desc, timestamp, amxc_string_get(pcp_server, 0));
++    } else {
++        r = update_portmapping_pm(bus_ctx, ifname, eport, proto, iport, desc, timestamp);
+     }
+-    amxc_string_clean(&rule_path);
+-    amxc_var_clean(&rule);
+-    amxc_var_clean(&ret);
+-    syslog(LOG_ERR, "update_portmapping: %d", r);
++
++    amxc_string_delete(&pcp_server);
+     return r;
+ }
+ 
+@@ -391,29 +282,17 @@ int update_portmapping_desc_timestamp(const char* ifname,
+                                       unsigned short eport, int proto,
+                                       const char* desc, unsigned int timestamp) {
+     int r = -1;
+-    amxc_var_t rule;
+-    amxc_var_t ret;
+-    amxc_string_t rule_path;
+-    unsigned int lease_duration;
++    amxc_string_t* pcp_server = 0;
+ 
+-    (void) ifname;
+-    amxc_var_init(&ret);
+-    amxc_string_init(&rule_path, 0);
+-    amxc_string_appendf(&rule_path, "NAT.PortMapping.[Protocol == \"%s\" && ExternalPort == %hu].", proto_itoa(proto), eport);
+-    lease_duration = (timestamp > 0) ? timestamp - upnp_time() : 0;
+-    amxc_var_init(&rule);
+-    amxc_var_init(&ret);
+-    amxc_var_set_type(&rule, AMXC_VAR_ID_HTABLE);
+-    amxc_var_add_key(uint32_t, &rule, "LeaseDuration", lease_duration);
+-    amxc_var_add_key(cstring_t, &rule, "Description", desc);
+-    amxb_set(bus_ctx, amxc_string_get(&rule_path, 0), &rule, &ret, 1);
+-    if(GETP_ARG(&ret, "0.0.") != NULL) {
+-        r = 0;
++    amxc_string_new(&pcp_server, 0);
++
++    if(is_dslite(&pcp_server)) {
++        r = update_portmapping_desc_timestamp_pcp(bus_ctx, ifname, eport, proto, desc, timestamp, amxc_string_get(pcp_server, 0));
++    } else {
++        r = update_portmapping_desc_timestamp_pm(bus_ctx, ifname, eport, proto, desc, timestamp);
+     }
+-    amxc_string_clean(&rule_path);
+-    amxc_var_clean(&rule);
+-    amxc_var_clean(&ret);
+-    syslog(LOG_ERR, "update_portmapping_desc_timestamp: %d", r);
++
++    amxc_string_delete(&pcp_server);
+     return r;
+ }
+ 
+diff --git miniupnpd/amx/amxrdr.h miniupnpd/amx/amxrdr.h
+index 38c7ffa..f30ef5c 100644
+--- miniupnpd/amx/amxrdr.h
++++ miniupnpd/amx/amxrdr.h
+@@ -68,25 +68,25 @@
+ #define MAX_NB_TRY 3
+ 
+ int
+-add_redirect_rule2(const char * ifname, const char * rhost, unsigned short eport,
+-                   const char * iaddr, unsigned short iport, int proto,
+-				   const char * desc, unsigned int timestamp);
++add_redirect_rule2(const char* ifname, const char* rhost, unsigned short eport,
++                   const char* iaddr, unsigned short iport, int proto,
++                   const char* desc, unsigned int timestamp);
+ 
+ int
+-add_filter_rule2(const char * ifname, const char * rhost, const char * iaddr,
++add_filter_rule2(const char* ifname, const char* rhost, const char* iaddr,
+                  unsigned short eport, unsigned short iport,
+-				 int proto, const char * desc);
++                 int proto, const char* desc);
+ 
+ 
+ /* delete_redirect_rule()
+  */
+ int
+-delete_redirect_rule(const char * ifname, unsigned short eport, int proto);
++delete_redirect_rule(const char* ifname, unsigned short eport, int proto);
+ 
+ /* delete_filter_rule()
+  */
+ int
+-delete_filter_rule(const char * ifname, unsigned short eport, int proto);
++delete_filter_rule(const char* ifname, unsigned short eport, int proto);
+ 
+ int
+ clear_redirect_rules(void);
+-- 
+2.34.1
+

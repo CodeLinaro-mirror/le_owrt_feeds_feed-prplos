@@ -1,0 +1,120 @@
+From 95f55e7c1fce341335ee3e1a9009230342dae090 Mon Sep 17 00:00:00 2001
+From: Danyil Zubok <d.zubok@inango-systems.com>
+Date: Tue, 12 Aug 2025 21:10:18 +0300
+Subject: [PATCH] miniupnpd: Fix AddPortMapping error code
+
+Fix AddPortMapping error code when rule already exists but Origin is
+different
+
+References: PCF-1984
+Signed-off-by: Danyil Zubok <d.zubok@inango-systems.com>
+---
+ miniupnpd/amx/amxpmp.c   |  2 +-
+ miniupnpd/amx/amxpmp.h   |  1 +
+ miniupnpd/amx/amxrdr.c   | 24 ++++++++++++++++++++++++
+ miniupnpd/amx/amxrdr.h   |  3 +++
+ miniupnpd/upnpredirect.c |  5 +++++
+ 5 files changed, 34 insertions(+), 1 deletion(-)
+
+diff --git miniupnpd/amx/amxpmp.c miniupnpd/amx/amxpmp.c
+index e06c7a1..0a91933 100644
+--- miniupnpd/amx/amxpmp.c
++++ miniupnpd/amx/amxpmp.c
+@@ -71,7 +71,7 @@
+ 
+ time_t upnp_time(void);
+ 
+-static const char* proto_itoa(int proto) {
++const char* proto_itoa(int proto) {
+     const char* protocol;
+     switch(proto) {
+     case IPPROTO_UDP:
+diff --git miniupnpd/amx/amxpmp.h miniupnpd/amx/amxpmp.h
+index 85f9224..7f8783a 100644
+--- miniupnpd/amx/amxpmp.h
++++ miniupnpd/amx/amxpmp.h
+@@ -103,5 +103,6 @@ int update_portmapping_desc_timestamp_pm(amxb_bus_ctx_t* bus_ctx, const char* if
+ 
+ void delete_all_port_mapping_entries(amxb_bus_ctx_t* bus_ctx);
+ 
++const char* proto_itoa(int proto);
+ #endif
+ 
+diff --git miniupnpd/amx/amxrdr.c miniupnpd/amx/amxrdr.c
+index 325f9ac..d9f5e73 100644
+--- miniupnpd/amx/amxrdr.c
++++ miniupnpd/amx/amxrdr.c
+@@ -326,3 +326,27 @@ int delete_redirect_and_filter_rules(unsigned short eport, int proto) {
+     syslog(LOG_WARNING, "delete_redirect_and_filter_rules: %d", r);
+     return r;
+ }
++
++bool is_redirect_rule_with_other_origin(unsigned short eport, int proto) {
++    bool r = false;
++
++    amxc_var_t ret;
++    amxc_string_t rule;
++    amxc_var_t* obj;
++
++    amxc_var_init(&ret);
++
++    amxc_string_init(&rule, 0);
++    amxc_string_appendf(&rule, "NAT.PortMapping.[Protocol == \"%s\" && ExternalPort == %hu && Origin != \"UPnP_IWF\"].", proto_itoa(proto), eport);
++
++    amxb_get(bus_ctx, amxc_string_get(&rule, 0), 0, &ret, 1);
++
++    obj = GETP_ARG(&ret, "0.0.");
++    r = (obj != NULL);
++
++    amxc_var_clean(&ret);
++    amxc_string_clean(&rule);
++
++    syslog(LOG_WARNING, "%s(proto='%s', port=%hu) -> %d", __func__, proto_itoa(proto), eport, r);
++    return r;
++}
+diff --git miniupnpd/amx/amxrdr.h miniupnpd/amx/amxrdr.h
+index d1fdb8b..77e8dbd 100644
+--- miniupnpd/amx/amxrdr.h
++++ miniupnpd/amx/amxrdr.h
+@@ -3,6 +3,7 @@
+ ** SPDX-License-Identifier: BSD-2-Clause-Patent
+ **
+ ** SPDX-FileCopyrightText: Copyright (c) 2023 SoftAtHome
++** SPDX-FileCopyrightText: Copyright (c) 2025 Inango
+ **
+ ** Redistribution and use in source and binary forms, with or
+ ** without modification, are permitted provided that the following
+@@ -62,6 +63,7 @@
+ #ifndef AMXRDR_H_INCLUDED
+ #define AMXRDR_H_INCLUDED
+ 
++#include <stdbool.h>
+ #include <sys/types.h>
+ #include "../commonrdr.h"
+ 
+@@ -94,5 +96,6 @@ clear_redirect_rules(void);
+ 
+ int delete_redirect_and_filter_rules(unsigned short eport, int proto);
+ 
++bool is_redirect_rule_with_other_origin(unsigned short eport, int proto);
+ #endif
+ 
+diff --git miniupnpd/upnpredirect.c miniupnpd/upnpredirect.c
+index 65d6508..0da114f 100644
+--- miniupnpd/upnpredirect.c
++++ miniupnpd/upnpredirect.c
+@@ -430,6 +430,11 @@ upnp_redirect(const char * rhost, unsigned short eport,
+ 		       eport, protocol);
+ 		return -4;
+ #endif /* CHECK_PORTINUSE */
++#ifdef USE_AMX
++        } else if (is_redirect_rule_with_other_origin(eport, proto)) {
++            syslog(LOG_INFO, "redirecting already exists but with different origin");
++            return -2;
++#endif
+ 	} else {
+ 		timestamp = (leaseduration > 0) ? upnp_time() + leaseduration : 0;
+ 		syslog(LOG_INFO, "redirecting port %hu to %s:%hu protocol %s for: %s",
+-- 
+2.34.1
+

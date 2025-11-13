@@ -1,0 +1,374 @@
+From 24a1aac06fe12f893cbcf682c4d24bd3331e03b2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Th=C3=A9o-Paul=20Bodin?= <theo-paul.bodin@softathome.com>
+Date: Wed, 20 Nov 2024 19:20:30 +0100
+Subject: [PATCH] UPnP: Subscribe socket is closed on LAN change Problem:
+ Change on LAN interface causes restart of miniupnpd to update config Restart
+ of miniupnpd loses every subscribe request Cause: Miniupnpd get every LAN
+ information during init. If LAN is changed, miniupnpd needs to be restarted
+ Solution: Change SIGUSR1 to reload LAN infos as well as WAN infos Issue:
+ [CDROUTER][UPnP] ConnectionStatus value in NOTIFY event is NOT correctly
+ updated after WAN connectivity Loss [change]
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+References: PCF-1833, FEAT-13
+
+Signed-off-by: Théo-Paul Bodin <theo-paul.bodin@softathome.com>
+---
+ miniupnpd/amx/amxmisc.c |   2 +
+ miniupnpd/miniupnpd.c   | 221 +++++++++++++++++++++++++---------------
+ 2 files changed, 143 insertions(+), 80 deletions(-)
+
+diff --git miniupnpd/amx/amxmisc.c miniupnpd/amx/amxmisc.c
+index d88f283..ef9e27d 100644
+--- miniupnpd/amx/amxmisc.c
++++ miniupnpd/amx/amxmisc.c
+@@ -358,6 +358,7 @@ int amx_get_dummy(void) {
+ int init_amx(void) {
+     int r = -1;
+     int count = 0;
++
+     if(bus_ctx != NULL) {
+         r = 0;
+     } else {
+@@ -512,6 +513,7 @@ int are_addresses_from_same_host(const char* addr_a, const char* addr_b) {
+     }
+     amxc_var_init(&ret_a);
+     amxc_var_init(&ret_b);
++    when_true_status(strcmp(addr_a, addr_b) == 0, exit, rv = 1);
+     when_failed(get_host_from_address(addr_a, &ret_a), exit);
+     when_failed(get_host_from_address(addr_b, &ret_b), exit);
+     host_a = amxc_var_key(GETP_ARG(&ret_a, "0.0."));
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index 0485218..09b06ae 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -134,6 +134,10 @@ volatile sig_atomic_t should_send_public_address_change_notif = 0;
+ volatile sig_atomic_t should_rewrite_leasefile = 0;
+ #endif /* !TOMATO && ENABLE_LEASEFILE && LEASEFILE_USE_REMAINING_TIME */
+ 
++static int _debug_flag = 0;
++static char _listening_ip[256]; // arbitrary size
++static int _presentationurl_from_lan = 0;
++
+ #ifdef TOMATO
+ #if 1
+ /* Tomato specific code */
+@@ -1170,6 +1174,38 @@ void complete_uuidvalues(void)
+ 	}
+ }
+ 
++static uint32_t parselanaddr_wrapper(void) {
++	struct lan_addr_s* lan_addr = NULL;
++	struct lan_addr_s* lan_addr2 = NULL;
++	int debug_flag = _debug_flag;
++
++	lan_addr = (struct lan_addr_s *) malloc(sizeof(struct lan_addr_s));
++	if (lan_addr == NULL)
++	{
++		INIT_PRINT_ERR("malloc(sizeof(struct lan_addr_s)): %m");
++		return 1;
++	}
++	if(parselanaddr(lan_addr, _listening_ip, debug_flag) != 0)
++	{
++		INIT_PRINT_ERR("can't parse \"%s\" as a valid "
++#ifndef ENABLE_IPV6
++				"LAN address or "
++#endif
++				"interface name\n", _listening_ip);
++		free(lan_addr);
++		return 1;
++	}
++	/* check if we already have this address */
++	for(lan_addr2 = lan_addrs.lh_first; lan_addr2 != NULL; lan_addr2 = lan_addr2->list.le_next)
++	{
++		if (0 == strncmp(lan_addr2->str, lan_addr->str, 15))
++			break;
++	}
++	if (lan_addr2 == NULL)
++		LIST_INSERT_HEAD(&lan_addrs, lan_addr, list);
++	return 0;
++}
++
+ /* init phase :
+  * 1) read configuration file
+  * 2) read command line arguments
+@@ -1200,8 +1236,6 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 	int options_flag = 0;
+ 	const char * optionsfile = DEFAULT_CONFIG;
+ #endif /* DISABLE_CONFIG_FILE */
+-	struct lan_addr_s * lan_addr;
+-	struct lan_addr_s * lan_addr2;
+ 
+ 	/* only print usage if -h is used */
+ 	for(i=1; i<argc; i++)
+@@ -1211,7 +1245,7 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 		if(0 == strcmp(argv[i], "-d"))
+ 			debug_flag = 1;
+ 	}
+-
++	_debug_flag = debug_flag;
+ 	openlog_option = LOG_PID|LOG_CONS;
+ 	openlog_option = LOG_PID;
+ 	if(debug_flag)
+@@ -1288,23 +1322,11 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 				ext_stun_port = atoi(ary_options[i].value);
+ 				break;
+ 			case UPNPLISTENING_IP:
+-				lan_addr = (struct lan_addr_s *) malloc(sizeof(struct lan_addr_s));
+-				if (lan_addr == NULL)
++				strncpy(_listening_ip, ary_options[i].value, 128);
++				if (parselanaddr_wrapper())
+ 				{
+-					INIT_PRINT_ERR("malloc(sizeof(struct lan_addr_s)): %m");
+ 					return 1;
+ 				}
+-				if(parselanaddr(lan_addr, ary_options[i].value, debug_flag) != 0)
+-				{
+-					INIT_PRINT_ERR("can't parse \"%s\" as a valid "
+-#ifndef ENABLE_IPV6
+-					        "LAN address or "
+-#endif
+-					        "interface name\n", ary_options[i].value);
+-					free(lan_addr);
+-					return 1;
+-				}
+-				LIST_INSERT_HEAD(&lan_addrs, lan_addr, list);
+ 				break;
+ #ifdef ENABLE_IPV6
+ 			case UPNPIPV6_LISTENING_IP:
+@@ -1771,30 +1793,11 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 			if(i+1 < argc)
+ 			{
+ 				i++;
+-				lan_addr = (struct lan_addr_s *) malloc(sizeof(struct lan_addr_s));
+-				if (lan_addr == NULL)
++				strncpy(_listening_ip, argv[i], 128);
++				if (parselanaddr_wrapper())
+ 				{
+-					INIT_PRINT_ERR("malloc(sizeof(struct lan_addr_s)): %m");
+ 					return 1;
+ 				}
+-				if(parselanaddr(lan_addr, argv[i], debug_flag) != 0)
+-				{
+-					INIT_PRINT_ERR("can't parse \"%s\" as a valid "
+-#ifndef ENABLE_IPV6
+-					        "LAN address or "
+-#endif	/* #ifndef ENABLE_IPV6 */
+-					        "interface name\n", argv[i]);
+-					free(lan_addr);
+-					return 1;
+-				}
+-				/* check if we already have this address */
+-				for(lan_addr2 = lan_addrs.lh_first; lan_addr2 != NULL; lan_addr2 = lan_addr2->list.le_next)
+-				{
+-					if (0 == strncmp(lan_addr2->str, lan_addr->str, 15))
+-						break;
+-				}
+-				if (lan_addr2 == NULL)
+-					LIST_INSERT_HEAD(&lan_addrs, lan_addr, list);
+ 			} else {
+ 				INIT_PRINT_ERR("Option -%c takes one argument.\n", argv[i][1]);
+ 				goto print_usage;
+@@ -1810,28 +1813,11 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 				}
+ 				sprintf(val, "%s %s", argv[i+1], argv[i+2]);
+ 
+-				lan_addr = (struct lan_addr_s *) malloc(sizeof(struct lan_addr_s));
+-				if (lan_addr == NULL)
++				strncpy(_listening_ip, val, 128);
++				if (parselanaddr_wrapper())
+ 				{
+-					INIT_PRINT_ERR("malloc(sizeof(struct lan_addr_s)): %m");
+-					free(val);
+ 					return 1;
+ 				}
+-				if(parselanaddr(lan_addr, val, debug_flag) != 0)
+-				{
+-					INIT_PRINT_ERR("can't parse \"%s\" as a valid LAN address or interface name\n", val);
+-					free(lan_addr);
+-					free(val);
+-					return 1;
+-				}
+-				/* check if we already have this address */
+-				for(lan_addr2 = lan_addrs.lh_first; lan_addr2 != NULL; lan_addr2 = lan_addr2->list.le_next)
+-				{
+-					if (0 == strncmp(lan_addr2->str, lan_addr->str, 15))
+-						break;
+-				}
+-				if (lan_addr2 == NULL)
+-					LIST_INSERT_HEAD(&lan_addrs, lan_addr, list);
+ 
+ 				free(val);
+ 				i+=2;
+@@ -1977,6 +1963,7 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 	}
+ 	else
+ 	{
++		_presentationurl_from_lan = 1;
+ 		snprintf(presentationurl, PRESENTATIONURL_MAX_LEN,
+ 		         "http://%s/", lan_addrs.lh_first->str);
+ 		         /*"http://%s:%d/", lan_addrs.lh_first->str, 80);*/
+@@ -2166,6 +2153,46 @@ print_usage:
+ 	return 1;
+ }
+ 
++static void clean_snotify(int **snotify_addr, int addr_count) {
++	int32_t i;
++	int *snotify = *snotify_addr;
++
++#ifndef ENABLE_IPV6
++	for(i = 0; i < addr_count; i++) {
++#else
++	for(i = 0; i < addr_count * 2; i++) {
++#endif
++		close(snotify[i]);
++	}
++	free(snotify);
++	snotify = NULL;
++}
++
++static void clean_snatpmp(int **snatpmp_addr, int addr_count) {
++	int32_t i;
++	int *snatpmp = *snatpmp_addr;
++
++	for(i=0; i<addr_count; i++) {
++		if(snatpmp[i]>=0)
++		{
++			close(snatpmp[i]);
++			snatpmp[i] = -1;
++		}
++	}
++	free(snatpmp);
++	snatpmp = NULL;
++}
++
++static void clear_lan_addrs(void) {
++	struct lan_addr_s* lan_addr = NULL;
++
++	while(lan_addrs.lh_first != NULL) {
++		lan_addr = lan_addrs.lh_first;
++		LIST_REMOVE(lan_addrs.lh_first, list);
++		free(lan_addr);
++	}
++}
++
+ /* === main === */
+ /* process HTTP or SSDP requests */
+ int
+@@ -2641,6 +2668,60 @@ main(int argc, char * * argv)
+ 		if(should_send_public_address_change_notif)
+ 		{
+ 			syslog(LOG_INFO, "should send external iface address change notification(s)");
++			clean_snotify(&snotify, addr_count);
++			clean_snatpmp(&snatpmp, addr_count);
++			clear_lan_addrs();
++			parselanaddr_wrapper();
++			addr_count = 0;
++			for(lan_addr = lan_addrs.lh_first; lan_addr != NULL; lan_addr = lan_addr->list.le_next)
++				addr_count++;
++			if(addr_count > 0) {
++#ifndef ENABLE_IPV6
++				snotify = calloc(addr_count, sizeof(int));
++#else
++				/* one for IPv4, one for IPv6 */
++				snotify = calloc(addr_count * 2, sizeof(int));
++#endif
++			}
++			/* open socket for sending notifications */
++			if(OpenAndConfSSDPNotifySockets(snotify) < 0)
++			{
++				syslog(LOG_ERR, "Failed to open sockets for sending SSDP notify "
++							"messages. EXITING");
++				return 1;
++			}
++#ifdef ENABLE_NATPMP
++			if(addr_count > 0) {
++				snatpmp = malloc(addr_count * sizeof(int));
++				for(i = 0; i < addr_count; i++)
++					snatpmp[i] = -1;
++			}
++			/* open socket for NAT PMP traffic */
++			if(GETFLAG(ENABLENATPMPMASK))
++			{
++				if(OpenAndConfNATPMPSockets(snatpmp) < 0)
++#ifdef ENABLE_PCP
++				{
++					syslog(LOG_ERR, "Failed to open sockets for NAT-PMP/PCP.");
++				} else {
++					syslog(LOG_NOTICE, "Listening for NAT-PMP/PCP traffic on port %u",
++						NATPMP_PORT);
++				}
++#else
++				{
++					syslog(LOG_ERR, "Failed to open sockets for NAT PMP.");
++				} else {
++					syslog(LOG_NOTICE, "Listening for NAT-PMP traffic on port %u",
++						NATPMP_PORT);
++				}
++#endif
++			}
++#endif
++			if (_presentationurl_from_lan)
++			{
++				snprintf(presentationurl, PRESENTATIONURL_MAX_LEN,
++		        	"http://%s/", lan_addrs.lh_first->str);
++			}
+ 			if(GETFLAG(PERFORMSTUNMASK))
+ 			{
+ 				if (update_ext_ip_addr_from_stun(0) != 0) {
+@@ -3261,13 +3342,7 @@ shutdown:
+ 	if(sifacewatcher >= 0) close(sifacewatcher);
+ #endif
+ #ifdef ENABLE_NATPMP
+-	for(i=0; i<addr_count; i++) {
+-		if(snatpmp[i]>=0)
+-		{
+-			close(snatpmp[i]);
+-			snatpmp[i] = -1;
+-		}
+-	}
++	clean_snatpmp(&snatpmp, addr_count);
+ #endif
+ #if defined(ENABLE_IPV6) && defined(ENABLE_PCP)
+ 	if(spcp_v6 >= 0)
+@@ -3290,12 +3365,7 @@ shutdown:
+ 
+ 	if (GETFLAG(ENABLEUPNPMASK))
+ 	{
+-#ifndef ENABLE_IPV6
+-		for(i = 0; i < addr_count; i++)
+-#else
+-		for(i = 0; i < addr_count * 2; i++)
+-#endif
+-			close(snotify[i]);
++		clean_snotify(&snotify, addr_count);
+ 	}
+ 
+ 	/* remove pidfile */
+@@ -3307,20 +3377,11 @@ shutdown:
+ #endif
+ 
+ 	/* delete lists */
+-	while(lan_addrs.lh_first != NULL)
+-	{
+-		lan_addr = lan_addrs.lh_first;
+-		LIST_REMOVE(lan_addrs.lh_first, list);
+-		free(lan_addr);
+-	}
++	clear_lan_addrs();
+ 
+ #ifdef ENABLE_HTTPS
+ 	free_ssl();
+ #endif
+-#ifdef ENABLE_NATPMP
+-	free(snatpmp);
+-#endif
+-	free(snotify);
+ 
+ 	shutdown_redirect();
+ 
+-- 
+2.34.1
+

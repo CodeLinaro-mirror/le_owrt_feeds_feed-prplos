@@ -1,0 +1,26 @@
+From b30e5eb7ea69900e2d3aa9602c1fa9e0f6550437 Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Mon, 31 Jul 2023 12:10:14 +0200
+Subject: [PATCH] Issue: HOP-3906 [prpl][UPnP] Activate support for Remote Host
+
+GitOrigin-RevId: 15f684aaab6f9db02fd427cb71531fa9a330b399
+---
+ miniupnpd/configure | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git miniupnpd/configure miniupnpd/configure
+index 08816e2..aa172b4 100755
+--- miniupnpd/configure
++++ miniupnpd/configure
+@@ -668,7 +668,7 @@ echo "Please edit config.h for more compilation options."
+ 
+ # define SUPPORT_REMOTEHOST if the FW related code really supports setting
+ # a RemoteHost
+-if [ \( "$FW" = "netfilter" \) -o \( "$FW" = "pf" \) -o \( "$FW" = "ipfw" \) ] ; then
++if [ \( "$FW" = "netfilter" \) -o \( "$FW" = "pf" \) -o \( "$FW" = "ipfw" \) -o \( "$FW" = "amx" \) ] ; then
+ 	echo "#define SUPPORT_REMOTEHOST" >> ${CONFIGFILE}
+ fi
+ 
+-- 
+2.34.1
+

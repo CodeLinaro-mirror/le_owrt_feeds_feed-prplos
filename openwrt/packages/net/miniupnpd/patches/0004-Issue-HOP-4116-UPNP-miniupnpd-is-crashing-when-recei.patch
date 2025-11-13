@@ -1,0 +1,37 @@
+From aa09e234c7a9d58108438053d422f86db65f34fc Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Thu, 10 Aug 2023 16:24:55 +0200
+Subject: [PATCH] Issue: HOP-4116: [UPNP] miniupnpd is crashing when receiving
+ a portmapping that should overwrite an existing rule [fix]
+
+GitOrigin-RevId: 7cf7d195bf2f4bc0f554f24d4bd798a704d6ae17
+---
+ miniupnpd/amx/amxrdr.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git miniupnpd/amx/amxrdr.c miniupnpd/amx/amxrdr.c
+index fde8c7e..f55f9f3 100644
+--- miniupnpd/amx/amxrdr.c
++++ miniupnpd/amx/amxrdr.c
+@@ -383,6 +383,7 @@ int update_portmapping_desc_timestamp(const char* ifname,
+ 
+     (void) ifname;
+     amxc_var_init(&ret);
++    amxc_string_init(&rule_path, 0);
+     amxc_string_appendf(&rule_path, "NAT.PortMapping.[Protocol == \"%s\" && ExternalPort == %hu].", proto_itoa(proto), eport);
+     lease_duration = (timestamp > 0) ? timestamp - upnp_time() : 0;
+     amxc_var_init(&rule);
+@@ -391,7 +392,9 @@ int update_portmapping_desc_timestamp(const char* ifname,
+     amxc_var_add_key(uint32_t, &rule, "LeaseDuration", lease_duration);
+     amxc_var_add_key(cstring_t, &rule, "Description", desc);
+     amxb_set(bus_ctx, amxc_string_get(&rule_path, 0), &rule, &ret, 1);
+-    amxc_var_log(&ret);
++    if(GETP_ARG(&ret, "0.0.") != NULL) {
++        r = 0;
++    }
+     amxc_string_clean(&rule_path);
+     amxc_var_clean(&rule);
+     amxc_var_clean(&ret);
+-- 
+2.34.1
+

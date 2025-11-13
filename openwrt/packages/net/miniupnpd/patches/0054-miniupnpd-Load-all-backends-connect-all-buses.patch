@@ -1,0 +1,460 @@
+From d5971a40819435b62b5a12be5b2a8b4f366ef74f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Th=C3=A9o-Paul=20Bodin?= <theo-paul.bodin@softathome.com>
+Date: Tue, 1 Apr 2025 17:56:41 +0200
+Subject: [PATCH] miniupnpd: Load all backends connect all buses
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Problem: Netmodel need pcb backend to work
+
+Solution: Load all backends instead of just ubus
+
+Issue: [UPnP][REG]The DUT Advertise WANIPConnection instead of WANPPPConnection [change]
+
+References: PCF-1833, FEAT-13
+
+Signed-off-by: Théo-Paul Bodin <theo-paul.bodin@softathome.com>
+Signed-off-by: Xavier DOOMS <xavier.dooms_ext@softathome.com>
+---
+ miniupnpd/amx/amxmisc.c    | 103 ++++++++++++++++++++++---------------
+ miniupnpd/amx/amxmisc.h    |   2 +-
+ miniupnpd/amx/amxpinhole.c |   2 +-
+ miniupnpd/amx/amxrdr.c     |  10 ++--
+ miniupnpd/miniupnpd.c      |  12 ++---
+ miniupnpd/options.c        |   4 +-
+ miniupnpd/options.h        |   4 +-
+ miniupnpd/upnpglobalvars.c |   4 +-
+ miniupnpd/upnpglobalvars.h |   8 +--
+ 9 files changed, 85 insertions(+), 64 deletions(-)
+
+diff --git miniupnpd/amx/amxmisc.c miniupnpd/amx/amxmisc.c
+index 7c7710a..6f15646 100644
+--- miniupnpd/amx/amxmisc.c
++++ miniupnpd/amx/amxmisc.c
+@@ -77,6 +77,7 @@
+ #include <stdatomic.h>
+ #include "config.h"
+ #include "../upnpglobalvars.h"
++#include "amxmisc.h"
+ 
+ #define FIREWALL_OBJECT_PATH "Device.Firewall."
+ #define FIREWALL_ENABLE_PATH "Device.Firewall.Enable"
+@@ -110,7 +111,6 @@ static int get_string_param_from_bus(const char* param_path, char* ret_param_val
+     int rv = -1;
+     amxc_var_t obj;
+     const char* param_value = NULL;
+-    char* tmp = NULL;
+ 
+     if(!bus_ctx) {
+         init_amx();
+@@ -150,7 +150,6 @@ exit:
+ static int get_firewall_enabled(bool* enabled) {
+     int rv = -1;
+     amxc_var_t firewall_obj;
+-    amxc_string_t firewall_policylevel;
+ 
+     if(!bus_ctx) {
+         init_amx();
+@@ -231,7 +230,7 @@ static void init_loglevel(void) {
+     amxc_var_init(&arg);
+     amxc_var_init(&ret);
+     amxc_var_set_type(&arg, AMXC_VAR_ID_HTABLE);
+-    amxb_call(bus_ctx, "UPnP.", "list_trace_zones", &arg, &ret, 1);
++    amxb_call(get_amx_bus_ctx("UPnP."), "UPnP.", "list_trace_zones", &arg, &ret, 1);
+     if(amxc_var_type_of(&ret) != AMXC_VAR_ID_NULL) {
+         level = GETP_UINT32(&ret, "0.upnp");
+     }
+@@ -269,9 +268,9 @@ bool exchange_upnp_notify_needed(bool needed) {
+  * changes in the bus. It creates a notification
+  * to inform the subscribers about the change.
+  */
+-static void portmapping_entries_changed(const char* const sig_name,
+-                                        const amxc_var_t* const data,
+-                                        void* const priv) {
++static void portmapping_entries_changed(UNUSED const char* const sig_name,
++                                        UNUSED const amxc_var_t* const data,
++                                        UNUSED void* const priv) {
+     /* Raise a flag to indicate that a UPnP notification is needed.
+      * Notification will be processed in the main loop */
+     atomic_fetch_add(&system_update_id, 1);
+@@ -284,7 +283,7 @@ int amx_add_portmapping_sub(amxb_bus_ctx_t* bus_ctx) {
+                              "(notification == 'dm:object-changed') && \
+                                 (contains('parameters.PortMappingNumberOfEntries'))",
+                              portmapping_entries_changed, NULL);
+-    if (res != 0) {
++    if(res != 0) {
+         syslog(LOG_ERR,
+                "Failed to subscribe to object-changed event for "
+                "'%s' object: res '%d'",
+@@ -298,7 +297,7 @@ int amx_add_portmapping_sub(amxb_bus_ctx_t* bus_ctx) {
+ int amx_del_portmapping_sub(amxb_bus_ctx_t* bus_ctx) {
+     int res = amxb_unsubscribe(bus_ctx, NAT_OBJECT_PATH,
+                                portmapping_entries_changed, NULL);
+-    if (res != 0) {
++    if(res != 0) {
+         syslog(LOG_ERR,
+                "Failed to unsubscribe from object-changed event for "
+                "'%s' object: res '%d'",
+@@ -309,45 +308,58 @@ int amx_del_portmapping_sub(amxb_bus_ctx_t* bus_ctx) {
+     return res;
+ }
+ 
+-void* amxrt_thread(void* arg) {
++void* amxrt_thread(UNUSED void* arg) {
+     int r = -1;
++    amxc_var_t csv_list;
++
++    when_not_null_status(get_amx_bus_ctx("UPnP."), exit, r = 0);
+ 
+     amxrt_new();
+ 
+-    r = amxb_be_load(ubus_backend_url);
+-    if (r != 0) {
+-        syslog(LOG_ERR, "Failed to load AMX backend at %s: %d",
+-               ubus_backend_url, r);
+-        return r;
++    amxc_var_init(&csv_list);
++    amxc_var_set_csv_string_t(&csv_list, amx_backend_urls);
++    amxc_var_cast(&csv_list, AMXC_VAR_ID_LIST);
++    amxc_var_for_each(backend, &csv_list) {
++        if((r = amxb_be_load(amxc_var_constcast(cstring_t, backend))) != 0) {
++            syslog(LOG_WARNING, "Couldn't open backend %s (%d)", amxc_var_constcast(cstring_t, backend), r);
++        }
+     }
+-    r = amxb_connect(&bus_ctx, ubus_sock_url);
+-    if (r != 0) {
+-        syslog(LOG_ERR, "Failed to connect to AMX bus at %s: %d", ubus_sock_url,
+-               r);
+-        return r;
++
++    amxc_var_set_csv_string_t(&csv_list, amx_sock_urls);
++    amxc_var_cast(&csv_list, AMXC_VAR_ID_LIST);
++    amxc_var_for_each(sock, &csv_list) {
++        amxb_bus_ctx_t* tmp = NULL;
++        if((r = amxb_connect(&tmp, amxc_var_constcast(cstring_t, sock))) != 0) {
++            syslog(LOG_WARNING, "Couldn't open sock %s (%d)", amxc_var_constcast(cstring_t, sock), r);
++        }
+     }
+ 
++    amxc_var_clean(&csv_list);
++
++    bus_ctx = get_amx_bus_ctx(NAT_OBJECT_PATH);
++
+     r = amxrt_el_create();
+-    if (r != 0) {
++    if(r != 0) {
+         syslog(LOG_ERR, "Failed to create AMX event loop: %d", r);
+         return NULL;
+     }
+ 
+     r = amx_add_portmapping_sub(bus_ctx);
+-    if (r != 0) {
++    if(r != 0) {
+         syslog(LOG_ERR, "Failed to add portmapping subscription: %d", r);
+         return NULL;
+     }
+ 
+     r = amxrt_el_start();  // will block until amxrt_el_stop is called
+-    if (r != 0) {
++    if(r != 0) {
+         syslog(LOG_ERR, "AMX event loop failed to start: %d", r);
+     } else {
+         syslog(LOG_INFO, "AMX event loop stopped successfully");
+     }
+-    amxb_disconnect(bus_ctx);
++
+     amxrt_stop();
+     amxrt_delete();
++exit:
+     return NULL;
+ }
+ 
+@@ -363,14 +375,14 @@ int init_amx(void) {
+         r = 0;
+     } else {
+         r = pthread_create(&amxrt_thread_id, NULL, amxrt_thread, NULL);
+-        if (r != 0) {
++        if(r != 0) {
+             syslog(LOG_ERR, "Failed to create AMX event loop thread: %d", r);
+             return r;
+         }
+-        while (bus_ctx == NULL) {
++        while(bus_ctx == NULL) {
+             // Wait for the bus context to be initialized
+             sleep(1);  // Sleep for 1 second
+-            if (++count > 10) {
++            if(++count > 10) {
+                 syslog(LOG_ERR,
+                        "AMX bus context not initialized after 10 seconds");
+                 return -1;
+@@ -387,11 +399,17 @@ void shutdown_amx(void) {
+     amxrt_el_stop();
+     pthread_join(amxrt_thread_id, NULL);
+     bus_ctx = NULL;
++    amxb_be_remove_all();
+     return;
+ }
+ 
+-amxb_bus_ctx_t* get_amx_bus_ctx(void) {
+-    return bus_ctx;
++amxb_bus_ctx_t* get_amx_bus_ctx(const char* object) {
++    amxb_bus_ctx_t* bus = NULL;
++
++    if((bus = amxb_be_who_has(object)) == NULL) {
++        syslog(LOG_WARNING, "Bus for %s isn't found", object);
++    }
++    return bus;
+ }
+ 
+ /**
+@@ -401,7 +419,7 @@ amxb_bus_ctx_t* get_amx_bus_ctx(void) {
+  * in global runtime_flags.
+  *
+  */
+-void refresh_firewall_flags() {
++void refresh_firewall_flags(void) {
+ #ifdef ENABLE_IPV6
+     int ret;
+     bool firewall_enabled;
+@@ -439,10 +457,10 @@ static int get_host_from_address(const char* addr, amxc_var_t* ret) {
+ 
+     amxc_string_init(&tmp, 0);
+     amxc_string_setf(&tmp, "Hosts.Host.*.IPv4Address.[IPAddress=='%s'].", addr);
+-    when_failed(amxb_get(bus_ctx, amxc_string_get(&tmp, 0), 0, ret, 0), exit);
++    when_failed(amxb_get(get_amx_bus_ctx("Hosts."), amxc_string_get(&tmp, 0), 0, ret, 0), exit);
+     if(GETP_ARG(ret, "0.0.") == NULL) {
+         amxc_string_setf(&tmp, "Hosts.Host.*.IPv6Address.[IPAddress=='%s'].", addr);
+-        when_failed(amxb_get(bus_ctx, amxc_string_get(&tmp, 0), 0, ret, 0), exit);
++        when_failed(amxb_get(get_amx_bus_ctx("Hosts."), amxc_string_get(&tmp, 0), 0, ret, 0), exit);
+         if(GETP_ARG(ret, "0.0.") != NULL) {
+             rv = 0;
+         }
+@@ -488,7 +506,7 @@ int get_mac_from_ip(const char* addr, char* ret_macaddr) {
+     // find the line for addr and read it's mac field into ret_macaddr
+     while(fgets(line, sizeof(line), f)) {
+         if(sscanf(line, "%15s %15s %15s %17s %15s %15s",
+-          ip, hw_type, flags, mac, mask, device) == 6) {
++                  ip, hw_type, flags, mac, mask, device) == 6) {
+             if(strncmp(ip, addr, INET6_ADDRSTRLEN) == 0) {
+                 strncpy(ret_macaddr, mac, MAC_ADDR_STR_LEN);
+                 fclose(f);
+@@ -508,7 +526,7 @@ int are_addresses_from_same_host(const char* addr_a, const char* addr_b) {
+     const char* host_a;
+     const char* host_b;
+ 
+-    if(!bus_ctx) {
++    if(get_amx_bus_ctx("UPnP.") == NULL) {
+         init_amx();
+     }
+     amxc_var_init(&ret_a);
+@@ -540,17 +558,17 @@ int amx_is_wan_up(void) {
+     amxc_string_t wan_ip_path;
+     amxd_path_t path;
+ 
+-    if(!bus_ctx) {
++    if(get_amx_bus_ctx("UPnP.") == NULL) {
+         init_amx();
+     }
+     amxc_var_init(&ret);
+     amxc_var_init(&wan_obj);
+     amxc_string_init(&wan_ip_path, 0);
+     amxd_path_init(&path, "Device.Logical.Interface.[Alias=='wan'].X_PRPLWARE-COM_WAN.");
+-    rv = amxb_resolve(bus_ctx, &path, &ret);
+-    when_failed_status(rv, exit, syslog(LOG_ERR, "Couldn't resolve Device.Logical.Interface.[Alias=='wan'].X_PRPLWARE-COM_WAN. to a fix path (%d) bus_ctx: %p", rv, bus_ctx));
++    rv = amxb_resolve(get_amx_bus_ctx("Device.Logical."), &path, &ret);
++    when_failed_status(rv, exit, syslog(LOG_ERR, "Couldn't resolve Device.Logical.Interface.[Alias=='wan'].X_PRPLWARE-COM_WAN. to a fix path (%d) bus_ctx: %p", rv, get_amx_bus_ctx("Device.Logical.")));
+     when_false(amxc_var_type_of(&ret) != AMXC_VAR_ID_NULL, exit);
+-    rv = amxb_get(bus_ctx, GETI_CHAR(&ret, 0), 0, &wan_obj, 1);
++    rv = amxb_get(get_amx_bus_ctx("Device.Logical."), GETI_CHAR(&ret, 0), 0, &wan_obj, 1);
+     when_failed_status(rv, exit, syslog(LOG_ERR, "Couldn't get Logical interface %s data (%d))", GETI_CHAR(&ret, 0), rv));
+     rv = -1;
+     amxc_string_setf(&wan_ip_path, "0.'%s'.IPv4Address", GETI_CHAR(&ret, 0));
+@@ -571,10 +589,13 @@ exit:
+ }
+ 
+ int amx_is_wan_ppp(void) {
+-    if(!bus_ctx) {
++    bool ppp = false;
++
++    if(get_amx_bus_ctx("UPnP.") == NULL) {
+         init_amx();
+     }
+-    return netmodel_hasFlag(ip_interface, "ppp", "", "down");
++    ppp = netmodel_hasFlag(ip_interface, "ppp", "", "down");
++    return ppp;
+ }
+ 
+ int ext_is_dslite(void) {
+@@ -582,7 +603,7 @@ int ext_is_dslite(void) {
+     amxc_var_t ret;
+ 
+     amxc_var_init(&ret);
+-    rv = amxb_get(bus_ctx, "DSLite.InterfaceSetting.[Status=='Enabled'].", 0, &ret, 1);
++    rv = amxb_get(get_amx_bus_ctx("DSLite."), "DSLite.InterfaceSetting.[Status=='Enabled'].", 0, &ret, 1);
+     if(rv != 0) {
+         syslog(LOG_ERR, "Couldn't search for a valid DSLite interface assuming it's not (%d)", rv);
+         rv = 0;
+@@ -601,7 +622,7 @@ void get_dslite_external_ip(char* ext_ip_addr) {
+     amxc_var_t ret;
+ 
+     amxc_var_init(&ret);
+-    rv = amxb_get(bus_ctx, "PCP.Client.[Status=='Enabled'].Server.[Status=='Enabled']", 0, &ret, 1);
++    rv = amxb_get(get_amx_bus_ctx("PCP."), "PCP.Client.[Status=='Enabled'].Server.[Status=='Enabled']", 0, &ret, 1);
+     if((rv == 0) && (GETP_ARG(&ret, "0.0.") != NULL)) {
+         strncpy(ext_ip_addr, GETP_CHAR(&ret, "0.0.ExternalIPAddress"), INET_ADDRSTRLEN);
+     } else {
+diff --git miniupnpd/amx/amxmisc.h miniupnpd/amx/amxmisc.h
+index 48bdd61..dbfc172 100644
+--- miniupnpd/amx/amxmisc.h
++++ miniupnpd/amx/amxmisc.h
+@@ -77,7 +77,7 @@ void shutdown_amx(void);
+  * event loop and initializes the bus context.
+  */
+ int init_amx(void);
+-amxb_bus_ctx_t* get_amx_bus_ctx(void);
++amxb_bus_ctx_t* get_amx_bus_ctx(const char* object);
+ void refresh_firewall_flags(void);
+ int get_mac_from_ip(const char*, char*);
+ int are_addresses_from_same_host(const char*, const char*);
+diff --git miniupnpd/amx/amxpinhole.c miniupnpd/amx/amxpinhole.c
+index b2e977d..25cd5bc 100644
+--- miniupnpd/amx/amxpinhole.c
++++ miniupnpd/amx/amxpinhole.c
+@@ -81,7 +81,7 @@ int init_pinhole(void) {
+     int r = -1;
+ 
+     if(init_amx() == 0) {
+-        bus_ctx = get_amx_bus_ctx();
++        bus_ctx = get_amx_bus_ctx("Firewall.");
+         if(bus_ctx != NULL) {
+             r = 0;
+         }
+diff --git miniupnpd/amx/amxrdr.c miniupnpd/amx/amxrdr.c
+index 6991274..d80b04d 100644
+--- miniupnpd/amx/amxrdr.c
++++ miniupnpd/amx/amxrdr.c
+@@ -83,7 +83,7 @@ int init_redirect(void) {
+     int r = -1;
+ 
+     if(init_amx() == 0) {
+-        bus_ctx = get_amx_bus_ctx();
++        bus_ctx = get_amx_bus_ctx("PCP.");
+         if(bus_ctx != NULL) {
+             r = 0;
+         }
+@@ -125,9 +125,9 @@ static bool is_dslite(amxc_string_t** output_pcp_server) {
+ 
+     amxc_var_init(&ret);
+ 
+-    amxb_get(bus_ctx, "DSLite.InterfaceSetting.[Status == \"Enabled\"].", 0, &ret, 1);
++    amxb_get(get_amx_bus_ctx("DSLite."), "DSLite.InterfaceSetting.[Status == \"Enabled\"].", 0, &ret, 1);
+     if(GETP_ARG(&ret, "0.0.") != NULL) {
+-        amxb_get(bus_ctx, "PCP.Client.[UPnPIWF.Status == \"Enabled\"].Server.[Status == \"Enabled\"].", 0, &ret, 1);
++        amxb_get(get_amx_bus_ctx("PCP."), "PCP.Client.[UPnPIWF.Status == \"Enabled\"].Server.[Status == \"Enabled\"].", 0, &ret, 1);
+         if(GETP_ARG(&ret, "0.0.") == NULL) {
+             syslog(LOG_WARNING, "Failed to get the PCP Server object");
+             goto exit;
+@@ -163,9 +163,9 @@ int add_redirect_rule2(const char* ifname, const char* rhost,
+     amxc_string_new(&pcp_server, 0);
+ 
+     if(is_dslite(&pcp_server)) {
+-        r = add_pcp_rule(bus_ctx, ifname, rhost, eport, iaddr, iport, proto, desc, timestamp, amxc_string_get(pcp_server, 0));
++        r = add_pcp_rule(get_amx_bus_ctx("PCP."), ifname, rhost, eport, iaddr, iport, proto, desc, timestamp, amxc_string_get(pcp_server, 0));
+     } else {
+-        r = add_pm_rule(bus_ctx, ifname, rhost, eport, iaddr, iport, proto, desc, timestamp);
++        r = add_pm_rule(get_amx_bus_ctx("NAT."), ifname, rhost, eport, iaddr, iport, proto, desc, timestamp);
+     }
+     if(r == 0) {
+         state_add_rdr = true;
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index 7924ebf..7cab20b 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -1402,13 +1402,13 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 				break;
+ #endif    /* USE_NETFILTER */
+ #ifdef USE_AMX
+-			case UPNPUBUS_SOCK_URL:
+-				strncpy(ubus_sock_url, ary_options[i].value, UBUS_SOCK_URL_MAX_LEN);
+-				ubus_sock_url[UBUS_SOCK_URL_MAX_LEN - 1] = '\0';
++			case UPNPAMX_SOCK_URLS:
++				strncpy(amx_sock_urls, ary_options[i].value, AMX_SOCK_URLS_MAX_LEN);
++				amx_sock_urls[AMX_SOCK_URLS_MAX_LEN - 1] = '\0';
+ 				break;
+-			case UPNPUBUS_BE_URL:
+-				strncpy(ubus_backend_url, ary_options[i].value, UBUS_BE_URL_MAX_LEN);
+-				ubus_backend_url[UBUS_BE_URL_MAX_LEN - 1] = '\0';
++			case UPNPAMX_BE_URLS:
++				strncpy(amx_backend_urls, ary_options[i].value, AMX_BE_URLS_MAX_LEN);
++				amx_backend_urls[AMX_BE_URLS_MAX_LEN - 1] = '\0';
+ 				break;
+ 			case UPNPAMX_INTERFACE :
+ 				strncpy(ip_interface, ary_options[i].value, IP_INTERFACE_MAX_LEN);
+diff --git miniupnpd/options.c miniupnpd/options.c
+index 2a947e3..3e9e3c9 100644
+--- miniupnpd/options.c
++++ miniupnpd/options.c
+@@ -60,8 +60,8 @@ static const struct {
+ 	{ UPNPMODEL_URL, "model_url" },
+ #endif
+ #ifdef USE_AMX
+-	{ UPNPUBUS_SOCK_URL, "ubus_sock_url" },
+-	{ UPNPUBUS_BE_URL, "ubus_backend_url" },
++	{ UPNPAMX_SOCK_URLS, "amx_sock_urls" },
++	{ UPNPAMX_BE_URLS, "amx_backend_urls" },
+ 	{ UPNPAMX_INTERFACE, "upnp_amx_wan_interface"},
+ #endif
+ 	{ UPNPNOTIFY_INTERVAL, "notify_interval" },
+diff --git miniupnpd/options.h miniupnpd/options.h
+index 918133a..90b669f 100644
+--- miniupnpd/options.h
++++ miniupnpd/options.h
+@@ -69,8 +69,8 @@ enum upnpconfigoptions {
+ 	UPNPTAG,				/* tag */
+ #endif
+ #ifdef USE_AMX
+-	UPNPUBUS_SOCK_URL,		/* ubus_sock_url*/
+-	UPNPUBUS_BE_URL,		/* ubus_backend_url*/
++	UPNPAMX_SOCK_URLS,		/* amx_sock_urls*/
++	UPNPAMX_BE_URLS,		/* amx_backend_urls*/
+ 	UPNPAMX_INTERFACE,		/* IP interface path in bus DM*/
+ #endif
+ #ifdef PF_ENABLE_FILTER_RULES
+diff --git miniupnpd/upnpglobalvars.c miniupnpd/upnpglobalvars.c
+index e91126b..4ab54b2 100644
+--- miniupnpd/upnpglobalvars.c
++++ miniupnpd/upnpglobalvars.c
+@@ -120,8 +120,8 @@ const char * tag = 0;
+ #endif
+ 
+ #ifdef USE_AMX
+-char ubus_sock_url[UBUS_SOCK_URL_MAX_LEN] = "ubus:/var/run/ubus.sock";
+-char ubus_backend_url[UBUS_BE_URL_MAX_LEN] = "/usr/bin/mods/amxb/mod-amxb-ubus.so";
++char amx_sock_urls[AMX_SOCK_URLS_MAX_LEN] = "ubus:/var/run/ubus.sock";
++char amx_backend_urls[AMX_BE_URLS_MAX_LEN] = "/usr/bin/mods/amxb/mod-amxb-ubus.so";
+ char ip_interface[IP_INTERFACE_MAX_LEN] = "Device.IP.Interface.2.";
+ #endif
+ 
+diff --git miniupnpd/upnpglobalvars.h miniupnpd/upnpglobalvars.h
+index f8b9f15..5f4c2f2 100644
+--- miniupnpd/upnpglobalvars.h
++++ miniupnpd/upnpglobalvars.h
+@@ -161,10 +161,10 @@ extern unsigned nfqix[];
+ #endif
+ 
+ #ifdef USE_AMX
+-#define UBUS_SOCK_URL_MAX_LEN (1024)
+-extern char ubus_sock_url[];
+-#define UBUS_BE_URL_MAX_LEN (1024)
+-extern char ubus_backend_url[];
++#define AMX_SOCK_URLS_MAX_LEN (2048)
++extern char amx_sock_urls[];
++#define AMX_BE_URLS_MAX_LEN (2048)
++extern char amx_backend_urls[];
+ #define IP_INTERFACE_MAX_LEN (256)
+ extern char ip_interface[];
+ #endif
+-- 
+2.34.1
+

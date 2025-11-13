@@ -1,0 +1,89 @@
+From 362294dfe4e208eb9753da0ee87a3bea07850c01 Mon Sep 17 00:00:00 2001
+From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+Date: Fri, 25 Jul 2025 21:05:50 +0300
+Subject: [PATCH] miniupnpd: fix InternalPort validation for AddPortMapping
+ action
+
+Input validation for `InternalPort == 0` is not implemented in miniupnp,
+so an error 606 is returned when validation passed that `InternalPort <
+1024`, but we expect the error code 732.
+
+Add new validation of internal port parameter for AddPortMapping
+ action to return code 732 when the internal port is 0
+Modify the validation of internal port parameter for
+ AddAnyPortMapping action to return code 732 when the internal port is 0
+Modify the upnp error code handling to return error after
+ Unauthorized error
+
+References: PCF-1952
+Signed-Off-By: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+---
+ miniupnpd/upnpsoap.c | 25 +++++++++++++++++++++----
+ 1 file changed, 21 insertions(+), 4 deletions(-)
+
+diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
+index b978c4f..46f5db3 100644
+--- miniupnpd/upnpsoap.c
++++ miniupnpd/upnpsoap.c
+@@ -528,6 +528,13 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 		return;
+ 	}
+ 
++	if (strcmp(int_port, "*") == 0 || iport == 0)
++	{
++		ClearNameValueList(&data);
++		SoapError(h, 732, "Wildcard not permited in IntPort");
++		return;
++	}
++
+ 	leaseduration = leaseduration_str ? atoi(leaseduration_str) : 0;
+ #ifdef IGD_V2
+ 	/* PortMappingLeaseDuration can be either a value between 1 and
+@@ -643,14 +650,24 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 		return;
+ 	}
+ 
++	/* If ext_port is not a number, it must be a "*" */
++	if (!is_numeric(ext_port) && 0 != strcmp(ext_port, "*"))
++	{
++		ClearNameValueList(&data);
++		SoapError(h, 402, "Invalid Args");
++		return;
++	}
++
+ 	eport = (0 == strcmp(ext_port, "*")) ? 0 : (unsigned short)atoi(ext_port);
+ 	if (eport == 0) {
+ 		eport = 1024 + ((random() & 0x7ffffffL) % (65536-1024));
+ 	}
++
+ 	iport = (unsigned short)atoi(int_port);
+-	if(iport == 0 || (!is_numeric(ext_port) && 0 != strcmp(ext_port, "*"))) {
++	if (strcmp(int_port, "*") == 0 || iport == 0)
++	{
+ 		ClearNameValueList(&data);
+-		SoapError(h, 402, "Invalid Args");
++		SoapError(h, 732, "Wildcard not permited in IntPort");
+ 		return;
+ 	}
+ #ifndef SUPPORT_REMOTEHOST
+@@ -710,7 +727,7 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	/* first try the port asked in request, then
+ 	 * try +1, -1, +2, -2, etc. */
+ 	r = upnp_redirect(r_host, eport, int_ip, iport, protocol, desc, leaseduration);
+-	if (r != 0 && r != -1) {
++	if (r != 0 && r != -1 && r != -3) {
+ 		unsigned short eport_below, eport_above;
+ 		struct in_addr address;
+ 		uint32_t allowed_eports[65536 / 32];
+@@ -737,7 +754,7 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 			if (!(allowed_eports[eport / 32] & ((uint32_t)1U << (eport % 32))))
+ 				continue;	/* not allowed */
+ 			r = upnp_redirect(r_host, eport, int_ip, iport, protocol, desc, leaseduration);
+-			if (r == 0 || r == -1) {
++			if (r == 0 || r == -1 || r == -3) {
+ 				/* OK or failure : Stop */
+ 				break;
+ 			}
+-- 
+2.34.1
+

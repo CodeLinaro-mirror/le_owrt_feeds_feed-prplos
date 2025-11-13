@@ -1,0 +1,672 @@
+From e3f39753ad57e2bd48493c4912d77d796f211596 Mon Sep 17 00:00:00 2001
+From: Mykyta Diachyna <m.diachyna@inango-systems.com>
+Date: Thu, 11 Sep 2025 16:33:24 +0300
+Subject: [PATCH] miniupnpd: upnpsoap: Add MAC-based permissions
+
+Add MAC-based permissions in order to identify
+control points not only by IP, but also by MAC
+
+References: PCF-1999
+Signed-off-by: Mykyta Diachyna <m.diachyna@inango-systems.com>
+---
+ miniupnpd/amx/amxmisc.c    |  49 +++++++++
+ miniupnpd/amx/amxmisc.h    |   1 +
+ miniupnpd/objects.mk       |   2 +-
+ miniupnpd/portmacmap.c     | 219 +++++++++++++++++++++++++++++++++++++
+ miniupnpd/portmacmap.h     |  80 ++++++++++++++
+ miniupnpd/upnpglobalvars.h |   2 +
+ miniupnpd/upnpsoap.c       | 121 +++++++++++++++++++-
+ 7 files changed, 467 insertions(+), 7 deletions(-)
+ create mode 100644 miniupnpd/portmacmap.c
+ create mode 100644 miniupnpd/portmacmap.h
+
+diff --git miniupnpd/amx/amxmisc.c miniupnpd/amx/amxmisc.c
+index c4825dd..d88f283 100644
+--- miniupnpd/amx/amxmisc.c
++++ miniupnpd/amx/amxmisc.c
+@@ -62,6 +62,7 @@
+ ****************************************************************************/
+ 
+ #include <amxc/amxc_variant.h>
++#include <netinet/in.h>
+ #include <string.h>
+ #include <syslog.h>
+ #include <amxrt/amxrt.h>
+@@ -86,6 +87,7 @@
+ #define MAX_PATH_LEN 256
+ #define MAX_FW_VALUE_LEN 256
+ #define NAT_OBJECT_PATH "NAT."
++#define MAX_PATH_LEN 256
+ 
+ pthread_t amxrt_thread_id;
+ atomic_bool upnp_notify_needed = false;
+@@ -451,6 +453,53 @@ exit:
+     return rv;
+ }
+ 
++/**
++ * @brief Get MAC address of a device by it's IP address.
++ *
++ * Takes an IP address of a device and returns it's MAC address.
++ *
++ * @param addr The IP address (IPv4 or IPv6) of the device to get the MAC address of.
++ * @param ret_macaddr Preallocated buffer of at least MAC_ADDR_STR_LEN bytes, into which
++ * the MAC address of the device will be written.
++ * @return -1 for error while retrieving the MAC address, 0 for success.
++ */
++int get_mac_from_ip(const char* addr, char* ret_macaddr) {
++    char line[256];
++    char ip[16];
++    char hw_type[16];
++    char flags[16];
++    char mac[18];
++    char mask[16];
++    char device[16];
++    FILE* f;
++
++    f = fopen("/proc/net/arp", "r");
++    if(f == NULL) {
++        return -1;
++    }
++
++    // skip header line
++    if(fgets(line, sizeof(line), f) == NULL) {
++        fclose(f);
++        return -1;
++    }
++
++    // find the line for addr and read it's mac field into ret_macaddr
++    while(fgets(line, sizeof(line), f)) {
++        if(sscanf(line, "%15s %15s %15s %17s %15s %15s",
++          ip, hw_type, flags, mac, mask, device) == 6) {
++            if(strncmp(ip, addr, INET6_ADDRSTRLEN) == 0) {
++                strncpy(ret_macaddr, mac, MAC_ADDR_STR_LEN);
++                fclose(f);
++                return 0;
++            }
++        }
++    }
++
++    fclose(f);
++    return -1;
++}
++
+ int are_addresses_from_same_host(const char* addr_a, const char* addr_b) {
+     int rv = 0;
+     amxc_var_t ret_a;
+diff --git miniupnpd/amx/amxmisc.h miniupnpd/amx/amxmisc.h
+index 891f8de..3b974e3 100644
+--- miniupnpd/amx/amxmisc.h
++++ miniupnpd/amx/amxmisc.h
+@@ -79,6 +79,7 @@ void shutdown_amx(void);
+ int init_amx(void);
+ amxb_bus_ctx_t* get_amx_bus_ctx(void);
+ void refresh_firewall_flags(void);
++int get_mac_from_ip(const char*, char*);
+ int are_addresses_from_same_host(const char*, const char*);
+ int amx_is_wan_up(void);
+ int amx_is_wan_ppp(void);
+diff --git miniupnpd/objects.mk miniupnpd/objects.mk
+index b1fa75b..76c7b94 100644
+--- miniupnpd/objects.mk
++++ miniupnpd/objects.mk
+@@ -1,6 +1,6 @@
+ BASEOBJS = miniupnpd.o upnphttp.o upnpdescgen.o upnpsoap.o \
+            upnpreplyparse.o minixml.o portinuse.o \
+-           upnpredirect.o getifaddr.o daemonize.o \
++           portmacmap.o upnpredirect.o getifaddr.o daemonize.o \
+            options.o upnppermissions.o minissdp.o natpmp.o pcpserver.o \
+            upnpglobalvars.o upnpevents.o upnputils.o getconnstatus.o \
+            upnpstun.o upnppinhole.o pcplearndscp.o asyncsendto.o
+diff --git miniupnpd/portmacmap.c miniupnpd/portmacmap.c
+new file mode 100644
+index 0000000..f3be3a4
+--- /dev/null
++++ miniupnpd/portmacmap.c
+@@ -0,0 +1,219 @@
++/****************************************************************************
++**
++** SPDX-License-Identifier: BSD-2-Clause-Patent
++**
++** SPDX-FileCopyrightText: Copyright (c) 2025 Inango
++**
++** Redistribution and use in source and binary forms, with or
++** without modification, are permitted provided that the following
++** conditions are met:
++**
++** 1. Redistributions of source code must retain the above copyright
++** notice, this list of conditions and the following disclaimer.
++**
++** 2. Redistributions in binary form must reproduce the above
++** copyright notice, this list of conditions and the following
++** disclaimer in the documentation and/or other materials provided
++** with the distribution.
++**
++** Subject to the terms and conditions of this license, each
++** copyright holder and contributor hereby grants to those receiving
++** rights under this license a perpetual, worldwide, non-exclusive,
++** no-charge, royalty-free, irrevocable (except for failure to
++** satisfy the conditions of this license) patent license to make,
++** have made, use, offer to sell, sell, import, and otherwise
++** transfer this software, where such license applies only to those
++** patent claims, already acquired or hereafter acquired, licensable
++** by such copyright holder or contributor that are necessarily
++** infringed by:
++**
++** (a) their Contribution(s) (the licensed copyrights of copyright
++** holders and non-copyrightable additions of contributors, in
++** source or binary form) alone; or
++**
++** (b) combination of their Contribution(s) with the work of
++** authorship to which such Contribution(s) was added by such
++** copyright holder or contributor, if, at the time the Contribution
++** is added, such addition causes such combination to be necessarily
++** infringed. The patent license shall not apply to any other
++** combinations which include the Contribution.
++**
++** Except as expressly stated above, no rights or licenses from any
++** copyright holder or contributor is granted under this license,
++** whether expressly, by implication, estoppel or otherwise.
++**
++** DISCLAIMER
++**
++** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
++** CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
++** INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++** DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
++** CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
++** USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
++** AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
++** ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++** POSSIBILITY OF SUCH DAMAGE.
++**
++****************************************************************************/
++#include "portmacmap.h"
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <stdio.h>
++
++static struct port_mac_tuple* port_mac_map = NULL;
++
++/**
++ * @brief Cleans up expired mappings.
++ *
++ * Goes over all current mappings and cleans up expired ones.
++ *
++ */
++static void port_mac_map_cleanup_expired()
++{
++	struct port_mac_tuple* pmm = port_mac_map;
++	struct port_mac_tuple* tmp = NULL;
++	struct port_mac_tuple* prv = NULL;
++	time_t curr_time = time(NULL);
++
++	while(pmm != NULL) {
++		if(curr_time > pmm->creation_time + pmm->lifetime) {
++			if(prv == NULL) {
++				port_mac_map = port_mac_map->next;
++				free(pmm);
++				pmm = port_mac_map;
++			} else {
++				prv->next = pmm->next;
++				free(pmm);
++				pmm = prv->next;
++			}
++			continue;
++		} else {
++			prv = pmm;
++			pmm = pmm->next;
++		}
++	}
++}
++
++/**
++ * @brief Add a PORT->MAC pair to the map.
++ *
++ * Add a PORT->MAC pair to the map, replacing in case a pair with this PORT
++ * already exists.
++ *
++ * @param port The key at which to insert the pair (port).
++ * @param mac The MAC address to insert at the key.
++ * @param lifetime The lifetime of the mapping, after which it will be deleted.
++ */
++void port_mac_map_add(unsigned short port, const char* mac,
++                      unsigned int lifetime)
++{
++	struct port_mac_tuple pmt;
++	struct port_mac_tuple* pmm;
++
++	port_mac_map_cleanup_expired();
++
++	pmt.creation_time = time(NULL);
++	pmt.lifetime = lifetime;
++	pmt.port = port;
++	strncpy(pmt.mac, mac, MAC_ADDR_STR_LEN);
++	pmt.next = NULL;
++
++	if(port_mac_map == NULL) {
++		port_mac_map = malloc(sizeof(struct port_mac_tuple));
++		memcpy(port_mac_map, &pmt, sizeof(struct port_mac_tuple));
++		return;
++	}
++
++	pmm = port_mac_map;
++	while(pmm->next != NULL) {
++		if(pmm->next->port == port) {
++			pmt.next = pmm->next->next;
++			memcpy(pmm->next, &pmt, sizeof(struct port_mac_tuple));
++			return;
++		}
++
++		pmm = pmm->next;
++	}
++
++	pmm->next = malloc(sizeof(struct port_mac_tuple));
++	memcpy(pmm->next, &pmt, sizeof(struct port_mac_tuple));
++	return;
++}
++
++/**
++ * @brief Delete a PORT->MAC pair from the map.
++ *
++ * Delete a PORT->MAC pair from the map using the PORT as the key.
++ * No error will be printed in case the pair already doesn't exist.
++ *
++ * @param port The key of the PORT->MAC pair to delete.
++ */
++void port_mac_map_delete(unsigned short port)
++{
++	struct port_mac_tuple* pmt;
++	struct port_mac_tuple* tmp;
++
++	port_mac_map_cleanup_expired();
++
++	if(port_mac_map == NULL) {
++		return;
++	}
++
++	if(port_mac_map->port == port) {
++		tmp = port_mac_map;
++		port_mac_map = tmp->next;
++		free(tmp);
++		return;
++	}
++
++	pmt = port_mac_map;
++	while(pmt->next != NULL) {
++		if(pmt->next->port == port) {
++			tmp = pmt->next;
++			pmt->next = tmp->next;
++			free(tmp);
++			return;
++		}
++
++		pmt = pmt->next;
++	}
++}
++
++/**
++ * @brief Get MAC by PORT from the map.
++ *
++ * Get a MAC address previously inserted into the map using the corresponding
++ * PORT. Note that mappings with expired lifetimes will not be returned and will
++ * instead be cleaned up in this function. Also note that the returned string
++ * must be freed by the caller.
++ *
++ * @param port The key by which to get the MAC address from the map.
++ * @param ret_mac A buffer of at least MAC_ADDR_STR_LEN+1 for the MAC to be written to.
++ */
++int port_mac_map_get_active(unsigned short port, char* ret_mac)
++{
++	struct port_mac_tuple* pmt;
++
++	port_mac_map_cleanup_expired();
++
++	if(port_mac_map == NULL) {
++		return -1;
++	}
++
++	pmt = port_mac_map;
++	while(pmt != NULL) {
++		if(pmt->port == port) {
++			strncpy(ret_mac, pmt->mac, MAC_ADDR_STR_LEN+1);
++			return 0;
++		}
++
++		pmt = pmt->next;
++	}
++
++	return -1;
++}
+diff --git miniupnpd/portmacmap.h miniupnpd/portmacmap.h
+new file mode 100644
+index 0000000..e693074
+--- /dev/null
++++ miniupnpd/portmacmap.h
+@@ -0,0 +1,80 @@
++/****************************************************************************
++**
++** SPDX-License-Identifier: BSD-2-Clause-Patent
++**
++** SPDX-FileCopyrightText: Copyright (c) 2025 Inango
++**
++** Redistribution and use in source and binary forms, with or
++** without modification, are permitted provided that the following
++** conditions are met:
++**
++** 1. Redistributions of source code must retain the above copyright
++** notice, this list of conditions and the following disclaimer.
++**
++** 2. Redistributions in binary form must reproduce the above
++** copyright notice, this list of conditions and the following
++** disclaimer in the documentation and/or other materials provided
++** with the distribution.
++**
++** Subject to the terms and conditions of this license, each
++** copyright holder and contributor hereby grants to those receiving
++** rights under this license a perpetual, worldwide, non-exclusive,
++** no-charge, royalty-free, irrevocable (except for failure to
++** satisfy the conditions of this license) patent license to make,
++** have made, use, offer to sell, sell, import, and otherwise
++** transfer this software, where such license applies only to those
++** patent claims, already acquired or hereafter acquired, licensable
++** by such copyright holder or contributor that are necessarily
++** infringed by:
++**
++** (a) their Contribution(s) (the licensed copyrights of copyright
++** holders and non-copyrightable additions of contributors, in
++** source or binary form) alone; or
++**
++** (b) combination of their Contribution(s) with the work of
++** authorship to which such Contribution(s) was added by such
++** copyright holder or contributor, if, at the time the Contribution
++** is added, such addition causes such combination to be necessarily
++** infringed. The patent license shall not apply to any other
++** combinations which include the Contribution.
++**
++** Except as expressly stated above, no rights or licenses from any
++** copyright holder or contributor is granted under this license,
++** whether expressly, by implication, estoppel or otherwise.
++**
++** DISCLAIMER
++**
++** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
++** CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
++** INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++** DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
++** CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
++** USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
++** AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
++** ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++** POSSIBILITY OF SUCH DAMAGE.
++**
++****************************************************************************/
++#ifndef PORT_MAC_MAP_H_INCLUDED
++#define PORT_MAC_MAP_H_INCLUDED
++
++#include "upnpglobalvars.h"
++#include <time.h>
++
++struct port_mac_tuple {
++	unsigned short port;
++	char mac[MAC_ADDR_STR_LEN + 1];
++	time_t creation_time;
++	unsigned int lifetime;
++	struct port_mac_tuple* next;
++};
++
++void port_mac_map_add(unsigned short, const char*, unsigned int);
++void port_mac_map_delete(unsigned short);
++int port_mac_map_get_active(unsigned short, char*);
++
++#endif
+diff --git miniupnpd/upnpglobalvars.h miniupnpd/upnpglobalvars.h
+index b04653c..f8b9f15 100644
+--- miniupnpd/upnpglobalvars.h
++++ miniupnpd/upnpglobalvars.h
+@@ -15,6 +15,8 @@
+ #include "config.h"
+ #include <stdatomic.h>
+ 
++#define MAC_ADDR_STR_LEN 17
++
+ /* name of the network interface used to access internet */
+ extern const char * ext_if_name;
+ 
+diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
+index 8ecbe12..119d5b2 100644
+--- miniupnpd/upnpsoap.c
++++ miniupnpd/upnpsoap.c
+@@ -37,6 +37,7 @@
+ #ifdef USE_AMX
+ #include "amx/amxmisc.h"
+ #include "amx/amxpmp.h"
++#include "portmacmap.h"
+ #endif
+ 
+ /* utility function */
+@@ -429,10 +430,12 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	int bodylen;
+ 	struct NameValueParserData data;
+ 	char * int_ip, * int_port, * ext_port, * protocol, * desc;
++	char old_protocol[256];
++	char old_int_ip[INET6_ADDRSTRLEN + 1];
+ 	char * leaseduration_str;
+-	unsigned int leaseduration;
++	unsigned int old_leaseduration, leaseduration;
+ 	char * r_host;
+-	unsigned short iport, eport;
++	unsigned short old_iport, iport, eport;
+ 
+ 	struct in_addr result_ip;/*unsigned char result_ip[16];*/ /* inet_pton() */
+ #ifndef USE_AMX
+@@ -604,6 +607,26 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	       action, eport, int_ip, iport, protocol, desc, leaseduration,
+ 	       r_host ? r_host : "NULL");
+ 
++#ifdef USE_AMX
++	r = upnp_get_redirection_infos(eport, old_protocol, &old_iport,
++	                               old_int_ip, sizeof(old_int_ip),
++	                               NULL, 0,
++	                               NULL, 0,
++	                               &old_leaseduration);
++	if(r == 0 && strncmp(old_int_ip, int_ip, INET6_ADDRSTRLEN) != 0) {
++		char mac[MAC_ADDR_STR_LEN + 1];
++		char mac_expected[MAC_ADDR_STR_LEN + 1];
++		r = port_mac_map_get_active(eport, mac_expected);
++		get_mac_from_ip(inet_ntoa(h->clientaddr), &mac);
++		if(r == 0 && strncmp(mac, mac_expected, MAC_ADDR_STR_LEN) == 0) {
++			r = upnp_delete_redirection(eport, old_protocol);
++			if(r == 0) {
++				port_mac_map_delete(eport);
++			}
++		}
++	}
++#endif
++
+ 	r = upnp_redirect(r_host, eport, int_ip, iport, protocol, desc, leaseduration);
+ 
+ 	ClearNameValueList(&data);
+@@ -635,6 +658,12 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	switch(r)
+ 	{
+ 	case 0:	/* success */
++#ifdef USE_AMX
++		char mac[MAC_ADDR_STR_LEN + 1] = {0};
++		get_mac_from_ip(inet_ntoa(h->clientaddr), &mac);
++		port_mac_map_add(eport, mac, leaseduration);
++#endif
++
+ 		bodylen = snprintf(body, sizeof(body), resp,
+ 		                   action, ns/*SERVICE_TYPE_WANIPC||SERVICE_TYPE_WANPPPC*/);
+ 		BuildSendAndCloseSoapResp(h, body, bodylen);
+@@ -674,9 +703,11 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	struct NameValueParserData data;
+ 	const char * int_ip, * int_port, * ext_port, * protocol, * desc;
+ 	const char * r_host;
+-	unsigned short iport, eport;
++	char old_int_ip[INET6_ADDRSTRLEN + 1];
++	char old_protocol[256];
++	unsigned short old_iport, iport, eport;
+ 	const char * leaseduration_str;
+-	unsigned int leaseduration;
++	unsigned int old_leaseduration, leaseduration;
+ 
+ 	struct hostent *hp; /* getbyhostname() */
+ 	char ** ptr; /* getbyhostname() */
+@@ -796,6 +827,27 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 		}
+ 	}
+ 
++#ifdef USE_AMX
++	char mac[MAC_ADDR_STR_LEN + 1];
++	char mac_expected[MAC_ADDR_STR_LEN + 1];
++
++	r = upnp_get_redirection_infos(eport, old_protocol, &old_iport,
++	                               old_int_ip, sizeof(old_int_ip),
++	                               NULL, 0,
++	                               NULL, 0,
++	                               &old_leaseduration);
++	if(r == 0 && strncmp(old_int_ip, int_ip, INET6_ADDRSTRLEN) != 0) {
++		r = port_mac_map_get_active(eport, mac_expected);
++		get_mac_from_ip(inet_ntoa(h->clientaddr), &mac);
++		if(r == 0 && strncmp(mac, mac_expected, MAC_ADDR_STR_LEN) == 0) {
++			r = upnp_delete_redirection(eport, old_protocol);
++			if(r == 0) {
++				port_mac_map_delete(eport);
++			}
++		}
++	}
++#endif
++
+ 	/* first try the port asked in request, then
+ 	 * try +1, -1, +2, -2, etc. */
+ 	r = upnp_redirect(r_host, eport, int_ip, iport, protocol, desc, leaseduration);
+@@ -825,6 +877,23 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 			}
+ 			if (!(allowed_eports[eport / 32] & ((uint32_t)1U << (eport % 32))))
+ 				continue;	/* not allowed */
++#ifdef USE_AMX
++			r = upnp_get_redirection_infos(eport, old_protocol, &old_iport,
++			                               old_int_ip, sizeof(old_int_ip),
++			                               NULL, 0,
++			                               NULL, 0,
++			                               &old_leaseduration);
++			if(r == 0 && strncmp(old_int_ip, int_ip, INET6_ADDRSTRLEN) != 0) {
++				r = port_mac_map_get_active(eport, mac_expected);
++				get_mac_from_ip(inet_ntoa(h->clientaddr), &mac);
++				if(r == 0 && strncmp(mac, mac_expected, MAC_ADDR_STR_LEN) == 0) {
++					r = upnp_delete_redirection(eport, old_protocol);
++					if(r == 0) {
++						port_mac_map_delete(eport);
++					}
++				}
++			}
++#endif
+ 			r = upnp_redirect(r_host, eport, int_ip, iport, protocol, desc, leaseduration);
+ 			if (r == 0 || r == -1 || r == -3) {
+ 				/* OK or failure : Stop */
+@@ -843,6 +912,13 @@ AddAnyPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 		SoapError(h, 728, "NoPortMapsAvailable");
+ 		break;
+ 	case 0:	/* success */
++#ifdef USE_AMX
++		char mac[MAC_ADDR_STR_LEN + 1] = {0};
++
++		get_mac_from_ip(inet_ntoa(h->clientaddr), &mac);
++		port_mac_map_add(eport, mac, leaseduration);
++#endif
++
+ 		bodylen = snprintf(body, sizeof(body), resp,
+ 		              action, ns, /*SERVICE_TYPE_WANIPC,*/
+ 					  eport, action);
+@@ -1028,10 +1104,19 @@ DeletePortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 			if(inet_pton(AF_INET, int_ip, &int_ip_addr) > 0)
+ 			{
+ #ifdef USE_AMX
++				int matched = 0;
++				char mac[MAC_ADDR_STR_LEN + 1] = {0};
++				char mac_expected[MAC_ADDR_STR_LEN + 1];
+ 				char ip_str[INET6_ADDRSTRLEN] = {0};
+ 
++				get_mac_from_ip(inet_ntoa(h->clientaddr), &mac);
++				r = port_mac_map_get_active(eport, mac_expected);
++				if(r == 0 && strncmp(mac_expected, mac, MAC_ADDR_STR_LEN) == 0) {
++					matched = 1;
++				}
++
+ 				inet_ntop((h->ipv6) ? AF_INET6 : AF_INET, (h->ipv6) ? (void*)&h->clientaddr_v6 : (void*)&h->clientaddr, ip_str, INET6_ADDRSTRLEN);
+-				if(are_addresses_from_same_host(int_ip, ip_str) == 0)
++				if(matched == 0 && are_addresses_from_same_host(int_ip, ip_str) == 0)
+ #else
+ 				if(h->clientaddr.s_addr != int_ip_addr.s_addr)
+ #endif /* USE_AMX */
+@@ -1052,6 +1137,9 @@ DeletePortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	case 0: /* success */
+ 		bodylen = snprintf(body, sizeof(body), resp, action, ns, action);
+ 		BuildSendAndCloseSoapResp(h, body, bodylen);
++#ifdef USE_AMX
++		port_mac_map_delete(eport);
++#endif
+ 		break;
+ 	case -2: /* not found */
+ 		SoapError(h, 714, "NoSuchEntryInArray");
+@@ -1135,9 +1223,27 @@ DeletePortMappingRange(struct upnphttp * h, const char * action, const char * ns
+ 		return;
+ 	}
+ 
++#ifdef USE_AMX
++	char mac[MAC_ADDR_STR_LEN + 1] = {0};
++
++	get_mac_from_ip(inet_ntoa(h->clientaddr), &mac);
++#endif
++
+ 	int mismatched_control_point = 0;
++	int matched;
+ 	for(i = 0; i < number; i++)
+ 	{
++		matched = 1;
++#ifdef USE_AMX
++		char mac_expected[MAC_ADDR_STR_LEN + 1];
++
++		r = port_mac_map_get_active(port_list[i], mac_expected);
++		if(r == 0 && strncmp(mac_expected, mac, MAC_ADDR_STR_LEN) != 0) {
++			matched = 0;
++			mismatched_control_point = 1;
++		}
++#endif
++
+ 		r = upnp_get_redirection_infos(port_list[i], protocol, &a,
+ 		                               int_ip, sizeof(int_ip),
+ 		                               NULL, 0,
+@@ -1154,7 +1260,7 @@ DeletePortMappingRange(struct upnphttp * h, const char * action, const char * ns
+ 			continue;
+ 		}
+ 
+-		if(strncmp(ip_str, int_ip, INET6_ADDRSTRLEN) != 0) {
++		if(matched == 0 && strncmp(ip_str, int_ip, INET6_ADDRSTRLEN) != 0) {
+ 			syslog(LOG_INFO,
+ 			       "%s: NOT deleting external port: %hu, protocol: %s: NewManage=0 and InternalAddress does not match ClientAddress",
+ 			       action, port_list[i], protocol);
+@@ -1165,6 +1271,9 @@ DeletePortMappingRange(struct upnphttp * h, const char * action, const char * ns
+ 		r = upnp_delete_redirection(port_list[i], protocol);
+ 		if (r == 0) {
+ 			deleted_number += 1;
++#ifdef USE_AMX
++			port_mac_map_delete(port_list[i]);
++#endif
+ 		}
+ 		syslog(LOG_INFO, "%s: deleting external port: %hu, protocol: %s: %s",
+ 		       action, port_list[i], protocol, r < 0 ? "failed" : "ok");
+-- 
+2.34.1
+

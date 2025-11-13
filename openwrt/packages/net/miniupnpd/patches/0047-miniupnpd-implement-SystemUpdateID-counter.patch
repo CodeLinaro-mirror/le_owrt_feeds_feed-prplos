@@ -1,0 +1,96 @@
+From d0b409d508c20061978883e73a08b3f0648154c3 Mon Sep 17 00:00:00 2001
+From: Vladimir Shulika <v.shulika@inango-systems.com>
+Date: Fri, 22 Aug 2025 21:20:25 +0300
+Subject: [PATCH] miniupnpd: implement SystemUpdateID counter
+
+SystemUpdateID is not changing after AddPortMapping or DeletePortMapping.
+
+But whenever a change in rules is done, the value of this variable is must be
+incremented by 1 and evented. A change can be an addition, a removal, an update,
+or the fact that a rule is disabled or enabled.
+
+Solution:
+* Add support for SystemUpdateID magic value. This variable used to track changes which could affect NAT port mappings.
+* Add to portmapping_entries_changed fuction the SystemUpdateID value incremented each time when port mapping entries change event raised.
+
+References: PCF-2015
+Signed-off-by: Vladimir Shulika <v.shulika@inango-systems.com>
+Signed-off-by: Vladyslav Tupikin <v.tupikin@inango-systems.com>
+---
+ miniupnpd/amx/amxmisc.c     | 1 +
+ miniupnpd/testupnpdescgen.c | 2 ++
+ miniupnpd/upnpdescgen.c     | 3 +--
+ miniupnpd/upnpglobalvars.c  | 1 +
+ miniupnpd/upnpglobalvars.h  | 3 +++
+ 5 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git miniupnpd/amx/amxmisc.c miniupnpd/amx/amxmisc.c
+index 6e8fa40..c4825dd 100644
+--- miniupnpd/amx/amxmisc.c
++++ miniupnpd/amx/amxmisc.c
+@@ -272,6 +272,7 @@ static void portmapping_entries_changed(const char* const sig_name,
+                                         void* const priv) {
+     /* Raise a flag to indicate that a UPnP notification is needed.
+      * Notification will be processed in the main loop */
++    atomic_fetch_add(&system_update_id, 1);
+     exchange_upnp_notify_needed(true);
+     syslog(LOG_INFO, "Port mapping entries changed, notification needed");
+ }
+diff --git miniupnpd/testupnpdescgen.c miniupnpd/testupnpdescgen.c
+index 6dcf689..db42fdd 100644
+--- miniupnpd/testupnpdescgen.c
++++ miniupnpd/testupnpdescgen.c
+@@ -47,6 +47,8 @@ unsigned int ext_is_ppp = 0;
+ 
+ int runtime_flags = 0;
+ 
++atomic_uint system_update_id = 0;
++
+ int getifaddr(const char * ifname, char * buf, int len, struct in_addr * addr, struct in_addr * mask)
+ {
+ 	UNUSED(ifname);
+diff --git miniupnpd/upnpdescgen.c miniupnpd/upnpdescgen.c
+index 7a0803a..aec0a87 100644
+--- miniupnpd/upnpdescgen.c
++++ miniupnpd/upnpdescgen.c
+@@ -1568,8 +1568,7 @@ genEventVars(int * len, const struct serviceDesc * s)
+ 			case SYSTEMUPDATEID_MAGICALVALUE:
+ 				/* Please read section 2.3.23 SystemUpdateID
+ 				 * of UPnP-gw-WANIPConnection-v2-Service.pdf */
+-				snprintf(tmp, sizeof(tmp), "%d",
+-				         1/* system update id */);
++				snprintf(tmp, sizeof(tmp), "%u", system_update_id);
+ 				str = strcat_str(str, len, &tmplen, tmp);
+ 				break;
+ #endif
+diff --git miniupnpd/upnpglobalvars.c miniupnpd/upnpglobalvars.c
+index a8a0e66..e91126b 100644
+--- miniupnpd/upnpglobalvars.c
++++ miniupnpd/upnpglobalvars.c
+@@ -179,3 +179,4 @@ char * os_version = NULL;
+ #endif /* DYNAMIC_OS_VERSION */
+ 
+ unsigned int allow_reserved_addr = 0;
++atomic_uint system_update_id = 0;
+diff --git miniupnpd/upnpglobalvars.h miniupnpd/upnpglobalvars.h
+index 6159817..b04653c 100644
+--- miniupnpd/upnpglobalvars.h
++++ miniupnpd/upnpglobalvars.h
+@@ -13,6 +13,7 @@
+ #include "upnppermissions.h"
+ #include "miniupnpdtypes.h"
+ #include "config.h"
++#include <stdatomic.h>
+ 
+ /* name of the network interface used to access internet */
+ extern const char * ext_if_name;
+@@ -195,4 +196,6 @@ extern char * os_version;
+ 
+ extern unsigned int allow_reserved_addr;
+ 
++extern atomic_uint system_update_id;
++
+ #endif /* UPNPGLOBALVARS_H_INCLUDED */
+-- 
+2.34.1
+

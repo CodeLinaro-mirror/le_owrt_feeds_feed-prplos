@@ -1,0 +1,55 @@
+From a3309d75363af594c63f2e39a63142ec2b9d7e5e Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Tue, 3 Oct 2023 14:29:18 +0200
+Subject: [PATCH] disable console logging by default
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Recent miniupnpd versions shipped with prplos-next likely introduced
+some changes which result in a lot of noisy logging output directly into
+the console, mainly during the startup:
+
+ miniupnpd[5549]: Cannot get IP address for ext interface . Network is down
+ miniupnpd[5549]: HTTP listening on port 5000
+ miniupnpd[5549]: no HTTP IPv6 address, disabling IPv6
+ miniupnpd[5549]: Listening for NAT-PMP/PCP traffic on port 5351
+ miniupnpd[5549]: shutting down MiniUPnPd
+ miniupnpd[6161]: HTTP listening on port 5000
+ miniupnpd[6161]: no HTTP IPv6 address, disabling IPv6
+ miniupnpd[6161]: Listening for NAT-PMP/PCP traffic on port 5351
+
+Those errors are expected and can’t be fixed, as in the time when
+miniupnpd starts the network is not ready yet.
+
+So lets silence those console log splats by moving the console logging
+under `-d` debug flag, so basically restoring previous logging
+experience.
+
+References: PCF-924
+Patch taken from https://gitlab.com/prpl-foundation/prplos/feed-prpl/-/commit/90120ccc9ac9fc883d996def46b4e4326e2b451a
+Signed-off-by: Matthias FRANCK <matthias.franck_ext@softathome.com> [rebased]
+GitOrigin-RevId: 8c34ae6310272f2ca2d7122b916684f74a22e945
+---
+ miniupnpd/miniupnpd.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index 1e8f1a0..80b752a 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -1204,9 +1204,10 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 	}
+ 
+ 	openlog_option = LOG_PID|LOG_CONS;
++	openlog_option = LOG_PID;
+ 	if(debug_flag)
+ 	{
+-		openlog_option |= LOG_PERROR;	/* also log on stderr */
++		openlog_option |= LOG_CONS | LOG_PERROR;	/* also log on console/stderr */
+ 	}
+ 
+ 	openlog("miniupnpd", openlog_option, LOG_MINIUPNPD);
+-- 
+2.34.1
+

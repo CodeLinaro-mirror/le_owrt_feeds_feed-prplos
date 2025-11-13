@@ -1,0 +1,43 @@
+From fdb119c4c0ee003373b1d279da28a748306cb8e8 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Th=C3=A9o-Paul=20Bodin?= <theo-paul.bodin@softathome.com>
+Date: Wed, 19 Feb 2025 17:34:44 +0100
+Subject: [PATCH] miniupnpd: add sockopt IP_MULTICAST_LOOP for SSDP Notify
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Problem: Other program on the device doesn't receive broadcasted SSDP Notify message
+
+Cause: IP_MULTICAST_LOOP is set to 0
+
+Solution: set IP_MULTICAST_LOOP to 1 when using AMX backend
+
+Issue: [upnp][discovery] UPnP deviceInstances are not added
+after a reboot. [change]
+
+References: PCF-1833, FEAT-13
+
+Signed-off-by: Théo-Paul Bodin <theo-paul.bodin@softathome.com>
+---
+ miniupnpd/minissdp.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git miniupnpd/minissdp.c miniupnpd/minissdp.c
+index a6ab4dc..bcbae98 100644
+--- miniupnpd/minissdp.c
++++ miniupnpd/minissdp.c
+@@ -291,7 +291,11 @@ static int
+ OpenAndConfSSDPNotifySocket(struct lan_addr_s * lan_addr)
+ {
+ 	int s;
++#ifdef USE_AMX
++	unsigned char loopchar = 1;
++#else
+ 	unsigned char loopchar = 0;
++#endif
+ 	int bcast = 1;
+ 	unsigned char ttl = 2; /* UDA v1.1 says :
+ 		The TTL for the IP packet SHOULD default to 2 and
+-- 
+2.34.1
+

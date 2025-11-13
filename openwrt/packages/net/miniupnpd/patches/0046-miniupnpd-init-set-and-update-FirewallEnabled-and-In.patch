@@ -1,0 +1,302 @@
+From d2b544b1c61745d90cefa21b39f6a8f8169b5ba8 Mon Sep 17 00:00:00 2001
+From: Mykyta Diachyna <m.diachyna@inango-systems.com>
+Date: Sat, 16 Aug 2025 00:52:16 +0300
+Subject: [PATCH] miniupnpd: init: set and update FirewallEnabled and
+ InboundPinholeAllowed
+
+Read from bus, set and update FirewallEnabled and
+InboundPinholeAllowed variables on miniupnpd init and
+on use.
+
+References: PCF-1960
+Signed-off-by: Mykyta Diachyna <m.diachyna@inango-systems.com>
+---
+ miniupnpd/amx/amxmisc.c | 179 +++++++++++++++++++++++++++++++++++++++-
+ miniupnpd/amx/amxmisc.h |   1 +
+ miniupnpd/miniupnpd.c   |   4 +
+ miniupnpd/upnpsoap.c    |  12 +++
+ 4 files changed, 195 insertions(+), 1 deletion(-)
+
+diff --git miniupnpd/amx/amxmisc.c miniupnpd/amx/amxmisc.c
+index 0497629..6e8fa40 100644
+--- miniupnpd/amx/amxmisc.c
++++ miniupnpd/amx/amxmisc.c
+@@ -61,6 +61,7 @@
+ **
+ ****************************************************************************/
+ 
++#include <amxc/amxc_variant.h>
+ #include <string.h>
+ #include <syslog.h>
+ #include <amxrt/amxrt.h>
+@@ -76,6 +77,14 @@
+ #include "config.h"
+ #include "../upnpglobalvars.h"
+ 
++#define FIREWALL_OBJECT_PATH "Device.Firewall."
++#define FIREWALL_ENABLE_PATH "Device.Firewall.Enable"
++#define FIREWALL_CONFIG_PATH "Device.Firewall.Config"
++#define FIREWALL_POLICYLEVEL_PATH "Device.Firewall.PolicyLevel"
++#define FIREWALL_ADVANCEDLEVEL_PATH "Device.Firewall.AdvancedLevel"
++#define FIREWALL_LEVEL_HIGH_PATH "Firewall.Level.High"
++#define MAX_PATH_LEN 256
++#define MAX_FW_VALUE_LEN 256
+ #define NAT_OBJECT_PATH "NAT."
+ 
+ pthread_t amxrt_thread_id;
+@@ -83,6 +92,135 @@ atomic_bool upnp_notify_needed = false;
+ 
+ static amxb_bus_ctx_t* bus_ctx = NULL;
+ 
++/**
++ * @brief Get a string from the bus.
++ *
++ * Gets a string parameter from the bus.
++ *
++ * @param param_path Full path to the parameter to get.
++ * @param ret_param_value A buffer of MAX_PATH_LEN bytes to write the parameter's value into.
++ * @return Status indicator: 0 - success, -1 - error.
++ */
++static int get_string_param_from_bus(const char* param_path, char* ret_param_value) {
++    char path[MAX_PATH_LEN];
++    char* param_name = NULL;
++    char* last_dot_ptr = NULL;
++    int rv = -1;
++    amxc_var_t obj;
++    const char* param_value = NULL;
++    char* tmp = NULL;
++
++    if(!bus_ctx) {
++        init_amx();
++    }
++
++    amxc_var_init(&obj);
++
++    rv = amxb_get(bus_ctx, param_path, 0, &obj, 1);
++    when_failed_status(rv, exit, syslog(LOG_ERR, "Couldn't get value of %s (%d))", param_path, rv));
++
++    if(amxc_var_type_of(&obj) != AMXC_VAR_ID_LIST) {
++        syslog(LOG_ERR, "Couldn't get value of %s: type of returned object is not list", param_path);
++        goto exit;
++    }
++
++    last_dot_ptr = strrchr(param_path, '.');
++    param_name = last_dot_ptr + 1;
++    snprintf(path, MAX_PATH_LEN, "0.0.%s", param_name);
++    param_value = GETP_CHAR(&obj, path);
++    when_null_status(param_value, exit, syslog(LOG_ERR, "Couldn't get value of %s: got null string", param_path));
++
++    strncpy(ret_param_value, param_value, MAX_PATH_LEN);
++    rv = 0;
++exit:
++    amxc_var_clean(&obj);
++    return rv;
++}
++
++/**
++ * @brief Get the current required state of FirewallEnabled
++ *
++ * Gets firewall status.
++ *
++ * @param enabled A bool buffer to write the result into.
++ * @return Status indicator: 0 - success, -1 - error.
++ */
++static int get_firewall_enabled(bool* enabled) {
++    int rv = -1;
++    amxc_var_t firewall_obj;
++    amxc_string_t firewall_policylevel;
++
++    if(!bus_ctx) {
++        init_amx();
++    }
++    amxc_var_init(&firewall_obj);
++
++    rv = amxb_get(bus_ctx, FIREWALL_ENABLE_PATH, 0, &firewall_obj, 1);
++    when_failed_status(rv, exit, syslog(LOG_ERR, "Couldn't get Firewall data (%d))", rv));
++
++    *enabled = GETP_BOOL(&firewall_obj, "0.0.Enable");
++    rv = 0;
++exit:
++    amxc_var_clean(&firewall_obj);
++    return rv;
++}
++
++/**
++ * @brief Get the current required state of InboundPinholeAllowed
++ *
++ * Gets firewall policy level and determined InboundPinholeAllowed status depending on it.
++ *
++ * @param allowed A bool buffer to write the result into.
++ * @return Status indicator: 0 - success, -1 - error.
++ */
++static int get_inbound_pinhole_allowed(bool* allowed) {
++    char firewall_config[MAX_FW_VALUE_LEN];
++    char level[MAX_FW_VALUE_LEN];
++    int rv = -1;
++
++    rv = get_string_param_from_bus(FIREWALL_CONFIG_PATH, firewall_config);
++    when_failed(rv, exit);
++
++    if(strncmp(firewall_config, "High", MAX_FW_VALUE_LEN) == 0) {
++        *allowed = false;
++        rv = 0;
++        goto exit;
++    }
++
++    if(strncmp(firewall_config, "Policy", MAX_FW_VALUE_LEN) == 0) {
++        rv = get_string_param_from_bus(FIREWALL_POLICYLEVEL_PATH, level);
++        when_failed(rv, exit);
++
++        if(strncmp(level, FIREWALL_LEVEL_HIGH_PATH, MAX_FW_VALUE_LEN) == 0) {
++            *allowed = false;
++        } else {
++            *allowed = true;
++        }
++
++        rv = 0;
++        goto exit;
++    }
++
++    if(strncmp(firewall_config, "Advanced", MAX_FW_VALUE_LEN) == 0) {
++        rv = get_string_param_from_bus(FIREWALL_ADVANCEDLEVEL_PATH, level);
++        when_failed(rv, exit);
++
++        if(strncmp(level, FIREWALL_LEVEL_HIGH_PATH, MAX_FW_VALUE_LEN) == 0) {
++            *allowed = false;
++        } else {
++            *allowed = true;
++        }
++
++        rv = 0;
++        goto exit;
++    }
++
++    *allowed = true;
++    rv = 0;
++exit:
++    return rv;
++}
++
+ static void init_loglevel(void) {
+     amxc_var_t ret;
+     amxc_var_t arg;
+@@ -252,6 +390,45 @@ amxb_bus_ctx_t* get_amx_bus_ctx(void) {
+     return bus_ctx;
+ }
+ 
++/**
++ * @brief Refreshes firewall-related flags (FirewallEnabled and InboundPinholeAllowed)
++ *
++ * Refreshes firewall-related flags (FirewallEnabled and InboundPinholeAllowed)
++ * in global runtime_flags.
++ *
++ */
++void refresh_firewall_flags() {
++#ifdef ENABLE_IPV6
++    int ret;
++    bool firewall_enabled;
++    bool inbound_pinhole_allowed;
++
++    ret = get_firewall_enabled(&firewall_enabled);
++    if(ret != 0) {
++        syslog(LOG_ERR, "Failed to get firewall status");
++        firewall_enabled = false;
++    }
++
++    if(firewall_enabled) {
++        CLEARFLAG(IPV6FCFWDISABLEDMASK);
++    } else {
++        SETFLAG(IPV6FCFWDISABLEDMASK);
++    }
++
++    ret = get_inbound_pinhole_allowed(&inbound_pinhole_allowed);
++    if(ret != 0) {
++        syslog(LOG_ERR, "Failed to get inbound pinhole permission status");
++        inbound_pinhole_allowed = false;
++    }
++
++    if(inbound_pinhole_allowed) {
++        CLEARFLAG(IPV6FCINBOUNDDISALLOWEDMASK);
++    } else {
++        SETFLAG(IPV6FCINBOUNDDISALLOWEDMASK);
++    }
++#endif
++}
++
+ static int get_host_from_address(const char* addr, amxc_var_t* ret) {
+     int rv = -1;
+     amxc_string_t tmp;
+@@ -346,4 +523,4 @@ int amx_is_wan_ppp(void) {
+         init_amx();
+     }
+     return netmodel_hasFlag(ip_interface, "ppp", "", "down");
+-}
+\ No newline at end of file
++}
+diff --git miniupnpd/amx/amxmisc.h miniupnpd/amx/amxmisc.h
+index f90a63c..891f8de 100644
+--- miniupnpd/amx/amxmisc.h
++++ miniupnpd/amx/amxmisc.h
+@@ -78,6 +78,7 @@ void shutdown_amx(void);
+  */
+ int init_amx(void);
+ amxb_bus_ctx_t* get_amx_bus_ctx(void);
++void refresh_firewall_flags(void);
+ int are_addresses_from_same_host(const char*, const char*);
+ int amx_is_wan_up(void);
+ int amx_is_wan_ppp(void);
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index f89d4e0..74f2622 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -2038,6 +2038,10 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ #endif
+ #endif
+ 
++#ifdef USE_AMX
++	refresh_firewall_flags();
++#endif
++
+ #ifdef TOMATO
+ 	tomato_load();
+ #endif /* TOMATO */
+diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
+index 3555ad2..2bdac6f 100644
+--- miniupnpd/upnpsoap.c
++++ miniupnpd/upnpsoap.c
+@@ -1655,6 +1655,10 @@ GetFirewallStatus(struct upnphttp * h, const char * action, const char * ns)
+ 	char body[512];
+ 	int bodylen;
+ 
++#ifdef USE_AMX
++	refresh_firewall_flags();
++#endif
++
+ 	bodylen = snprintf(body, sizeof(body), resp,
+ 		action, ns, /*"urn:schemas-upnp-org:service:WANIPv6FirewallControl:1",*/
+ 	    GETFLAG(IPV6FCFWDISABLEDMASK) ? 0 : 1,
+@@ -1666,6 +1670,10 @@ GetFirewallStatus(struct upnphttp * h, const char * action, const char * ns)
+ static int
+ CheckStatus(struct upnphttp * h)
+ {
++#ifdef USE_AMX
++	refresh_firewall_flags();
++#endif
++
+ 	if (GETFLAG(IPV6FCFWDISABLEDMASK))
+ 	{
+ 		SoapError(h, 702, "FirewallDisabled");
+@@ -2111,6 +2119,10 @@ GetOutboundPinholeTimeout(struct upnphttp * h, const char * action, const char *
+ 	/*int proto=0;*/
+ 	unsigned short iport, rport;
+ 
++#ifdef USE_AMX
++	refresh_firewall_flags();
++#endif
++
+ 	if (GETFLAG(IPV6FCFWDISABLEDMASK))
+ 	{
+ 		SoapError(h, 702, "FirewallDisabled");
+-- 
+2.34.1
+

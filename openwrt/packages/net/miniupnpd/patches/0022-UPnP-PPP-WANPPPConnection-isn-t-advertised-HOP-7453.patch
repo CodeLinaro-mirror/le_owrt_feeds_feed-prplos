@@ -1,0 +1,733 @@
+From 5527978871a5a37609315b9764dd625ff9bd1c97 Mon Sep 17 00:00:00 2001
+From: sahbot <support.opensource@softathome.com>
+Date: Wed, 16 Oct 2024 15:11:17 +0200
+Subject: [PATCH] UPnP/PPP: WANPPPConnection isn't advertised (HOP-7453)
+
+Cause: WANPPPConnection services isn't implemented
+
+Solution: Implement WANPPPConnection in xml generation
+It now advertise WANPPPConnection when WAN is PPP, WANIPConnection otherwise
+Implement WANPPPConnection in HTTP server to handle control
+
+Issue: HOP-7453 - [UPnP][REG]The DUT Advertise WANIPConnection instead of WANPPPConnection [change]
+GitOrigin-RevId: 812c5bdab919c59ec1972b31dfd96d639fb78899
+---
+ miniupnpd/amx/amxmisc.c     |   7 +
+ miniupnpd/amx/amxmisc.h     |   1 +
+ miniupnpd/minissdp.c        |  20 +++
+ miniupnpd/miniupnpd.c       |   5 +
+ miniupnpd/miniupnpdpath.h   |   6 +
+ miniupnpd/testupnpdescgen.c |   1 +
+ miniupnpd/upnpdescgen.c     | 294 ++++++++++++++++++++++++++++--------
+ miniupnpd/upnpdescgen.h     |  10 ++
+ miniupnpd/upnpevents.c      |   5 +
+ miniupnpd/upnpevents.h      |   3 +
+ miniupnpd/upnpglobalvars.c  |   2 +
+ miniupnpd/upnpglobalvars.h  |   2 +
+ miniupnpd/upnphttp.c        |   3 +
+ miniupnpd/upnpsoap.c        |   2 +-
+ miniupnpd/upnpurns.h        |   4 +
+ 15 files changed, 301 insertions(+), 64 deletions(-)
+
+diff --git miniupnpd/amx/amxmisc.c miniupnpd/amx/amxmisc.c
+index 3805d90..3412fec 100644
+--- miniupnpd/amx/amxmisc.c
++++ miniupnpd/amx/amxmisc.c
+@@ -212,4 +212,11 @@ exit:
+     amxc_var_clean(&wan_obj);
+     amxd_path_clean(&path);
+     return rv;
++}
++
++int amx_is_wan_ppp(void) {
++    if(!bus_ctx) {
++        init_amx();
++    }
++    return netmodel_hasFlag(ip_interface, "ppp", "", "down");
+ }
+\ No newline at end of file
+diff --git miniupnpd/amx/amxmisc.h miniupnpd/amx/amxmisc.h
+index a78e443..024d804 100644
+--- miniupnpd/amx/amxmisc.h
++++ miniupnpd/amx/amxmisc.h
+@@ -72,6 +72,7 @@ int init_amx(void);
+ amxb_bus_ctx_t* get_amx_bus_ctx(void);
+ int are_addresses_from_same_host(const char*, const char*);
+ int amx_is_wan_up(void);
++int amx_is_wan_ppp(void);
+ 
+ #endif
+ 
+diff --git miniupnpd/minissdp.c miniupnpd/minissdp.c
+index a672c71..a6ab4dc 100644
+--- miniupnpd/minissdp.c
++++ miniupnpd/minissdp.c
+@@ -800,6 +800,10 @@ SendSSDPNotifies(int s, const char * host, unsigned short http_port,
+ 				ver_str[0] = '\0';
+ 			else
+ 				snprintf(ver_str, sizeof(ver_str), "%d", known_service_types[i].version);
++			if ((strcmp("urn:schemas-upnp-org:service:WANPPPConnection:", known_service_types[i].s) == 0 && !ext_is_ppp) ||
++				(strcmp("urn:schemas-upnp-org:service:WANIPConnection:", known_service_types[i].s) == 0 && ext_is_ppp)) {
++				continue;
++			}
+ 			SendSSDPNotify(s, (struct sockaddr *)&sockname, sockname_len, dest_str,
+ 			               host, http_port,
+ #ifdef ENABLE_HTTPS
+@@ -1206,6 +1210,10 @@ ProcessSSDPData(int s, const char *bufr, int n,
+ 			/* Responds to request with a device as ST header */
+ 			for(i = 0; known_service_types[i].s; i++)
+ 			{
++				if ((strcmp("urn:schemas-upnp-org:service:WANPPPConnection:", known_service_types[i].s) == 0 && !ext_is_ppp) ||
++					(strcmp("urn:schemas-upnp-org:service:WANIPConnection:", known_service_types[i].s) == 0 && ext_is_ppp)) {
++					continue;
++				}
+ 				l = (int)strlen(known_service_types[i].s);
+ 				if(l<=st_len && (0 == memcmp(st, known_service_types[i].s, l))
+ #ifdef UPNP_STRICT
+@@ -1267,6 +1275,10 @@ ProcessSSDPData(int s, const char *bufr, int n,
+ 				syslog(LOG_INFO, "ssdp:all found");
+ 				for(i=0; known_service_types[i].s; i++)
+ 				{
++					if ((strcmp("urn:schemas-upnp-org:service:WANPPPConnection:", known_service_types[i].s) == 0 && !ext_is_ppp) ||
++						(strcmp("urn:schemas-upnp-org:service:WANIPConnection:", known_service_types[i].s) == 0 && ext_is_ppp)) {
++						continue;
++					}
+ #ifdef DELAY_MSEARCH_RESPONSE
+ 					delay += delay_increment;
+ #endif
+@@ -1462,6 +1474,10 @@ SendSSDPGoodbye(int * sockets, int n_sockets)
+ #endif
+ 	    for(i=0; known_service_types[i].s; i++)
+ 	    {
++			if ((strcmp("urn:schemas-upnp-org:service:WANPPPConnection:", known_service_types[i].s) == 0 && !ext_is_ppp) ||
++				(strcmp("urn:schemas-upnp-org:service:WANIPConnection:", known_service_types[i].s) == 0 && ext_is_ppp)) {
++				continue;
++			}
+ 			if(i==0)
+ 				ver_str[0] = '\0';
+ 			else
+@@ -1522,6 +1538,10 @@ SubmitServicesToMiniSSDPD(const char * host, unsigned short port) {
+ 		return -1;
+ 	}
+ 	for(i = 0; known_service_types[i].s; i++) {
++		if ((strcmp("urn:schemas-upnp-org:service:WANPPPConnection:", known_service_types[i].s) == 0 && !ext_is_ppp) ||
++			(strcmp("urn:schemas-upnp-org:service:WANIPConnection:", known_service_types[i].s) == 0 && ext_is_ppp)) {
++			continue;
++		}
+ 		buffer[0] = 4;	/* request type 4 : submit service */
+ 		if(i==0)
+ 			ver_str[0] = '\0';
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index d5dd7d4..16d640a 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -101,6 +101,7 @@ void init_iptpinhole(void);
+ #endif
+ #ifdef USE_AMX
+ #include "amx/amxpinhole.h"
++#include "amx/amxmisc.h"
+ #endif
+ #endif
+ 
+@@ -1892,6 +1893,10 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 		}
+ 	}
+ 
++#ifdef USE_AMX
++	ext_is_ppp = amx_is_wan_ppp();
++#endif
++
+ #ifndef NO_BACKGROUND_NO_PIDFILE
+ 	if(debug_flag)
+ 	{
+diff --git miniupnpd/miniupnpdpath.h miniupnpd/miniupnpdpath.h
+index a728ec1..95a4daf 100644
+--- miniupnpd/miniupnpdpath.h
++++ miniupnpd/miniupnpdpath.h
+@@ -45,5 +45,11 @@
+ #define DP_EVENTURL			"/evt/DP"
+ #endif
+ 
++#ifdef ADVERTISE_WANPPPCONN
++#define WANPPPC_PATH		"/WANPPPCn.xml"
++#define WANPPPC_CONTROLURL	"/ctl/PPPConn"
++#define WANPPPC_EVENTURL	"/evt/PPPConn"
++#endif
++
+ #endif
+ 
+diff --git miniupnpd/testupnpdescgen.c miniupnpd/testupnpdescgen.c
+index f6eda7b..2fc019d 100644
+--- miniupnpd/testupnpdescgen.c
++++ miniupnpd/testupnpdescgen.c
+@@ -43,6 +43,7 @@ unsigned int upnp_configid = 666;
+ 
+ const char * use_ext_ip_addr = NULL;
+ const char * ext_if_name = "eth0";
++unsigned int ext_is_ppp = 0;
+ 
+ int runtime_flags = 0;
+ 
+diff --git miniupnpd/upnpdescgen.c miniupnpd/upnpdescgen.c
+index 714feae..8d24fed 100644
+--- miniupnpd/upnpdescgen.c
++++ miniupnpd/upnpdescgen.c
+@@ -35,6 +35,38 @@
+ #define EXTERNALIPADDRESS_MAGICALVALUE (254)
+ #define DEFAULTCONNECTIONSERVICE_MAGICALVALUE (255)
+ 
++#ifdef ENABLE_L3F_SERVICE
++#define NSERVICES1 1
++#else
++#define NSERVICES1 0
++#endif
++
++#ifdef HAS_DUMMY_SERVICE
++#define NSERVICES2 1
++#else
++#define NSERVICES2 0
++#endif
++
++#ifdef ENABLE_DP_SERVICE
++#define NSERVICES3 1
++#else
++#define NSERVICES3 0
++#endif
++
++#ifdef ENABLE_6FC_SERVICE
++#define NSERVICES4 1
++#else
++#define NSERVICES4 0
++#endif
++
++#ifdef ADVERTISE_WANPPPCONN
++#define NSERVICES5 1
++#else
++#define NSERVICES5 0
++#endif
++
++#define NSERVICES (NSERVICES1 + NSERVICES2 + NSERVICES3)
++#define WANCD_NSERVICES (NSERVICES4 + NSERVICES5 + 1)
+ 
+ static const char * const upnptypes[] =
+ {
+@@ -140,20 +172,142 @@ static const char root_service[] =
+ static const char root_device[] =
+ 	"root xmlns=\"urn:schemas-upnp-org:device-1-0\"";
+ 
++/*
++ * This enum must match the rootDesc array below
++ * It allow to avoid having to calculate each offset every time a change is made
++ */
++static enum rootDescElt {
++	RD_ROOTDEVICE = 0,
++	RD_SPECVERSION,
++	RD_DEVICE,
++	RD_SPECVERSION_MAJOR,
++	RD_SPECVERSION_MINOR,
++	RD_DEVICE_DEVICETYPE,
++	RD_DEVICE_FRIENDLYNAME,
++	RD_DEVICE_MANUFACTURER,
++	RD_DEVICE_MANUFACTURERURL,
++	RD_DEVICE_MODELDESCRIPTION,
++	RD_DEVICE_MODELNAME,
++	RD_DEVICE_MODELNUMBER,
++	RD_DEVICE_MODELURL,
++	RD_DEVICE_SERIALNUMBER,
++	RD_DEVICE_UDN,
++#if defined(ENABLE_L3F_SERVICE) || defined(HAS_DUMMY_SERVICE) || defined(ENABLE_DP_SERVICE)
++	RD_DEVICE_SERVICELIST,
++#endif
++	RD_DEVICE_DEVICELIST,
++	RD_DEVICE_PRESENTATIONURL,
++	RD_WANDEVICE,
++	RD_WANDEVICE_DEVICETYPE,
++	RD_WANDEVICE_FRIENDLYNAME,
++	RD_WANDEVICE_MANUFACTURER,
++	RD_WANDEVICE_MANUFACTURERURL,
++	RD_WANDEVICE_MODELDESCRIPTION,
++	RD_WANDEVICE_MODELNAME,
++	RD_WANDEVICE_MODELNUMBER,
++	RD_WANDEVICE_MODELURL,
++	RD_WANDEVICE_SERIALNUMBER,
++	RD_WANDEVICE_UDN,
++	RD_WANDEVICE_UPC,
++	RD_WANDEVICE_SERVICELIST,
++	RD_WANDEVICE_DEVICELIST,
++	RD_WANSERVICE_SERVICEWANCIC,
++	RD_SERVICEWANCIC_SERVICETYPE,
++	RD_SERVICEWANCIC_SERVICEID,
++	RD_SERVICEWANCIC_SCPDURL,
++	RD_SERVICEWANCIC_CONTROLURL,
++	RD_SERVICEWANCIC_EVENTSUBURL,
++	RD_WANDEVICE_DEVICEWANCD,
++	RD_WANCDDEVICE_DEVICETYPE,
++	RD_WANCDDEVICE_FRIENDLYNAME,
++	RD_WANCDDEVICE_MANUFACTURER,
++	RD_WANCDDEVICE_MANUFACTURERURL,
++	RD_WANCDDEVICE_MODELDESCRIPTION,
++	RD_WANCDDEVICE_MODELNAME,
++	RD_WANCDDEVICE_MODELNUMBER,
++	RD_WANCDDEVICE_MODELURL,
++	RD_WANCDDEVICE_SERIALNUMBER,
++	RD_WANCDDEVICE_UDN,
++	RD_WANCDDEVICE_UPC,
++	RD_WANCDDEVICE_SERVICELIST,
++	RD_WANCDSERVICE_WANIPC,
++#ifdef ENABLE_6FC_SERVICE
++	RD_WANCDSERVICE_IP6FC,
++#endif
++#ifdef ADVERTISE_WANPPPCONN
++	RD_WANCDSERVICE_WANPPPC,
++#endif
++	RD_SERVICEWANIPC_SERVICETYPE,
++	RD_SERVICEWANIPC_SERVICEID,
++	RD_SERVICEWANIPC_SCPDURL,
++	RD_SERVICEWANIPC_CONTROLURL,
++	RD_SERVICEWANIPC_EVENTSUBURL,
++#ifdef ENABLE_6FC_SERVICE
++	RD_SERVICEIP6FC_SERVICETYPE,
++	RD_SERVICEIP6FC_SERVICEID,
++	RD_SERVICEIP6FC_SCPDURL,
++	RD_SERVICEIP6FC_CONTROLURL,
++	RD_SERVICEIP6FC_EVENTSUBURL,
++#endif
++#if NSERVICES > 0
++	RD_DUMMYENUM,							// trick to have unconditionnal value above next enum
++	RD_OFFSETSERVICES = RD_DUMMYENUM - 1, 	// RD_OFFSETSERVICES + 1 will always be first services
++#endif
++#if defined(HAS_DUMMY_SERVICE)
++	RD_SERVICE_DUMMY,
++#endif
++#if defined(ENABLE_L3F_SERVICE)
++	RD_SERVICE_L3F,
++#endif
++#if defined(ENABLE_DP_SERVICE)
++	RD_SERVICE_DP,
++#endif
++#if defined(HAS_DUMMY_SERVICE)
++	RD_SERVICEDUMMY_SERVICETYPE,
++	RD_SERVICEDUMMY_SERVICEID,
++	RD_SERVICEDUMMY_SCPDURL,
++	RD_SERVICEDUMMY_CONTROLURL,
++	RD_SERVICEDUMMY_EVENTSUBURL,
++#endif
++#if defined(ENABLE_L3F_SERVICE)
++	RD_SERVICEL3F_SERVICETYPE,
++	RD_SERVICEL3F_SERVICEID,
++	RD_SERVICEL3F_SCPDURL,
++	RD_SERVICEL3F_CONTROLURL,
++	RD_SERVICEL3F_EVENTSUBURL,
++#endif
++#if defined(ENABLE_DP_SERVICE)
++	RD_SERVICEDP_SERVICETYPE,
++	RD_SERVICEDP_SERVICEID,
++	RD_SERVICEDP_SCPDURL,
++	RD_SERVICEDP_CONTROLURL,
++	RD_SERVICEDP_EVENTSUBURL,
++#endif
++#ifdef ADVERTISE_WANPPPCONN
++	RD_SERVICEWANPPPC_SERVICETYPE,
++	RD_SERVICEWANPPPC_SERVICEID,
++	RD_SERVICEWANPPPC_SCPDURL,
++	RD_SERVICEWANPPPC_CONTROLURL,
++	RD_SERVICEWANPPPC_EVENTSUBURL,
++#endif
++	RD_END
++};
++
+ /* root Description of the UPnP Device
+  * fixed to match UPnP_IGD_InternetGatewayDevice 1.0.pdf
+  * Needs to be checked with UPnP-gw-InternetGatewayDevice-v2-Device.pdf
+  * presentationURL is only "recommended" but the router doesn't appears
+- * in "Network connections" in Windows XP if it is not present. */
++ * in "Network connections" in Windows XP if it is not present.
++ * While modifying this array, modify accordingly the enum above*/
+ static const struct XMLElt rootDesc[] =
+ {
+ /* 0 */
+-	{root_device, INITHELPER(1,2)},
+-	{"specVersion", INITHELPER(3,2)},
++	{root_device, INITHELPER(RD_SPECVERSION, 2)},
++	{"specVersion", INITHELPER(RD_SPECVERSION_MAJOR, 2)},
+ #if defined(ENABLE_L3F_SERVICE) || defined(HAS_DUMMY_SERVICE) || defined(ENABLE_DP_SERVICE)
+-	{"device", INITHELPER(5,13)},
++	{"device", INITHELPER(RD_DEVICE_DEVICETYPE, 13)},
+ #else
+-	{"device", INITHELPER(5,12)},
++	{"device", INITHELPER(RD_DEVICE_DEVICETYPE, 12)},
+ #endif
+ 	{"/major", UPNP_VERSION_MAJOR_STR},
+ 	{"/minor", UPNP_VERSION_MINOR_STR},
+@@ -182,43 +336,19 @@ static const struct XMLElt rootDesc[] =
+ 	{"/serialNumber", serialnumber},
+ 	{"/UDN", uuidvalue_igd},	/* required */
+ 	/* see if /UPC is needed. */
+-#ifdef ENABLE_6FC_SERVICE
+-#define SERVICES_OFFSET 63
+-#else
+-#define SERVICES_OFFSET 58
+-#endif
+-#if defined(ENABLE_L3F_SERVICE) || defined(HAS_DUMMY_SERVICE) || defined(ENABLE_DP_SERVICE)
+-	/* here we dening Services for the root device :
+-	 * L3F and DUMMY and DeviceProtection */
+-#ifdef ENABLE_L3F_SERVICE
+-#define NSERVICES1 1
+-#else
+-#define NSERVICES1 0
+-#endif
+-#ifdef HAS_DUMMY_SERVICE
+-#define NSERVICES2 1
+-#else
+-#define NSERVICES2 0
+-#endif
+-#ifdef ENABLE_DP_SERVICE
+-#define NSERVICES3 1
+-#else
+-#define NSERVICES3 0
+-#endif
+-#define NSERVICES (NSERVICES1+NSERVICES2+NSERVICES3)
+-	{"serviceList", INITHELPER(SERVICES_OFFSET,NSERVICES)},
+-	{"deviceList", INITHELPER(18,1)},
++#if NSERVICES > 0
++	{"serviceList", INITHELPER(RD_OFFSETSERVICES + 1, NSERVICES)},
++	{"deviceList", INITHELPER(RD_WANDEVICE, 1)},
+ 	{"/presentationURL", presentationurl},	/* recommended */
+ #else
+-	{"deviceList", INITHELPER(18,1)},
++	{"deviceList", INITHELPER(RD_WANDEVICE, 1)},
+ 	{"/presentationURL", presentationurl},	/* recommended */
+ 	{0,0},
+ #endif
+ /* 18 */
+-	{"device", INITHELPER(19,13)},
++	{"device", INITHELPER(RD_WANDEVICE_DEVICETYPE, 13)},
+ /* 19 */
+-	{"/deviceType", DEVICE_TYPE_WAN}, /* required */
+-		/* urn:schemas-upnp-org:device:WANDevice:1 or 2 */
++	{"/deviceType", DEVICE_TYPE_WAN}, /* required | urn:schemas-upnp-org:device:WANDevice:1 or 2 */
+ 	{"/friendlyName", WANDEV_FRIENDLYNAME},
+ 	{"/manufacturer", WANDEV_MANUFACTURER},
+ 	{"/manufacturerURL", WANDEV_MANUFACTURERURL},
+@@ -230,14 +360,12 @@ static const struct XMLElt rootDesc[] =
+ 	{"/UDN", uuidvalue_wan},
+ 	{"/UPC", WANDEV_UPC},	/* UPC (=12 digit barcode) is optional */
+ /* 30 */
+-	{"serviceList", INITHELPER(32,1)},
+-	{"deviceList", INITHELPER(38,1)},
++	{"serviceList", INITHELPER(RD_WANSERVICE_SERVICEWANCIC, 1)},
++	{"deviceList", INITHELPER(RD_WANDEVICE_DEVICEWANCD,1)},
+ /* 32 */
+-	{"service", INITHELPER(33,5)},
++	{"service", INITHELPER(RD_SERVICEWANCIC_SERVICETYPE, 5)},
+ /* 33 */
+-	{"/serviceType",
+-			"urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1"},
+-	/*{"/serviceId", "urn:upnp-org:serviceId:WANCommonInterfaceConfig"}, */
++	{"/serviceType", "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1"},
+ 	{"/serviceId", "urn:upnp-org:serviceId:WANCommonIFC1"}, /* required */
+ 	{"/SCPDURL", WANCFG_PATH},
+ 	{"/controlURL", WANCFG_CONTROLURL},
+@@ -245,8 +373,7 @@ static const struct XMLElt rootDesc[] =
+ /* 38 */
+ 	{"device", INITHELPER(39,12)},
+ /* 39 */
+-	{"/deviceType", DEVICE_TYPE_WANC},
+-		/* urn:schemas-upnp-org:device:WANConnectionDevice:1 or 2 */
++	{"/deviceType", DEVICE_TYPE_WANC},		/* urn:schemas-upnp-org:device:WANConnectionDevice:1 or 2 */
+ 	{"/friendlyName", WANCDEV_FRIENDLYNAME},
+ 	{"/manufacturer", WANCDEV_MANUFACTURER},
+ 	{"/manufacturerURL", WANCDEV_MANUFACTURERURL},
+@@ -256,38 +383,41 @@ static const struct XMLElt rootDesc[] =
+ 	{"/modelURL", WANCDEV_MODELURL},
+ 	{"/serialNumber", serialnumber},
+ 	{"/UDN", uuidvalue_wcd},
+-	{"/UPC", WANCDEV_UPC},	/* UPC (=12 digit Barcode) is optional */
++	{"/UPC", WANCDEV_UPC},					/* UPC (=12 digit Barcode) is optional */
++	{"serviceList", INITHELPER(RD_WANCDSERVICE_WANIPC, WANCD_NSERVICES)},
++/* 51 */
++	{"service", INITHELPER(RD_SERVICEWANIPC_SERVICETYPE,5)},
+ #ifdef ENABLE_6FC_SERVICE
+-	{"serviceList", INITHELPER(51,2)},
+-#else
+-	{"serviceList", INITHELPER(51,1)},
++	{"service", INITHELPER(RD_SERVICEIP6FC_SERVICETYPE,5)},
+ #endif
+-/* 51 */
+-	{"service", INITHELPER(53,5)},
+-	{"service", INITHELPER(58,5)},
+-/* 53 */
+-	{"/serviceType", SERVICE_TYPE_WANIPC},
+-		/* urn:schemas-upnp-org:service:WANIPConnection:2 for v2 */
+-	{"/serviceId", SERVICE_ID_WANIPC},
+-		/* urn:upnp-org:serviceId:WANIPConn1 or 2 */
++#ifdef ADVERTISE_WANPPPCONN
++	{"service", INITHELPER(RD_SERVICEWANPPPC_SERVICETYPE,5)},
++#endif
++/* 54 */
++	{"/serviceType", SERVICE_TYPE_WANIPC},	/* urn:schemas-upnp-org:service:WANIPConnection:2 for v2 */
++	{"/serviceId", SERVICE_ID_WANIPC},		/* urn:upnp-org:serviceId:WANIPConn1 or 2 */
+ 	{"/SCPDURL", WANIPC_PATH},
+ 	{"/controlURL", WANIPC_CONTROLURL},
+ 	{"/eventSubURL", WANIPC_EVENTURL},
+ #ifdef ENABLE_6FC_SERVICE
+-/* 58 */
++/* 59 */
+ 	{"/serviceType", "urn:schemas-upnp-org:service:WANIPv6FirewallControl:1"},
+ 	{"/serviceId", "urn:upnp-org:serviceId:WANIPv6Firewall1"},
+ 	{"/SCPDURL", WANIP6FC_PATH},
+ 	{"/controlURL", WANIP6FC_CONTROLURL},
+ 	{"/eventSubURL", WANIP6FC_EVENTURL},
+ #endif
+-/* 58 / 63 = SERVICES_OFFSET*/
+-#if defined(HAS_DUMMY_SERVICE) || defined(ENABLE_L3F_SERVICE) || defined(ENABLE_DP_SERVICE)
+-	{"service", INITHELPER(SERVICES_OFFSET+2,5)},
+-	{"service", INITHELPER(SERVICES_OFFSET+7,5)},
++/* RD_OFFSERVICES + 1 */
++#ifdef HAS_DUMMY_SERVICE
++	{"service", INITHELPER(RD_SERVICEDUMMY_SERVICETYPE, 5)},
++#endif
++#ifdef ENABLE_L3F_SERVICE
++	{"service", INITHELPER(RD_SERVICEL3F_SERVICETYPE, 5)},
++#endif
++#ifdef ENABLE_DP_SERVICE
++	{"service", INITHELPER(RD_SERVICEDP_SERVICETYPE, 5)},
+ #endif
+ #ifdef HAS_DUMMY_SERVICE
+-/* 60 / 65 = SERVICES_OFFSET+2 */
+ 	{"/serviceType", "urn:schemas-dummy-com:service:Dummy:1"},
+ 	{"/serviceId", "urn:dummy-com:serviceId:dummy1"},
+ 	{"/SCPDURL", DUMMY_PATH},
+@@ -295,7 +425,6 @@ static const struct XMLElt rootDesc[] =
+ 	{"/eventSubURL", "/dummy"},
+ #endif
+ #ifdef ENABLE_L3F_SERVICE
+-/* 60 / 65 = SERVICES_OFFSET+2 */
+ 	{"/serviceType", "urn:schemas-upnp-org:service:Layer3Forwarding:1"},
+ 	{"/serviceId", "urn:upnp-org:serviceId:L3Forwarding1"},
+ 	{"/SCPDURL", L3F_PATH},
+@@ -308,12 +437,18 @@ static const struct XMLElt rootDesc[] =
+  * If DeviceProtection is not implemented and applied, it is RECOMMENDED
+  * that control points are able to access only actions and parameters defined
+  * as Public role. */
+-/* 65 / 70 = SERVICES_OFFSET+7 */
+ 	{"/serviceType", "urn:schemas-upnp-org:service:DeviceProtection:1"},
+ 	{"/serviceId", "urn:upnp-org:serviceId:DeviceProtection1"},
+ 	{"/SCPDURL", DP_PATH},
+ 	{"/controlURL", DP_CONTROLURL},
+ 	{"/eventSubURL", DP_EVENTURL},
++#endif
++#ifdef ADVERTISE_WANPPPCONN
++	{"/serviceType", SERVICE_TYPE_WANPPPC},
++	{"/serviceId", SERVICE_ID_WANPPPC},
++	{"/SCPDURL", WANPPPC_PATH},
++	{"/controlURL", WANPPPC_CONTROLURL},
++	{"/eventSubURL", WANPPPC_EVENTURL},
+ #endif
+ 	{0, 0}
+ };
+@@ -555,6 +690,11 @@ static const struct stateVar WANIPCnVars[] =
+ static const struct serviceDesc scpdWANIPCn =
+ { WANIPCnActions, WANIPCnVars };
+ 
++/* Missing actions are: GetLinkLayerMaxBitRates, GetPPPEncryptionProtocol, GETPPPCompressionProtocol, ...
++ * GetPPPAuthenticationProtocol, GetUserName, GetPassword */
++static const struct serviceDesc scpdWANPPPCn =
++{ WANIPCnActions, WANIPCnVars };
++
+ /* WANCfg.xml */
+ /* See UPnP_IGD_WANCommonInterfaceConfig 1.0.pdf */
+ 
+@@ -938,6 +1078,7 @@ genXML(char * str, int * len, int * tmplen,
+ 					if ((strcmp(p[i].data, DEVICE_TYPE_IGD) == 0) ||
+ 						(strcmp(p[i].data, DEVICE_TYPE_WAN) == 0)  ||
+ 						(strcmp(p[i].data, DEVICE_TYPE_WANC) == 0) ||
++						(strcmp(p[i].data, SERVICE_TYPE_WANPPPC) == 0) ||
+ 						(strcmp(p[i].data, SERVICE_TYPE_WANIPC) == 0) )
+ 					{
+ 						str[*len - 1] = '1';	/* Change the version number to 1 */
+@@ -983,6 +1124,14 @@ unstack:
+ 				/* Skip the child element */
+ 				goto unstack;
+ 			}
++#endif
++#ifdef ADVERTISE_WANPPPCONN
++			if(p[k & 0xffff].eltname[0] == '/' &&
++			   ((strcmp(p[k & 0xffff].data, SERVICE_TYPE_WANPPPC) == 0 && !ext_is_ppp) ||
++			   (strcmp(p[k & 0xffff].data, SERVICE_TYPE_WANIPC) == 0 && ext_is_ppp))) {
++				syslog(LOG_INFO, "/ is %s and ext_is_ppp %d, skipping it", p[k & 0xffff].data, ext_is_ppp);
++				goto unstack;
++			}
+ #endif
+ 			/* node with child(ren) */
+ 			/*printf("<%s>\n", eltname); */
+@@ -1212,6 +1361,16 @@ genWANIPCn(int * len, int force_igd1)
+ 	return genServiceDesc(len, &scpdWANIPCn, force_igd1);
+ }
+ 
++#ifdef ADVERTISE_WANPPPCONN
++/* genWANPPPCn() :
++ * Generate the WANPPPConnection xml description */
++char *
++genWANPPPCn(int * len, int force_igd1)
++{
++	return genServiceDesc(len, &scpdWANIPCn, force_igd1);
++}
++#endif
++
+ /* genWANCfg() :
+  * Generate the WANInterfaceConfig xml description. */
+ char *
+@@ -1359,6 +1518,15 @@ getVarsWANIPCn(int * l)
+                         &scpdWANIPCn);
+ }
+ 
++#ifdef ADVERTISE_WANPPPCONN
++char *
++getVarsWANPPPCn(int * l)
++{
++	return genEventVars(l,
++                        &scpdWANIPCn);
++}
++#endif
++
+ char *
+ getVarsWANCfg(int * l)
+ {
+diff --git miniupnpd/upnpdescgen.h miniupnpd/upnpdescgen.h
+index 1f961ee..eb211e9 100644
+--- miniupnpd/upnpdescgen.h
++++ miniupnpd/upnpdescgen.h
+@@ -59,6 +59,11 @@ genRootDesc(int * len, int force_igd1);
+ char *
+ genWANIPCn(int * len, int force_igd1);
+ 
++#ifdef ADVERTISE_WANPPPCONN
++char *
++genWANPPPCn(int * len, int force_igd1);
++#endif
++
+ char *
+ genWANCfg(int * len, int force_igd1);
+ 
+@@ -81,6 +86,11 @@ genDP(int * len, int force_igd1);
+ char *
+ getVarsWANIPCn(int * len);
+ 
++#ifdef ADVERTISE_WANPPPCONN
++char *
++getVarsWANPPPCn(int * len);
++#endif
++
+ char *
+ getVarsWANCfg(int * len);
+ 
+diff --git miniupnpd/upnpevents.c miniupnpd/upnpevents.c
+index 6e0a8ad..dc609ec 100644
+--- miniupnpd/upnpevents.c
++++ miniupnpd/upnpevents.c
+@@ -446,6 +446,11 @@ static void upnp_event_prepare(struct upnp_event_notify * obj)
+ 	case EDP:
+ 		xml = getVarsDP(&l);
+ 		break;
++#endif
++#ifdef ADVERTISE_WANPPPCONN
++	case EWanPPP:
++		xml = getVarsWANPPPCn(&l);
++		break;
+ #endif
+ 	default:
+ 		xml = NULL;
+diff --git miniupnpd/upnpevents.h miniupnpd/upnpevents.h
+index ed9104f..d6b6ccc 100644
+--- miniupnpd/upnpevents.h
++++ miniupnpd/upnpevents.h
+@@ -25,6 +25,9 @@ enum subscriber_service_enum {
+ #ifdef ENABLE_DP_SERVICE
+  EDP,
+ #endif
++#ifdef ADVERTISE_WANPPPCONN
++ EWanPPP,
++#endif
+ };
+ 
+ void
+diff --git miniupnpd/upnpglobalvars.c miniupnpd/upnpglobalvars.c
+index e120101..6d2e73c 100644
+--- miniupnpd/upnpglobalvars.c
++++ miniupnpd/upnpglobalvars.c
+@@ -21,6 +21,8 @@ const char * ext_if_name = 0;
+ const char * ext_if_name6 = 0;
+ #endif
+ 
++unsigned int ext_is_ppp = 0;
++
+ /* stun host/port configuration */
+ const char * ext_stun_host = 0;
+ uint16_t ext_stun_port = 0;
+diff --git miniupnpd/upnpglobalvars.h miniupnpd/upnpglobalvars.h
+index 48ee927..a093e9b 100644
+--- miniupnpd/upnpglobalvars.h
++++ miniupnpd/upnpglobalvars.h
+@@ -22,6 +22,8 @@ extern const char * ext_if_name;
+ extern const char * ext_if_name6;
+ #endif
+ 
++extern unsigned int ext_is_ppp;
++
+ /* stun host/port configuration */
+ extern const char * ext_stun_host;
+ extern uint16_t ext_stun_port;
+diff --git miniupnpd/upnphttp.c miniupnpd/upnphttp.c
+index b6241fb..218add9 100644
+--- miniupnpd/upnphttp.c
++++ miniupnpd/upnphttp.c
+@@ -775,6 +775,9 @@ ProcessHttpQuery_upnphttp(struct upnphttp * h)
+ #endif
+ #ifdef ENABLE_DP_SERVICE
+ 		{ DP_PATH, genDP},
++#endif
++#ifdef ADVERTISE_WANPPPCONN
++		{WANPPPC_PATH, genWANPPPCn},
+ #endif
+ 		{ NULL, NULL}
+ 	};
+diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
+index 1350f24..b978c4f 100644
+--- miniupnpd/upnpsoap.c
++++ miniupnpd/upnpsoap.c
+@@ -576,7 +576,7 @@ AddPortMapping(struct upnphttp * h, const char * action, const char * ns)
+ 	{
+ 	case 0:	/* success */
+ 		bodylen = snprintf(body, sizeof(body), resp,
+-		                   action, ns/*SERVICE_TYPE_WANIPC*/);
++		                   action, ns/*SERVICE_TYPE_WANIPC||SERVICE_TYPE_WANPPPC*/);
+ 		BuildSendAndCloseSoapResp(h, body, bodylen);
+ 		break;
+ 	case -4:
+diff --git miniupnpd/upnpurns.h miniupnpd/upnpurns.h
+index db10664..d834f15 100644
+--- miniupnpd/upnpurns.h
++++ miniupnpd/upnpurns.h
+@@ -16,14 +16,18 @@
+ #define DEVICE_TYPE_WAN     "urn:schemas-upnp-org:device:WANDevice:2"
+ #define DEVICE_TYPE_WANC    "urn:schemas-upnp-org:device:WANConnectionDevice:2"
+ #define SERVICE_TYPE_WANIPC "urn:schemas-upnp-org:service:WANIPConnection:2"
++#define SERVICE_TYPE_WANPPPC "urn:schemas-upnp-org:service:WANPPPConnection:2"
+ #define SERVICE_ID_WANIPC   "urn:upnp-org:serviceId:WANIPConn1"
++#define SERVICE_ID_WANPPPC   "urn:upnp-org:serviceId:WANPPPConn1"
+ #else
+ /* IGD v1 */
+ #define DEVICE_TYPE_IGD     "urn:schemas-upnp-org:device:InternetGatewayDevice:1"
+ #define DEVICE_TYPE_WAN     "urn:schemas-upnp-org:device:WANDevice:1"
+ #define DEVICE_TYPE_WANC    "urn:schemas-upnp-org:device:WANConnectionDevice:1"
+ #define SERVICE_TYPE_WANIPC "urn:schemas-upnp-org:service:WANIPConnection:1"
++#define SERVICE_TYPE_WANPPPC "urn:schemas-upnp-org:service:WANPPPConnection:1"
+ #define SERVICE_ID_WANIPC   "urn:upnp-org:serviceId:WANIPConn1"
++#define SERVICE_ID_WANPPPC   "urn:upnp-org:serviceId:WANPPPConn1"
+ #endif
+ 
+ #endif
+-- 
+2.34.1
+

@@ -1,0 +1,45 @@
+From 76f5850df22f59428cad6c385c1ca9e5b2fc88de Mon Sep 17 00:00:00 2001
+From: Mykyta Diachyna <m.diachyna@inango-systems.com>
+Date: Fri, 15 Aug 2025 15:00:31 +0300
+Subject: [PATCH] miniupnpd: Make IGD and WANConnectionDevice metadata match
+
+Replace hardcoded values for WANConnectionDevice metadata
+with the same values as IGD metadata, taken from the config
+
+References: PCF-1927
+Signed-off-by: Mykyta Diachyna <m.diachyna@inango-systems.com>
+---
+ miniupnpd/upnpdescgen.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git miniupnpd/upnpdescgen.c miniupnpd/upnpdescgen.c
+index 75c1c15..014d60d 100644
+--- miniupnpd/upnpdescgen.c
++++ miniupnpd/upnpdescgen.c
+@@ -384,6 +384,15 @@ static const struct XMLElt rootDesc[] =
+ 	{"device", INITHELPER(39,12)},
+ /* 39 */
+ 	{"/deviceType", DEVICE_TYPE_WANC},		/* urn:schemas-upnp-org:device:WANConnectionDevice:1 or 2 */
++#ifdef ENABLE_MANUFACTURER_INFO_CONFIGURATION
++	{"/friendlyName", friendly_name},
++	{"/manufacturer", manufacturer_name},
++	{"/manufacturerURL", manufacturer_url},
++	{"/modelDescription", model_description},
++	{"/modelName", model_name},
++	{"/modelNumber", modelnumber},
++	{"/modelURL", model_url},
++#else
+ 	{"/friendlyName", WANCDEV_FRIENDLYNAME},
+ 	{"/manufacturer", WANCDEV_MANUFACTURER},
+ 	{"/manufacturerURL", WANCDEV_MANUFACTURERURL},
+@@ -391,6 +400,7 @@ static const struct XMLElt rootDesc[] =
+ 	{"/modelName", WANCDEV_MODELNAME},
+ 	{"/modelNumber", WANCDEV_MODELNUMBER},
+ 	{"/modelURL", WANCDEV_MODELURL},
++#endif
+ 	{"/serialNumber", serialnumber},
+ 	{"/UDN", uuidvalue_wcd},
+ 	{"/UPC", WANCDEV_UPC},					/* UPC (=12 digit Barcode) is optional */
+-- 
+2.34.1
+

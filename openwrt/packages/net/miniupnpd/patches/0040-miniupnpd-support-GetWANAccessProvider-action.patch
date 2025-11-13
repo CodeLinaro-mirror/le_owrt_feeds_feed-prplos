@@ -1,0 +1,190 @@
+From 34e50d6fee038bd1d97ba4b75e8d3acbd8e45b39 Mon Sep 17 00:00:00 2001
+From: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+Date: Tue, 12 Aug 2025 20:09:14 +0300
+Subject: [PATCH] miniupnpd: support GetWANAccessProvider action
+
+The user cannot request GetWANAccessProvider action because it is not
+supported in miniupnpd
+
+Solution:
+* Add parsing option `wan_access_provider` from miniupnpd config file
+* Add GetWANAccessProvider action for WANCommonInterfaceConfig service
+  to return value of `wan_access_provider` config option
+
+Reference: PCF-1998
+Signed-off-by: Mykola Hlukhenkyi <m.hlukhenkyi@inango-systems.com>
+---
+ miniupnpd/miniupnpd.c      |  4 ++++
+ miniupnpd/miniupnpd.conf   |  4 ++++
+ miniupnpd/options.c        |  3 ++-
+ miniupnpd/options.h        |  3 ++-
+ miniupnpd/upnpdescgen.c    |  9 ++++++++-
+ miniupnpd/upnpglobalvars.c |  3 +++
+ miniupnpd/upnpglobalvars.h |  3 +++
+ miniupnpd/upnpsoap.c       | 23 +++++++++++++++++++++++
+ 8 files changed, 49 insertions(+), 3 deletions(-)
+
+diff --git miniupnpd/miniupnpd.c miniupnpd/miniupnpd.c
+index 6cb84ea..0a810f6 100644
+--- miniupnpd/miniupnpd.c
++++ miniupnpd/miniupnpd.c
+@@ -1498,6 +1498,10 @@ init(int argc, char * * argv, struct runtime_vars * v)
+ 				}
+ 				break;
+ #endif
++			case UPNPWANACCESSPROVIDER:
++				strncpy(wan_access_provider, ary_options[i].value, WAN_ACCESS_PROVIDER_MAX_LEN);
++				wan_access_provider[WAN_ACCESS_PROVIDER_MAX_LEN-1] = '\0';
++				break;
+ 			default:
+ 				INIT_PRINT_ERR("Unknown option in file %s\n",
+ 				        optionsfile);
+diff --git miniupnpd/miniupnpd.conf miniupnpd/miniupnpd.conf
+index d314d86..8377ad1 100644
+--- miniupnpd/miniupnpd.conf
++++ miniupnpd/miniupnpd.conf
+@@ -107,6 +107,10 @@
+ # Model URL, default is URL of OS vendor
+ #model_url=http://miniupnp.free.fr/
+ 
++# Name name of the Service Provider providing link connectivity
++# on the WAN interface.
++#wan_access_provider=""
++
+ # Bitrates reported by daemon in bits per second
+ # by default miniupnpd tries to get WAN interface speed
+ #bitrate_up=1000000
+diff --git miniupnpd/options.c miniupnpd/options.c
+index 90e93d4..2a947e3 100644
+--- miniupnpd/options.c
++++ miniupnpd/options.c
+@@ -107,7 +107,8 @@ static const struct {
+ #endif
+ 	{ UPNPMINISSDPDSOCKET, "minissdpdsocket"},
+ 	{ UPNPALLOWRESERVEDADDR, "pf_allow_reserved_addr"},
+-	{ UPNPSECUREMODE, "secure_mode"}
++	{ UPNPSECUREMODE, "secure_mode"},
++	{ UPNPWANACCESSPROVIDER, "wan_access_provider"}
+ };
+ 
+ int
+diff --git miniupnpd/options.h miniupnpd/options.h
+index 716d302..918133a 100644
+--- miniupnpd/options.h
++++ miniupnpd/options.h
+@@ -88,7 +88,8 @@ enum upnpconfigoptions {
+ 	UPNPFORCEIGDDESCV1,
+ #endif
+ 	UPNPALLOWRESERVEDADDR,
+-	UPNPENABLE				/* enable_upnp */
++	UPNPENABLE,				/* enable_upnp */
++	UPNPWANACCESSPROVIDER
+ };
+ 
+ /* readoptionsfile()
+diff --git miniupnpd/upnpdescgen.c miniupnpd/upnpdescgen.c
+index 3f5693b..7a0803a 100644
+--- miniupnpd/upnpdescgen.c
++++ miniupnpd/upnpdescgen.c
+@@ -835,6 +835,12 @@ static const struct argument GetTotalPacketsReceivedArgs[] =
+ 	{0, 0}
+ };
+ 
++static const struct argument GetWANAccessProviderArgs[] =
++{
++	{2, 8},
++	{0, 0}
++};
++
+ static const struct action WANCfgActions[] =
+ {
+ 	{"GetCommonLinkProperties", GetCommonLinkPropertiesArgs}, /* Required */
+@@ -842,6 +848,7 @@ static const struct action WANCfgActions[] =
+ 	{"GetTotalBytesReceived", GetTotalBytesReceivedArgs},     /* optional */
+ 	{"GetTotalPacketsSent", GetTotalPacketsSentArgs},         /* optional */
+ 	{"GetTotalPacketsReceived", GetTotalPacketsReceivedArgs}, /* optional */
++	{"GetWANAccessProvider", GetWANAccessProviderArgs},       /* optional */
+ 	{0, 0}
+ };
+ 
+@@ -863,7 +870,7 @@ static const struct stateVar WANCfgVars[] =
+ 	{"TotalPacketsSent", 3, 0},    /* Optional */
+ 	{"TotalPacketsReceived", 3, 0},/* Optional */
+ 	/*{"MaximumActiveConnections", 2, 0},	// allowed Range value // OPTIONAL */
+-	/*{"WANAccessProvider", 0, 0},*/   /* Optional */
++	{"WANAccessProvider", 0, 0},   /* Optional */
+ 	{0, 0}
+ };
+ 
+diff --git miniupnpd/upnpglobalvars.c miniupnpd/upnpglobalvars.c
+index 9910b17..a8a0e66 100644
+--- miniupnpd/upnpglobalvars.c
++++ miniupnpd/upnpglobalvars.c
+@@ -97,6 +97,9 @@ char model_description[MODEL_DESCRIPTION_MAX_LEN] = ROOTDEV_MODELDESCRIPTION;
+ char model_url[MODEL_URL_MAX_LEN] = ROOTDEV_MODELURL;
+ #endif
+ 
++/* name of the Service Provider */
++char wan_access_provider[WAN_ACCESS_PROVIDER_MAX_LEN] = "";
++
+ /* UPnP permission rules : */
+ struct upnpperm * upnppermlist = 0;
+ unsigned int num_upnpperm = 0;
+diff --git miniupnpd/upnpglobalvars.h miniupnpd/upnpglobalvars.h
+index a093e9b..6159817 100644
+--- miniupnpd/upnpglobalvars.h
++++ miniupnpd/upnpglobalvars.h
+@@ -129,6 +129,9 @@ extern char model_description[];
+ extern char model_url[];
+ #endif
+ 
++#define WAN_ACCESS_PROVIDER_MAX_LEN (256)
++extern char wan_access_provider[];
++
+ /* UPnP permission rules : */
+ extern struct upnpperm * upnppermlist;
+ extern unsigned int num_upnpperm;
+diff --git miniupnpd/upnpsoap.c miniupnpd/upnpsoap.c
+index de6be01..c0c02b7 100644
+--- miniupnpd/upnpsoap.c
++++ miniupnpd/upnpsoap.c
+@@ -192,6 +192,28 @@ GetTotalPacketsSent(struct upnphttp * h, const char * action, const char * ns)
+ 	BuildSendAndCloseSoapResp(h, body, bodylen);
+ }
+ 
++static void
++GetWANAccessProvider(struct upnphttp * h, const char * action, const char * ns)
++{
++	int r;
++
++	static const char resp[] =
++		"<u:%sResponse "
++		"xmlns:u=\"%s\">"
++		"<NewWANAccessProvider>%s</NewWANAccessProvider>"
++		"</u:%sResponse>";
++
++	char body[512];
++	int bodylen;
++	struct ifdata data;
++
++	r = getifstats(ext_if_name, &data);
++	bodylen = snprintf(body, sizeof(body), resp,
++	         action, ns,/*"urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1",*/
++	         wan_access_provider, action);
++	BuildSendAndCloseSoapResp(h, body, bodylen);
++}
++
+ static void
+ GetTotalPacketsReceived(struct upnphttp * h, const char * action, const char * ns)
+ {
+@@ -2424,6 +2446,7 @@ soapMethods[] =
+ 	{ "GetTotalPacketsReceived", GetTotalPacketsReceived},
+ 	{ "GetCommonLinkProperties", GetCommonLinkProperties},
+ 	{ "GetStatusInfo", GetStatusInfo},
++	{ "GetWANAccessProvider", GetWANAccessProvider},
+ 	/* WANIPConnection */
+ 	{ "GetConnectionTypeInfo", GetConnectionTypeInfo },
+ 	{ "GetNATRSIPStatus", GetNATRSIPStatus},
+-- 
+2.34.1
+
