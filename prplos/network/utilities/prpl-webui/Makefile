@@ -6,8 +6,8 @@ PKG_RELEASE:=1
 PKG_LICENSE:=BSD-2-Clause-Patent
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/prplos/prpl-webui/-/archive/0.2.8
-PKG_HASH:=071c2f093aef6a2e0514a93412949b3a49518d2f0f1faaf53e734c1184b9ad34
+PKG_SOURCE_URL:=https://gitlab.com/api/v4/projects/40213611/packages/generic/$(PKG_NAME)/$(PKG_VERSION)
+PKG_HASH:=73782dea9d1d401d57e0955b660c9c92928c640ff4bdf8e085f19312490351f6
 
 PKG_UNPACK=$(HOST_TAR) -C $(PKG_BUILD_DIR) -xzf $(DL_DIR)/$(PKG_SOURCE)
 
