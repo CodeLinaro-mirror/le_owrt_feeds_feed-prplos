@@ -20,10 +20,6 @@ define Package/prpl-webui
   DEPENDS:=+tr181-rest-api +lighttpd-mod-rewrite
 endef
 
-define Package/prp-webui/conffiles
-/etc/lighttpd/conf.d/51-prplos-webui.conf
-endef
-
 define Package/prpl-webui/description
  This package contains reference web UI implementation for prplOS using the
  EmberJS framework.
@@ -36,7 +32,6 @@ Build/Compile = $(Build/Compile/Default)
 define Package/prpl-webui/install
 	$(INSTALL_DIR) $(1)/www
 	$(CP) $(PKG_BUILD_DIR)/dist/* $(1)/www/
-	$(CP) ./files/* $(1)/
 endef
 
 $(eval $(call BuildPackage,prpl-webui))
