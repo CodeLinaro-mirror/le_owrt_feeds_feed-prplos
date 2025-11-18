@@ -11,9 +11,13 @@ config SAH_REBOOT_SERVICE
     bool "Build reboot plug-in"
     default y
 
-config SAH_REBOOT_SERVICE_ORDER
-    int "Start up order"
+config SAH_REBOOT_SERVICE_START_ORDER
+    int "Reboot service start up order"
     default 18
+
+config SAH_REBOOT_SERVICE_STOP_ORDER
+    int "Reboot service shutdown order"
+    default 82
 
 config SAH_REBOOT_SERVICE_RUN_AS_USER
     string "User will be used for the reboot-service plugin"
