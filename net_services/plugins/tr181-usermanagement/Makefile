@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-usermanagement
-PKG_VERSION:=v0.27.0
+PKG_VERSION:=bugfix_PPW-1051-fix-race-where-group-database-becomes-empty-temporarily
 SHORT_DESCRIPTION:=tr181 user management plugin
 
-PKG_SOURCE:=tr181-usermanagement-v0.27.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usermanagement/-/archive/v0.27.0
-PKG_HASH:=bb5fe4f110f3dc03fbc166eb82f8e6bf5906b2311fc7f1f901721adac4b6fe9e
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-usermanagement-v0.27.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=bugfix/PPW-1051-fix-race-where-group-database-becomes-empty-temporarily
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usermanagement.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
