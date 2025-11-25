@@ -1,15 +1,15 @@
-# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
 # WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libtr69-engine
-PKG_VERSION:=v0.10.2
+PKG_VERSION:=v0.14.0
 SHORT_DESCRIPTION:=libraries to define and implement the ACS RPCs methods and data parser
 
-PKG_SOURCE:=libtr69-engine-v0.10.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine/-/archive/v0.10.2
-PKG_HASH:=c98c324c488c1417448389719a952fe8a9d7abd2e6661d6260d1f5d21e7fc347
-PKG_BUILD_DIR:=$(BUILD_DIR)/libtr69-engine-v0.10.2
+PKG_SOURCE:=libtr69-engine-v0.14.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine/-/archive/v0.14.0
+PKG_HASH:=fb6fe256b58693817959e8fd1584cf66747dc4804245489c24784d35506eeaa3
+PKG_BUILD_DIR:=$(BUILD_DIR)/libtr69-engine-v0.14.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
