@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-xpon
-PKG_VERSION:=v1.8.3
+PKG_VERSION:=dev_main_PCF-2009_SFP_support
 SHORT_DESCRIPTION:=TR-181 XPON manager
 
-PKG_SOURCE:=tr181-xpon-v1.8.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-xpon/-/archive/v1.8.3
-PKG_HASH:=3926df2a39bec2a16b9ee17b80fd07200b787ca30876de2eaf153df4379eae1c
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-xpon-v1.8.3
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_main_PCF-2009_SFP_support
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-xpon.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -40,6 +41,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libsahtrace
   DEPENDS += +amxrt
   DEPENDS += +mod-netmodel
+  DEPENDS += +mod-dmext
   DEPENDS += +SAH_AMX_TR181_XPON_USE_NETDEV_COUNTERS:mod-dmstats
   MENU:=1
 endef
