@@ -41,7 +41,7 @@ endef
 
 define Host/Install
 	$(MAKE) -C $(HOST_BUILD_DIR) BOARD=$(CONFIG_IMAGEGENERATOR_BOARD) \
-	    STAGINGDIR=$(STAGING_DIR_HOST) install DESTDIR=$(1)
+	    install DESTDIR=$(HOST_BUILD_DIR)
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
