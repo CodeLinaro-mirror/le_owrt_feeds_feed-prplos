@@ -5,7 +5,7 @@ PKG_VERSION:=1.0
 SHORT_DESCRIPTION:=Provide tools to build various format of images
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=dev_FEAT-29/PCF-1893
+PKG_SOURCE_VERSION:=dev_FEAT-29/PCF-1893_phen
 PKG_SOURCE_URL:=git@gitlab.com:prpl-foundation/components/utilities/imagegenerator.git
 PKG_MIRROR_HASH:=skip
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
@@ -41,7 +41,7 @@ endef
 
 define Host/Install
 	$(MAKE) -C $(HOST_BUILD_DIR) BOARD=$(CONFIG_IMAGEGENERATOR_BOARD) \
-	    STAGINGDIR=$(STAGING_DIR_HOST) install DESTDIR=$(1)
+	    install DESTDIR=$(HOST_BUILD_DIR)
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
