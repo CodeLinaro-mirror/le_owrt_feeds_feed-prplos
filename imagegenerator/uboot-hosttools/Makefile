@@ -32,7 +32,7 @@ define HostPython3/PipInstall
 			install \
 			--no-binary :all: \
 			--progress-bar off \
-			file://$(1) \
+			$(1) \
 		$(if $(CONFIG_PYTHON3_HOST_PIP_CACHE_WORLD_READABLE), \
 			&& $(FIND) $(HOST_PYTHON3_PIP_CACHE_DIR) -not -type d -exec chmod go+r  '{}' \; \
 			&& $(FIND) $(HOST_PYTHON3_PIP_CACHE_DIR)      -type d -exec chmod go+rx '{}' \; \
@@ -63,11 +63,13 @@ endef
 
 define Host/Install
 	@echo "******* Installing pylib on the host *******"
-	$(call HostPython3/PipInstall,$(HOST_BUILD_DIR)/tools/u_boot_pylib)
+	$(call HostPython3/PipInstall,file://$(HOST_BUILD_DIR)/tools/u_boot_pylib)
 	@echo "******* Installing dtoc on the host *******"
-	$(call HostPython3/PipInstall,$(HOST_BUILD_DIR)/tools/dtoc)
+	$(call HostPython3/PipInstall,file://$(HOST_BUILD_DIR)/tools/dtoc)
 	@echo "******* Installing binman on the host *******"
-	$(call HostPython3/PipInstall,$(HOST_BUILD_DIR)/tools/binman)
+	$(call HostPython3/PipInstall,file://$(HOST_BUILD_DIR)/tools/binman)
+	@echo "******* Installing cryptodome on the host *******"
+	$(call HostPython3/PipInstall, pycryptodomex==3.19.1)
 	@echo "******* Installing mkimage on host *******"
 	$(INSTALL_DIR) $(STAGING_DIR_HOST)/bin
 	$(CP) $(HOST_BUILD_DIR)/tools/mkimage $(STAGING_DIR_HOST)/bin
