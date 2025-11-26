@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=initramfs-generator
 
-PKG_VERSION:=dev_FEAT-29/PCF-1893
+PKG_VERSION:=dev_FEAT-29_PCF-1893
 SHORT_DESCRIPTION:=Provide tools to build a pivoting initramfs
 
 PKG_SOURCE_PROTO:=git
