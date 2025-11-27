@@ -13,7 +13,7 @@ config AMX_TR181_USB
 
 config AMX_TR181_USB_ORDER
     int "Start up order for the tr181-usb manager"
-    default 81
+    default 40
 
 config AMX_TR181_USB_BUSYBOX_MDEV_OPTIONS
     bool "Enable busybox support for mdev device events"

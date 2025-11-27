@@ -13,7 +13,7 @@ config AMX_TR140_STORAGE_SERVICE
 
 config AMX_TR140_STORAGE_SERVICE_ORDER
     int "Start up order for the tr140-storageservice manager"
-    default 70
+    default 81
 
 config AMX_TR140_STORAGE_SERVICE_FOLDER_AUTO_ADD_USB_DEVICES_ROOT
     bool "Enable Folder auto add usb devices root"
