@@ -14,24 +14,15 @@
 #
 ##########################################################################################################
 
-#
-# The following parameters will definitely need modifying
-#
-Device.LocalAgent.Controller.1.EndpointID "proto::controller-id"
-Device.STOMP.Connection.1.Host "controller.cdroutertest.com"
-Device.STOMP.Connection.1.Username "qacafe"
-Device.STOMP.Connection.1.Password "qacafe123"
-
 Device.LocalAgent.EndpointID "proto::agent-id"
+Device.LocalAgent.X_VANTIVA-COM_PreConnectTimeout "600"
 
-#
-# The following parameters may be modified
-#
-Device.LocalAgent.MTP.1.Alias "cpe-1"
-Device.LocalAgent.MTP.1.Enable "true"
-Device.LocalAgent.MTP.1.Protocol "STOMP"
-Device.LocalAgent.MTP.1.STOMP.Reference "Device.STOMP.Connection.1"
-Device.LocalAgent.MTP.1.STOMP.Destination "/queue/agent-1"
+
+###################################
+# Controller 1 for CDRouter tests #
+###################################
+
+Device.LocalAgent.Controller.1.EndpointID "proto::controller-id"
 Device.LocalAgent.Controller.1.Alias "cpe-1"
 Device.LocalAgent.Controller.1.Enable "true"
 Device.LocalAgent.Controller.1.AssignedRole "Device.LocalAgent.ControllerTrust.Role.1"
@@ -40,11 +31,25 @@ Device.LocalAgent.Controller.1.PeriodicNotifTime "0001-01-01T00:00:00Z"
 Device.LocalAgent.Controller.1.USPNotifRetryMinimumWaitInterval "5"
 Device.LocalAgent.Controller.1.USPNotifRetryIntervalMultiplier "2000"
 Device.LocalAgent.Controller.1.ControllerCode ""
+
+# Controller 1, MTP = STOMP
 Device.LocalAgent.Controller.1.MTP.1.Alias "cpe-1" 
 Device.LocalAgent.Controller.1.MTP.1.Enable "true"
 Device.LocalAgent.Controller.1.MTP.1.Protocol "STOMP"
 Device.LocalAgent.Controller.1.MTP.1.STOMP.Reference "Device.STOMP.Connection.1"
 Device.LocalAgent.Controller.1.MTP.1.STOMP.Destination "/controller-path"
+
+# LocalAgent, STOMP
+Device.LocalAgent.MTP.1.Alias "cpe-1"
+Device.LocalAgent.MTP.1.Enable "true"
+Device.LocalAgent.MTP.1.Protocol "STOMP"
+Device.LocalAgent.MTP.1.STOMP.Reference "Device.STOMP.Connection.1"
+Device.LocalAgent.MTP.1.STOMP.Destination "/queue/agent-1"
+
+# STOMP
+Device.STOMP.Connection.1.Host "controller.cdroutertest.com"
+Device.STOMP.Connection.1.Username "qacafe"
+Device.STOMP.Connection.1.Password "qacafe123"
 Device.STOMP.Connection.1.Alias "cpe-1"
 Device.STOMP.Connection.1.Enable "true"
 Device.STOMP.Connection.1.Port "61614"
@@ -56,7 +61,52 @@ Device.STOMP.Connection.1.IncomingHeartbeat "300000"
 Device.STOMP.Connection.1.ServerRetryInitialInterval "60"
 Device.STOMP.Connection.1.ServerRetryIntervalMultiplier "1000"
 Device.STOMP.Connection.1.ServerRetryMaxInterval "30720"
-Device.LocalAgent.X_VANTIVA-COM_PreConnectTimeout "600"
+
+# Controller 1, MTP = MQTT
+Device.LocalAgent.Controller.1.MTP.2.Alias "cpe-1"
+Device.LocalAgent.Controller.1.MTP.2.Enable "true"
+Device.LocalAgent.Controller.1.MTP.2.Protocol "MQTT"
+Device.LocalAgent.Controller.1.MTP.2.MQTT.Reference "Device.MQTT.Client.1"
+Device.LocalAgent.Controller.1.MTP.2.MQTT.Topic "/controller-path"
+
+# LocalAgent, MQTT
+Device.LocalAgent.MTP.3.MQTT.ResponseTopicConfigured "/queue/agent-1"
+Device.LocalAgent.MTP.3.MQTT.Reference "Device.MQTT.Client.1"
+Device.LocalAgent.MTP.3.Alias "cpe-1"
+Device.LocalAgent.MTP.3.Enable "true"
+Device.LocalAgent.MTP.3.Protocol "MQTT"
+
+# MQTT
+Device.MQTT.Client.1.BrokerAddress "controller.cdroutertest.com"
+Device.MQTT.Client.1.ProtocolVersion "5.0"
+Device.MQTT.Client.1.BrokerPort "8883"
+Device.MQTT.Client.1.TransportProtocol "TLS"
+Device.MQTT.Client.1.Username "qacafe"
+Device.MQTT.Client.1.Password "qacafe123"
+Device.MQTT.Client.1.Alias "cpe-1"
+Device.MQTT.Client.1.Enable true
+Device.MQTT.Client.1.ClientID ""
+Device.MQTT.Client.1.KeepAliveTime "60"
+Device.MQTT.Client.1.ConnectRetryTime "5"
+Device.MQTT.Client.1.ConnectRetryIntervalMultiplier   "2000"
+Device.MQTT.Client.1.ConnectRetryMaxInterval "60"
+
+# Controller 1, MTP = Websocket
+Device.LocalAgent.Controller.1.MTP.3.Alias "cpe-1"
+Device.LocalAgent.Controller.1.MTP.3.Enable "true"
+Device.LocalAgent.Controller.1.MTP.3.Protocol "WebSocket"
+Device.LocalAgent.Controller.1.MTP.3.WebSocket.Host "controller.cdroutertest.com"
+Device.LocalAgent.Controller.1.MTP.3.WebSocket.Port 443
+Device.LocalAgent.Controller.1.MTP.3.WebSocket.Path "/controller-path"
+Device.LocalAgent.Controller.1.MTP.3.WebSocket.EnableEncryption "true"
+
+# LocalAgent, WebSocket
+Device.LocalAgent.MTP.4.Alias "cpe-1"
+Device.LocalAgent.MTP.4.Enable "true"
+Device.LocalAgent.MTP.4.Protocol "WebSocket"
+Device.LocalAgent.MTP.4.WebSocket.Path "/queue/agent-1"
+
+
 
 # For USP service
 Device.UnixDomainSockets.UnixDomainSocket.1.Alias "cpe-1"
@@ -66,6 +116,7 @@ Device.UnixDomainSockets.UnixDomainSocket.2.Alias "cpe-2"
 Device.UnixDomainSockets.UnixDomainSocket.2.Mode "Listen"
 Device.UnixDomainSockets.UnixDomainSocket.2.Path "/var/run/usp/broker_agent_path"
 
+# LocalAgent, UDS
 Device.LocalAgent.MTP.2.Alias  "cpe-2"
 Device.LocalAgent.MTP.2.Protocol  "UDS"
 Device.LocalAgent.MTP.2.UDS.UnixDomainSocketRef  "Device.UnixDomainSockets.UnixDomainSocket.2"
