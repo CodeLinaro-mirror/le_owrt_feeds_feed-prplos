@@ -24,6 +24,20 @@ config SAH_LIB_FWINTERFACE_INTERFACE_IPTC
 
 endchoice
 
+config SAH_LIB_FWINTERFACE_SUPPORTS_PHYSDEV
+    bool "Build with iptables-mod-physdev support"
+    default y
+    depends on SAH_LIB_FWINTERFACE_INTERFACE_IPTC
+
+config SAH_LIB_FWINTERFACE_DEFAULT_LOCKFILE
+    string "Default value for the lockfile"
+    default "/var/run/xtables.lock"
+    depends on !SAH_LIB_FWINTERFACE_LOCKFILE_PER_TABLE
+
+config SAH_LIB_FWINTERFACE_LOCKFILE_PER_TABLE
+    bool "Use a lockfile per table (and IP version). WARNING: iptables should be patched to support the same lockfiles to avoid conflicts. WARNING: risk of deadlocking? The following lockfiles will be used for IPv6: /var/run/ip6tables.lock_mangle /var/run/ip6tables.lock_filter /var/run/ip6tables.lock_raw /var/run/ip6tables.lock_nat The following lockfiles will be used for IPv4: /var/run/iptables.lock_mangle /var/run/iptables.lock_filter /var/run/iptables.lock_raw /var/run/iptables.lock_nat"
+    default n
+
 endmenu
 
 endif
