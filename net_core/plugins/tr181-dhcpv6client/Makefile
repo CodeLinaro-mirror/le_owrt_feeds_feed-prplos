@@ -6,10 +6,10 @@ PKG_NAME:=tr181-dhcpv6client
 PKG_VERSION:=v1.12.5
 SHORT_DESCRIPTION:=TR-181 compatible DHCPv6 client
 
-PKG_SOURCE:=tr181-dhcpv6client-v1.12.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6client/-/archive/v1.12.5
-PKG_HASH:=7600fb042ba325079a9d173c6e70d89dd8cf8d974604ca9f47aba2aae64ddf3b
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6client-v1.12.5
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=git@gitlab.com:prpl-foundation/components/core/plugins/tr181-dhcpv6client.git
+PKG_SOURCE_VERSION:=PPW-999-tr181-dhcpv6client_Code_Reorganisation
+PKG_MIRROR_HASH:=skip
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
