@@ -6,10 +6,10 @@ PKG_NAME:=ip-manager
 PKG_VERSION:=v1.51.6
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-ip-v1.51.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ip/-/archive/v1.51.6
-PKG_HASH:=043a82dd20ab2958fd0d88b97c83667c115176b7e25e7ee83c84710ea9eead3d
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ip-v1.51.6
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ip.git
+PKG_SOURCE_VERSION:=PPW-999-tr181_ip_Code_Reorganisation
+PKG_MIRROR_HASH:=skip
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
