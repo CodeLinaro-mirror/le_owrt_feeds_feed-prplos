@@ -1,0 +1,251 @@
+From c65eecb655b079919af41c72322eedad5ea2f4b8 Mon Sep 17 00:00:00 2001
+From: Sergio Panseri <sergio.panseri@consult.red>
+Date: Tue, 2 Dec 2025 15:03:30 +0000
+Subject: [PATCH] 010-update-ssl-ctx-vendor-hook.patch
+
+---
+ src/vendor/vendor.c | 189 +++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 188 insertions(+), 1 deletion(-)
+
+diff --git a/src/vendor/vendor.c b/src/vendor/vendor.c
+index 594ff97..da3270f 100644
+--- a/src/vendor/vendor.c
++++ b/src/vendor/vendor.c
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2019-2025, Broadband Forum
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2016-2024  CommScope, Inc
++ * Copyright (C) 2025 Consult.Red
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -44,7 +45,8 @@
+ #include <stdlib.h>
+ #include <stdbool.h>
+ #include <string.h>
+-
++#include <unistd.h>
++#include <openssl/engine.h>
+ #include "usp_err_codes.h"
+ #include "vendor_defs.h"
+ #include "vendor_api.h"
+@@ -53,10 +55,79 @@
+ #define DM_TIME_STATUS "Device.Time.Status"
+ #define DM_DEVICE_DEVICEINFO "Device.DeviceInfo."
+ 
++
++static int read_env(const char *env_name, char *out_value, size_t out_size)
++{
++    const char *val = getenv(env_name);
++    if (val != 0 && *val != '\0') {
++        strncpy(out_value, val, out_size - 1);
++        out_value[out_size - 1] = '\0';
++        return 1;
++    } else {
++        out_value[0] = '\0';
++        return 0;
++    }
++}
++
++static int parse_config_file(const char *config_file, char *certificate_uri, size_t cert_uri_size,
++   char *privatekey_uri, size_t key_uri_size, char *trust_store, size_t trust_store_size)
++{
++   char line[512];
++   certificate_uri[0] = '\0';
++   privatekey_uri[0] = '\0';
++   trust_store[0] = '\0';
++   FILE *fp = fopen(config_file, "r");
++   if (fp == NULL)
++   {
++      return 0;
++   }
++
++   while (fgets(line, sizeof(line), fp) != NULL)
++   {
++      // Remove trailing newline
++      line[strcspn(line, "\r\n")] = 0;
++
++      if (strncmp(line, "CertificateURI=", 15) == 0)
++      {
++         memset(certificate_uri, 0, cert_uri_size);
++         if (strncmp(line + 15, "file://", 7) == 0)
++         {
++            // Skip the "file://" prefix
++            strncpy(certificate_uri, line + 22, cert_uri_size - 1);
++         }
++         else
++         {
++            strncpy(certificate_uri, line + 15, cert_uri_size - 1);
++         }
++         certificate_uri[cert_uri_size - 1] = '\0';
++      }
++      else if (strncmp(line, "PrivateKeyURI=", 14) == 0)
++      {
++         memset(privatekey_uri, 0, key_uri_size);
++         strncpy(privatekey_uri, line + 14, key_uri_size - 1);
++         privatekey_uri[key_uri_size - 1] = '\0';
++      }
++      else if (strncmp(line, "TrustStore=", 11) == 0)
++      {
++         memset(trust_store, 0, trust_store_size);
++         strncpy(trust_store, line + 11, trust_store_size - 1);
++         trust_store[trust_store_size - 1] = '\0';
++      }
++   }
++
++   fclose(fp);
++   USP_LOG_Debug("%s: Parsed CertificateURI: %s", __FUNCTION__, certificate_uri);
++   USP_LOG_Debug("%s: Parsed PrivateKeyURI: %s", __FUNCTION__, privatekey_uri);
++   USP_LOG_Debug("%s: Parsed TrustStore: %s", __FUNCTION__, trust_store);
++
++   return 1;
++}
++
+ static bool can_mtp_connect(void)
+ {
+    char time_status[50];
+    int err;
++   char config_file[256] = {0};
+ 
+    // Exit if tr181-device has not registered the critical objects it provides for the data model
+    if (USP_DM_IsRegistered(DM_DEVICE_DEVICEINFO) == false)
+@@ -65,6 +136,15 @@ static bool can_mtp_connect(void)
+        return false;
+    }
+ 
++   // Check that the configuration file exists
++   read_env("CONFIGURATION_FILE", config_file, sizeof(config_file));
++   if (config_file[0] == '\0' || access(config_file, F_OK) != 0) {
++      USP_LOG_Warning("%s: Configuration file '%s' does not exist!", __FUNCTION__, config_file);
++      return false;
++   }
++
++   USP_LOG_Info("%s: Using configuration file: %s", __FUNCTION__, config_file);
++
+    // Exit if tr181-device has not registered the Device.Time data model
+    if (USP_DM_IsRegistered(DM_TIME_STATUS) == false)
+    {
+@@ -90,6 +170,112 @@ static bool can_mtp_connect(void)
+    return true;
+ }
+ 
++static int update_ssl_ctx_cb(SSL_CTX *ctx)
++{
++   int err = USP_ERR_OK;
++   char config_file[256] = {0};
++   char certificate_uri[256] = {0};
++   char privatekey_uri[256] = {0};
++   char trust_store[256] = {0};
++
++   USP_LOG_Info("%s: Updating SSL_CTX with vendor specific settings", __FUNCTION__);
++   read_env("CONFIGURATION_FILE", config_file, sizeof(config_file));
++   if (!parse_config_file(config_file, certificate_uri, sizeof(certificate_uri),
++      privatekey_uri, sizeof(privatekey_uri),
++      trust_store, sizeof(trust_store)))
++   {
++      USP_LOG_Warning("%s: Failed to open configuration file '%s'", __FUNCTION__, config_file);
++      return USP_ERR_INTERNAL_ERROR;
++   }
++
++   // Load device certificate
++   if (certificate_uri[0] != '\0')
++   {
++      if (SSL_CTX_use_certificate_file(ctx, certificate_uri, SSL_FILETYPE_PEM) != 1)
++      {
++         USP_LOG_Warning("%s: Failed to load device certificate from %s", __FUNCTION__, certificate_uri);
++         err = USP_ERR_INTERNAL_ERROR;
++      }
++      else
++      {
++         USP_LOG_Info("%s: Loaded device certificate from %s", __FUNCTION__, certificate_uri);
++      }
++   }
++
++   // Load private key
++   if (privatekey_uri[0] != '\0')
++   {
++      //Check if the private key URI is in PKCS#11 format
++      if (strncmp(privatekey_uri, "pkcs11:", 7) == 0)
++      {
++         #pragma GCC diagnostic push
++         #pragma GCC diagnostic ignored "-Wdeprecated-declarations" // To allow the use of OpenSSL engine APIs
++         // If the private key is specified as a PKCS#11 URI
++         ENGINE *e = ENGINE_by_id("pkcs11");
++         if (e == NULL)
++         {
++            USP_LOG_Warning("%s: Failed to get PKCS#11 engine", __FUNCTION__);
++            err = USP_ERR_INTERNAL_ERROR;
++         }
++         else
++         {
++            EVP_PKEY *pkey = ENGINE_load_private_key(e, privatekey_uri, NULL, NULL);
++            if (pkey)
++            {
++               if (SSL_CTX_use_PrivateKey(ctx, pkey) != 1)
++               {
++                  char buf[256];
++                  unsigned long err = ERR_get_error();
++                  ERR_error_string_n(err, buf, sizeof(buf));
++                  USP_LOG_Warning("%s: Failed to load private key from PKCS#11 URI %s (OpenSSL error: %s)", __FUNCTION__, privatekey_uri, buf);
++                  err = USP_ERR_INTERNAL_ERROR;
++               }
++               else
++               {
++                  USP_LOG_Info("%s: Loaded private key from PKCS#11 URI %s", __FUNCTION__, privatekey_uri);
++               }
++               EVP_PKEY_free(pkey);
++            }
++            else
++            {
++               USP_LOG_Warning("%s: ENGINE_load_private_key failed for PKCS#11 URI %s", __FUNCTION__, privatekey_uri);
++               err = USP_ERR_INTERNAL_ERROR;
++            }
++            ENGINE_free(e);
++         }
++         #pragma GCC diagnostic pop
++      }
++      else
++      {
++         // If the private key is specified as a file path
++         if (SSL_CTX_use_PrivateKey_file(ctx, privatekey_uri, SSL_FILETYPE_PEM) != 1)
++         {
++            USP_LOG_Warning("%s: Failed to load private key from %s", __FUNCTION__, privatekey_uri);
++            err = USP_ERR_INTERNAL_ERROR;
++         }
++         else
++         {
++            USP_LOG_Info("%s: Loaded private key from %s", __FUNCTION__, privatekey_uri);
++         }
++      }
++   }
++
++   // Load trusted CA certificates
++   if (trust_store[0] != '\0')
++   {
++      if (SSL_CTX_load_verify_locations(ctx, NULL, trust_store) != 1)
++      {
++         USP_LOG_Warning("%s: Failed to load CA certificates from %s", __FUNCTION__, trust_store);
++         err = USP_ERR_INTERNAL_ERROR;
++      }
++      else
++      {
++         USP_LOG_Info("%s: Loaded CA certificates from %s", __FUNCTION__, trust_store);
++      }
++   }
++
++   return err;
++}
+ 
+ /*********************************************************************//**
+ **
+@@ -107,6 +293,7 @@ int VENDOR_Init(void)
+     vendor_hook_cb_t callbacks;
+     memset(&callbacks, 0, sizeof(callbacks));
+     callbacks.can_mtp_connect_cb = can_mtp_connect;
++    callbacks.update_ssl_ctx_cb = update_ssl_ctx_cb;
+     USP_REGISTER_CoreVendorHooks(&callbacks);
+ 
+     return USP_ERR_OK;
+-- 
+2.43.0
+

@@ -2257,15 +2257,15 @@ diff --git a/src/include/usp_api.h b/src/include/usp_api.h
 index 72fd5d7..e287df0 100644
 --- a/src/include/usp_api.h
 +++ b/src/include/usp_api.h
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2019-2025, Broadband Forum
+@@ -4,6 +4,7 @@
   * Copyright (C) 2024-2025, Vantiva Technologies SAS
   * Copyright (C) 2016-2024  CommScope, Inc
+  * Copyright (c) 2025 Consult.Red
 + * Copyright (c) 2025 Inango
   *
   * Redistribution and use in source and binary forms, with or without
   * modification, are permitted provided that the following conditions
-@@ -141,6 +142,7 @@ typedef struct
+@@ -142,6 +143,7 @@ typedef struct
      dm_req_instances_t *inst;   // Pointer to instances information for the parameter or object
      dm_val_union_t val_union;   // When performing a Set Parameter Value, stores the new value converted to it's native type
      int group_id;       // group_id of the data model provider component implementing the data model path (or NON_GROUPED if implemented internally)
