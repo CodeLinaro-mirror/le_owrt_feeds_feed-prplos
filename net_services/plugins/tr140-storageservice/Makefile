@@ -7,7 +7,7 @@ SHORT_DESCRIPTION:=TR-140 storage service manager
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_DATE:=2025-09-22
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr140-storageservice
-PKG_SOURCE_VERSION:=f44d7d23e938de983e53773c1377498cfc0597ff
+PKG_SOURCE_VERSION:=5d0d682bdfbf5ea0348ffc10d712a5a74592277b
 PKG_MIRROR_HASH:=e88942229fdc8871403e7aef1c72650dea4133939e9a00cea4791a03b9c3a774
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr140-storageservice-v0.1.0
