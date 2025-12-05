@@ -49,13 +49,7 @@ define Build/InstallDev
 endef
 
 define Package/$(PKG_NAME)/install
-	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
-	if [ -d ./files ]; then \
-		$(CP) ./files/* $(1)/; \
-	fi
-	find $(1) -name *.a -exec rm {} +;
-	find $(1) -name *.h -exec rm {} +;
-	find $(1) -name *.pc -exec rm {} +;
+	$(INSTALL_DIR) $(1)/security/initramfs
 endef
 
 define Package/$(PKG_NAME)/config
