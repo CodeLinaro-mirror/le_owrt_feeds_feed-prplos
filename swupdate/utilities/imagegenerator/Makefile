@@ -35,6 +35,16 @@ define Package/$(PKG_NAME)/config
 	source "$(SOURCE)/Config.in"
 endef
 
+define Build/Compile
+	@echo "Nothing to build"
+endef
+
+define Package/$(PKG_NAME)/install
+	$(INSTALL_DIR) $(1)/security
+	$(CP) $(PKG_BUILD_DIR)/keys/public.pem $(1)/security/
+	$(CP) $(PKG_BUILD_DIR)/keys/smd_pub.pem $(1)/security/
+endef
+
 define Host/Compile
 	@echo "Nothing to build for the host"
 endef
