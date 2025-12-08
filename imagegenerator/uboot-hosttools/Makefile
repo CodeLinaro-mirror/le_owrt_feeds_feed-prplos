@@ -58,7 +58,7 @@ define Host/Compile
 	$(MAKE) STAGINGDIR=$(STAGING_DIR_HOST) \
 	-C $(HOST_BUILD_DIR) \
 	tools-only_defconfig \
-	tools-only
+	scripts_dtc tools-only
 endef
 
 define Host/Install
@@ -73,6 +73,7 @@ define Host/Install
 	@echo "******* Installing mkimage on host *******"
 	$(INSTALL_DIR) $(STAGING_DIR_HOST)/bin
 	$(CP) $(HOST_BUILD_DIR)/tools/mkimage $(STAGING_DIR_HOST)/bin
+	$(CP) $(HOST_BUILD_DIR)/scripts/dtc/dtc $(STAGING_DIR_HOST)/bin
 	# Other tools can be installed if required
 endef
 
