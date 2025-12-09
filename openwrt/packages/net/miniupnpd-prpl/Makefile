@@ -11,11 +11,11 @@ PKG_NAME:=miniupnpd-prpl
 PKG_VERSION:=2.3.3
 PKG_RELEASE:=6
 
-PKG_VERSION:=2.3.3
-PKG_SOURCE:=miniupnpd-prpl-stable-2.3.y_v0.3.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/miniupnpd/-/archive/prpl/stable-2.3.y_v0.3.3
-PKG_HASH:=74d4ede416cc42ea1a4861e4542f2a842ca562df11fbc32386210cabc83a2398
-PKG_BUILD_DIR:=$(BUILD_DIR)/miniupnpd-prpl-stable-2.3.y_v0.3.3
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=PPW-1187_get_amx_bus_ctx
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/miniupnpd.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_MAINTAINER:=
 PKG_LICENSE:=BSD-3-Clause
