@@ -1,15 +1,15 @@
-# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
 # WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routing/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=routing-manager
-PKG_VERSION:=v1.27.0
+PKG_VERSION:=v1.28.0
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-routing-v1.27.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routing/-/archive/v1.27.0
-PKG_HASH:=a54dc7bb51d459ca1232d22aca7db447bbfd45235d68dd6895f368751b514bf6
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routing-v1.27.0
+PKG_SOURCE:=tr181-routing-v1.28.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routing/-/archive/v1.28.0
+PKG_HASH:=61c8e2a6bf305fdaaf593f262587c3fa55c94ccc6151735c4523be3875a0b1de
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routing-v1.28.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -21,10 +21,10 @@ PKG_BUILD_DEPENDS += libamxj
 
 define SAHInit/Install
 	install -d $(1)/etc/rc.d/
-	if [[ "${CONFIG_PACKAGE_procd}" != "y" ]]; then \
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_ROUTING_START_ORDER)$(COMPONENT); \
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_ROUTING_STOP_ORDER)$(COMPONENT); \
-	fi
+ifneq ($(CONFIG_PACKAGE_procd),y)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_ROUTING_START_ORDER)$(COMPONENT)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_ROUTING_STOP_ORDER)$(COMPONENT)
+endif
 endef
 
 include $(INCLUDE_DIR)/package.mk
