@@ -6,7 +6,7 @@ PKG_VERSION:=FEAT-29
 SHORT_DESCRIPTION:=Provide tools to build a pivoting initramfs
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=FEAT-29
+PKG_SOURCE_VERSION:=dev_key_derivation
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/initramfs-generator.git
 PKG_MIRROR_HASH:=3b740e5b8b28d93f3800cfe5fbb12c5bb63d3ecd6a5c443775fe3770f994e95b
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
