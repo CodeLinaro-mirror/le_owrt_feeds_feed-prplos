@@ -11,7 +11,7 @@ diff --git a/src/vendor/vendor_defs.h b/src/vendor/vendor_defs.h
 index 47e1ac1..d23a118 100755
 --- a/src/vendor/vendor_defs.h
 +++ b/src/vendor/vendor_defs.h
-@@ -140,7 +140,7 @@
+@@ -142,7 +142,7 @@
  #define REMOVE_DEVICE_SCHEDULE_TIMER     // Removes Device.ScheduleTimer() from the core data model
  #define REMOVE_DEVICE_BOOT_EVENT         // Removes Device.Boot! from the core data model
  //#define REMOVE_DEVICE_SECURITY           // Removes Device.Security, Device.LocalAgent.Certificate and ControllerTrust Challenge/Response mechanism

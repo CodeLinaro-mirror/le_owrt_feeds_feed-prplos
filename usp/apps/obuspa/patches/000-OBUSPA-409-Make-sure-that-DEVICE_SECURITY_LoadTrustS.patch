@@ -1,0 +1,236 @@
+From c2b8f30f5d87aeb74ef9be1a769f76a4ee7e3bf1 Mon Sep 17 00:00:00 2001
+From: Sergio Panseri <sergio.panseri@consult.red>
+Date: Tue, 2 Dec 2025 13:53:37 +0000
+Subject: [PATCH] OBUSPA-409: Make sure that DEVICE_SECURITY_LoadTrustStore is
+ always called at the beginning of a connection
+
+This ensures that the vendor is able to customise the SSL_CTX via theload_agent_cert_cb hook before each connection attempt.
+---
+ src/core/bdc_exec.c   |  1 +
+ src/core/stomp.c      | 15 ++++++++++
+ src/core/wsclient.c   | 64 +++++++++++++++++++++++++++++++++----------
+ src/include/usp_api.h |  1 +
+ 4 files changed, 66 insertions(+), 15 deletions(-)
+
+diff --git a/src/core/bdc_exec.c b/src/core/bdc_exec.c
+index 2a41160..baaea5c 100644
+--- a/src/core/bdc_exec.c
++++ b/src/core/bdc_exec.c
+@@ -54,6 +54,7 @@
+ #include "os_utils.h"
+ #include "device.h"
+ #include "rfc1123.h"
++#include "data_model.h"
+ 
+ //------------------------------------------------------------------------------
+ // Structure containing the connection details for the specified profile
+diff --git a/src/core/stomp.c b/src/core/stomp.c
+index f76db4f..bdf6a8a 100644
+--- a/src/core/stomp.c
++++ b/src/core/stomp.c
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2019-2025, Broadband Forum
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2016-2024  CommScope, Inc
++ * Copyright (C) 2025 Consult.Red
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -165,6 +166,7 @@ typedef struct
+     int socket_fd;          // socket used for this STOMP connection (this is actually part of the bio, but duplicated here to make it easier to access)
+     SSL *ssl;               // SSL used for this STOMP connection
+     STACK_OF(X509) *cert_chain; // Full SSL certificate chain for the STOMP connection, collected in the SSL verify callback
++    bool are_certificate_loaded; // Flag indicating whether certificates have been loaded into the SSL context
+ 
+     int role_instance;     // role granted by the CA cert in the chain of trust with the STOMP broker (instance in Device.LocalAgent.ControllerTrust.Role.{i})
+ 
+@@ -1550,6 +1552,7 @@ void StopStompConnection(stomp_connection_t *sc, bool purge_queued_messages)
+     sc->socket_fd = -1;
+     sc->ssl = NULL;
+     sc->cert_chain = NULL;
++    sc->are_certificate_loaded = false;
+     sc->role_instance = ROLE_DEFAULT;
+     USP_SAFE_FREE(sc->subscribe_dest);
+     sc->agent_heartbeat_period = 0;
+@@ -1612,6 +1615,7 @@ void InitStompConnection(stomp_connection_t *sc)
+     sc->socket_fd = -1;
+     sc->ssl = NULL;
+     sc->cert_chain = NULL;
++    sc->are_certificate_loaded = false;
+     sc->role_instance = ROLE_DEFAULT;
+     sc->subscribe_dest = NULL;
+ 
+@@ -1655,6 +1659,17 @@ int PerformStompSslConnect(stomp_connection_t *sc)
+     int err;
+     X509 *server_cert;
+ 
++    if (!sc->are_certificate_loaded)
++    {
++        err = DEVICE_SECURITY_LoadTrustStore(stomp_ssl_ctx, 0, NULL);
++        if (err != USP_ERR_OK)
++        {
++            USP_LOG_Error("%s: DEVICE_SECURITY_LoadTrustStore() failed", __FUNCTION__);
++            return USP_ERR_INTERNAL_ERROR;
++        }
++        sc->are_certificate_loaded = true;
++    }
++
+     // Exit if unable to create a new SSL connection
+     sc->ssl = SSL_new(stomp_ssl_ctx);
+     if (sc->ssl == NULL)
+diff --git a/src/core/wsclient.c b/src/core/wsclient.c
+index 8574a7b..e509c09 100644
+--- a/src/core/wsclient.c
++++ b/src/core/wsclient.c
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2021-2025, Broadband Forum
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2021-2024  CommScope, Inc
++ * Copyright (C) 2025 Consult.Red
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -57,6 +58,7 @@
+ #include "nu_ipaddr.h"
+ #include "nu_macaddr.h"
+ #include "text_utils.h"
++#include "data_model.h"  // for vendor_hook_callbacks
+ 
+ //------------------------------------------------------------------------------
+ // State of a websocket client connection
+@@ -219,6 +221,15 @@ static pthread_mutex_t wsc_access_mutex;
+ // libwebsockets context for this component
+ static struct lws_context *wsc_ctx = NULL;
+ 
++//------------------------------------------------------------------------------------
++// SSL_CTX associated with the libwebsocket's vhost.
++static SSL_CTX *lws_ssl_ctx = NULL;
++
++// ------------------------------------------------------------------------------------
++// The SSL_CTX is common for all the connections, the certificates are only loaded
++// once at the first connection.
++bool are_certs_loaded = false;
++
+ //------------------------------------------------------------------------------------
+ // Structure passed to libwebsockets defining the websocket USP sub-protocol
+ static struct lws_protocols wsc_subprotocol[2];      // last entry is NULL terminator
+@@ -240,8 +251,9 @@ void HandleWsclient_QueueUspRecord(queue_client_usp_record_msg_t *qur);
+ void ServiceWsclientSendQueue(void);
+ int HandleAllWscEvents(struct lws *handle, enum lws_callback_reasons event, void *per_session_data, void *event_args, size_t event_args_len);
+ int ValidateReceivedWsclientSubProtocol(struct lws *handle);
+-int HandleWscEvent_LoadCerts(SSL_CTX *ssl_ctx);
++void HandleWscEvent_LoadCerts(SSL_CTX *ssl_ctx);
+ int HandleWscEvent_VerifyCerts(struct lws *handle, SSL *ssl, int preverify_ok, X509_STORE_CTX *x509_ctx);
++void HandleWscEvent_NewClient(void);
+ int HandleWscEvent_Error(struct lws *handle, char *err_msg);
+ int HandleWscEvent_Closed(struct lws *handle);
+ int HandleWscEvent_Destroyed(struct lws *handle);
+@@ -352,6 +364,8 @@ void WSCLIENT_Destroy(void)
+     // NOTE: This also frees libwebsockets' SSL context and associated certs
+     lws_context_destroy(wsc_ctx);
+     wsc_ctx = NULL;
++    lws_ssl_ctx = NULL;
++    are_certs_loaded = false;
+ 
+     // Iterate over all websock clients, freeing any memory they're using
+     for (i=0; i<NUM_ELEM(wsclients); i++)
+@@ -413,6 +427,8 @@ int WSCLIENT_Start(void)
+     // Create the websocket context
+     // NOTE: libwebsockets calls HandleAllWscEvents() from within lws_create_context() to load the
+     // trust store and client certs into libwebsockets SSL context
++    lws_ssl_ctx = NULL;
++    are_certs_loaded = false;
+     wsc_ctx = lws_create_context(&info);
+     if (wsc_ctx == NULL)
+     {
+@@ -1493,7 +1509,7 @@ int HandleAllWscEvents(struct lws *handle, enum lws_callback_reasons event, void
+ 
+         case LWS_CALLBACK_OPENSSL_LOAD_EXTRA_CLIENT_VERIFY_CERTS:
+             tr_event("WS client: LWS_CALLBACK_OPENSSL_LOAD_EXTRA_CLIENT_VERIFY_CERTS");
+-            result = HandleWscEvent_LoadCerts(per_session_data);
++            HandleWscEvent_LoadCerts(per_session_data);
+             break;
+ 
+         case LWS_CALLBACK_OPENSSL_PERFORM_SERVER_CERT_VERIFICATION:
+@@ -1501,6 +1517,12 @@ int HandleAllWscEvents(struct lws *handle, enum lws_callback_reasons event, void
+             result = HandleWscEvent_VerifyCerts(handle, event_args, event_args_len, per_session_data);
+             break;
+ 
++        case LWS_CALLBACK_SERVER_NEW_CLIENT_INSTANTIATED:
++            tr_event("WS client: LWS_CALLBACK_SERVER_NEW_CLIENT_INSTANTIATED");
++            HandleWscEvent_NewClient();
++            result = 0;
++            break;
++
+         default:
+             tr_event("WS client: event=%d", event);
+             break;
+@@ -1522,21 +1544,11 @@ int HandleAllWscEvents(struct lws *handle, enum lws_callback_reasons event, void
+ ** \param   ssl_ctx - libwebsockets handle identifying the connection with activity on it
+ ** \param   err_msg - pointer to string identifying the error, or NULL if no error message provided
+ **
+-** \return  0 if successful, -1 otherwise
+-**
+ **************************************************************************/
+-int HandleWscEvent_LoadCerts(SSL_CTX *ssl_ctx)
++void HandleWscEvent_LoadCerts(SSL_CTX *ssl_ctx)
+ {
+-    int err;
+-
+-    // Exit if unable to load trust store and client cert into libwebsocket's SSL context
+-    err = DEVICE_SECURITY_LoadTrustStore(ssl_ctx, 0, NULL);
+-    if (err != USP_ERR_OK)
+-    {
+-        return -1;
+-    }
+-
+-    return 0;
++    // Save the global vhost's SSL_CTX to allow vendor-specific SSL configuration later
++    lws_ssl_ctx = ssl_ctx;
+ }
+ 
+ /*********************************************************************//**
+@@ -1575,6 +1587,28 @@ int HandleWscEvent_VerifyCerts(struct lws *handle, SSL *ssl, int preverify_ok, X
+     return 0;
+ }
+ 
++/*********************************************************************//**
++**
++** int HandleWscEvent_NewClient(void)
++**
++** Called from the LWS_CALLBACK_SERVER_NEW_CLIENT_INSTANTIATED event to
++** allow vendor hooks to modify the SSL context before the connection is made
++**
++**************************************************************************/
++void HandleWscEvent_NewClient(void)
++{
++    if ((lws_ssl_ctx != NULL) && !are_certs_loaded)
++    {
++        int err;
++
++        err = DEVICE_SECURITY_LoadTrustStore(lws_ssl_ctx, 0, NULL);
++        if (err == USP_ERR_OK)
++        {
++            are_certs_loaded = true;
++        }
++    }
++}
++
+ /*********************************************************************//**
+ **
+ ** HandleWscEvent_Error
+diff --git a/src/include/usp_api.h b/src/include/usp_api.h
+index 3b54428..d4f1407 100644
+--- a/src/include/usp_api.h
++++ b/src/include/usp_api.h
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2019-2025, Broadband Forum
+  * Copyright (C) 2024-2025, Vantiva Technologies SAS
+  * Copyright (C) 2016-2024  CommScope, Inc
++ * Copyright (c) 2025 Consult.Red
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+-- 
+2.43.0
+

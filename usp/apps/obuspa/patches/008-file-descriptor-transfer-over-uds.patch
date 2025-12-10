@@ -57,7 +57,7 @@ diff --git a/Makefile.am b/Makefile.am
 index 2e18704..00dde0f 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -100,7 +100,8 @@ SOURCES = src/core/main.c \
+@@ -110,7 +110,8 @@ SOURCES = src/core/main.c \
                      src/core/device_uds.c \
                      src/core/uds.c \
                      src/core/usp_service.c \
@@ -68,10 +68,10 @@ index 2e18704..00dde0f 100644
  
  obuspa_SOURCES = $(SOURCES)
 diff --git a/src/core/cli_server.c b/src/core/cli_server.c
-index 742870b..4ae7cb0 100644
+index 4f6a382..e76e392 100644
 --- a/src/core/cli_server.c
 +++ b/src/core/cli_server.c
-@@ -1217,7 +1217,7 @@ int ExecuteCli_Operate(str_vector_t *args)
+@@ -1218,7 +1218,7 @@ int ExecuteCli_Operate(str_vector_t *args)
  
          // Exit if unable to start the specified operation
          KV_VECTOR_Init(&output_args);
@@ -490,8 +490,8 @@ index d9643da..98e54cd 100644
  //------------------------------------------------------------------------------
  // Socket pair used to implement the main data model message queue
  // One socket is always used for sending, and the other always used for receiving
-@@ -320,7 +325,7 @@ void ProcessMessageQueueSocketActivity(socket_set_t *set);
- void FreeDmExecMessageArguments(dm_exec_msg_t *msg);
+@@ -361,7 +366,7 @@ void GetParameterValueCallback(void *arg1, void *arg2);
+ void SetParameterValueCallback(void *arg1, void *arg2);
  #ifndef REMOVE_USP_BROKER
  void ForwardPendingMessagesOnFilterQueue(socket_set_t *set);
 -Usp__Msg *IsMatchingMsgId(dm_exec_msg_t *msg, char *msg_id, char *responder, Usp__Header__MsgType header_type, bool *is_handled);
@@ -499,7 +499,7 @@ index d9643da..98e54cd 100644
  #endif
  #ifdef ENABLE_UDS
  void HandleUdsHandshakeComplete(char *endpoint_id, uds_path_t path_type, unsigned conn_id);
-@@ -747,7 +752,7 @@ void DM_EXEC_PostUspRecord(unsigned char *pbuf, int pbuf_len, char *originator,
+@@ -941,7 +946,7 @@ void DM_EXEC_PostUspRecord(unsigned char *pbuf, int pbuf_len, char *originator,
      if (main_mq_tx_socket == -1)
      {
          USP_LOG_Error("%s is being called before data model has been initialised", __FUNCTION__);
@@ -508,7 +508,7 @@ index d9643da..98e54cd 100644
      }
  
      // Form message
-@@ -777,8 +782,22 @@ void DM_EXEC_PostUspRecord(unsigned char *pbuf, int pbuf_len, char *originator,
+@@ -971,8 +976,22 @@ void DM_EXEC_PostUspRecord(unsigned char *pbuf, int pbuf_len, char *originator,
          USP_LOG_Error("%s(%d): send failed : (err=%d) %s", __FUNCTION__, __LINE__, errno, USP_ERR_ToString(errno, buf, sizeof(buf)) );
          USP_LOG_Error("%s: Discarding received USP Record", __FUNCTION__);
          FreeDmExecMessageArguments(&msg);
@@ -532,7 +532,7 @@ index d9643da..98e54cd 100644
  }
  
  /*********************************************************************//**
-@@ -1291,6 +1310,7 @@ void DM_EXEC_CopyMTPConnection(mtp_conn_t *dst, mtp_conn_t *src)
+@@ -1485,6 +1504,7 @@ void DM_EXEC_CopyMTPConnection(mtp_conn_t *dst, mtp_conn_t *src)
          case kMtpProtocol_UDS:
              dst->uds.conn_id = src->uds.conn_id;
              dst->uds.path_type = src->uds.path_type;
@@ -540,7 +540,7 @@ index d9643da..98e54cd 100644
              break;
  #endif
          default:
-@@ -1432,12 +1452,14 @@ void DM_EXEC_HandleScheduledExit(void)
+@@ -1626,12 +1646,14 @@ void DM_EXEC_HandleScheduledExit(void)
  ** \param   mtpc - details of where this USP message should be sent
  ** \param   header_type - Type of response message that we are expecting in the USP Message header
  ** \param   timeout - timeout (in seconds) for receiving a response message
@@ -556,7 +556,7 @@ index d9643da..98e54cd 100644
  {
      char wanted_msg_id[MAX_MSG_ID_LEN];
      int timeout_ms;
-@@ -1497,9 +1519,8 @@ Usp__Msg *DM_EXEC_SendRequestAndWaitForResponse(char *endpoint_id, Usp__Msg *req
+@@ -1691,9 +1713,8 @@ Usp__Msg *DM_EXEC_SendRequestAndWaitForResponse(char *endpoint_id, Usp__Msg *req
                  }
              }
  #endif
@@ -567,7 +567,7 @@ index d9643da..98e54cd 100644
              if (resp != NULL)
              {
                  divert_to_filter_queue = false;     // Switch back to posting to the main message queue
-@@ -2200,13 +2221,15 @@ void ForwardPendingMessagesOnFilterQueue(socket_set_t *set)
+@@ -2394,13 +2415,15 @@ void ForwardPendingMessagesOnFilterQueue(socket_set_t *set)
  ** \param   responder - endpoint_id which we expect to receive the response from
  ** \param   header_type - Type of response message in the header that we are expecting
  ** \param   is_handled - pointer to variable in which to return whether the message was handled here or not
@@ -584,7 +584,7 @@ index d9643da..98e54cd 100644
  {
      process_usp_record_msg_t *pur;
      UspRecord__Record *rec = NULL;
-@@ -2231,6 +2254,14 @@ Usp__Msg *IsMatchingMsgId(dm_exec_msg_t *msg, char *msg_id, char *responder, Usp
+@@ -2425,6 +2448,14 @@ Usp__Msg *IsMatchingMsgId(dm_exec_msg_t *msg, char *msg_id, char *responder, Usp
          goto exit;
      }
  
@@ -2022,7 +2022,7 @@ index 5666a9b..ea255cc 100644
          MSG_HANDLER_QueueErrorMessage(err, endpoint_id, mtpc, usp->header->msg_id);
      }
  }
-@@ -1928,7 +1994,7 @@ int USP_BROKER_ExecuteCli_Service(str_vector_t *args)
+@@ -1933,7 +1999,7 @@ int USP_BROKER_ExecuteCli_Service(str_vector_t *args)
  
      // Send the request and wait for a response
      // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
@@ -2031,7 +2031,7 @@ index 5666a9b..ea255cc 100644
  
      // Exit if timed out waiting for a response
      if (resp == NULL)
-@@ -2024,7 +2090,7 @@ void USP_BROKER_WatchTable(char *table, int *subs_instances)
+@@ -2029,7 +2095,7 @@ void USP_BROKER_WatchTable(char *table, int *subs_instances)
      // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
      resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
                                                   USP__HEADER__MSG_TYPE__ADD_RESP,
@@ -2040,7 +2040,7 @@ index 5666a9b..ea255cc 100644
  
      // Exit if timed out waiting for a response
      if (resp == NULL)
-@@ -2155,7 +2221,7 @@ int USP_BROKER_ResolveSeInstance(int group_id, char *table, char *param, char *v
+@@ -2160,7 +2226,7 @@ int USP_BROKER_ResolveSeInstance(int group_id, char *table, char *param, char *v
      // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
      resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
                                                   USP__HEADER__MSG_TYPE__GET_RESP,
@@ -2049,7 +2049,7 @@ index 5666a9b..ea255cc 100644
  
      // Exit if timed out waiting for a response
      if (resp == NULL)
-@@ -3157,7 +3223,7 @@ int Broker_GroupGet(int group_id, kv_vector_t *kvv)
+@@ -3162,7 +3228,7 @@ int Broker_GroupGet(int group_id, kv_vector_t *kvv)
      // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
      resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
                                                   USP__HEADER__MSG_TYPE__GET_RESP,
@@ -2058,7 +2058,7 @@ index 5666a9b..ea255cc 100644
  
      // Exit if timed out waiting for a response
      if (resp == NULL)
-@@ -3219,7 +3285,7 @@ int Broker_GroupSet(int group_id, kv_vector_t *params, unsigned *param_types, in
+@@ -3224,7 +3290,7 @@ int Broker_GroupSet(int group_id, kv_vector_t *params, unsigned *param_types, in
      // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
      resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
                                                   USP__HEADER__MSG_TYPE__SET_RESP,
@@ -2067,7 +2067,7 @@ index 5666a9b..ea255cc 100644
  
      // Exit if timed out waiting for a response
      if (resp == NULL)
-@@ -3280,7 +3346,7 @@ int Broker_GroupAdd(int group_id, char *path, int *instance)
+@@ -3285,7 +3351,7 @@ int Broker_GroupAdd(int group_id, char *path, int *instance)
      // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
      resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
                                                   USP__HEADER__MSG_TYPE__ADD_RESP,
@@ -2076,7 +2076,7 @@ index 5666a9b..ea255cc 100644
  
      // Exit if timed out waiting for a response
      if (resp == NULL)
-@@ -3439,7 +3505,7 @@ int Broker_CreateObj(int group_id, char *path, group_add_param_t *params, int nu
+@@ -3444,7 +3510,7 @@ int Broker_CreateObj(int group_id, char *path, group_add_param_t *params, int nu
      // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
      resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
                                                   USP__HEADER__MSG_TYPE__ADD_RESP,
@@ -2085,7 +2085,7 @@ index 5666a9b..ea255cc 100644
  
      // Exit if timed out waiting for a response
      if (resp == NULL)
-@@ -3477,7 +3543,7 @@ int Broker_SyncOperate(dm_req_t *req, char *command_key, kv_vector_t *input_args
+@@ -3482,7 +3548,7 @@ int Broker_SyncOperate(dm_req_t *req, char *command_key, kv_vector_t *input_args
  
      #define IS_SYNC true
      #define IS_ASYNC false
@@ -2094,7 +2094,7 @@ index 5666a9b..ea255cc 100644
  
      return err;
  }
-@@ -3532,7 +3598,7 @@ int Broker_AsyncOperate(dm_req_t *req, kv_vector_t *input_args, int instance)
+@@ -3537,7 +3603,7 @@ int Broker_AsyncOperate(dm_req_t *req, kv_vector_t *input_args, int instance)
  
      // Exit if an error occurred whilst trying to send the Operate Request and receive the Operate Response
      output_args = USP_ARG_Create();
@@ -2103,7 +2103,7 @@ index 5666a9b..ea255cc 100644
      if (err != USP_ERR_OK)
      {
          USP_ARG_Delete(output_args);
-@@ -3683,7 +3749,7 @@ int Broker_GroupSubscribe(int broker_instance, int group_id, subs_notify_t notif
+@@ -3688,7 +3754,7 @@ int Broker_GroupSubscribe(int broker_instance, int group_id, subs_notify_t notif
      // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
      resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
                                                   USP__HEADER__MSG_TYPE__ADD_RESP,
@@ -2112,7 +2112,7 @@ index 5666a9b..ea255cc 100644
  
      // Exit if timed out waiting for a response
      if (resp == NULL)
-@@ -3891,7 +3957,7 @@ int SyncSubscriptions(usp_service_t *us)
+@@ -3896,7 +3962,7 @@ int SyncSubscriptions(usp_service_t *us)
      // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
      resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
                                                   USP__HEADER__MSG_TYPE__GET_RESP,
@@ -2121,7 +2121,7 @@ index 5666a9b..ea255cc 100644
  
      // Exit if timed out waiting for a response
      if (resp == NULL)
-@@ -4242,7 +4308,7 @@ int UspService_DeleteInstances(usp_service_t *us, bool allow_partial, str_vector
+@@ -4247,7 +4313,7 @@ int UspService_DeleteInstances(usp_service_t *us, bool allow_partial, str_vector
      // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
      resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
                                                   USP__HEADER__MSG_TYPE__DELETE_RESP,
@@ -2130,7 +2130,7 @@ index 5666a9b..ea255cc 100644
  
      // Exit if timed out waiting for a response
      if (resp == NULL)
-@@ -4297,7 +4363,7 @@ int UspService_RefreshInstances(usp_service_t *us, str_vector_t *paths, bool wit
+@@ -4302,7 +4368,7 @@ int UspService_RefreshInstances(usp_service_t *us, str_vector_t *paths, bool wit
      // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
      resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
                                                   USP__HEADER__MSG_TYPE__GET_INSTANCES_RESP,
@@ -2139,7 +2139,7 @@ index 5666a9b..ea255cc 100644
  
      // Exit if timed out waiting for a response
      if (resp == NULL)
-@@ -4361,7 +4427,7 @@ void UspService_GetAllParamsForPath(usp_service_t *us, str_vector_t *usp_service
+@@ -4367,7 +4433,7 @@ int UspService_GetAllParamsForPath(usp_service_t *us, str_vector_t *usp_service_
      // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
      resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
                                                   USP__HEADER__MSG_TYPE__GET_RESP,
@@ -2148,7 +2148,7 @@ index 5666a9b..ea255cc 100644
  
      // Exit if timed out waiting for a response
      if (resp == NULL)
-@@ -5137,11 +5203,12 @@ int ProcessDeleteResponse(Usp__Msg *resp, str_vector_t *paths, int *failure_inde
+@@ -5140,11 +5206,12 @@ int ProcessDeleteResponse(Usp__Msg *resp, str_vector_t *paths, int *failure_inde
  ** \param   is_complete - pointer to variable in which to return whether the operate response was indicating that the operate had completed
  **                        or NULL if this information is not required
  **                        This argument is only needed for async commands to differentiate an operate response containing an operate result from one not containing an operate result
@@ -2162,7 +2162,7 @@ index 5666a9b..ea255cc 100644
  {
      int err;
      Usp__Msg *req;
-@@ -5149,6 +5216,7 @@ int SendOperateAndProcessResponse(int group_id, char *path, bool is_sync, char *
+@@ -5152,6 +5219,7 @@ int SendOperateAndProcessResponse(int group_id, char *path, bool is_sync, char *
      usp_service_t *us;
      char msg_id[MAX_MSG_ID_LEN];
      bool modified_num_entries = false;
@@ -2170,7 +2170,7 @@ index 5666a9b..ea255cc 100644
  
      // Find USP Service associated with the group_id
      us = FindUspServiceByGroupId(group_id);
-@@ -5183,7 +5251,7 @@ int SendOperateAndProcessResponse(int group_id, char *path, bool is_sync, char *
+@@ -5186,7 +5254,7 @@ int SendOperateAndProcessResponse(int group_id, char *path, bool is_sync, char *
      // NOTE: request message is consumed by DM_EXEC_SendRequestAndWaitForResponse()
      resp = DM_EXEC_SendRequestAndWaitForResponse(us->endpoint_id, req, &us->controller_mtp,
                                                   USP__HEADER__MSG_TYPE__OPERATE_RESP,
@@ -2179,7 +2179,7 @@ index 5666a9b..ea255cc 100644
  
      // Exit if timed out waiting for a response
      if (resp == NULL)
-@@ -5192,7 +5260,7 @@ int SendOperateAndProcessResponse(int group_id, char *path, bool is_sync, char *
+@@ -5195,7 +5263,7 @@ int SendOperateAndProcessResponse(int group_id, char *path, bool is_sync, char *
      }
  
      // Process the operate response, determining if it was successful or not
@@ -2188,7 +2188,7 @@ index 5666a9b..ea255cc 100644
  
      // Free the operate response, since we've finished with it
      usp__msg__free_unpacked(resp, pbuf_allocator);
-@@ -5213,11 +5281,12 @@ int SendOperateAndProcessResponse(int group_id, char *path, bool is_sync, char *
+@@ -5216,11 +5284,12 @@ int SendOperateAndProcessResponse(int group_id, char *path, bool is_sync, char *
  ** \param   is_complete - pointer to variable in which to return whether the operate response was indicating that the operate had completed
  **                        or NULL if this information is not required
  **                        This argument is only needed for async commands to differentiate an operate response containing an operate result from one not containing an operate result
@@ -2202,7 +2202,7 @@ index 5666a9b..ea255cc 100644
  {
      int i;
      int err;
-@@ -5282,6 +5351,11 @@ int ProcessOperateResponse(Usp__Msg *resp, char *path, bool is_sync, kv_vector_t
+@@ -5285,6 +5354,11 @@ int ProcessOperateResponse(Usp__Msg *resp, char *path, bool is_sync, kv_vector_t
              break;
  
          case USP__OPERATE_RESP__OPERATION_RESULT__OPERATION_RESP_REQ_OUTPUT_ARGS:
@@ -2214,7 +2214,7 @@ index 5666a9b..ea255cc 100644
              // Operation succeeded: Copy across output arguments
              args = res->req_output_args;
              for (i=0; i < args->n_output_args; i++)
-@@ -7396,6 +7470,7 @@ bool AttemptPassThruForNotification(Usp__Msg *usp, char *endpoint_id, mtp_conn_t
+@@ -7407,6 +7481,7 @@ bool AttemptPassThruForNotification(Usp__Msg *usp, char *endpoint_id, mtp_conn_t
      subs_map_t *smap;
      int broker_instance;
      int items_converted;
@@ -2222,7 +2222,7 @@ index 5666a9b..ea255cc 100644
  
      // Exit if message was badly formed - the error will be handled by the normal handlers
      if ((usp->body == NULL) || (usp->body->msg_body_case != USP__BODY__MSG_BODY_REQUEST) ||
-@@ -7477,10 +7552,29 @@ bool AttemptPassThruForNotification(Usp__Msg *usp, char *endpoint_id, mtp_conn_t
+@@ -7488,10 +7563,29 @@ bool AttemptPassThruForNotification(Usp__Msg *usp, char *endpoint_id, mtp_conn_t
      }
      USP_LOG_Info("Passthru NOTIFY");
  
@@ -2257,15 +2257,15 @@ diff --git a/src/include/usp_api.h b/src/include/usp_api.h
 index 72fd5d7..e287df0 100644
 --- a/src/include/usp_api.h
 +++ b/src/include/usp_api.h
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2019-2025, Broadband Forum
+@@ -4,6 +4,7 @@
   * Copyright (C) 2024-2025, Vantiva Technologies SAS
   * Copyright (C) 2016-2024  CommScope, Inc
+  * Copyright (c) 2025 Consult.Red
 + * Copyright (c) 2025 Inango
   *
   * Redistribution and use in source and binary forms, with or without
   * modification, are permitted provided that the following conditions
-@@ -141,6 +142,7 @@ typedef struct
+@@ -142,6 +143,7 @@ typedef struct
      dm_req_instances_t *inst;   // Pointer to instances information for the parameter or object
      dm_val_union_t val_union;   // When performing a Set Parameter Value, stores the new value converted to it's native type
      int group_id;       // group_id of the data model provider component implementing the data model path (or NON_GROUPED if implemented internally)
