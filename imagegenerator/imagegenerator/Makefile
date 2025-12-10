@@ -14,6 +14,7 @@ PKG_LICENSE:=SAH BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE.SAH LICENSE.BSD
 
 PKG_RELEASE:=1
+PKG_BUILD_DEPENDS += imagegenerator/host
 HOST_BUILD_DEPENDS += uboot-hosttools/host
 HOST_BUILD_DEPENDS += swugenerator/host
 
