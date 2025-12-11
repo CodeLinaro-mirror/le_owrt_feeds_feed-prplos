@@ -1,0 +1,20 @@
+config PACKAGE_tr104-voip
+    tristate
+    select SAH_AMX_TR104_VOIP
+
+if PACKAGE_tr104-voip
+
+menu "Select tr104-voip build options"
+    depends on PACKAGE_tr104-voip
+
+config SAH_AMX_TR104_VOIP
+    bool "Build the tr104 VoIP manager"
+    default y
+
+config SAH_AMX_TR104_VOIP_ORDER
+    int "Set the tr104 VoIP manager start up order"
+    default 99
+
+endmenu
+
+endif
