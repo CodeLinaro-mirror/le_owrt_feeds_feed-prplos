@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-ppp
-PKG_VERSION:=v0.18.0
+PKG_VERSION:=dev_PCF-2189
 SHORT_DESCRIPTION:=TR-181 compatible PPP plugin
 
-PKG_SOURCE:=tr181-ppp-v0.18.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ppp/-/archive/v0.18.0
-PKG_HASH:=e3764cd48f8e917eb11d40e97ad1415039c30f38cc352ee6334070a2663f6a00
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ppp-v0.18.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PCF-2189
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ppp.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
