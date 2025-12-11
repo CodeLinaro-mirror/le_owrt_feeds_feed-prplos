@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=v1.38.5
+PKG_VERSION:=v1.38.6
 SHORT_DESCRIPTION:=TR069 Manager
 
-PKG_SOURCE:=tr069-manager-v1.38.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.38.5
-PKG_HASH:=4050d7880c32d6a9187bc674f5a909b26c17dd2ecdf41c49aa1c9047475599ec
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.38.5
+PKG_SOURCE:=tr069-manager-v1.38.6.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.38.6
+PKG_HASH:=9b12ea55b9976775cbd086f1d53dd77b6832d29320b640d58fcd8929c0759282
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.38.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -19,9 +19,9 @@ COMPONENT:=tr069-manager
 PKG_RELEASE:=1
 
 define SAHInit/Install
-	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/cwmp_plugin ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_SAH_AMX_TR069_MANAGER_ORDER)cwmp_plugin
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/cwmp_plugin ${PKG_INSTALL_DIR}/etc/rc.d/K$(CONFIG_SAH_AMX_TR069_MANAGER_ORDER)cwmp_plugin
+	install -d $(1)/etc/rc.d/
+	ln -sfr $(1)/etc/init.d/cwmp_plugin $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR069_MANAGER_ORDER)cwmp_plugin
+	ln -sfr $(1)/etc/init.d/cwmp_plugin $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR069_MANAGER_ORDER)cwmp_plugin
 endef
 
 include $(INCLUDE_DIR)/package.mk
@@ -64,11 +64,12 @@ endef
 define Build/Install
 	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_TR069_MANAGER_ORDER=$(CONFIG_SAH_AMX_TR069_MANAGER_ORDER) CONFIG_SAH_AMX_TR069_MANAGER_CERTIFICATE_NO_PEM=$(CONFIG_SAH_AMX_TR069_MANAGER_CERTIFICATE_NO_PEM) CONFIG_SAH_AMX_TR069_MANAGER_USE_GSDM=$(CONFIG_SAH_AMX_TR069_MANAGER_USE_GSDM))
 
-	$(call SAHInit/Install)
+	$(call SAHInit/Install,$(PKG_INSTALL_DIR))
 endef
 
 define Build/InstallDev
 	$(call Build/Install/Default, install INSTALL=install D=$(STAGING_DIR) DEST=$(STAGING_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_TR069_MANAGER_ORDER=$(CONFIG_SAH_AMX_TR069_MANAGER_ORDER) CONFIG_SAH_AMX_TR069_MANAGER_CERTIFICATE_NO_PEM=$(CONFIG_SAH_AMX_TR069_MANAGER_CERTIFICATE_NO_PEM) CONFIG_SAH_AMX_TR069_MANAGER_USE_GSDM=$(CONFIG_SAH_AMX_TR069_MANAGER_USE_GSDM))
+	$(call SAHInit/Install,$(STAGING_DIR))
 endef
 
 define Package/$(PKG_NAME)/install
