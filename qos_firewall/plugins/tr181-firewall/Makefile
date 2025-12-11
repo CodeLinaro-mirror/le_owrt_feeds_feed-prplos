@@ -1,15 +1,15 @@
-# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
 # WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-firewall/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-firewall
-PKG_VERSION:=v8.15.0
+PKG_VERSION:=v8.16.0
 SHORT_DESCRIPTION:=TR181 firewall manager
 
-PKG_SOURCE:=tr181-firewall-v8.15.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-firewall/-/archive/v8.15.0
-PKG_HASH:=1159635e4049e3e3571834acb0bc72a5e980e96b12bc8abee829068d11d2c688
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-firewall-v8.15.0
+PKG_SOURCE:=tr181-firewall-v8.16.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-firewall/-/archive/v8.16.0
+PKG_HASH:=8ef3b2b8109164bc781c5fb91f291288ca86bac4ff9ad7444dc4483fe769058a
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-firewall-v8.16.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -21,10 +21,10 @@ PKG_BUILD_DEPENDS += SAH_AMX_TR181_FIREWALL_WITH_GMAP:libgmap-client
 
 define SAHInit/Install
 	install -d $(1)/etc/rc.d/
-	if [[ "${CONFIG_PACKAGE_procd}" != "y" ]]; then \
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_FIREWALL_ORDER)$(COMPONENT); \
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_FIREWALL_ORDER)$(COMPONENT); \
-	fi
+ifneq ($(CONFIG_PACKAGE_procd),y)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_FIREWALL_ORDER)$(COMPONENT)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_FIREWALL_ORDER)$(COMPONENT)
+endif
 endef
 
 include $(INCLUDE_DIR)/package.mk
