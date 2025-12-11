@@ -1,0 +1,45 @@
+From 032b4c0a849da482288e7f719e3785609d87a104 Mon Sep 17 00:00:00 2001
+From: Sergio Panseri <sergio.panseri@consult.red>
+Date: Thu, 11 Dec 2025 10:25:38 +0000
+Subject: [PATCH] Debug code
+
+---
+ src/core/device_security.c | 7 ++++---
+ src/core/stomp.c           | 3 ++-
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/src/core/device_security.c b/src/core/device_security.c
+index 6886b3e..504a3ec 100644
+--- a/src/core/device_security.c
++++ b/src/core/device_security.c
+@@ -565,9 +565,10 @@ SSL_CTX *DEVICE_SECURITY_CreateSSLContext(const SSL_METHOD *method, int verify_m
+     err = DEVICE_SECURITY_LoadTrustStore(ssl_ctx, verify_mode, verify_callback);
+     if (err != USP_ERR_OK)
+     {
+-        SSL_CTX_free(ssl_ctx);
+-        ssl_ctx = NULL;
+-        goto exit;
++        USP_LOG_Warning("%s: DEVICE_SECURITY_LoadTrustStore() failed but continuing for debug", __FUNCTION__);
++        // SSL_CTX_free(ssl_ctx);
++        // ssl_ctx = NULL;
++        // goto exit;
+     }
+ 
+ exit:
+diff --git a/src/core/stomp.c b/src/core/stomp.c
+index 4d63428..072e272 100644
+--- a/src/core/stomp.c
++++ b/src/core/stomp.c
+@@ -1726,7 +1726,8 @@ int PerformStompSslConnect(stomp_connection_t *sc)
+         err = DEVICE_SECURITY_GetControllerTrust(sc->cert_chain, &sc->role_instance);
+         if (err != USP_ERR_OK)
+         {
+-            return err;
++            USP_LOG_Warning("%s: DEVICE_SECURITY_GetControllerTrust() failed but continuing", __FUNCTION__);
++            //return err;
+         }
+     }
+ 
+-- 
+2.43.0
+
