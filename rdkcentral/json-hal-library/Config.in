@@ -1,0 +1,24 @@
+config PACKAGE_json-hal-library
+    tristate
+    select SAH_JSON_HAL_LIBRARY
+
+if PACKAGE_json-hal-library
+
+menu "Select json-hal-library build options"
+    depends on PACKAGE_json-hal-library
+
+config SAH_JSON_HAL_LIBRARY
+    bool "Build json-hal-library"
+    default y
+
+config SAH_JSON_HAL_LIBRARY_DISABLE_SCHEMA_VALIDATION
+    bool "Disable schema validation for json-hal-library"
+    default y
+
+config SAH_JSON_HAL_LIBRARY_DISABLE_BLOCKING_SUBSCRIBE_EVENT
+    bool "Disable blocking subscribe event for json-hal-library"
+    default y
+
+endmenu
+
+endif
