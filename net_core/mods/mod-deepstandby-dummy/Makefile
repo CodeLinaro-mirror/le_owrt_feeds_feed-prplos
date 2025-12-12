@@ -2,14 +2,15 @@
 # WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/modules/mod-deepstandby-dummy/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=mod-amxb-usp
-PKG_VERSION:=v5.10.2
-SHORT_DESCRIPTION:=USP backend implementation for amxb
+PKG_NAME:=mod-deepstandby-dummy
+PKG_VERSION:=dev_PCF-2161
+SHORT_DESCRIPTION:=A dummy vendor module to simulate the deep standby mode, for testing purposes
 
-PKG_SOURCE:=amxb_usp-v5.10.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp/-/archive/v5.10.2
-PKG_HASH:=3662b74e2a25065bf1a49aabe8c0dd62432636f07094b32d5f5b08629f6ec269
-PKG_BUILD_DIR:=$(BUILD_DIR)/amxb_usp-v5.10.2
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PCF-2161
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-deepstandby-dummy.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -21,7 +22,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=Ambiorix
+  SUBMENU:=Modules
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-deepstandby-dummy
   DEPENDS += +libamxc
