@@ -5,9 +5,9 @@ PKG_VERSION:=1.0
 SHORT_DESCRIPTION:=Provide tools to build various format of images
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=FEAT-29
+PKG_SOURCE_VERSION:=dev_kernel_preload_sig
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/imagegenerator.git
-PKG_MIRROR_HASH:=4c38853b26de992ca35235580e2903730e1d6f97b6905b8789f7961ecdbbb16c
+PKG_MIRROR_HASH:=768ba0b3264639a1588a9f1c808cdb89a9d99756178e7e88d87827d9bcd1d54c
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=SAH BSD-2-Clause-Patent
