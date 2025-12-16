@@ -4,9 +4,10 @@ PKG_NAME:=json-hal-library
 PKG_VERSION=test-json-hal-library
 SHORT_DESCRIPTION:=JSON HAL Library
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/json-hal-library-/archive/$(PKG_VERSION)
-PKG_HASH:=skip
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=test-json-hal-library
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/json-hal-library.git
+PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=sercomm
 
