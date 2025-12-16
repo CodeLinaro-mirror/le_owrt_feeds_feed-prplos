@@ -4,9 +4,10 @@ PKG_NAME:=tr104-voip
 PKG_VERSION:=test-new-voip-manager
 SHORT_DESCRIPTION:=TR-104 VoIP manager
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr104-voip/-/archive/$(PKG_VERSION)
-PKG_HASH:=skip
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=test-new-voip-manager
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr104-voip.git
+PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=sercomm
 PKG_BUILD_DEPENDS:=json-hal-library
