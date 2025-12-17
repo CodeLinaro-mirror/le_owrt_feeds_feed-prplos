@@ -3,11 +3,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-mod-dnssd
-PKG_VERSION:=dev_HOP-11230_f
+PKG_VERSION:=dev_HOP-11235_f
 SHORT_DESCRIPTION:=Module to add dnssd data to gmap datamodel
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=dev_HOP-11230_f
+PKG_SOURCE_VERSION:=dev_HOP-11235_f
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-mod-dnssd.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
