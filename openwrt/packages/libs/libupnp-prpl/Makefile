@@ -31,6 +31,8 @@ endef
 define Package/libupnp-prpl
   $(call Package/libupnp-prpl/Default)
   DEPENDS:=+libpthread
+  PROVIDES:=libupnp
+  CONFLICTS:=libupnp
   TITLE:=UPnP SDK library
   MENU:=1
 endef
