@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=sysregister
-PKG_VERSION:=master_v1.0.0
+PKG_VERSION:=dev_FEAT-29
 SHORT_DESCRIPTION:=Kernel module to expose IO registers to sysfs
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=master_v1.0.0
+PKG_SOURCE_VERSION:=dev_FEAT-29
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/sysregister.git
-PKG_MIRROR_HASH:=skip
+PKG_MIRROR_HASH:=bfe284a469a41bb8b737a2066175572da8660330ae87d53dbb55ad4ca41f9a41
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=GPL-2.0-or-later
