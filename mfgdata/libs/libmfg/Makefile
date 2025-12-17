@@ -5,9 +5,9 @@ PKG_VERSION:=v1.2.0
 SHORT_DESCRIPTION:=Tool to parse/read the Manufacturing data, providing a lib that can be used by other tools
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=v1.2.0
+PKG_SOURCE_VERSION:=FEAT-29
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/mfgdata/libmfg.git
-PKG_MIRROR_HASH:=4cd0a198aa3eeebc06babf3234d72ded0c10e09807b291a4c77fe2142fd0032b
+PKG_MIRROR_HASH:=8a1559ec72f2170028cfd01664bd7a0949e65149fd7f9d14e7d5e7be9734eb22
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent

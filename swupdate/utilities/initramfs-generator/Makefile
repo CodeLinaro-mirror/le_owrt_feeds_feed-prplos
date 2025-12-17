@@ -2,13 +2,13 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=initramfs-generator
 
-PKG_VERSION:=dev_SBL-1496
+PKG_VERSION:=FEAT-29
 SHORT_DESCRIPTION:=Provide tools to build a pivoting initramfs
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=dev_SBL-1496
-PKG_SOURCE_URL:=git@gitlab.com:prpl-foundation/components/utilities/initramfs-generator.git
-PKG_MIRROR_HASH:=skip
+PKG_SOURCE_VERSION:=FEAT-29
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/initramfs-generator.git
+PKG_MIRROR_HASH:=458a2b898d6ba57125ef2cbb54368d0b0c3e93f60ea523eb3abb58027ebc8326
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
@@ -23,7 +23,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
   SUBMENU:=Image Generation
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=git@gitlab.com:prpl-foundation/components/utilities/initramfs-generator.git
+  URL:=https://gitlab.com/prpl-foundation/components/utilities/initramfs-generator.git
   DEPENDS += +INITRAMFS_GENERATOR_ROOTFS_FIT:dtc
   DEPENDS += +INITRAMFS_GENERATOR_ROOTFS_SIG_PRELOAD:libopenssl
   DEPENDS += +kmod-dm
