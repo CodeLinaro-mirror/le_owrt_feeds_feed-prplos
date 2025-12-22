@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=wan-manager
-PKG_VERSION:=v1.10.8
+PKG_VERSION:=DEV_PPW-1095
 SHORT_DESCRIPTION:=TR-181 compatible plugin for advanced WAN mode configuration
 
-PKG_SOURCE:=wan-manager-v1.10.8.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/wan-manager/-/archive/v1.10.8
-PKG_HASH:=4c4848183d4b6a76af479e2d854bbb14d077fe821280dd2a829dde94e4c5b4bd
-PKG_BUILD_DIR:=$(BUILD_DIR)/wan-manager-v1.10.8
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=DEV_PPW-1095
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/wan-manager.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -19,9 +20,9 @@ COMPONENT:=wan-manager
 PKG_RELEASE:=1
 
 define SAHInit/Install
-	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_SAH_AMX_WAN_MANAGER_ORDER)$(COMPONENT)
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/K$(CONFIG_SAH_AMX_WAN_MANAGER_ORDER)$(COMPONENT)
+	install -d $(1)/etc/rc.d/
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_WAN_MANAGER_ORDER)$(COMPONENT)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_WAN_MANAGER_ORDER)$(COMPONENT)
 endef
 
 include $(INCLUDE_DIR)/package.mk
@@ -58,11 +59,12 @@ endef
 define Build/Install
 	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_WAN_MANAGER_ORDER=$(CONFIG_SAH_AMX_WAN_MANAGER_ORDER) CONFIG_SAH_AMX_WAN_MANAGER_RUN_AS_USER=$(CONFIG_SAH_AMX_WAN_MANAGER_RUN_AS_USER) CONFIG_SAH_AMX_WAN_MANAGER_RUN_AS_GROUP=$(CONFIG_SAH_AMX_WAN_MANAGER_RUN_AS_GROUP))
 
-	$(call SAHInit/Install)
+	$(call SAHInit/Install,$(PKG_INSTALL_DIR))
 endef
 
 define Build/InstallDev
 	$(call Build/Install/Default, install INSTALL=install D=$(STAGING_DIR) DEST=$(STAGING_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_WAN_MANAGER_ORDER=$(CONFIG_SAH_AMX_WAN_MANAGER_ORDER) CONFIG_SAH_AMX_WAN_MANAGER_RUN_AS_USER=$(CONFIG_SAH_AMX_WAN_MANAGER_RUN_AS_USER) CONFIG_SAH_AMX_WAN_MANAGER_RUN_AS_GROUP=$(CONFIG_SAH_AMX_WAN_MANAGER_RUN_AS_GROUP))
+	$(call SAHInit/Install,$(STAGING_DIR))
 endef
 
 define Package/$(PKG_NAME)/install
