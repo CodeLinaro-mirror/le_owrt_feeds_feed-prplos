@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-temperature
-PKG_VERSION:=v0.6.3
+PKG_VERSION:=v0.7.0
 SHORT_DESCRIPTION:=TR-181 compatible plugin for device temperature management
 
-PKG_SOURCE:=tr181-temperature-v0.6.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-temperature/-/archive/v0.6.3
-PKG_HASH:=7385fb5c3607857a5b9fdc0470bfff54885da3b6b10e411b748b62d1c025010d
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-temperature-v0.6.3
+PKG_SOURCE:=tr181-temperature-v0.7.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-temperature/-/archive/v0.7.0
+PKG_HASH:=79b41130a69097238cc2bee1085103f4e76280df50c81562bffc03bc40bdb19e
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-temperature-v0.7.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -19,9 +19,9 @@ COMPONENT:=tr181-temperature
 PKG_RELEASE:=1
 
 define SAHInit/Install
-	install -d ${PKG_INSTALL_DIR}/etc/rc.d/
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_TEMPERATURE_ORDER)$(COMPONENT)
-	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_TEMPERATURE_ORDER)$(COMPONENT)
+	install -d $(1)/etc/rc.d/
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_TEMPERATURE_ORDER)$(COMPONENT)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_TEMPERATURE_ORDER)$(COMPONENT)
 endef
 
 include $(INCLUDE_DIR)/package.mk
@@ -53,11 +53,12 @@ endef
 define Build/Install
 	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_TR181_TEMPERATURE_ORDER=$(CONFIG_SAH_AMX_TR181_TEMPERATURE_ORDER) CONFIG_SAH_AMX_TR181_TEMPERATURE_RUN_AS_USER=$(CONFIG_SAH_AMX_TR181_TEMPERATURE_RUN_AS_USER) CONFIG_SAH_AMX_TR181_TEMPERATURE_RUN_AS_GROUP=$(CONFIG_SAH_AMX_TR181_TEMPERATURE_RUN_AS_GROUP))
 
-	$(call SAHInit/Install)
+	$(call SAHInit/Install,$(PKG_INSTALL_DIR))
 endef
 
 define Build/InstallDev
 	$(call Build/Install/Default, install INSTALL=install D=$(STAGING_DIR) DEST=$(STAGING_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include CONFIG_SAH_AMX_TR181_TEMPERATURE_ORDER=$(CONFIG_SAH_AMX_TR181_TEMPERATURE_ORDER) CONFIG_SAH_AMX_TR181_TEMPERATURE_RUN_AS_USER=$(CONFIG_SAH_AMX_TR181_TEMPERATURE_RUN_AS_USER) CONFIG_SAH_AMX_TR181_TEMPERATURE_RUN_AS_GROUP=$(CONFIG_SAH_AMX_TR181_TEMPERATURE_RUN_AS_GROUP))
+	$(call SAHInit/Install,$(STAGING_DIR))
 endef
 
 define Package/$(PKG_NAME)/install
