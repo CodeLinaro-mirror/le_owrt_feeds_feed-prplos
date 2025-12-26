@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-fw-amx
-PKG_VERSION:=v0.3.6
+PKG_VERSION:=v0.3.8
 SHORT_DESCRIPTION:=Ambiorix module to configure the tr181-firewall
 
-PKG_SOURCE:=mod-fw-amx-v0.3.6.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-fw-amx/-/archive/v0.3.6
-PKG_HASH:=8ca177fe8437531c76c31b20208480de84a058a036a49cc54e6030b0009af4ce
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-fw-amx-v0.3.6
+PKG_SOURCE:=mod-fw-amx-v0.3.8.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-fw-amx/-/archive/v0.3.8
+PKG_HASH:=97ae2e68ea5203855ab44ce92254d9cb4bbfed4266eeada87eda097686a7755e
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-fw-amx-v0.3.8
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
