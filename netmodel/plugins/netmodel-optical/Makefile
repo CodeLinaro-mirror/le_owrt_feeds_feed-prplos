@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-optical
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=dev_PPW-1011
 SHORT_DESCRIPTION:=Network Model Optical client
 
-PKG_SOURCE:=netmodel-optical-v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-optical/-/archive/v0.1.0
-PKG_HASH:=8b5270a85ed6d477d5b644a936bb468ad566c4f9c680e5b286f9d42d55cb459c
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-optical-v0.1.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PPW-1011
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-optical.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
