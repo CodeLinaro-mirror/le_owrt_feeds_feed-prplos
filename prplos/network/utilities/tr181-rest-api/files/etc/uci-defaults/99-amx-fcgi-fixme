@@ -1,6 +1,6 @@
 #!/bin/sh
 
 # fix amx-fcgi fcgi socket handling
-sed -i 's|export LIGHTTPD_CHROOT=/webui|export LIGHTTPD_CHROOT=/|' /etc/init.d/amx-fcgi
+sed -i 's|LIGHTTPD_CHROOT=/webui|LIGHTTPD_CHROOT=/|' /etc/init.d/amx-fcgi
 
 exit 0
