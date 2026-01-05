@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dhcpv6client
-PKG_VERSION:=v1.16.1
+PKG_VERSION:=v1.17.0
 SHORT_DESCRIPTION:=TR-181 compatible DHCPv6 client
 
-PKG_SOURCE:=tr181-dhcpv6client-v1.16.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6client/-/archive/v1.16.1
-PKG_HASH:=5990c63862ef3695bbf702a34e0e2766e2b34d21a6466437be3af6cad161ff85
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6client-v1.16.1
+PKG_SOURCE:=tr181-dhcpv6client-v1.17.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6client/-/archive/v1.17.0
+PKG_HASH:=599c3a4b00d18a9e2a24c865d91a21e31074183c5dbf4aea64eb3d5ac3799e50
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6client-v1.17.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
