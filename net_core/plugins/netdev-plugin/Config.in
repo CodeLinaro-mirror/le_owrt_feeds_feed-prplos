@@ -23,6 +23,14 @@ config SAH_AMX_NETDEV_RUN_AS_GROUP
     string "Group will be used for the NETDEV plugin"
     default "tr181_app"
 
+config SAH_AMX_NETDEV_START_ORDER
+    int "Init start up order for the NETDEV plugin"
+    default 20
+
+config SAH_AMX_NETDEV_STOP_ORDER
+    int "Init stop order for the NETDEV plugin"
+    default 10
+
 endmenu
 
 endif
