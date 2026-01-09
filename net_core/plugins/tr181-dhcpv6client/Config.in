@@ -32,6 +32,14 @@ config PRPL_CPE_OPMODE_GATEWAY
     bool ""
     default y
 
+config SAH_AMX_TR181_DHCPV6CLIENT_START_ORDER
+    int "Init start up order for the tr181-dhcpv6client plugin"
+    default 25
+
+config SAH_AMX_TR181_DHCPV6CLIENT_STOP_ORDER
+    int "Init stop order for the tr181-dhcpv6client plugin"
+    default 75
+
 endmenu
 
 endif
