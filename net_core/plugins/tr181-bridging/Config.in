@@ -19,6 +19,14 @@ config SAH_AMX_TR181_BRIDGING_RUN_AS_GROUP
     string "Group will be used for the bridging manager plugin"
     default "tr181_app"
 
+config SAH_AMX_TR181_BRIDGING_START_ORDER
+    int "Init start up order for the bridging manager plugin"
+    default 22
+
+config SAH_AMX_TR181_BRIDGING_STOP_ORDER
+    int "Init stop order for the bridging manager plugin"
+    default 76
+
 endmenu
 
 endif
