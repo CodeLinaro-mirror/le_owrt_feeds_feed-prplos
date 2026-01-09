@@ -1,0 +1,24 @@
+config PACKAGE_tr181-dynamicdns
+    tristate
+    select SAH_DYNAMIC_DNS
+
+if PACKAGE_tr181-dynamicdns
+
+menu "Select tr181-dynamicdns build options"
+    depends on PACKAGE_tr181-dynamicdns
+
+config SAH_DYNAMIC_DNS
+    bool "Build the TR-181 Device.DynamicDNS"
+    default y
+
+config SAH_DYNAMIC_DNS_START_ORDER
+    int "Init start up order for the the TR-181 Device.DynamicDNS plugin"
+    default 25
+
+config SAH_DYNAMIC_DNS_STOP_ORDER
+    int "Init stop order for the the TR-181 Device.DynamicDNS plugin"
+    default 10
+
+endmenu
+
+endif
