@@ -3,14 +3,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-wanmgr-system
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=dev_sfp
 SHORT_DESCRIPTION:=SoC module wan-manager handles system level changes
 
-PKG_SOURCE:=mod-wanmgr-system-v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-system/-/archive/v0.1.0
-PKG_HASH:=80da010214311ff4cca29000c0ec5476cbfe0106c5d6a03c896f96a19ff11fb2
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-wanmgr-system-v0.1.0
-PKG_MAINTAINER:=AT&T <prplosdev@list.att.com>
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_sfp
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-system.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
 
@@ -21,7 +22,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=Other
+  SUBMENU:=Ambiorix
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-system
   DEPENDS += +libamxc
