@@ -23,6 +23,7 @@ define KernelPackage/$(PKG_NAME)
   TITLE:=sysregister kernel module
   FILES:=$(PKG_BUILD_DIR)/$(PKG_NAME).ko
   KCONFIG:=
+  AUTOLOAD:=$(call AutoLoad,99,sysregister)
 endef
 
 define KernelPackage/$(PKG_NAME)/description
