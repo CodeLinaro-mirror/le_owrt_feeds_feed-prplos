@@ -1,0 +1,6 @@
+This repository contains package recipes, patches, and metadata for prplOS.
+
+The top-level LICENSE applies to original content in this repository unless a
+subdirectory or file indicates a different license. Third-party components and
+vendored code retain their original licenses, which are documented in their
+respective directories, files, or package metadata.
