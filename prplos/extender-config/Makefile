@@ -32,6 +32,9 @@ define Package/extender-config/install
 	$(INSTALL_DIR) $(1)/etc/amx/wld/wld_defaults/
 	$(CP) ./files/45-extender-ep-defaults.odl.uc $(1)/etc/amx/wld/wld_defaults/
 
+	$(INSTALL_DIR) $(1)/etc/amx/prplmesh-process-manager/defaults.d/
+	$(CP) ./files/90_extender_process_manager_prplmesh_mode.odl $(1)/etc/amx/prplmesh-process-manager/defaults.d/
+
 	$(INSTALL_DIR) $(1)/etc/amx/tr181-bridging/tr181-bridging_defaults/
 	$(CP) ./files/99_bridging_enable_lan_stp.odl $(1)/etc/amx/tr181-bridging/tr181-bridging_defaults/
 endef
