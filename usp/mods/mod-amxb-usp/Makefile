@@ -1,15 +1,15 @@
 # WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
-# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/modules/mod-deepstandby-dummy/-/blob/main/baf.yml instead
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-amxb-usp
-PKG_VERSION:=v5.12.1
+PKG_VERSION:=v5.13.0
 SHORT_DESCRIPTION:=USP backend implementation for amxb
 
-PKG_SOURCE:=amxb_usp-v5.12.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp/-/archive/v5.12.1
-PKG_HASH:=ba3343236bb0d5c1aa48873d519452e6846f08ebe71806cb6c80f487e42f44bd
-PKG_BUILD_DIR:=$(BUILD_DIR)/amxb_usp-v5.12.1
+PKG_SOURCE:=amxb_usp-v5.13.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp/-/archive/v5.13.0
+PKG_HASH:=7b499d1b3cf4e6d5aba3fb0ac579b5fdaa4b7322c7dc44db8400125643089df0
+PKG_BUILD_DIR:=$(BUILD_DIR)/amxb_usp-v5.13.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -21,32 +21,34 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=Ambiorix
+  SUBMENU:=Modules
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-deepstandby-dummy
+  URL:=https://gitlab.com/prpl-foundation/components/ambiorix/modules/amxb_backends/amxb_usp
   DEPENDS += +libamxc
-  DEPENDS += +libamxj
-  DEPENDS += +libamxm
-  DEPENDS += +libamxo
   DEPENDS += +libamxp
-  DEPENDS += +libsahtrace
+  DEPENDS += +libamxd
+  DEPENDS += +libamxb
+  DEPENDS += +libamxo
+  DEPENDS += +libimtp
+  DEPENDS += +libusp
+  DEPENDS += +libuspi
   MENU:=1
 endef
 
 define Package/$(PKG_NAME)/description
-	A dummy vendor module to simulate the deep standby mode, for testing purposes
+	USP backend implementation for amxb
 endef
 
 define Build/Compile
-	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include PKG_CONFIG=$(PKG_CONFIG))
+	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include PKG_CONFIG=$(PKG_CONFIG) CONFIG_SAH_MOD_AMXB_USP_INSTALL_DIR=$(CONFIG_SAH_MOD_AMXB_USP_INSTALL_DIR) CONFIG_SAH_MOD_AMXB_USP_REQUIRES_DEVICE_PREFIX=$(CONFIG_SAH_MOD_AMXB_USP_REQUIRES_DEVICE_PREFIX))
 endef
 
 define Build/Install
-	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include PKG_CONFIG=$(PKG_CONFIG))
+	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include PKG_CONFIG=$(PKG_CONFIG) CONFIG_SAH_MOD_AMXB_USP_INSTALL_DIR=$(CONFIG_SAH_MOD_AMXB_USP_INSTALL_DIR) CONFIG_SAH_MOD_AMXB_USP_REQUIRES_DEVICE_PREFIX=$(CONFIG_SAH_MOD_AMXB_USP_REQUIRES_DEVICE_PREFIX))
 endef
 
 define Build/InstallDev
-	$(call Build/Install/Default, install INSTALL=install D=$(STAGING_DIR) DEST=$(STAGING_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include PKG_CONFIG=$(PKG_CONFIG))
+	$(call Build/Install/Default, install INSTALL=install D=$(STAGING_DIR) DEST=$(STAGING_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include PKG_CONFIG=$(PKG_CONFIG) CONFIG_SAH_MOD_AMXB_USP_INSTALL_DIR=$(CONFIG_SAH_MOD_AMXB_USP_INSTALL_DIR) CONFIG_SAH_MOD_AMXB_USP_REQUIRES_DEVICE_PREFIX=$(CONFIG_SAH_MOD_AMXB_USP_REQUIRES_DEVICE_PREFIX))
 endef
 
 define Package/$(PKG_NAME)/install
@@ -57,6 +59,10 @@ define Package/$(PKG_NAME)/install
 	find $(1) -name *.a -exec rm {} +;
 	find $(1) -name *.h -exec rm {} +;
 	find $(1) -name *.pc -exec rm {} +;
+endef
+
+define Package/$(PKG_NAME)/config
+	source "$(SOURCE)/Config.in"
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
