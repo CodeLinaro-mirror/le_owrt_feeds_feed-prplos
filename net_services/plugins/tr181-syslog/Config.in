@@ -11,9 +11,13 @@ config SAH_AMX_TR181_SYSLOG
     bool "TR-181 compatible syslog"
     default y
 
-config SAH_AMX_TR181_SYSLOG_ORDER
-    int "TR-181 syslog plugin start up order"
+config SAH_AMX_TR181_SYSLOG_START_ORDER
+    int "Init start up order for the TR-181 compatible syslog"
     default 12
+
+config SAH_AMX_TR181_SYSLOG_STOP_ORDER
+    int "Init stop order for the TR-181 compatible syslog"
+    default 88
 
 endmenu
 
