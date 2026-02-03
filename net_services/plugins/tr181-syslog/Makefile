@@ -77,4 +77,8 @@ define Package/$(PKG_NAME)/install
 	find $(1) -name *.pc -exec rm {} +;
 endef
 
+define Package/$(PKG_NAME)/config
+	source "$(SOURCE)/Config.in"
+endef
+
 $(eval $(call BuildPackage,$(PKG_NAME)))
