@@ -9,7 +9,49 @@ CONFIGURATION=obuspa
 
 RESET_FILE="/etc/config/obuspa_param_reset.txt"
 SQL_DB_FILE="/etc/obuspa.db"
-CERT="/etc/ssl/cert.pem"
+
+# Points to CA Bundle data model entry relevant for USP communication
+CA_BUNDLE="Security.CABundle.1"
+# Points to device private key and certificate data model entry relevant for USP communication
+# For non-mTLS communication shall be empty.
+DEVICE_KEY_CERT="Security.Certificate.2"
+
+get_ca_bundle_file_path() {
+	local BUNDLE_URI=$(ba-cli -l "${1}.CAFile()" | grep "CAFile = " | cut -d '"' -f2)
+	echo ${BUNDLE_URI#file://}
+}
+
+get_certificate_path() {
+	local FILE_URI=$(ba-cli -l "${1}.GetCertificateURI()" | grep "CertificateURI = " | cut -d '"' -f2)
+	echo ${FILE_URI#file://}
+}
+
+get_private_key_uri() {
+	ba-cli -l "${1}.GetCertificateURI()" | grep "PrivateKeyURI = " | cut -d '"' -f2
+}
+
+get_wait_ca_bundle()
+{
+	local COUNT=0
+	local BUNDLE_PATH=""
+
+	# return immediately if authentication / encryption is not required
+	if [ -z "${1}" ]; then
+		return 0
+	fi
+
+	# tr181-security that provides the Security data model starts before obuspa.
+	# Wait is only added for extra robustness.
+	while [ "$COUNT" -lt 5 ] && [ -z "$BUNDLE_PATH" ]; do
+		BUNDLE_PATH=$(get_ca_bundle_file_path "${1}")
+		if [ -z "$BUNDLE_PATH" ]; then
+			# echo "Waiting for CA bundle path ($COUNT)" >&2
+			sleep 1
+		fi
+		COUNT=$((COUNT + 1))
+	done
+	echo "$BUNDLE_PATH"
+}
 
 register_service()
 {
@@ -19,10 +61,20 @@ register_service()
 	procd_set_param stdout 1
 	procd_set_param stderr 1
 
+	CA_FILE=$(get_wait_ca_bundle $CA_BUNDLE)
+	CERTIFICATE_URI=$(get_certificate_path ${DEVICE_KEY_CERT})
+	PRIVATE_KEY_URI=$(get_private_key_uri ${DEVICE_KEY_CERT})
+
+	# echo "CA_FILE=${CA_FILE}"
+	# echo "CERTIFICATE_URI=${CERTIFICATE_URI}"
+	# echo "PRIVATE_KEY_URI=${PRIVATE_KEY_URI}"
+
 	boardserial=$(source /etc/environment 2>/dev/null ; echo $SERIALNUMBER)
 	boardoui=$(source /etc/environment 2>/dev/null ; echo $MANUFACTUREROUI)
 	procd_set_param env USP_BOARD_SERIAL="${boardserial}" \
-						USP_BOARD_OUI="${boardoui}"
+						USP_BOARD_OUI="${boardoui}" \
+						CertificateURI="${CERTIFICATE_URI}" \
+						PrivateKeyURI="${PRIVATE_KEY_URI}"
 
 	# -p Enables trace logging of the USP protocol messages. Enable setting -p option to utilize prototracing
 	# procd_append_param command -p
@@ -32,8 +84,8 @@ register_service()
 
 	# -v Sets the debug verbosity log level: 0=Off, 1=Error(default), 2=Warning, 3=Info
 	# procd_append_param command -v 2
-	if [ -f "${CERT}" ]; then
-		procd_append_param command -t ${CERT}
+	if [ -f "${CA_FILE}" ]; then
+		procd_append_param command -t ${CA_FILE}
 	fi
 	procd_append_param command -r ${RESET_FILE} -f ${SQL_DB_FILE}
 	procd_set_param respawn \
