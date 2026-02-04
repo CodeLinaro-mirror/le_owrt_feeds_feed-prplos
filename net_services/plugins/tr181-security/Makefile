@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-security
-PKG_VERSION:=feat-107-dev
+PKG_VERSION:=feat-107-for-feat-63-c
 SHORT_DESCRIPTION:=TR-181 compatible security plugin
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=feat-107-dev
+PKG_SOURCE_VERSION:=feat-107-for-feat-63-c
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-security.git
-PKG_MIRROR_HASH:=skip
+PKG_MIRROR_HASH:=139b64ded27624974019c1436ad3cc85b90b9b77b842dc54d66311409c70853b
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
