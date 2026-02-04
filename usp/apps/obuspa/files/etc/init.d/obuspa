@@ -9,7 +9,24 @@ CONFIGURATION=obuspa
 
 RESET_FILE="/etc/config/obuspa_param_reset.txt"
 SQL_DB_FILE="/etc/obuspa.db"
-CERT="/etc/ssl/cert.pem"
+
+NAME="obuspa-init"
+WHERE_TO_LOG="logger"
+log_obuspa_init() {
+	if [ "$WHERE_TO_LOG" == "logger" ]; then
+		logger -t ${NAME} "$1"
+	else
+		echo "$1" >> /tmp/obuspa-init.log
+	fi
+}
+
+get_ca_bundle_dir() {
+	ba-cli -jl "${1}.CADir()" | grep '"CADir"'
+}
+
+get_ca_bundle_file() {
+	ba-cli -jl "${1}.CAFile()"# | grep '"CAFile"'
+}
 
 register_service()
 {
@@ -23,6 +40,32 @@ register_service()
 	boardoui=$(source /etc/environment 2>/dev/null ; echo $MANUFACTUREROUI)
 	procd_set_param env USP_BOARD_SERIAL="${boardserial}" \
 						USP_BOARD_OUI="${boardoui}"
+	
+
+
+	ca_bundle=$(source /etc/environment 2>/dev/null ; echo $OBUSPA_CA_BUNDLE)
+	log_obuspa_init "OBUSPA_CA_BUNDLE: ${ca_bundle}"
+
+	count=0
+	while [ "$count" -lt 10 ] && [ -z "$CA_DIR" ]; do
+		CA_DIR=$(get_ca_bundle_dir "${ca_bundle}")
+		log_obuspa_init "CADir: $CA_DIR"
+		if [ -z "$CA_DIR" ]; then
+			log_obuspa_init "Waiting for CA_DIR ($count)"
+			sleep 3
+		fi
+	count=$((count + 1))
+	done
+	
+	ca_dir=$(echo "$CA_DIR" | sed -n 's/.*"CADir":"\([^"]*\)".*/\1/p')
+	ca_dir=${ca_dir#file://}
+	CA_FILE=$(get_ca_bundle_file "${ca_bundle}")
+	ca_file=$(echo "$CA_FILE" | sed -n 's/.*"CAFile":"\([^"]*\)".*/\1/p')
+	ca_file=${ca_file#file://}
+
+	log_obuspa_init "CADir: $ca_dir"
+	log_obuspa_init "CAFile: $ca_file"
+
 
 	# -p Enables trace logging of the USP protocol messages. Enable setting -p option to utilize prototracing
 	# procd_append_param command -p
@@ -32,8 +75,8 @@ register_service()
 
 	# -v Sets the debug verbosity log level: 0=Off, 1=Error(default), 2=Warning, 3=Info
 	# procd_append_param command -v 2
-	if [ -f "${CERT}" ]; then
-		procd_append_param command -t ${CERT}
+	if [ -e "${ca_dir}" ]; then
+		procd_append_param command -t ${ca_file}
 	fi
 	procd_append_param command -r ${RESET_FILE} -f ${SQL_DB_FILE}
 	procd_set_param respawn \
