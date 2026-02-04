@@ -10,10 +10,10 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=odhcpd
 PKG_RELEASE:=1
 
-PKG_VERSION:=gen_d8118f6e_v0.3.0
+PKG_VERSION:=gen_d8118f6e_v0.3.1 
 PKG_SOURCE:=odhcpd-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/odhcpd/-/archive/$(PKG_VERSION)
-PKG_HASH:=f6c233dadb744ba6bfafacc9e45e631921e00726fd17fb62a893279951cd856b
+PKG_HASH:=63a0569ee4b5fa56ae0c9d3b4b3eee7041d1740636788598ce6008e24b7f095a
 PKG_BUILD_DIR:=$(BUILD_DIR)/odhcpd-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Hans Dedecker <dedeckeh@gmail.com>
