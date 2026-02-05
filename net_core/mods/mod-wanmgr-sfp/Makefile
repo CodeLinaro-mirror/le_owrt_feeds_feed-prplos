@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-wanmgr-sfp
-PKG_VERSION:=v0.1.3
+PKG_VERSION:=dev_PPW-1409_coverity
 SHORT_DESCRIPTION:=SoC module to update wan-manager on the newly detected or removed sfp details
 
-PKG_SOURCE:=mod-wanmgr-sfp-v0.1.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-sfp/-/archive/v0.1.3
-PKG_HASH:=4259aa21bf38f5f79eb4efbf358307d577453899526f317748b1991523bb7ce6
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-wanmgr-sfp-v0.1.3
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PPW-1409_coverity
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-sfp.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
