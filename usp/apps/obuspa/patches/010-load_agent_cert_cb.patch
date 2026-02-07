@@ -1,0 +1,126 @@
+diff --git a/src/vendor/vendor.c b/src/vendor/vendor.c
+index 594ff97..835585a 100644
+--- a/src/vendor/vendor.c
++++ b/src/vendor/vendor.c
+@@ -44,6 +44,7 @@
+ #include <stdlib.h>
+ #include <stdbool.h>
+ #include <string.h>
++#include <openssl/engine.h>
+ 
+ #include "usp_err_codes.h"
+ #include "vendor_defs.h"
+@@ -90,6 +91,102 @@ static bool can_mtp_connect(void)
+    return true;
+ }
+ 
++static int read_env(const char *env_name, char *out_value, size_t out_size)
++{
++    const char *val = getenv(env_name);
++    if (val != 0 && *val != '\0') {
++        strncpy(out_value, val, out_size - 1);
++        out_value[out_size - 1] = '\0';
++        return 1;
++    } else {
++        out_value[0] = '\0';
++        return 0;
++    }
++}
++
++static int load_agent_cert(SSL_CTX *ctx)
++{
++   int err = USP_ERR_OK;
++   char certificate_uri[256] = {0};
++   char privatekey_uri[256] = {0};
++
++   read_env("CertificateURI", certificate_uri, sizeof(certificate_uri));
++   read_env("PrivateKeyURI", privatekey_uri, sizeof(privatekey_uri));
++
++   // Load device certificate
++   if (certificate_uri[0] != '\0')
++   {
++      if (SSL_CTX_use_certificate_file(ctx, certificate_uri, SSL_FILETYPE_PEM) != 1)
++      {
++         USP_LOG_Warning("%s: Failed to load device certificate from %s", __FUNCTION__, certificate_uri);
++         err = USP_ERR_INTERNAL_ERROR;
++      }
++      else
++      {
++         USP_LOG_Info("%s: Loaded device certificate from %s", __FUNCTION__, certificate_uri);
++      }
++   }
++
++   // Load private key
++   if (privatekey_uri[0] != '\0')
++   {
++      //Check if the private key URI is in PKCS#11 format
++      if (strncmp(privatekey_uri, "pkcs11:", 7) == 0)
++      {
++         #pragma GCC diagnostic push
++         #pragma GCC diagnostic ignored "-Wdeprecated-declarations" // To allow the use of OpenSSL engine APIs
++         // If the private key is specified as a PKCS#11 URI
++         ENGINE *e = ENGINE_by_id("pkcs11");
++         if (e == NULL)
++         {
++            USP_LOG_Warning("%s: Failed to get PKCS#11 engine", __FUNCTION__);
++            err = USP_ERR_INTERNAL_ERROR;
++         }
++         else
++         {
++            EVP_PKEY *pkey = ENGINE_load_private_key(e, privatekey_uri, NULL, NULL);
++            if (pkey)
++            {
++               if (SSL_CTX_use_PrivateKey(ctx, pkey) != 1)
++               {
++                  char buf[256];
++                  unsigned long err = ERR_get_error();
++                  ERR_error_string_n(err, buf, sizeof(buf));
++                  USP_LOG_Warning("%s: Failed to load private key from PKCS#11 URI %s (OpenSSL error: %s)", __FUNCTION__, privatekey_uri, buf);
++                  err = USP_ERR_INTERNAL_ERROR;
++               }
++               else
++               {
++                  USP_LOG_Info("%s: Loaded private key from PKCS#11 URI %s", __FUNCTION__, privatekey_uri);
++               }
++               EVP_PKEY_free(pkey);
++            }
++            else
++            {
++               USP_LOG_Warning("%s: ENGINE_load_private_key failed for PKCS#11 URI %s", __FUNCTION__, privatekey_uri);
++               err = USP_ERR_INTERNAL_ERROR;
++            }
++            ENGINE_free(e);
++         }
++         #pragma GCC diagnostic pop
++      }
++      else
++      {
++         // If the private key is specified as a file path
++         if (SSL_CTX_use_PrivateKey_file(ctx, privatekey_uri, SSL_FILETYPE_PEM) != 1)
++         {
++            USP_LOG_Warning("%s: Failed to load private key from %s", __FUNCTION__, privatekey_uri);
++            err = USP_ERR_INTERNAL_ERROR;
++         }
++         else
++         {
++            USP_LOG_Info("%s: Loaded private key from %s", __FUNCTION__, privatekey_uri);
++         }
++      }
++   }
++
++   return err;
++}
+ 
+ /*********************************************************************//**
+ **
+@@ -105,8 +202,10 @@ static bool can_mtp_connect(void)
+ int VENDOR_Init(void)
+ {
+     vendor_hook_cb_t callbacks;
++    USP_LOG_Warning("%s", __FUNCTION__);
+     memset(&callbacks, 0, sizeof(callbacks));
+     callbacks.can_mtp_connect_cb = can_mtp_connect;
++    callbacks.load_agent_cert_cb = load_agent_cert;
+     USP_REGISTER_CoreVendorHooks(&callbacks);
+ 
+     return USP_ERR_OK;
