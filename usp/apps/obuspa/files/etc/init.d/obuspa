@@ -10,22 +10,21 @@ CONFIGURATION=obuspa
 RESET_FILE="/etc/config/obuspa_param_reset.txt"
 SQL_DB_FILE="/etc/obuspa.db"
 
-NAME="obuspa-init"
-WHERE_TO_LOG="logger"
-log_obuspa_init() {
-	if [ "$WHERE_TO_LOG" == "logger" ]; then
-		logger -t ${NAME} "$1"
-	else
-		echo "$1" >> /tmp/obuspa-init.log
-	fi
+DEVICE_KEY_CERT="Security.Certificate.2."
+CA_BUNDLE="Security.CABundle.1."
+
+get_ca_bundle_file_path() {
+    BUNDLE_URI=$(ba-cli -l "${1}CAFile()" | grep "CAFile = " | cut -d '"' -f2)
+    echo ${BUNDLE_URI#file://}
 }
 
-get_ca_bundle_dir() {
-	ba-cli -jl "${1}.CADir()" | grep '"CADir"'
+get_certificate_path() {
+    FILE_URI=$(ba-cli -l "${1}.GetCertificateURI()" | grep "CertificateURI = " | cut -d '"' -f2)
+    echo ${FILE_URI#file://}
 }
 
-get_ca_bundle_file() {
-	ba-cli -jl "${1}.CAFile()"# | grep '"CAFile"'
+get_private_key_uri() {
+	ba-cli -l "${1}.GetCertificateURI()" | grep "PrivateKeyURI = " | cut -d '"' -f2
 }
 
 register_service()
@@ -36,36 +35,29 @@ register_service()
 	procd_set_param stdout 1
 	procd_set_param stderr 1
 
+	count=0
+	while [ "$count" -lt 10 ] && [ -z "$CA_FILE" ]; do
+		CA_FILE=$(get_ca_bundle_file_path "${CA_BUNDLE}")
+		echo "CA_FILE: $CA_FILE"
+		if [ -z "$CA_FILE" ]; then
+			echo "Waiting for CA_FILE ($count)"
+			sleep 1
+		fi
+		count=$((count + 1))
+	done
+
+	CertificateURI=$(get_certificate_path ${DEVICE_KEY_CERT})
+	PrivateKeyURI=$(get_private_key_uri ${DEVICE_KEY_CERT})
+
+	echo "CertificateURI=${CertificateURI}"
+	echo "PrivateKeyURI=${PrivateKeyURI}"
+
 	boardserial=$(source /etc/environment 2>/dev/null ; echo $SERIALNUMBER)
 	boardoui=$(source /etc/environment 2>/dev/null ; echo $MANUFACTUREROUI)
 	procd_set_param env USP_BOARD_SERIAL="${boardserial}" \
-						USP_BOARD_OUI="${boardoui}"
-	
-
-
-	ca_bundle=$(source /etc/environment 2>/dev/null ; echo $OBUSPA_CA_BUNDLE)
-	log_obuspa_init "OBUSPA_CA_BUNDLE: ${ca_bundle}"
-
-	count=0
-	while [ "$count" -lt 10 ] && [ -z "$CA_DIR" ]; do
-		CA_DIR=$(get_ca_bundle_dir "${ca_bundle}")
-		log_obuspa_init "CADir: $CA_DIR"
-		if [ -z "$CA_DIR" ]; then
-			log_obuspa_init "Waiting for CA_DIR ($count)"
-			sleep 3
-		fi
-	count=$((count + 1))
-	done
-	
-	ca_dir=$(echo "$CA_DIR" | sed -n 's/.*"CADir":"\([^"]*\)".*/\1/p')
-	ca_dir=${ca_dir#file://}
-	CA_FILE=$(get_ca_bundle_file "${ca_bundle}")
-	ca_file=$(echo "$CA_FILE" | sed -n 's/.*"CAFile":"\([^"]*\)".*/\1/p')
-	ca_file=${ca_file#file://}
-
-	log_obuspa_init "CADir: $ca_dir"
-	log_obuspa_init "CAFile: $ca_file"
-
+						USP_BOARD_OUI="${boardoui}" \
+						CertificateURI="${CertificateURI}" \
+						PrivateKeyURI="${PrivateKeyURI}"
 
 	# -p Enables trace logging of the USP protocol messages. Enable setting -p option to utilize prototracing
 	# procd_append_param command -p
@@ -74,9 +66,9 @@ register_service()
 	# procd_append_param command -l /var/log/obuspa
 
 	# -v Sets the debug verbosity log level: 0=Off, 1=Error(default), 2=Warning, 3=Info
-	# procd_append_param command -v 2
-	if [ -e "${ca_dir}" ]; then
-		procd_append_param command -t ${ca_file}
+	procd_append_param command -v 2
+	if [ -f "${CA_FILE}" ]; then
+		procd_append_param command -t ${CA_FILE}
 	fi
 	procd_append_param command -r ${RESET_FILE} -f ${SQL_DB_FILE}
 	procd_set_param respawn \
