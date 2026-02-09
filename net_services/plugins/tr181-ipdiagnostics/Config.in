@@ -15,6 +15,14 @@ config PRPL_IP_DIAGNOSTIC_UPLOAD_DOWNLOAD
     bool "Build the TR-181 Device.IP.Diagnostics.DownloadDiagnostics and Device.IP.Diagnostics.UploadDiagnostics"
     default y
 
+config SAH_IP_DIAGNOSTICS_START_ORDER
+    int "Init start up order for the TR-181 IP.Diagnostics Plugin"
+    default 25
+
+config SAH_IP_DIAGNOSTICS_STOP_ORDER
+    int "Init stop order for the TR-181 IP.Diagnostics Plugin"
+    default 10
+
 endmenu
 
 endif
