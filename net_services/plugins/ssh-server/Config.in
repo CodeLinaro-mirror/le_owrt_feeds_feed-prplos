@@ -19,14 +19,6 @@ config SAH_AMX_SSH_SERVER_SOP
     bool "Build ssh server plugin for SOP"
     default n
 
-config PRPL_CPE_OPMODE_EXTENDER
-    bool ""
-    default n
-
-config PRPL_CPE_OPMODE_GATEWAY
-    bool ""
-    default y
-
 endmenu
 
 endif
