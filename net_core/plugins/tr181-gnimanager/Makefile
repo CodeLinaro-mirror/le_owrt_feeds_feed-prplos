@@ -3,13 +3,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-gnimanager
-PKG_VERSION:=v0.1.1
+PKG_VERSION:=PPW-1365
 SHORT_DESCRIPTION:=tr181-gnimanager interface plugin
 
-PKG_SOURCE:=tr181-gnimanager-v0.1.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-gnimanager/-/archive/v0.1.1
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=PPW-1365
+
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-gnimanager.git
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_HASH:=68bdd1f23aa368a9d73c6ec58a9a019fb56ea8187942380e6038effa2f599a53
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-gnimanager-v0.1.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
