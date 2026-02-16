@@ -1,0 +1,6 @@
+config SYSREGISTER_RESET_BOOTCOUNT
+	bool "Reset the bootcount at boot"
+	default n
+	help
+	  Install an init script that resets the bootcount and disables the
+	  temporary failover at the end of the boot sequence.
