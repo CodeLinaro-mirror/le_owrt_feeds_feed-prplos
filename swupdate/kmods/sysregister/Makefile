@@ -30,6 +30,17 @@ define KernelPackage/$(PKG_NAME)/description
  This is a driver to expose IO registers to userspace.
 endef
 
+define KernelPackage/$(PKG_NAME)/install
+	$(if $(CONFIG_SYSREGISTER_RESET_BOOTCOUNT), \
+		$(INSTALL_DIR) $(1)/etc/init.d; \
+		$(INSTALL_BIN) ./files/zzz_bootconfirm.init $(1)/etc/init.d/zzz_bootconfirm; \
+	)
+endef
+
+define KernelPackage/$(PKG_NAME)/config
+	source "$(SOURCE)/Config.in"
+endef
+
 define Build/Compile
 	$(MAKE) -C $(LINUX_DIR) \
 		COMPONENT=$(PKG_NAME) \
