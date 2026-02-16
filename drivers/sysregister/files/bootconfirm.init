@@ -1,0 +1,11 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2026 SoftAtHome
+
+START=99zzz
+
+start() {
+	# Reset the bootcount
+	echo 0 > /sys/class/registers/bootcount
+	# Disable the temporary failover
+	fw_setenv failover 0
+}
