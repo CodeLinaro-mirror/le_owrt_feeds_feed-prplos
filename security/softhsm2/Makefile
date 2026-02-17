@@ -40,7 +40,8 @@ define Package/softhsm2/install
 	$(CP) ./files/softhsm2.conf $(1)/etc/softhsm2.conf
 	$(CP) ./files/softhsm $(1)/etc/init.d/
 	$(CP) ./files/certificate-uri $(1)/etc/init.d/
-	$(CP) ./files/ca.crt $(1)/usr/share/ca-certificates/
+	$(MKDIR) /usr/share/ca-certificates/TheBundle
+	$(CP) ./files/ca.crt $(1)/usr/share/ca-certificates/TheBundle/
 	$(CP) ./files/ca.key $(1)/root/certs/
 endef
 
