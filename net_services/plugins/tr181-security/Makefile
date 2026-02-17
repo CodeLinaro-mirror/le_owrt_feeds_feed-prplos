@@ -3,11 +3,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-security
-PKG_VERSION:=feat-107-for-feat-63-c
+PKG_VERSION:=feat-107-for-feat-417/1
 SHORT_DESCRIPTION:=TR-181 compatible security plugin
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=feat-107-for-feat-63-c
+PKG_SOURCE_VERSION:=feat-107-for-feat-417/1
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-security.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
