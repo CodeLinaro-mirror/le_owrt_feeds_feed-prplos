@@ -11,6 +11,14 @@ config SAH_AMX_TR181_CONMON
     bool "Build TR-181 Connection Monitor plugin"
     default y
 
+config SAH_AMX_TR181_CONMON_START_ORDER
+    int "Start up order for the tr181-conmon plugin"
+    default 98
+
+config SAH_AMX_TR181_CONMON_STOP_ORDER
+    int "Shutdown order for the tr181-conmon plugin"
+    default 78
+
 config SAH_AMX_TR181_CONMON_RUN_AS_USER
     string "User will be used for the tr181-conmon plugin"
     default "tr181_app"
