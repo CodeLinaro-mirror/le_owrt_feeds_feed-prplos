@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-security
-PKG_VERSION:=v0.8.2
+PKG_VERSION:=v0.9.0
 SHORT_DESCRIPTION:=TR-181 compatible security plugin
 
-PKG_SOURCE:=tr181-security-v0.8.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-security/-/archive/v0.8.2
-PKG_HASH:=d47fadf150fc366613b05f6a59d19b1ce9691f40c7d58360978fdf3c298ec86c
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-security-v0.8.2
+PKG_SOURCE:=tr181-security-v0.9.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-security/-/archive/v0.9.0
+PKG_HASH:=38a681f1b0ef8e401ef681298d2cd22c5e90d27ce9848920aaa6f0576c94edd4
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-security-v0.9.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -39,7 +39,6 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxb
   DEPENDS += +libsahtrace
   DEPENDS += +libamxo
-  DEPENDS += +libamxm
   DEPENDS += +mod-dmext
   DEPENDS += +libopenssl
   MENU:=1
