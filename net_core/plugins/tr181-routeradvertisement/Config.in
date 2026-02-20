@@ -19,6 +19,14 @@ config SAH_SERVICES_AMX-TR181ROUTERADVERTISEMENT_RUN_AS_GROUP
     string "Group will be used for the tr181-routeradvertisement plugin"
     default "tr181_app"
 
+config SAH_SERVICES_AMX-TR181ROUTERADVERTISEMENT_START_ORDER
+    int "Init start up order for the tr181-routeradvertisement plugin"
+    default 40
+
+config SAH_SERVICES_AMX-TR181ROUTERADVERTISEMENT_STOP_ORDER
+    int "Init stop order for the tr181-routeradvertisement plugin"
+    default 60
+
 endmenu
 
 endif
