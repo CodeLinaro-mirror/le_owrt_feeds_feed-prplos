@@ -11,9 +11,13 @@ config SAH_AMX_TR181_MCASTD_CORE_PLUGIN
     bool "Build mcastd's user space app"
     default y
 
-config SAH_AMX_TR181_MCASTD_CORE_PLUGIN_ORDER
+config SAH_AMX_TR181_MCASTD_CORE_PLUGIN_START_ORDER
     int "mcastd startup order"
     default 22
+
+config SAH_AMX_TR181_MCASTD_CORE_PLUGIN_STOP_ORDER
+    int "mcastd stop order"
+    default 78
 
 config SAH_AMX_TR181_MCASTD_CORE_PLUGIN_QUERY_MCAST_IPTV_INTF
     bool "Find out ifindex of mcast-iptv interface"
