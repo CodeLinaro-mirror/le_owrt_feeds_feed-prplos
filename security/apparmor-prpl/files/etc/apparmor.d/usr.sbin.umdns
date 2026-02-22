@@ -1,0 +1,16 @@
+abi <abi/3.0>,
+
+include <tunables/global>
+
+profile umdns /usr/sbin/umdns flags=(attach_disconnected) {
+  include <abstractions/base>
+  include <abstractions/nameservice>
+
+  capability net_raw,
+  capability dac_override,
+  capability kill,
+
+  network unix stream,
+
+  /etc/seccomp/umdns.json r,
+}
