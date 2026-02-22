@@ -24,6 +24,8 @@ profile dnsmasq /usr/sbin/dnsmasq flags=(attach_disconnected, complain) {
   /tmp/TZ r,
   /tmp/dhcp.hostsfile rw,
   /tmp/dhcp.leases rw,
+  /tmp/dhcp.leases rw,
+  /tmp/dhcp.leases w,
   /tmp/dnsmasq.d/ r,
   /tmp/dnsmasq_conf/ r,
   /tmp/dnsmasq_conf/* r,

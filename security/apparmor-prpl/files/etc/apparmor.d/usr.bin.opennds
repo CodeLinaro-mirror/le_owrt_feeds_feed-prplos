@@ -8,5 +8,4 @@ profile opennds /usr/bin/opennds flags=(attach_disconnected, complain) {
 
   /bin/busybox ix,
   /bin/busybox mr,
-
 }
