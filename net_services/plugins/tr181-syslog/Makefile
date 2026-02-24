@@ -8,7 +8,7 @@ SHORT_DESCRIPTION:=TR-181 compatible syslog
 
 PKG_SOURCE:=tr181-syslog-v1.12.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-syslog/-/archive/v1.12.0
-PKG_HASH:=c323d8160daf490c6e75fd7e9b15a48471b18f3e39ab794ce580a6814024e500
+PKG_HASH:=d66244496d55aa6c19124ba51d8b2249bff8168c80289ed13563a9904b782bb3
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-syslog-v1.12.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
