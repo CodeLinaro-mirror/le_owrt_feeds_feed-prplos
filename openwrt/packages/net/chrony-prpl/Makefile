@@ -8,13 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=chrony-prpl
-PKG_VERSION:=gen_4.4_v0.1.0
+PKG_VERSION:=gen_4.4_v0.2.0
 PKG_RELEASE:=1
 
-PKG_VERSION:=gen_4.4_v0.1.0
 PKG_SOURCE:=chrony-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/chrony/-/archive/$(PKG_VERSION)
-PKG_HASH:=3e83ecbd3ba6af195c0f1713743cc097d1d5ba5b6b571b417598162d5738a7cd
+PKG_HASH:=471a29e28d4f2a4441e4a800f07bacc80e8b0e60aa8ffa2ee1b6b38084f37288
 PKG_BUILD_DIR:=$(BUILD_DIR)/chrony-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Miroslav Lichvar <mlichvar0@gmail.com>
