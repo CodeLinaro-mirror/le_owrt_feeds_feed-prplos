@@ -17,6 +17,7 @@ define DMMInit/Install
 	if [[ "${CONFIG_PACKAGE_procd}" != "y" ]]; then \
 	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/S$(CONFIG_DMM_USP_DISCOVERY_ORDER)$(COMPONENT); \
 	ln -sfr ${PKG_INSTALL_DIR}/etc/init.d/$(COMPONENT) ${PKG_INSTALL_DIR}/etc/rc.d/K$(CONFIG_DMM_USP_DISCOVERY_ORDER)$(COMPONENT); \
+	fi
 endef
 
 include $(INCLUDE_DIR)/package.mk
