@@ -1,0 +1,28 @@
+config PACKAGE_datacollect-agent
+    tristate
+    select SAH_DATACOLLECT_AGENT
+
+if PACKAGE_datacollect-agent
+
+menu "Select datacollect-agent build options"
+    depends on PACKAGE_datacollect-agent
+
+config SAH_DATACOLLECT_AGENT
+    bool "Build the DataCollect agent plugin"
+    default y
+
+config SAH_DATACOLLECT_AGENT_START_ORDER
+    int "DataCollect agent plugin start up order"
+    default 95
+
+config SAH_DATACOLLECT_AGENT_STOP_ORDER
+    string "DataCollect agent plugin shutdown order"
+    default "05"
+
+config SAH_DATACOLLECT_PERSIST_PATH
+    string "Path where is stored configuration file and persistence file"
+    default "/etc/config/datacollect/agent"
+
+endmenu
+
+endif
