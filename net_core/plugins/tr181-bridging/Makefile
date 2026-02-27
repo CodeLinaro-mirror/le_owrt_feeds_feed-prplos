@@ -6,9 +6,12 @@ PKG_NAME:=tr181-bridging
 PKG_VERSION:=v2.15.0
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-bridging-v2.15.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bridging/-/archive/v2.15.0
-PKG_HASH:=8a90d1c02c8cbdbb8e0c8169387588903763313b143508e7d0bd794826f92a6d
+#PKG_SOURCE:=tr181-bridging-v2.15.0.tar.gz
+#PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bridging/-/archive/v2.15.0
+#PKG_HASH:=8a90d1c02c8cbdbb8e0c8169387588903763313b143508e7d0bd794826f92a6d
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=PPW-991_extender_config_overflow
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bridging.git
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bridging-v2.15.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent

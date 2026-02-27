@@ -6,9 +6,12 @@ PKG_NAME:=odl-generator
 PKG_VERSION:=v1.15.2
 SHORT_DESCRIPTION:=Odl generator using ucode
 
-PKG_SOURCE:=odl-generator-v1.15.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/odl-generator/-/archive/v1.15.2
-PKG_HASH:=91044c11f117365b191ebbbe3e3146ecdb8f40852b1202bf88f7362439b3413f
+#PKG_SOURCE:=odl-generator-v1.15.2.tar.gz
+#PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/odl-generator/-/archive/v1.15.2
+#PKG_HASH:=91044c11f117365b191ebbbe3e3146ecdb8f40852b1202bf88f7362439b3413f
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/odl-generator.git
+PKG_SOURCE_VERSION:=PPW-991_extender_config_overflow
 PKG_BUILD_DIR:=$(BUILD_DIR)/odl-generator-v1.15.2
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent

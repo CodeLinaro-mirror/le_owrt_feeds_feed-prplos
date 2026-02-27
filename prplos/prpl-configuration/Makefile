@@ -17,6 +17,10 @@ endef
 
 define Package/prpl-configuration/install
 	$(CP) ./files/common/* $(1)/
+
+	$(INSTALL_DIR) $(1)/etc/env.d/
+	echo "echo \"export PRPL_CPE_OPMODE=\\\"${CONFIG_PRPL_CPE_OPMODE}\\\"\"  >> /var/etc/environment" > $(1)/etc/env.d/10-build_type.sh
+	chmod +x $(1)/etc/env.d/10-build_type.sh
 endef
 
 define Package/prpl-configuration/config
