@@ -20,8 +20,8 @@ config SAH_AMX_TR181_DHCPV4CLIENT_RUN_AS_GROUP
     default "tr181_app"
 
 config SAH_AMX_TR181_DHCPV4CLIENT_SENTOPTION_125
-    string "Vendor-Identifying Vendor-Specific Information Option to sent in DHCP requests"
-    default ""
+     bool "Send Vendor-Identifying Vendor-Specific Information Option in DHCP requests"
+     default y
 
 config SAH_AMX_TR181_DHCPV4CLIENT_START_ORDER
     int "Init start up order for the TR-181 DHCPV4CLIENT plugin"

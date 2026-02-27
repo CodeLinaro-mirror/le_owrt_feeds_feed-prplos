@@ -17,6 +17,10 @@ endef
 
 define Package/prpl-configuration/install
 	$(CP) ./files/common/* $(1)/
+
+	$(INSTALL_DIR) $(1)/etc/ucode-conf.d/
+	echo "export PRPL_CPE_OPMODE=\"${CONFIG_PRPL_CPE_OPMODE}\"" > $(1)/etc/ucode-conf.d/10_cpe_opmode.sh
+	chmod +x $(1)/etc/ucode-conf.d/10_cpe_opmode.sh
 endef
 
 define Package/prpl-configuration/config
