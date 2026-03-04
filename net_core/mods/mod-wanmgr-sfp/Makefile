@@ -1,15 +1,15 @@
-# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
 # WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-sfp/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-wanmgr-sfp
-PKG_VERSION:=v0.1.3
+PKG_VERSION:=v0.1.6
 SHORT_DESCRIPTION:=SoC module to update wan-manager on the newly detected or removed sfp details
 
-PKG_SOURCE:=mod-wanmgr-sfp-v0.1.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-sfp/-/archive/v0.1.3
-PKG_HASH:=4259aa21bf38f5f79eb4efbf358307d577453899526f317748b1991523bb7ce6
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-wanmgr-sfp-v0.1.3
+PKG_SOURCE:=mod-wanmgr-sfp-v0.1.6.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-sfp/-/archive/v0.1.6
+PKG_HASH:=c65f3e935b0d4c246c5c6ed4cb235f08a4a4c98ffb396d65b3ec208b08fe9782
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-wanmgr-sfp-v0.1.6
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
