@@ -21,7 +21,7 @@ include $(INCLUDE_DIR)/package.mk
 define KernelPackage/$(PKG_NAME)
   SUBMENU:=Other modules
   TITLE:=sysregister kernel module
-  FILES:=$(PKG_BUILD_DIR)/$(PKG_NAME).ko
+  FILES:=$(PKG_BUILD_DIR)/src/$(PKG_NAME).ko
   KCONFIG:=
   AUTOLOAD:=$(call AutoLoad,99,sysregister)
 endef
