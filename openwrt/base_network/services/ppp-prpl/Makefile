@@ -31,6 +31,8 @@ PKG_BUILD_FLAGS:=gc-sections lto
 PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
 
+TARGET_CFLAGS += -Wno-error=incompatible-pointer-types
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/ppp-prpl
