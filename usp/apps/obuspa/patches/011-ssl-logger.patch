@@ -1,0 +1,48 @@
+diff --git a/src/vendor/vendor.c b/src/vendor/vendor.c
+index b7762ef..77dea17 100644
+--- a/src/vendor/vendor.c
++++ b/src/vendor/vendor.c
+@@ -91,6 +91,33 @@ static bool can_mtp_connect(void)
+    return true;
+ }
+ 
++#if 1
++static void keylog_callback(const SSL *ssl, const char *line)
++{
++    USP_LOG_Warning("%s: enter function", __FUNCTION__);
++    const char *path = getenv("SSLKEYLOGFILE");
++    if (!path) {
++        return;
++    }
++
++    FILE *f = fopen(path, "a");
++    if (f) {
++        USP_LOG_Warning("%s: log TLS credentials to %s", __FUNCTION__, path);
++        fprintf(f, "%s\n", line);
++        fclose(f);
++    }
++}
++
++static void enable_ssl_keylog(SSL_CTX *ctx)
++{
++    USP_LOG_Warning("%s: enter function", __FUNCTION__);
++    if (getenv("SSLKEYLOGFILE")) {
++        USP_LOG_Info("%s: nakra: registering ssl keylog", __FUNCTION__);
++        SSL_CTX_set_keylog_callback(ctx, keylog_callback);
++    }
++}
++#endif
++
+ static int load_agent_cert(SSL_CTX *ctx)
+ {
+     int err = USP_ERR_OK;
+@@ -169,6 +196,9 @@ static int load_agent_cert(SSL_CTX *ctx)
+         }
+     }
+ 
++#if 1
++    enable_ssl_keylog(ctx);
++#endif
+     return err;
+ }
+ 
