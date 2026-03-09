@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-xpon-prpl
-PKG_VERSION:=v1.0.9
+PKG_VERSION:=dev_main_PCF-2009
 SHORT_DESCRIPTION:=xpon prpl module
 
-PKG_SOURCE:=mod-xpon-prpl-v1.0.9.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-xpon-prpl/-/archive/v1.0.9
-PKG_HASH:=cb46c49223b7df7cbde11deff51da248ab772775643c3da68ba58be1d95a3c7a
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-xpon-prpl-v1.0.9
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_main_PCF-2009
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-xpon-prpl.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -21,7 +22,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=Modules
+  SUBMENU:=Ambiorix
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-xpon-prpl
   DEPENDS += +libamxc
@@ -34,21 +35,8 @@ define Package/$(PKG_NAME)
   MENU:=1
 endef
 
-
-define Package/$(PKG_NAME)-mock
-  CATEGORY:=ambiorix
-  SUBMENU:=Modules
-  TITLE:=$(SHORT_DESCRIPTION) mock
-  URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-xpon-prpl
-  DEPENDS += $(PKG_NAME)
-endef
-
 define Package/$(PKG_NAME)/description
 	xpon prpl module
-endef
-
-define Package/$(PKG_NAME)-mock/description
-	xpon prpl module mock
 endef
 
 define Build/Compile
@@ -73,12 +61,4 @@ define Package/$(PKG_NAME)/install
 	find $(1) -name *.pc -exec rm {} +;
 endef
 
-define Package/$(PKG_NAME)-mock/install
-	$(INSTALL_DIR) $(1)/opt/prplos/usr/bin
-	$(CP) $(PKG_BUILD_DIR)/test_interactive/onu_hal_mock/onu_hal_mock/src/onu_hal_mock $(1)/opt/prplos/usr/bin/xpon-onu-hal-mock
-	$(CP) $(PKG_BUILD_DIR)/test_interactive/onu_hal_mock/dbgtool/src/dbgtool $(1)/opt/prplos/usr/bin/xpon-onu-hal-mock-dbgtool
-endef
-
 $(eval $(call BuildPackage,$(PKG_NAME)))
-$(eval $(call BuildPackage,$(PKG_NAME)-mock))
-
