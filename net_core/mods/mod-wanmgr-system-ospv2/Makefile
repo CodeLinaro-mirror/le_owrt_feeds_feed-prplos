@@ -1,15 +1,15 @@
 # WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
-# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-system/-/blob/main/baf.yml instead
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-system-ospv2/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=mod-wanmgr-system
-PKG_VERSION:=v0.3.1
-SHORT_DESCRIPTION:=SoC module wan-manager handles system level changes
+PKG_NAME:=mod-wanmgr-system-ospv2
+PKG_VERSION:=v0.1.0
+SHORT_DESCRIPTION:=SoC module wan-manager handles system level changes for the OSPv2 board
 
-PKG_SOURCE:=mod-wanmgr-system-v0.3.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-system/-/archive/v0.3.1
-PKG_HASH:=e21aaaa93fdbb18f0b62dc798867ad64442aee030de5c4cb44e5c43f2d149d05
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-wanmgr-system-v0.3.1
+PKG_SOURCE:=mod-wanmgr-system-ospv2-v0.1.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-system-ospv2/-/archive/v0.1.0
+PKG_HASH:=941cd86a184d4d42b8a13b771ddbeded741e8718a936eaa94d096d973491eb2a
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-wanmgr-system-ospv2-v0.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -21,9 +21,9 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=Other
+  SUBMENU:=Ambiorix
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-system
+  URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-system-ospv2
   DEPENDS += +libamxc
   DEPENDS += +libamxj
   DEPENDS += +libamxm
@@ -34,7 +34,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-	SoC module wan-manager handles system level changes
+	SoC module wan-manager handles system level changes for the OSPv2 board
 endef
 
 define Build/Compile
