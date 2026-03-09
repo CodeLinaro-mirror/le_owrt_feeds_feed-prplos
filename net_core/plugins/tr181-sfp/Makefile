@@ -1,15 +1,15 @@
-# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
 # WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-sfp/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-sfp
-PKG_VERSION:=v0.5.1
+PKG_VERSION:=v0.5.0
 SHORT_DESCRIPTION:=TR-181 compatible plugin for SFP
 
-PKG_SOURCE:=tr181-sfp-v0.5.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-sfp/-/archive/v0.5.1
-PKG_HASH:=fd65ee8e3e873f10d566e3cd9ac13f9f95aab30754113a51afda6a491c8d7520
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-sfp-v0.5.1
+PKG_SOURCE:=tr181-sfp-v0.5.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-sfp/-/archive/v0.5.0
+PKG_HASH:=2bdc7efec8a004e70c6305b1a47bba755cbb89c8f935fdd3eaa1cb20c2735aae
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-sfp-v0.5.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -20,10 +20,10 @@ PKG_RELEASE:=1
 
 define SAHInit/Install
 	install -d $(1)/etc/rc.d/
-ifneq ($(CONFIG_PACKAGE_procd),y)
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_SFP_ORDER)$(COMPONENT)
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_SFP_ORDER)$(COMPONENT)
-endif
+	if [[ "${CONFIG_PACKAGE_procd}" != "y" ]]; then \
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_SFP_ORDER)$(COMPONENT); \
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_SFP_ORDER)$(COMPONENT); \
+	fi
 endef
 
 include $(INCLUDE_DIR)/package.mk
