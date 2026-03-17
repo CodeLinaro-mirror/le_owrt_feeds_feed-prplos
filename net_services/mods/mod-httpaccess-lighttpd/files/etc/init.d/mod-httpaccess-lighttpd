@@ -2,7 +2,23 @@
 
 START=48
 
+CERT="/usr/share/ca-certificates/lighttpd.pem"
+KEY="/tmp/lighttpd.key"
+TMP_CERT="/tmp/lighttpd.crt"
+
+generate_server_certificate() {
+    if [ ! -f "$CERT" ]; then
+        mkdir -p /usr/share/ca-certificates
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+            -keyout "$KEY" -out "$TMP_CERT" \
+            -subj "/CN=PRPLWARE"
+        cat "$KEY" "$TMP_CERT" > "$CERT"
+        rm -f "$KEY" "$TMP_CERT"
+    fi
+}
+
 boot() {
     mkdir -p /var/log/lighttpd
     chown lighttpd:lighttpd /var/log/lighttpd/
+    generate_server_certificate
 }
