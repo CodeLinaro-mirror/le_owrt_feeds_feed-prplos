@@ -63,7 +63,7 @@ Device.STOMP.Connection.1.ServerRetryIntervalMultiplier "1000"
 Device.STOMP.Connection.1.ServerRetryMaxInterval "30720"
 
 # Controller 1, MTP = MQTT
-Device.LocalAgent.Controller.1.MTP.2.Alias "cpe-1"
+Device.LocalAgent.Controller.1.MTP.2.Alias "cpe-3"
 Device.LocalAgent.Controller.1.MTP.2.Enable "true"
 Device.LocalAgent.Controller.1.MTP.2.Protocol "MQTT"
 Device.LocalAgent.Controller.1.MTP.2.MQTT.Reference "Device.MQTT.Client.1"
@@ -72,7 +72,7 @@ Device.LocalAgent.Controller.1.MTP.2.MQTT.Topic "/controller-path"
 # LocalAgent, MQTT
 Device.LocalAgent.MTP.3.MQTT.ResponseTopicConfigured "/queue/agent-1"
 Device.LocalAgent.MTP.3.MQTT.Reference "Device.MQTT.Client.1"
-Device.LocalAgent.MTP.3.Alias "cpe-1"
+Device.LocalAgent.MTP.3.Alias "cpe-3"
 Device.LocalAgent.MTP.3.Enable "true"
 Device.LocalAgent.MTP.3.Protocol "MQTT"
 
@@ -83,8 +83,8 @@ Device.MQTT.Client.1.BrokerPort "8883"
 Device.MQTT.Client.1.TransportProtocol "TLS"
 Device.MQTT.Client.1.Username "qacafe"
 Device.MQTT.Client.1.Password "qacafe123"
-Device.MQTT.Client.1.Alias "cpe-1"
-Device.MQTT.Client.1.Enable true
+Device.MQTT.Client.1.Alias "cpe-3"
+Device.MQTT.Client.1.Enable "true"
 Device.MQTT.Client.1.ClientID ""
 Device.MQTT.Client.1.KeepAliveTime "60"
 Device.MQTT.Client.1.ConnectRetryTime "5"
@@ -92,21 +92,21 @@ Device.MQTT.Client.1.ConnectRetryIntervalMultiplier   "2000"
 Device.MQTT.Client.1.ConnectRetryMaxInterval "60"
 
 # Controller 1, MTP = Websocket
-Device.LocalAgent.Controller.1.MTP.3.Alias "cpe-1"
+Device.LocalAgent.Controller.1.MTP.3.Alias "cpe-4"
 Device.LocalAgent.Controller.1.MTP.3.Enable "true"
 Device.LocalAgent.Controller.1.MTP.3.Protocol "WebSocket"
 Device.LocalAgent.Controller.1.MTP.3.WebSocket.Host "controller.cdroutertest.com"
-Device.LocalAgent.Controller.1.MTP.3.WebSocket.Port 443
+Device.LocalAgent.Controller.1.MTP.3.WebSocket.Port "443"
 Device.LocalAgent.Controller.1.MTP.3.WebSocket.Path "/controller-path"
 Device.LocalAgent.Controller.1.MTP.3.WebSocket.EnableEncryption "true"
 
 # LocalAgent, WebSocket
-Device.LocalAgent.MTP.4.Alias "cpe-1"
+Device.LocalAgent.MTP.4.Alias "cpe-4"
 Device.LocalAgent.MTP.4.Enable "true"
 Device.LocalAgent.MTP.4.Protocol "WebSocket"
 Device.LocalAgent.MTP.4.WebSocket.Path "/queue/agent-1"
-
-
+Device.LocalAgent.MTP.4.WebSocket.Port "443"
+Device.LocalAgent.MTP.4.WebSocket.EnableEncryption "true"
 
 # For USP service
 Device.UnixDomainSockets.UnixDomainSocket.1.Alias "cpe-1"
