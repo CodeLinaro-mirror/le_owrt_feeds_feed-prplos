@@ -83,7 +83,7 @@ register_service()
 	# procd_append_param command -l /var/log/obuspa
 
 	# -v Sets the debug verbosity log level: 0=Off, 1=Error(default), 2=Warning, 3=Info
-	# procd_append_param command -v 2
+	procd_append_param command -v 4
 	if [ -f "${CA_FILE}" ]; then
 		procd_append_param command -t ${CA_FILE}
 	fi
