@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=v1.40.1
+PKG_VERSION:=PPW-1668_fix_firewall_ip_filtering
 SHORT_DESCRIPTION:=TR069 Manager
 
-PKG_SOURCE:=tr069-manager-v1.40.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.40.1
-PKG_HASH:=774ff754c60a514021fbd01685cb3e20919d94b6c8613a4615b6664712784ed1
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.40.1
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=PPW-1668/fix_firewall_ip_filtering
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
