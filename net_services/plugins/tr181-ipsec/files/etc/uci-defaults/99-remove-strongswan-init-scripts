@@ -1,0 +1,10 @@
+#!/bin/sh
+
+for INIT_SCRIPT in ipsec swanctl; do
+    if [[ -f "$IPKG_INSTROOT/etc/init.d/$INIT_SCRIPT" ]]; then
+        "${SHELL:-sh}" "$IPKG_INSTROOT/etc/rc.common" "$IPKG_INSTROOT/etc/init.d/$INIT_SCRIPT" disable
+        rm -f "$IPKG_INSTROOT/etc/init.d/$INIT_SCRIPT"
+    fi
+done
+
+exit 0
