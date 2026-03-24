@@ -19,6 +19,12 @@ config SAH_AMX_TR181_XPON_MAX_ONUS
     int "Maximum number of ONUs"
     default 1
 
+config SAH_AMX_TR181_XPON_DISABLE_SUPPORT_FOR_PM_OBJECTS
+    bool "Remove support for performance monitoring (PM) objects"
+    default n
+	help
+	  Say Y if tr181-xpon should not support querying the parameters of the PM objects. The XPON DM always shows the PM objects, independent of the value of this option. Set to Y if your config uses a PON vendor module which does not support the PM objects to avoid error or warning messages when PM objects are queried for such a PON vendor module. Then the parameters of the PM objects stay 0.
+
 config SAH_AMX_TR181_XPON_USE_NETDEV_COUNTERS
     bool "Get counters from netdev"
     default n
