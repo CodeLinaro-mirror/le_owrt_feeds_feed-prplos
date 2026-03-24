@@ -1,0 +1,24 @@
+config PACKAGE_tr181-ipsec
+    tristate
+    select SAH_AMX_TR181_IPSEC
+
+if PACKAGE_tr181-ipsec
+
+menu "Select tr181-ipsec build options"
+    depends on PACKAGE_tr181-ipsec
+
+config SAH_AMX_TR181_IPSEC
+    bool "Build tr181-ipsec plugin"
+    default y
+
+config SAH_AMX_TR181_IPSEC_START_ORDER
+    int "start up order of tr181-ipsec plugin"
+    default 84
+
+config SAH_AMX_TR181_IPSEC_STOP_ORDER
+    int "shutdown order of tr181-ipsec plugin"
+    default 16
+
+endmenu
+
+endif
