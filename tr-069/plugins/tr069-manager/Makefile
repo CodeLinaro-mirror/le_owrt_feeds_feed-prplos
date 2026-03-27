@@ -11,7 +11,7 @@ PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069
 PKG_SOURCE_VERSION:=FEAT-416/rm
 PKG_SOURCE_SUBDIR:=tr069-manager-FEAT-416-rm
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
-PKG_MIRROR_HASH:=skip
+PKG_MIRROR_HASH:=25a7b4542c992a3516aa9fc7db8c7decdca7f71362616af4c28e1e281de606b1
 
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
