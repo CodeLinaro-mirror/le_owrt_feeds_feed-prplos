@@ -1,11 +1,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=uboot-hosttools
-PKG_VERSION:=v2025.04
+PKG_VERSION:=v2026.01
 SHORT_DESCRIPTION:=U-Boot upstream bootloader for host tools
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=v2025.04
+PKG_SOURCE_VERSION:=v2026.01
 PKG_SOURCE_URL:=https://github.com/u-boot/u-boot
 PKG_MIRROR_HASH:=979c88d50c323877a270fcac46e4fa615bb7887798a4dd0af883420df9533428
 PKG_BUILD_DEPENDS:=libopenssl
@@ -24,13 +24,13 @@ include $(INCLUDE_DIR)/host-build.mk
 include $(TOPDIR)/feeds/packages/lang/python/python3-host.mk
 
 # Same as HostPython3/PipInstall() from python3-host.mk but with no check on hashes
+# and allowing installing dependencies from downloaded binaries
 define HostPython3/PipInstall
 	$(call locked, \
 		$(HOST_PYTHON3_VARS) \
 		$(HOST_PYTHON3_PIP_VARS) \
 		$(HOST_PYTHON3_PIP) \
 			install \
-			--no-binary :all: \
 			--progress-bar off \
 			$(1) \
 		$(if $(CONFIG_PYTHON3_HOST_PIP_CACHE_WORLD_READABLE), \
