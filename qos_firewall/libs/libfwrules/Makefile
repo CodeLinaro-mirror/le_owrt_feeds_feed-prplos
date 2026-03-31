@@ -1,15 +1,15 @@
-# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
 # WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/libraries/libfwrules/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libfwrules
-PKG_VERSION:=v2.11.1
+PKG_VERSION:=proj_prplware-v4.2.0_optimizations_v0.1.0
 SHORT_DESCRIPTION:=A library to store ordered firewall rules
 
-PKG_SOURCE:=libfwrules-v2.11.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfwrules/-/archive/v2.11.1
-PKG_HASH:=fbf5b841bfe8497477e23023c789b26eeb508aff2388241db7e82adc5efd322f
-PKG_BUILD_DIR:=$(BUILD_DIR)/libfwrules-v2.11.1
+PKG_SOURCE:=libfwrules-proj_prplware-v4.2.0_optimizations_v0.1.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfwrules/-/archive/proj_prplware-v4.2.0_optimizations_v0.1.0
+PKG_HASH:=9dd3da038a3066a48e1481b20ae7113063f5b429fcd79e383d94f4c1e8d57a49
+PKG_BUILD_DIR:=$(BUILD_DIR)/libfwrules-proj_prplware-v4.2.0_optimizations_v0.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
