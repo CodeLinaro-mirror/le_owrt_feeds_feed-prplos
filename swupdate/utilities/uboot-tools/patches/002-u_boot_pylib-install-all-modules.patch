@@ -1,0 +1,35 @@
+From 2a1bcefce835b827bbf88a9e112d646c5c4af9c1 Mon Sep 17 00:00:00 2001
+From: Paul HENRYS <paul.henrys_ext@softathome.com>
+Date: Tue, 31 Mar 2026 10:06:36 +0200
+Subject: [PATCH] tools: u_boot_pylib: ensure all Python modules are installed
+
+Add setuptools package configuration to pyproject.toml so that
+u_boot_pylib is installed as a proper Python package without changing
+the existing flat directory structure and making sure all modules are
+installed.
+
+Signed-off-by: Paul HENRYS <paul.henrys_ext@softathome.com>
+Reviewed-by: Simon Glass <sjg@chromium.org>
+---
+ tools/u_boot_pylib/pyproject.toml | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/tools/u_boot_pylib/pyproject.toml b/tools/u_boot_pylib/pyproject.toml
+index a860d134551..ed04d956b4e 100644
+--- a/tools/u_boot_pylib/pyproject.toml
++++ b/tools/u_boot_pylib/pyproject.toml
+@@ -21,5 +21,11 @@ classifiers = [
+ "Homepage" = "https://docs.u-boot.org"
+ "Bug Tracker" = "https://source.denx.de/groups/u-boot/-/issues"
+ 
++[tool.setuptools]
++packages = ["u_boot_pylib"]
++
++[tool.setuptools.package-dir]
++u_boot_pylib = ""
++
+ [tool.setuptools.package-data]
+ u_boot_pylib = ["*.rst"]
+-- 
+2.43.0
+
