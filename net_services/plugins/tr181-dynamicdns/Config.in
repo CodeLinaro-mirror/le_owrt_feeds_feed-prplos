@@ -17,6 +17,14 @@ config SAH_DYNAMIC_DNS_START_ORDER
 
 config SAH_DYNAMIC_DNS_STOP_ORDER
     int "Init stop order for the the TR-181 Device.DynamicDNS plugin"
+    default 75
+
+config SAH_DYNAMIC_DNS_BACKUPRESTORE_ORDER
+    int "DYNAMIC-DNS plugin backup restore order"
+    default 10
+
+config SAH_DYNAMIC_DNS_DEBUGINFO_ORDER
+    int "DYNAMIC-DNS plugin debug info order"
     default 10
 
 endmenu
