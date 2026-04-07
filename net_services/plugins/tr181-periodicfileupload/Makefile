@@ -1,15 +1,15 @@
-# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
 # WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-periodicfileupload/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-periodicfileupload
-PKG_VERSION:=v0.4.0
+PKG_VERSION:=v0.6.1
 SHORT_DESCRIPTION:=periodic uploaded file manager
 
-PKG_SOURCE:=tr181-periodicfileupload-v0.4.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-periodicfileupload/-/archive/v0.4.0
-PKG_HASH:=e84f391092adbb9f105f6c1337d101754fb5e91fc42375d3b62897d9ced7f66b
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-periodicfileupload-v0.4.0
+PKG_SOURCE:=tr181-periodicfileupload-v0.6.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-periodicfileupload/-/archive/v0.6.1
+PKG_HASH:=3f3d7ef0073f4401520db794f308647c9e9eb891854a5fd558831eedc8720c96
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-periodicfileupload-v0.6.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -20,10 +20,10 @@ PKG_RELEASE:=1
 
 define SAHInit/Install
 	install -d $(1)/etc/rc.d/
-	if [[ "${CONFIG_PACKAGE_procd}" != "y" ]]; then \
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_PERIODICFILEUPLOAD_ORDER)$(COMPONENT); \
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_PERIODICFILEUPLOAD_ORDER)$(COMPONENT); \
-	fi
+ifneq ($(CONFIG_PACKAGE_procd),y)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_PERIODICFILEUPLOAD_ORDER)$(COMPONENT)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_PERIODICFILEUPLOAD_ORDER)$(COMPONENT)
+endif
 endef
 
 include $(INCLUDE_DIR)/package.mk
