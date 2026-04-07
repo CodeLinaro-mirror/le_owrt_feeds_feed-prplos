@@ -11,13 +11,13 @@ config SAH_AMX_GMAP_CLIENT
     bool "Build the gMap client plugin"
     default y
 
-config SAH_AMX_GMAP_CLIENT_ORDER
+config SAH_AMX_GMAP_CLIENT_START_ORDER
     int "gMap client plugin startup order"
     default 82
 
-config SAH_AMX_GMAP_CLIENT_ONE_PROCESS
-    bool "All gMap client modules run in same process"
-    default n
+config SAH_AMX_GMAP_CLIENT_STOP_ORDER
+    int "gMap client plugin shutdown order"
+    default 18
 
 endmenu
 
