@@ -4,7 +4,7 @@ START=20
 
 LABEL="cpe-key"
 CA_KEY_DIR="/root/certs"
-CA_CERT_DIR="/usr/share/ca-certificates"
+CA_CERT_DIR="/usr/share/ca-certificates/test"
 DEVICE_CERT_DIR="/etc/config/autocert"
 SOFTHSM_TOKEN_DIR="/etc/softhsm/tokens"
 
