@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cellular-manager
-PKG_VERSION:=v1.7.0
+PKG_VERSION:=v1.6.0
 SHORT_DESCRIPTION:=Cellular plugin
 
-PKG_SOURCE:=cellular-manager-v1.7.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/cellular-manager/-/archive/v1.7.0
-PKG_HASH:=222b4f12997a20f24d2bcfc833aec0ff2f23d75ce00bb96c41ff74400a1e30bf
-PKG_BUILD_DIR:=$(BUILD_DIR)/cellular-manager-v1.7.0
+PKG_SOURCE:=cellular-manager-v1.6.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/cellular-manager/-/archive/v1.6.0
+PKG_HASH:=4442e8c071de57ea873930613f19cf11eb8a66a20093fff9c9ebedfef99488b5
+PKG_BUILD_DIR:=$(BUILD_DIR)/cellular-manager-v1.6.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -36,7 +36,6 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxb
   DEPENDS += +libamxc
   DEPENDS += +libamxd
-  DEPENDS += +libamxj
   DEPENDS += +libamxm
   DEPENDS += +libamxo
   DEPENDS += +libamxp
