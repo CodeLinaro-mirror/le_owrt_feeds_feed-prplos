@@ -1,0 +1,99 @@
+#!/bin/sh /etc/rc.common
+
+START=80
+
+extra_command "enable_onboard_gnss" "enable onboard GNSS"
+extra_command "disable_onboard_gnss" "disable onboard GNSS"
+extra_command "enable_modem_gnss" "enable 5G modem GNSS"
+extra_command "disable_modem_gnss" "disable 5G modem GNSS"
+
+board_init() {
+	. /lib/functions.sh
+
+	local board_name=$(board_name)
+
+	case "$board_name" in
+	"prpl,freedom")
+		local soc_base expander_base label base
+
+		for chip in /sys/class/gpio/gpiochip*; do
+			if [ -f "$chip/label" ]; then
+				label="$(cat "$chip/label")"
+				base="$(cat "$chip/base")"
+				if [ "$label" = "1000000.pinctrl" ]; then
+					soc_base="$base"
+				else
+					expander_base="$base"
+				fi
+			fi
+		done
+
+		if [ -z "$soc_base" ] || [ -z "$expander_base" ]; then
+			echo "Error: Failed to detect soc_base or expander_base." >&2
+			exit 1
+		fi
+
+		modem_gnss_gpio_pwr=$((expander_base + 4))
+
+		gnss_gpio_pwr=$((expander_base + 0))
+		gnss_gpio_wake_up=$((expander_base + 15))
+		gnss_gpio_reset=$((expander_base + 14))
+		;;
+	*)
+		echo "Unsupported board: $board_name"
+		exit 1
+		;;
+	esac
+}
+
+gpio_export_pin() {
+	local pin=$1
+	[ -d /sys/class/gpio/gpio${pin} ] || echo $pin >/sys/class/gpio/export
+	echo out >/sys/class/gpio/gpio${pin}/direction
+}
+
+gpio_init() {
+	gpio_export_pin $gnss_gpio_reset
+	gpio_export_pin $gnss_gpio_wake_up
+	gpio_export_pin $gnss_gpio_pwr
+	gpio_export_pin $modem_gnss_gpio_pwr
+}
+
+initialize() {
+	board_init
+	gpio_init
+}
+
+enable_onboard_gnss() {
+	board_init
+	echo 0 >/sys/class/gpio/gpio${gnss_gpio_pwr}/value
+	sleep .01
+	echo 0 >/sys/class/gpio/gpio${gnss_gpio_wake_up}/value
+	sleep .01
+	echo 0 >/sys/class/gpio/gpio${gnss_gpio_reset}/value
+	sleep .01
+	echo 1 >/sys/class/gpio/gpio${gnss_gpio_reset}/value
+	sleep .01
+}
+
+disable_onboard_gnss() {
+	board_init
+	echo 0 >/sys/class/gpio/gpio${gnss_gpio_reset}/value
+	sleep .01
+}
+
+enable_modem_gnss() {
+	board_init
+	echo 1 >/sys/class/gpio/gpio${modem_gnss_gpio_pwr}/value
+	sleep .01
+}
+
+disable_modem_gnss() {
+	board_init
+	echo 0 >/sys/class/gpio/gpio${modem_gnss_gpio_pwr}/value
+}
+
+boot() {
+	initialize
+	enable_onboard_gnss
+}
