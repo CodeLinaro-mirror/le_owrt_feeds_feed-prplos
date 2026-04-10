@@ -8,7 +8,7 @@ menu "Select tr181-sfp build options"
     depends on PACKAGE_tr181-sfp
 
 config SAH_AMX_TR181_SFP
-    bool "Build a tr181 compatible time plugin"
+    bool "Build a TR-181 compatible SFP plugin"
     default y
 
 config SAH_AMX_TR181_SFP_ORDER
