@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-routeradvertisement
-PKG_VERSION:=v0.23.0
+PKG_VERSION:=v0.26.0
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-routeradvertisement-v0.23.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routeradvertisement/-/archive/v0.23.0
-PKG_HASH:=a6178856998dba70aace827c7131b58703d98485237d78cda9b2f147129471fb
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routeradvertisement-v0.23.0
+PKG_SOURCE:=tr181-routeradvertisement-v0.26.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routeradvertisement/-/archive/v0.26.0
+PKG_HASH:=269c02a09e63aaaf9ed6053c13a2bf036909ae50297d2825855f04ec61d52fd7
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routeradvertisement-v0.26.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
