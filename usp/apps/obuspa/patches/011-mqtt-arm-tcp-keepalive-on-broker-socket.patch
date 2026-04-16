@@ -1,0 +1,80 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Petr Štetiar <petr.stetiar@prplfoundation.org>
+Date: Thu, 16 Apr 2026 12:00:00 +0200
+Subject: [PATCH] mqtt: arm TCP keepalive on the broker socket
+
+obuspa relies entirely on libmosquitto's application-layer PINGREQ
+timer (Device.MQTT.Client.{i}.KeepAliveTime) to detect a broken MQTT
+session. When the WAN address is briefly removed and re-added (e.g.
+DHCP renewal in CDRouter prplos.1.2.9 on OSPv2), the TCP socket can
+remain ESTABLISHED in the kernel while no traffic flows end-to-end.
+PINGREQ writes succeed into the kernel buffer, libmosquitto thinks
+the ping was sent, and obuspa never notices the dead peer.
+
+Arm SO_KEEPALIVE with tight probe values (idle=10, intvl=5, cnt=3)
+on the libmosquitto-owned socket immediately after each successful
+mosquitto_connect_bind_v5() / mosquitto_connect(). The kernel then
+reports the dead peer within ~25 s; the resulting socket error
+surfaces through mosquitto_loop_read/write and triggers a reconnect
+via the existing HandleMqttError path.
+
+libmosquitto creates a fresh fd on every connect, so the setsockopt
+must be re-applied here. setsockopt failures are logged at warning
+level but do not abort the connection.
+
+Fixes: PPW-1837
+Assisted-by: claude:opus-4-7:1m-context
+Signed-off-by: Petr Štetiar <petr.stetiar@prplfoundation.org>
+---
+ src/core/mqtt.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/src/core/mqtt.c b/src/core/mqtt.c
+--- a/src/core/mqtt.c
++++ b/src/core/mqtt.c
+@@ -49,6 +49,7 @@
+ #include <errno.h>
+ #include <math.h>
+ #include <fcntl.h>
++#include <netinet/tcp.h>
+ #include <openssl/ssl.h>
+ #include <openssl/bio.h>
+ #include <openssl/err.h>
+@@ -2647,6 +2648,37 @@ int Connect(mqtt_client_t *client)
+         goto exit;
+     }
+
++    // Arm TCP keepalive on the libmosquitto-owned socket so the kernel
++    // detects a silently half-dead peer (e.g. after a WAN DHCP renewal
++    // that leaves the socket in ESTABLISHED with no traffic) within
++    // ~ TCP_KEEPIDLE + TCP_KEEPCNT * TCP_KEEPINTVL seconds. The error
++    // surfaces through mosquitto_loop_read/write and triggers reconnect
++    // via the existing HandleMqttError path. libmosquitto creates a new
++    // fd on every connect, so this must be re-applied here. Failures
++    // are non-fatal.
++    {
++        int sock = mosquitto_socket(client->mosq);
++        if (sock != -1)
++        {
++            int on = 1;
++            int idle = 10;
++            int intvl = 5;
++            int cnt = 3;
++
++            if (setsockopt(sock, SOL_SOCKET,  SO_KEEPALIVE,  &on,    sizeof(on))    != 0)
++                USP_LOG_Warning("%s: setsockopt(SO_KEEPALIVE) failed: %s",  __FUNCTION__, strerror(errno));
++
++            if (setsockopt(sock, IPPROTO_TCP, TCP_KEEPIDLE,  &idle,  sizeof(idle))  != 0)
++                USP_LOG_Warning("%s: setsockopt(TCP_KEEPIDLE) failed: %s",  __FUNCTION__, strerror(errno));
++
++            if (setsockopt(sock, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl)) != 0)
++                USP_LOG_Warning("%s: setsockopt(TCP_KEEPINTVL) failed: %s", __FUNCTION__, strerror(errno));
++
++            if (setsockopt(sock, IPPROTO_TCP, TCP_KEEPCNT,   &cnt,   sizeof(cnt))   != 0)
++                USP_LOG_Warning("%s: setsockopt(TCP_KEEPCNT) failed: %s",   __FUNCTION__, strerror(errno));
++        }
++    }
++
+ exit:
+     // Free the connect properties (MQTTv5 only)
+     if (proplist != NULL)
