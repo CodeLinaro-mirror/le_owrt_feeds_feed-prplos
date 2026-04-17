@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-gre
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=dev_FEAT-375
 SHORT_DESCRIPTION:=Network Model gre client
 
-PKG_SOURCE:=netmodel-gre-v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-gre/-/archive/v0.1.0
-PKG_HASH:=48ad35b5a4026146c26b62989824c667dcd8082bafd382e2087a4934c533d368
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-gre-v0.1.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_FEAT-375
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-gre.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
