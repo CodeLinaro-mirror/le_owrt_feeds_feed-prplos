@@ -3,11 +3,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-gre
-PKG_VERSION:=dev_FEAT-150
+PKG_VERSION:=dev_FEAT-375
 SHORT_DESCRIPTION:=Network Model gre client
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=dev_FEAT-150
+PKG_SOURCE_VERSION:=dev_FEAT-375
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-gre.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
