@@ -11,7 +11,7 @@ RESET_FILE="/etc/config/obuspa_param_reset.txt"
 SQL_DB_FILE="/etc/obuspa.db"
 
 # Points to CA Bundle data model entry relevant for USP communication
-CA_BUNDLE="Security.CABundle.1"
+CA_BUNDLE="Security.CABundle.test"
 # Points to device private key and certificate data model entry relevant for USP communication
 # For non-mTLS communication shall be empty.
 DEVICE_KEY_CERT="Security.Certificate.2"
