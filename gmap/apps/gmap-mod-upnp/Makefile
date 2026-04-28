@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-mod-upnp
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=v0.3.1
 SHORT_DESCRIPTION:=Module to expose upnp information in gMap
 
-PKG_SOURCE:=gmap-mod-upnp-v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-mod-upnp/-/archive/v0.1.0
-PKG_HASH:=0fe8efbd5e4aae5c12c883f5a18c6f6f16a25dd555a41c70ecd09a6521dfd1fa
-PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mod-upnp-v0.1.0
+PKG_SOURCE:=gmap-mod-upnp-v0.3.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-mod-upnp/-/archive/v0.3.1
+PKG_HASH:=6d7b7c6c964c3fb06c5f651b35404c9bb62b7b92d1f2b204847138d55bbc6b09
+PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-mod-upnp-v0.3.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
