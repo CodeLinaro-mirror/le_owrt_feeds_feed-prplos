@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dhcpv6s-manager
-PKG_VERSION:=v0.29.0
+PKG_VERSION:=v0.29.1
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-dhcpv6s-v0.29.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6s/-/archive/v0.29.0
-PKG_HASH:=d02898273c15b665064b97bdeafa79070d643e3ff895cf71de1c83ddec4d287a
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6s-v0.29.0
+PKG_SOURCE:=tr181-dhcpv6s-v0.29.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv6s/-/archive/v0.29.1
+PKG_HASH:=63975bb91e8a572e44c0e30a0e67460c9d7ef32119bb4017fcdbbc9ea3bde1fd
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv6s-v0.29.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -40,6 +40,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxb
   DEPENDS += +libamxo
   DEPENDS += +libamxm
+  DEPENDS += +libipat
   DEPENDS += +libsahtrace
   DEPENDS += +libnetmodel
   DEPENDS += +libdhcpoptions
