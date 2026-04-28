@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hosts-manager
-PKG_VERSION:=proj_prplware-v4.2.0_optimizations_v0.1.0
+PKG_VERSION:=proj_prplware-v4.2.0_optimizations_v0.2.0
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-hosts-proj_prplware-v4.2.0_optimizations_v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-hosts/-/archive/proj_prplware-v4.2.0_optimizations_v0.1.0
-PKG_HASH:=be877e1184629fe40526ad3c8f074c0cf1d9dd6dc10f58a02621f84750851a61
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-hosts-proj_prplware-v4.2.0_optimizations_v0.1.0
+PKG_SOURCE:=tr181-hosts-proj_prplware-v4.2.0_optimizations_v0.2.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-hosts/-/archive/proj_prplware-v4.2.0_optimizations_v0.2.0
+PKG_HASH:=c027fb7b40e02ffd72369a6b0c5c5f8485f3a5fcbfe95e7f188096adf153dae8
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-hosts-proj_prplware-v4.2.0_optimizations_v0.2.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
