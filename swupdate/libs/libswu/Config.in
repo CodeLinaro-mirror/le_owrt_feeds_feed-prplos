@@ -1,0 +1,91 @@
+config PACKAGE_libswu
+    tristate
+    select SAH_LIB_SWU
+
+if PACKAGE_libswu
+
+menu "Select libswu build options"
+    depends on PACKAGE_libswu
+
+config SAH_LIB_SWU
+    bool "Build libswu library"
+    default y
+	help
+	  Library to hide board-specific aspects related to SW upgrade
+
+choice
+    prompt "storage type"
+    default SAH_LIB_SWU_UBI
+
+config SAH_LIB_SWU_UBI
+    bool "ubi"
+
+config SAH_LIB_SWU_VFLASH
+    bool "vflash (BCM flash abstraction layer)"
+
+config SAH_LIB_SWU_GPT
+    bool "GPT"
+
+endchoice
+
+config SAH_LIB_SWU_UBI_DEVICE_NUMBER
+    int "UBI device number"
+    default 0
+	help
+	  UBI device with UBI volumes to upgrade.
+
+config SAH_LIB_SWU_TOOLS
+    bool "Build the debug tool libswu-tool"
+    default n
+	help
+	  Say Y if you want to build and install the libswu-tool to debug this library. If unsure, say N.
+
+config SAH_LIB_SWU_PREVIOUS_STAGE_NAME
+    string "U-boot previous stage name"
+    default "U-boot-prestage"
+	help
+	  lib_swu parses the sah-mailbox for a flag named uboot-prestage-version. If this flag is found, the value is added to sw-versions file. The matching image name in the sw-versions file is this configuration option value.
+
+config SAH_LIB_SWU_SWUPDATE_PUBKEY
+    string "SWUpdate public key path"
+    default "/security/sbl/public.pem"
+
+config SAH_LIB_SWU_SWUPDATE_MIN_VERSION
+    string "Update file minimum version"
+    default ""
+	help
+	  Setting this option will enable SWUpdate '-N' command line flag, specifying a minimum version. If the .swu file version (specified in header) is strictly lower, upgrade will be denied. Use this option with care, when you definitely want to forbid downgrade under a specific version.
+
+choice
+    prompt "Dual-bank scheme"
+    default SAH_LIB_SWU_DUAL_BANK_SBL
+	help
+	  There are multiple schemes for partitioning and boot loader control of dual-bank upgrades and booting. lib_swu must be configured to support the scheme used on the target platform.
+	  Select "SoftAtHome SBL" for SoftAtHome's own Secure Bootloader scheme.
+	  Select "Broadcom BSP 5.04+" for the scheme supported by Broadcom U-Boot in BSP 5.04 onward.
+
+config SAH_LIB_SWU_DUAL_BANK_SBL
+    bool "SoftAtHome SBL"
+
+config SAH_LIB_SWU_DUAL_BANK_BCM504
+    bool "Broadcom BSP 5.04+"
+
+endchoice
+
+choice
+    prompt "select flash layout format"
+    default SAH_LIB_SWU_FLASH_LAYOUT_SOP
+	help
+	  lib_swu must select the flash layout format used on the target platform.
+
+config SAH_LIB_SWU_FLASH_LAYOUT_SOP
+    bool "SAH SOP flash layout"
+
+config SAH_LIB_SWU_FLASH_LAYOUT_PRPL
+    bool "PRPL flash layout"
+
+endchoice
+
+endmenu
+
+endif
