@@ -1,0 +1,30 @@
+# Copyright (C) 2024 OpenWrt
+#
+# Kconfig entries for libubootenv and fw-printenv.
+
+menu "Libraries"
+
+config PACKAGE_libubootenv
+	bool "libubootenv - Library to access U-Boot environment variables"
+	default n
+	help
+	  libubootenv provides a hardware-independent API to access the
+	  U-Boot environment (configuration variables stored by U-Boot).
+	  Select this if you need the library directly or if another
+	  package depends on it.
+
+endmenu
+
+menu "Utilities"
+
+config PACKAGE_fw-printenv
+	bool "fw_printenv / fw_setenv - U-Boot environment tools"
+	default n
+	select PACKAGE_libubootenv
+	help
+	  Command-line tools to read and modify U-Boot environment variables.
+	  Includes:
+	    * fw_printenv — print environment variables
+	    * fw_setenv  — set environment variables
+
+endmenu
