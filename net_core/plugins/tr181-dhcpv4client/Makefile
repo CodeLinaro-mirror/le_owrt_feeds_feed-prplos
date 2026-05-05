@@ -1,15 +1,15 @@
-# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
 # WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4client/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-dhcpv4client
-PKG_VERSION:=v1.30.1
+PKG_VERSION:=proj_prplware-v4.2.0_optimizations_v0.1.0
 SHORT_DESCRIPTION:=TR-181 compatible DHCPv4 client
 
-PKG_SOURCE:=tr181-dhcpv4client-v1.30.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4client/-/archive/v1.30.1
-PKG_HASH:=4e3ad68412aa69ca44800a77a4ba71c294595f4447c84743491c4280ac7ec176
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4client-v1.30.1
+PKG_SOURCE:=tr181-dhcpv4client-proj_prplware-v4.2.0_optimizations_v0.1.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4client/-/archive/proj_prplware-v4.2.0_optimizations_v0.1.0
+PKG_HASH:=e8480b51cc259bd84450ae8756f9dbe8c9ecf394efd5884ec55acd55eee48e9d
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4client-proj_prplware-v4.2.0_optimizations_v0.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -20,10 +20,10 @@ PKG_RELEASE:=1
 
 define SAHInit/Install
 	install -d $(1)/etc/rc.d/
-	if [[ "${CONFIG_PACKAGE_procd}" != "y" ]]; then \
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_DHCPV4CLIENT_START_ORDER)$(COMPONENT); \
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_DHCPV4CLIENT_STOP_ORDER)$(COMPONENT); \
-	fi
+ifneq ($(CONFIG_PACKAGE_procd),y)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_DHCPV4CLIENT_START_ORDER)$(COMPONENT)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_DHCPV4CLIENT_STOP_ORDER)$(COMPONENT)
+endif
 endef
 
 include $(INCLUDE_DIR)/package.mk
