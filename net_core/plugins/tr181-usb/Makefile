@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-usb
-PKG_VERSION:=v0.6.0
+PKG_VERSION:=v0.7.0
 SHORT_DESCRIPTION:=TR-181 USB manager
 
-PKG_SOURCE:=tr181-usb-v0.6.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usb/-/archive/v0.6.0
-PKG_HASH:=a07ccdf4d7c15fd9fce0162e63114e0349597e59c23761951c225485e754036c
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-usb-v0.6.0
+PKG_SOURCE:=tr181-usb-v0.7.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-usb/-/archive/v0.7.0
+PKG_HASH:=6d3883f051aacf06183ab9a115779f4f366fc7bb56e64f164390fc06c572528b
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-usb-v0.7.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
