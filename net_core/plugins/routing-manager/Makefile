@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=routing-manager
-PKG_VERSION:=v1.31.0
+PKG_VERSION:=feature_PCF_2235_ip_passthrough
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-routing-v1.31.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routing/-/archive/v1.31.0
-PKG_HASH:=f6361887387982050a6e4855daa447cdeb4e82878eaf43a104af923d8a9fd2fa
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-routing-v1.31.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=feature_PCF_2235_ip_passthrough
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-routing.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
