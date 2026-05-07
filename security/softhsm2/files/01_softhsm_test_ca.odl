@@ -1,0 +1,10 @@
+%populate {
+    object Security.CABundle {
+        instance add ("test") {
+            parameter Enable = true;
+            parameter Name = "test";
+            parameter CADirURI = "file:///usr/share/ca-certificates/test";
+            parameter CAFileURI = "file:///usr/share/ca-certificates/test/ca-certificate.crt";
+        }
+    }
+}
