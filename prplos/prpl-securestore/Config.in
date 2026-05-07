@@ -1,0 +1,16 @@
+config PRPL_SECUREBOOT
+	bool "Enable prpl secure boot (securestore partition)"
+	select PACKAGE_prpl-securestore
+	help
+	  When enabled, the securestore partition will be mounted at /cfg
+	  during boot. Required for secure eMMC boot configurations.
+
+config PRPL_SFL_SECURESTORE_LABEL
+	string
+	depends on PRPL_SECUREBOOT
+	prompt "Securestore partition label"
+	default "securestore"
+	help
+	  The partition label used to identify the securestore partition.
+	  The securestore init script will search for a partition with this
+	  label to mount at /cfg.
