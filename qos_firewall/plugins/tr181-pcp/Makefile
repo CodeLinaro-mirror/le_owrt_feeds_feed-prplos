@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-pcp
-PKG_VERSION:=v0.13.0
+PKG_VERSION:=proj_prplware-v4.2.0_optimizations_v0.1.0
 SHORT_DESCRIPTION:=Port control protocol
 
-PKG_SOURCE:=tr181-pcp-v0.13.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcp/-/archive/v0.13.0
-PKG_HASH:=3ead5196d2630038a2b2a7ce62c634a84a089ee1fe34e1193968c635679ecdb7
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-pcp-v0.13.0
+PKG_SOURCE:=tr181-pcp-proj_prplware-v4.2.0_optimizations_v0.1.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-pcp/-/archive/proj_prplware-v4.2.0_optimizations_v0.1.0
+PKG_HASH:=c121be78e5dfbbc54b55e32ce59c5faa12dca146406b9e4f986bfdc75c5dfab8
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-pcp-proj_prplware-v4.2.0_optimizations_v0.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
