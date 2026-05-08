@@ -47,6 +47,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libxml2
   DEPENDS += +SAH_AMX_PCM_TARBALL:libarchive
   DEPENDS += +libopenssl
+  DEPENDS += +SAH_AMX_PCM_SECURESTORE:prpl-securestore
   MENU:=1
 endef
 
