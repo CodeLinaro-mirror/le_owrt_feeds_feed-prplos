@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=amx-faultmonitor
-PKG_VERSION:=proj_prplware-v4.2.0_optimizations_v0.1.0
+PKG_VERSION:=proj_prplware-v4.2.0_optimizations_v0.1.1
 SHORT_DESCRIPTION:=Plugin to track and log faults in userspace programs
 
-PKG_SOURCE:=faultmonitor-proj_prplware-v4.2.0_optimizations_v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/faultmonitor/-/archive/proj_prplware-v4.2.0_optimizations_v0.1.0
-PKG_HASH:=71b5b72d5ee2521f3864e86b584b69254e2df37a6b721c4c851055687d29d5b7
-PKG_BUILD_DIR:=$(BUILD_DIR)/faultmonitor-proj_prplware-v4.2.0_optimizations_v0.1.0
+PKG_SOURCE:=faultmonitor-proj_prplware-v4.2.0_optimizations_v0.1.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/faultmonitor/-/archive/proj_prplware-v4.2.0_optimizations_v0.1.1
+PKG_HASH:=dab242b3fdd2335231a496b172466814c183ccffb80d7e87c0a35e261d03767f
+PKG_BUILD_DIR:=$(BUILD_DIR)/faultmonitor-proj_prplware-v4.2.0_optimizations_v0.1.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
