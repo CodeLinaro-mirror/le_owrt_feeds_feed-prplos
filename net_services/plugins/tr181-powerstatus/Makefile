@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-powerstatus
-PKG_VERSION:=v0.5.0
+PKG_VERSION:=proj_prplware-v4.2.0_optimizations_v0.1.0
 SHORT_DESCRIPTION:=tr181-powerstatus plugin
 
-PKG_SOURCE:=tr181-powerstatus-v0.5.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-powerstatus/-/archive/v0.5.0
-PKG_HASH:=081945f19f61817c1ad1b0b84464cff89c0a55240c4f06f0195ec17977b73b47
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-powerstatus-v0.5.0
+PKG_SOURCE:=tr181-powerstatus-proj_prplware-v4.2.0_optimizations_v0.1.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-powerstatus/-/archive/proj_prplware-v4.2.0_optimizations_v0.1.0
+PKG_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-powerstatus-proj_prplware-v4.2.0_optimizations_v0.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
