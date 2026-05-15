@@ -3,7 +3,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-firewall
-PKG_VERSION:=v8.16.0
+PKG_VERSION:=FIX_FEAT-437
 SHORT_DESCRIPTION:=TR181 firewall manager
 
 PKG_SOURCE:=tr181-firewall-v8.16.0.tar.gz

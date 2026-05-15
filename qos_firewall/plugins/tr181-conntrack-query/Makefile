@@ -3,7 +3,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-conntrack-query
-PKG_VERSION:=v0.4.1
+PKG_VERSION:=FIX_FEAT-437
 SHORT_DESCRIPTION:=tr181-conntrack-query interface plugin
 
 PKG_SOURCE:=tr181-conntrack-query-v0.4.1.tar.gz

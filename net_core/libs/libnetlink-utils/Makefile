@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libnetlink-utils
-PKG_VERSION:=v0.1.3
+PKG_VERSION:=dev_main_HOP-11948
 SHORT_DESCRIPTION:=Netlink utility library
 
 PKG_SOURCE:=libnetlink-utils-v0.1.3.tar.gz
