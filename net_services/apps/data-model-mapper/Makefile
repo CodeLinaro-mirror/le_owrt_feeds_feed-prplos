@@ -1,14 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=data-model-mapper
-PKG_VERSION:=v0.2.0
+PKG_VERSION:=v0.3.0
 PKG_RELEASE:=1
 PKG_LICENSE:=BSD-2-Clause-Patent
 
-PKG_SOURCE:=data-model-mapper-v0.2.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/applications/data-model-mapper/-/archive/v0.2.0
-PKG_HASH:=b4aec11d18c0d439ccf0503123c6322990f79298e318967a0e13875658ed04ab
-PKG_BUILD_DIR:=$(BUILD_DIR)/data-model-mapper-v0.2.0
+PKG_SOURCE:=data-model-mapper-v0.3.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/applications/data-model-mapper/-/archive/v0.3.0
+PKG_HASH:=fc8fa294e414899ff7b20c865f336d7a1c302ef7327fa2d042e9150e8398e966
+PKG_BUILD_DIR:=$(BUILD_DIR)/data-model-mapper-v0.3.0
 
 COMPONENT:=data-model-mapper
 
