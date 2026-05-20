@@ -36,8 +36,14 @@ define Package/$(PKG_NAME)/config
 	source "$(SOURCE)/Config.in"
 endef
 
+PRPLOS_VERSION := $(strip $(shell $(SCRIPT_DIR)/prplos_version.sh))
+EXTRA_CFLAGS += -DPRPLOS_VERSION='\"$(PRPLOS_VERSION)\"'
+
 define Build/Compile
-	@echo "Nothing to build"
+	@echo "Selected board: $(CONFIG_IMAGEGENERATOR_BOARD)"
+	$(call Build/Compile/Default, \
+	    BOARD=$(CONFIG_IMAGEGENERATOR_BOARD) \
+	    CFLAGS=$(EXTRA_CFLAGS))
 endef
 
 define Package/$(PKG_NAME)/install
