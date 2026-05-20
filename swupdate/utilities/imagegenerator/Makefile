@@ -53,12 +53,11 @@ define Package/$(PKG_NAME)/install
 endef
 
 define Host/Compile
-	@echo "Selected board: $(CONFIG_IMAGEGENERATOR_BOARD)"
+	@echo "Nothing to build for the host"
 endef
 
 define Host/Install
-	$(MAKE) -C $(HOST_BUILD_DIR) BOARD=$(CONFIG_IMAGEGENERATOR_BOARD) \
-	    install DESTDIR=$(HOST_BUILD_DIR)
+	@echo "Nothing to install for the host"
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
