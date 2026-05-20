@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=to avoid suppression of host membership reports on bridge int
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=mcastd-noforward_proj_prplware-v4.2.0_optimizations
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/mibs/gmap-mibs-common.git
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/mcastd-noforward.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
