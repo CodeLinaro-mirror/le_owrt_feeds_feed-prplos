@@ -1,14 +1,15 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=uboot-hosttools
+PKG_NAME:=uboot-tools
 PKG_VERSION:=v2026.01
-SHORT_DESCRIPTION:=U-Boot upstream bootloader for host tools
+SHORT_DESCRIPTION:=U-Boot upstream bootloader for tools
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=v2026.01
 PKG_SOURCE_URL:=https://github.com/u-boot/u-boot
 PKG_MIRROR_HASH:=979c88d50c323877a270fcac46e4fa615bb7887798a4dd0af883420df9533428
 PKG_BUILD_DEPENDS:=libopenssl
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=GPL-2.0-or-later
 PKG_LICENSE_FILES:=LICENSE
@@ -46,10 +47,28 @@ define Package/$(PKG_NAME)
   SUBMENU:=Image Generation
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://source.denx.de/u-boot/u-boot.git
+  DEPENDS += +libopenssl
 endef
 
 define Package/$(PKG_NAME)/description
-	U-Boot host tools
+	U-Boot tools
+endef
+
+define Build/Compile
+	$(MAKE) STAGINGDIR=$(STAGING_DIR) \
+	-C $(PKG_BUILD_DIR) \
+	tools-only_defconfig \
+	scripts_dtc tools-only
+endef
+
+define Package/$(PKG_NAME)/install
+	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
+	fi
+	find $(1) -name *.a -exec rm {} +;
+	find $(1) -name *.h -exec rm {} +;
+	find $(1) -name *.pc -exec rm {} +;
 endef
 
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
