@@ -27,6 +27,7 @@ endif
 endef
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/nls.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
@@ -44,7 +45,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libsahtrace
   DEPENDS += +mod-dmext
   DEPENDS += +mod-pcm-svc
-  DEPENDS += +libxml2
+  DEPENDS += +libxml2 $(ICONV_DEPENDS)
   DEPENDS += +SAH_AMX_PCM_TARBALL:libarchive
   DEPENDS += +libopenssl
   MENU:=1

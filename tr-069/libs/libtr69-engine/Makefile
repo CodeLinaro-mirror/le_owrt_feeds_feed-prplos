@@ -18,6 +18,7 @@ PKG_LICENSE_FILES:=LICENSE
 PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/nls.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
@@ -30,7 +31,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libamxb
   DEPENDS += +libamxo
   DEPENDS += +libsahtrace
-  DEPENDS += +libxml2
+  DEPENDS += +libxml2 $(ICONV_DEPENDS)
   MENU:=1
 endef
 

@@ -27,6 +27,7 @@ endif
 endef
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/nls.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
@@ -51,7 +52,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libnetmodel
   DEPENDS += +libfiletransfer
   DEPENDS += +libgmap-client
-  DEPENDS += +libxml2
+  DEPENDS += +libxml2 $(ICONV_DEPENDS)
   MENU:=1
 endef
 
