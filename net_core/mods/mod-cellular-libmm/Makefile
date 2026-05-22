@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-cellular-libmm
-PKG_VERSION:=v1.4.0
+PKG_VERSION:=dev_PPW-1992
 SHORT_DESCRIPTION:=SoC module to help handling Linux Cellular Implementation
 
-PKG_SOURCE:=mod-cellular-libmm-v1.4.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-cellular-libmm/-/archive/v1.4.0
-PKG_HASH:=9a609c333e46ee5887d8ec0ca790350c10b5cd563bba2772afd4f48a1390f817
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-cellular-libmm-v1.4.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PPW-1992
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-cellular-libmm.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
