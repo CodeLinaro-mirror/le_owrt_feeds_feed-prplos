@@ -15,7 +15,7 @@ PKG_LICENSE_FILES:=LICENSE
 
 PKG_RELEASE:=1
 PKG_BUILD_DEPENDS += imagegenerator/host
-HOST_BUILD_DEPENDS += uboot-hosttools/host
+HOST_BUILD_DEPENDS += uboot-tools/host
 HOST_BUILD_DEPENDS += swugenerator/host
 
 include $(INCLUDE_DIR)/package.mk
