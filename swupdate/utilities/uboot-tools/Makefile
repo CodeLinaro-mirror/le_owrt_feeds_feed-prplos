@@ -73,6 +73,9 @@ define Package/$(PKG_NAME)/install
 	$(foreach tool,$(UBOOT_CROSS_TOOLS), \
 		$(INSTALL_BIN) $(PKG_BUILD_DIR)/tools/$(tool) $(1)/usr/bin/; \
 	)
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
+	fi
 endef
 
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
