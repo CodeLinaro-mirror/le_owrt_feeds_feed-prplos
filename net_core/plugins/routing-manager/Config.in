@@ -23,6 +23,16 @@ config SAH_AMX_TR181_ROUTING_ROUTER_DISCOVERY
     bool "Enable TR-181 Routing router discovery functionality"
     default n
 
+config SAH_AMX_TR181_ROUTING_PASSTHROUGH_TABLE_ID
+    int "Passthrough policy routing table ID (Device.Routing.Router.2)"
+    depends on SAH_AMX_TR181_ROUTING
+    default 100
+    range 1 254
+    help
+      Linux routing table number for IP passthrough (Router instance Alias Passthrough).
+      Sets Routing.Router.2 Name and ID at build time. Default 100.
+      tr181-passthrough reads this via RouterReference.
+
 config SAH_AMX_TR181_ROUTING_START_ORDER
     int "Start up order"
     default 30
