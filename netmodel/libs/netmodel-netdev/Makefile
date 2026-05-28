@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-netdev
-PKG_VERSION:=proj_prplware-v4.2.0_optimizations_v0.1.0
+PKG_VERSION:=dev_optimizations_libamxs
 SHORT_DESCRIPTION:=Network Model NetDev client
 
-PKG_SOURCE:=netmodel-netdev-proj_prplware-v4.2.0_optimizations_v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-netdev/-/archive/proj_prplware-v4.2.0_optimizations_v0.1.0
-PKG_HASH:=53aa0f94db1bfac7d9a96911cc353872550590b64d5239c80d166acf89580dbd
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-netdev-proj_prplware-v4.2.0_optimizations_v0.1.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_optimizations_libamxs
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-netdev.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
