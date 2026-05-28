@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libnetmodel
-PKG_VERSION:=proj_prplware-v4.2.0_optimizations_v0.1.0
+PKG_VERSION:=proj_prplware-v4.2.0_optimizations_v0.1.1
 SHORT_DESCRIPTION:=NetModel client library
 
-PKG_SOURCE:=libnetmodel-proj_prplware-v4.2.0_optimizations_v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel/-/archive/proj_prplware-v4.2.0_optimizations_v0.1.0
-PKG_HASH:=3b0947b0cfdcbd9ca9a0104ae995499355494629e81f244a199a339829c3e25f
-PKG_BUILD_DIR:=$(BUILD_DIR)/libnetmodel-proj_prplware-v4.2.0_optimizations_v0.1.0
+PKG_SOURCE:=libnetmodel-proj_prplware-v4.2.0_optimizations_v0.1.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libnetmodel/-/archive/proj_prplware-v4.2.0_optimizations_v0.1.1
+PKG_HASH:=c9d6aae20952a08147606d72d87f0a1532f95a7b3c69d570b30bcaf657a6b5c3
+PKG_BUILD_DIR:=$(BUILD_DIR)/libnetmodel-proj_prplware-v4.2.0_optimizations_v0.1.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
