@@ -28,6 +28,7 @@ define Package/mstpd
   CATEGORY:=Network
   TITLE:=Multiple Spanning Tree Protocol daemon
   URL:=https://github.com/mstpd/mstpd
+  DEPENDS:=+libubox +libubus
 endef
 
 define Package/mstpd/description
@@ -42,6 +43,9 @@ endef
 TARGET_CFLAGS += \
 	-DRTNL_RCV_BUFSIZE=$(CONFIG_MSTPD_RTNL_RCV_BUFSIZE) \
 	-DRTNL_SND_BUFSIZE=$(CONFIG_MSTPD_RTNL_SND_BUFSIZE)
+
+CONFIGURE_ARGS += \
+        --enable-ubus
 
 MAKE_VARS+=MODE=prod
 
