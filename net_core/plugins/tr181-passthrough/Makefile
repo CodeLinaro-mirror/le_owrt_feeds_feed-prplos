@@ -29,7 +29,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
   SUBMENU:=TR-181 Managers
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=http://localhost:8000/dhcp_passthrough/
+  URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-passthrough
   DEPENDS += +libamxc
   DEPENDS += +libamxj
   DEPENDS += +libamxp
