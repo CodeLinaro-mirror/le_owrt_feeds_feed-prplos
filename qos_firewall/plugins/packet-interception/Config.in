@@ -23,6 +23,14 @@ config SAH_AMX_PACKET_INTERCEPTION_SUPPORT_SKIPLOG
     bool "Support skiplog"
     default n
 
+config SAH_AMX_PACKET_INTERCEPTION_NOT_OFFLOAD_MARK
+    int "SKB mark set to not offload packets to hardware accelerator"
+    default 32
+
+config SAH_AMX_PACKET_INTERCEPTION_TCPRESET_MARK
+    int "Connmark set to apply a TCP RST to the connection"
+    default 1
+
 endmenu
 
 endif
