@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mcastd-core
-PKG_VERSION:=v0.3.1
+PKG_VERSION:=v0.5.1
 SHORT_DESCRIPTION:=Kernel module for multicast support
 
-PKG_SOURCE:=mcastd-core-v0.3.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-core/-/archive/v0.3.1
-PKG_HASH:=80327c1a61b805e143a90303c803c301feda558de3320c39b34bcdd8f356492d
-PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-core-v0.3.1
+PKG_SOURCE:=mcastd-core-v0.5.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-core/-/archive/v0.5.1
+PKG_HASH:=2ab6df7c618e36122dac3f97597528e466d820dec89cd4af7b4cf2013d1269cb
+PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-core-v0.5.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -96,3 +96,4 @@ define KernelPackage/$(PKG_NAME)/config
 endef
 
 $(eval $(call KernelPackage,$(PKG_NAME)))
+
