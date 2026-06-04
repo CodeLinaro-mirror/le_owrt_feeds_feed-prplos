@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=amx-processmonitor
-PKG_VERSION:=v0.8.1
+PKG_VERSION:=dev_HOP-12389
 SHORT_DESCRIPTION:=monitor processes
 
-PKG_SOURCE:=amx-processmonitor-v0.8.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/amx-processmonitor/-/archive/v0.8.1
-PKG_HASH:=3b0b760fa9f0af7f3e95be6389fe3e1dd8f062b6ddd80222808ed09de9c96628
-PKG_BUILD_DIR:=$(BUILD_DIR)/amx-processmonitor-v0.8.1
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_HOP-12389
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/amx-processmonitor.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
