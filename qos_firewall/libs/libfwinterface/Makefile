@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libfwinterface
-PKG_VERSION:=v1.9.0
+PKG_VERSION:=feature_PCF_2235_ip_passthrough
 SHORT_DESCRIPTION:=A library providing interfaces between lib_fwrules and netfilter
 
-PKG_SOURCE:=libfwinterface-v1.9.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfwinterface/-/archive/v1.9.0
-PKG_HASH:=effd0eacc360e53071492445c3c43f418153e87349d45c7997addd3f8c1e0a9d
-PKG_BUILD_DIR:=$(BUILD_DIR)/libfwinterface-v1.9.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=feature_PCF_2235_ip_passthrough
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfwinterface.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
