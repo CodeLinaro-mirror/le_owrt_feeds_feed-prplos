@@ -8,13 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=unbound-prpl
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 
-PKG_VERSION:=1.24.0
-PKG_SOURCE:=unbound-prpl-stable-1.24.y_v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/unbound/-/archive/prpl/stable-1.24.y_v0.1.0
-PKG_HASH:=b7f6de6e6fbcc06075d5e309ea17e5ae7b8d1609dcad21d5a63bce8321465609
-PKG_BUILD_DIR:=$(BUILD_DIR)/unbound-prpl-stable-1.24.y_v0.1.0
+PKG_VERSION:=1.25.1
+PKG_SOURCE:=unbound-prpl-stable-1.25.1_v0.1.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/unbound/-/archive/prpl/stable-1.25.1_v0.1.0
+PKG_HASH:=66fdcd279cadeab391fc80527bf7c62293149c2134bcc023436ff125948f81f6
+PKG_BUILD_DIR:=$(BUILD_DIR)/unbound-prpl-stable-1.25.1_v0.1.0
+
 PKG_MAINTAINER:=Eric Luehrsen <ericluehrsen@gmail.com>
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE
