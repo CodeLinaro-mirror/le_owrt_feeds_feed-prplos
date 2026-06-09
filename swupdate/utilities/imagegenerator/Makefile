@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=imagegenerator
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=v0.2.0
 SHORT_DESCRIPTION:=Provide tools to build various format of images
 
-PKG_SOURCE:=imagegenerator-v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/imagegenerator/-/archive/v0.1.0
-PKG_HASH:=d2ed0c62269c0fb8a06324c37fb01b5997b7c8951e7f9d38470413cb4a5dd26f
+PKG_SOURCE:=imagegenerator-v0.2.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/imagegenerator/-/archive/v0.2.0
+PKG_HASH:=fde37b29a4ac5ee9b503c519ffa29b6b21f07c163c8c7fe24ef960e32c4f5e31
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
