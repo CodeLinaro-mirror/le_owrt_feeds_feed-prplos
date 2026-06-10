@@ -31,6 +31,10 @@ config SAH_AMX_TR181_ROUTING_STOP_ORDER
     int "Stop order"
     default 10
 
+config SAH_AMX_TR181_ROUTING_DYN_ROUTING_SUPPPORT
+    bool "Dynamic routing support for the tr181-routing"
+    default y
+
 endmenu
 
 endif
