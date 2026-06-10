@@ -1,0 +1,4 @@
+enable() {
+    logger -t bird -p daemon.warn "bird autostart is handled by tr181-routing"
+    return 0
+}
