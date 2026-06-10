@@ -1,0 +1,5 @@
+define Package/$(PKG_NAME)/install-append
+	cat $(THISDIR)/files/bird.init >> $$(1)/etc/init.d/bird
+endef
+
+$(call append,Package/$(PKG_NAME)/install,$(newline)$(Package/$(PKG_NAME)/install-append))
