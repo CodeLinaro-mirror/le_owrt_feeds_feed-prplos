@@ -13,15 +13,18 @@ PKG_LICENSE_FILES:=LICENSE
 PKG_SOURCE_URL:=https://github.com/sbabic/swugenerator.git
 
 PYTHON3_PKG_BUILD:=0
-HOST_PYTHON3_PACKAGE_BUILD_DEPENDS:=requirements
 HOST_BUILD_DEPENDS:=python3/host
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/host-build.mk
 include $(TOPDIR)/feeds/packages/lang/python/python3-host.mk
 
-# Same as HostPython3/PipInstall() from python3-host.mk but with no check on hashes
-define HostPython3/PipInstall
+# Similar to HostPython3/PipInstall() from python3-host.mk but with no check on hashes
+# since we use it to install SWUGenerator previously downloaded by OpenWrt with hash
+# verification. pip install with --require-hashes cannot work from a local directory.
+# --no-deps is also passed to make sure dependencies are not installed without checking
+# the hash
+define HostPython3/Local/PipInstall
 	$(call locked, \
 		$(HOST_PYTHON3_VARS) \
 		$(HOST_PYTHON3_PIP_VARS) \
@@ -29,6 +32,7 @@ define HostPython3/PipInstall
 			install \
 			--no-binary :all: \
 			--progress-bar off \
+			--no-deps \
 			file://$(1) \
 		$(if $(CONFIG_PYTHON3_HOST_PIP_CACHE_WORLD_READABLE), \
 			&& $(FIND) $(HOST_PYTHON3_PIP_CACHE_DIR) -not -type d -exec chmod go+r  '{}' \; \
@@ -56,8 +60,10 @@ define Host/Compile
 endef
 
 define Host/Install
+	@echo "******* Installing swugenerator dependencies on the host *******"
+	$(call HostPython3/PipInstall,-r requirements.txt)
 	@echo "******* Installing swugenerator on the host *******"
-	$(call HostPython3/PipInstall,$(HOST_BUILD_DIR))
+	$(call HostPython3/Local/PipInstall,$(HOST_BUILD_DIR))
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
