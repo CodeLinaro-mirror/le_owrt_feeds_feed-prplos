@@ -23,16 +23,21 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/host-build.mk
 include $(TOPDIR)/feeds/packages/lang/python/python3-host.mk
 
-# Same as HostPython3/PipInstall() from python3-host.mk but with no check on hashes
-# and allowing installing dependencies from downloaded binaries
-define HostPython3/PipInstall
+# Similar to HostPython3/PipInstall() from python3-host.mk but with no check on hashes
+# since we use it to install SWUGenerator previously downloaded by OpenWrt with hash
+# verification. pip install with --require-hashes cannot work from a local directory.
+# --no-deps is also passed to make sure dependencies are not installed without checking
+# the hash
+define HostPython3/Local/PipInstall
 	$(call locked, \
 		$(HOST_PYTHON3_VARS) \
 		$(HOST_PYTHON3_PIP_VARS) \
 		$(HOST_PYTHON3_PIP) \
 			install \
+			--no-binary :all: \
 			--progress-bar off \
-			$(1) \
+			--no-deps \
+			file://$(1) \
 		$(if $(CONFIG_PYTHON3_HOST_PIP_CACHE_WORLD_READABLE), \
 			&& $(FIND) $(HOST_PYTHON3_PIP_CACHE_DIR) -not -type d -exec chmod go+r  '{}' \; \
 			&& $(FIND) $(HOST_PYTHON3_PIP_CACHE_DIR)      -type d -exec chmod go+rx '{}' \; \
@@ -81,6 +86,7 @@ endef
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
 
 define Host/Compile
+	$(call HostPython3/PipInstall,-r requirements.txt)
 	$(MAKE) STAGINGDIR=$(STAGING_DIR_HOST) \
 		-C $(HOST_BUILD_DIR) \
 		tools-only_defconfig \
@@ -89,13 +95,11 @@ endef
 
 define Host/Install
 	@echo "******* Installing pylib on the host *******"
-	$(call HostPython3/PipInstall,file://$(HOST_BUILD_DIR)/tools/u_boot_pylib)
+	$(call HostPython3/Local/PipInstall,$(HOST_BUILD_DIR)/tools/u_boot_pylib)
 	@echo "******* Installing dtoc on the host *******"
-	$(call HostPython3/PipInstall,file://$(HOST_BUILD_DIR)/tools/dtoc)
+	$(call HostPython3/Local/PipInstall,$(HOST_BUILD_DIR)/tools/dtoc)
 	@echo "******* Installing binman on the host *******"
-	$(call HostPython3/PipInstall,file://$(HOST_BUILD_DIR)/tools/binman)
-	@echo "******* Installing cryptodome on the host *******"
-	$(call HostPython3/PipInstall, pycryptodomex==3.19.1)
+	$(call HostPython3/Local/PipInstall,$(HOST_BUILD_DIR)/tools/binman)
 	@echo "******* Installing mkimage on host *******"
 	$(INSTALL_DIR) $(STAGING_DIR_HOST)/bin
 	$(CP) $(HOST_BUILD_DIR)/tools/mkimage $(STAGING_DIR_HOST)/bin

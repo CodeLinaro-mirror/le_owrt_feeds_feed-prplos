@@ -1,0 +1,3 @@
+setuptools==82.0.1 --hash=sha256:7d872682c5d01cfde07da7bccc7b65469d3dca203318515ada1de5eda35efbf9
+pycryptodomex==3.19.1 --hash=sha256:0b7154aff2272962355f8941fd514104a88cb29db2d8f43a29af900d6398eb1c
+pylibfdt==1.7.2.post1 --hash=sha256:08ec69755f7565dc25e4e640e0315795888d4caeb7f146de4e05bf12b03c94c8
