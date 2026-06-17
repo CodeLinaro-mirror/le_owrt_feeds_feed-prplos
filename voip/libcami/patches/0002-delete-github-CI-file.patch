@@ -1,0 +1,94 @@
+From 2e1ef9f4d5fad2fdcf1543da31a43bd13346b034 Mon Sep 17 00:00:00 2001
+From: Ivan Mytsenko <ivan.mytsenko@globallogic.com>
+Date: Mon, 27 Oct 2025 19:46:41 +0200
+Subject: [PATCH] cami: Delete github CI file
+
+---
+ .github/workflows/main.yml | 75 --------------------------------------
+ 1 file changed, 75 deletions(-)
+ delete mode 100644 .github/workflows/main.yml
+
+diff --git a/.github/workflows/main.yml b/.github/workflows/main.yml
+deleted file mode 100644
+index 266f58e..0000000
+--- a/.github/workflows/main.yml
++++ /dev/null
+@@ -1,75 +0,0 @@
+-name: CI
+-
+-on:
+-  # Triggers the workflow on push or pull request events but only for the master branch
+-  push:
+-    branches: [ master, dev ]
+-  pull_request:
+-    branches: [ master ]
+-
+-  # Allows you to run this workflow manually from the Actions tab
+-  workflow_dispatch:
+-
+-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+-jobs:
+-  debian-12:
+-    runs-on: ubuntu-latest
+-    name: Debian 12
+-    container: debian:12
+-    steps:
+-      - name: Build Asterisk
+-        run: |
+-          cd /usr/src
+-          apt-get update -y
+-          apt-get install -y wget
+-          wget https://raw.githubusercontent.com/InterLinked1/phreakscript/refs/heads/master/phreaknet.sh
+-          chmod +x phreaknet.sh
+-          ./phreaknet.sh make
+-          phreaknet update
+-          phreaknet install --fast --lightweight
+-          echo "" > /etc/asterisk/manager.conf
+-          echo "[general]" >> /etc/asterisk/manager.conf
+-          echo "enabled = yes" >> /etc/asterisk/manager.conf
+-          echo "bindaddr = 127.0.0.1" >> /etc/asterisk/manager.conf
+-          echo "[test]" >> /etc/asterisk/manager.conf
+-          echo "secret=test" >> /etc/asterisk/manager.conf
+-          echo "read=all" >> /etc/asterisk/manager.conf
+-          echo "write=all" >> /etc/asterisk/manager.conf
+-          sleep 1
+-          /etc/init.d/asterisk restart
+-          sleep 3
+-      - name: Checkout
+-        uses: actions/checkout@v4
+-      - name: Build CAMI and execute simple demo
+-        run: |
+-          make
+-          make install
+-          make examples
+-          ./simpleami
+-  fedora-42:
+-    runs-on: ubuntu-24.04
+-    name: Fedora 42
+-    container: fedora:42
+-    steps:
+-      - name: Checkout
+-        uses: actions/checkout@v4
+-      - name: Build CAMI
+-        run: |
+-          dnf install -y make gcc
+-          make
+-          make install
+-          make examples
+-  freebsd-14:
+-    runs-on: ubuntu-24.04
+-    name: FreeBSD
+-    steps:
+-      - uses: actions/checkout@v4
+-      - name: Build CAMI
+-        uses: vmactions/freebsd-vm@v1
+-        with:
+-          usesh: true
+-          run: |
+-            pkg install -y gcc gmake
+-            gmake
+-            gmake install
+-            gmake examples
+-- 
+2.26.2
+

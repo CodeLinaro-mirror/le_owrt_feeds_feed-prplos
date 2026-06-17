@@ -1,0 +1,28 @@
+From 82ea3ec0a57f92810fc8d910d1a435b2c54bc777 Mon Sep 17 00:00:00 2001
+From: Ivan Mytsenko <ivan.mytsenko@globallogic.com>
+Date: Sun, 26 Oct 2025 17:09:35 +0200
+Subject: [PATCH] cami: Install libcami.so and header files to staging dir
+
+---
+ Makefile | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index b9d8951..742a46d 100644
+--- a/Makefile
++++ b/Makefile
+@@ -32,9 +32,8 @@ $(LIBNAME): $(EXE).o
+ 	$(CC) -shared -fPIC -o $(LIBNAME) $^ $(LIBS)
+ 
+ install:
+-	$(INSTALL) -m 755 $(LIBNAME) "/usr/lib"
+-	mkdir -p /usr/include/$(EXE)
+-	$(INSTALL) -m 644 include/*.h "/usr/include/$(EXE)/"
++	$(INSTALL) -m 755 $(LIBNAME) "$(STAGING_DIR)/usr/lib"
++	$(INSTALL) -m 644 include/*.h "$(STAGING_DIR)/usr/include/"
+ 
+ simpleami: simpleami.o $(LIBNAME)
+ 	$(CC) $(CFLAGS) -o $@ $@.o -L. -Wl,-rpath,. -l$(EXE) $(LIBS)
+-- 
+2.26.2
+
