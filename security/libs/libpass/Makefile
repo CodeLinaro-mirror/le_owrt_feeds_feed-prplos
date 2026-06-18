@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libpass
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=PPW-2035
 SHORT_DESCRIPTION:=shared library for password management
 
-PKG_SOURCE:=libpass-v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libpass/-/archive/v0.1.0
-PKG_HASH:=49c77400ed5a4ef940cfb97c966973b8472a40eae013b308f716f9e05612cd41
-PKG_BUILD_DIR:=$(BUILD_DIR)/libpass-v0.1.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=PPW-2035
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libpass.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
