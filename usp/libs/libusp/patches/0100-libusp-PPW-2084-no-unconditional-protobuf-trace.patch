@@ -1,0 +1,216 @@
+diff --git a/src/makefile b/src/makefile
+index 135aec4d031f..e2f8b60d5354 100644
+--- a/src/makefile
++++ b/src/makefile
+@@ -20,6 +20,11 @@ HEADERS = $(wildcard $(INCDIR_PUB)/usp/*.h)
+ SOURCES = $(wildcard $(SRCDIR)/*.c) $(wildcard $(SRCDIR)/bbf/*.c)
+ OBJECTS = $(addprefix $(OBJDIR)/,$(notdir $(SOURCES:.c=.o)))
+ 
++# Trace verbosity compiled into libusp.
++# 300 = NOTICE (ERROR/WARNING/NOTICE kept, INFO and above compiled out).
++# Override at build time: SAHTRACES_LEVEL=500 make
++SAHTRACES_LEVEL ?= 300
++
+ # compilation and linking flags
+ CFLAGS += -Werror -Wall -Wextra \
+           -Wformat=2 -Wshadow \
+@@ -27,7 +32,7 @@ CFLAGS += -Werror -Wall -Wextra \
+           -Wmissing-declarations -Wno-attributes \
+           -Wno-format-nonliteral \
+           -fPIC -g3 $(addprefix -I ,$(INCDIRS)) \
+-          -DSAHTRACES_ENABLED -DSAHTRACES_LEVEL=500
++          -DSAHTRACES_ENABLED -DSAHTRACES_LEVEL=$(SAHTRACES_LEVEL)
+ 
+ CFLAGS += -Wstrict-prototypes -Wold-style-definition -Wnested-externs -std=gnu11
+ 
+diff --git a/src/uspl_msghandler.c b/src/uspl_msghandler.c
+index dc556d8a69e8..ebdc9f037d2c 100644
+--- a/src/uspl_msghandler.c
++++ b/src/uspl_msghandler.c
+@@ -99,6 +99,23 @@ static ProtobufCAllocator msghandler_protobuf_allocator =
+ /* Message id that corresponds to protobuf */
+ static uint32_t msg_id = 0;
+ 
++static bool uspl_msghandler_trace_proto_enabled(void) {
++    sah_trace_zone_it* zone = sahTraceGetZone(uspl_traceme);
++
++    if(zone == NULL) {
++        zone = sahTraceGetZone("all");
++    }
++
++    return sahTraceZoneLevel(zone) >= TRACE_LEVEL_INFO;
++}
++
++static void uspl_msghandler_trace_proto(ProtobufCMessage* msg) {
++    when_false(uspl_msghandler_trace_proto_enabled(), exit);
++    PrintProtobufCMessageRecursive(msg, 0);
++exit:
++    return;
++}
++
+ static void* uspl_msghandler_protobuf_alloc(UNUSED void* allocator_data, size_t size) {
+     void* ptr;
+ 
+@@ -216,7 +233,7 @@ static UspRecord__Record* uspl_msghandler_unpack_binary_record(unsigned char* pb
+         return NULL;
+     }
+ 
+-    PrintProtobufCMessageRecursive(&rec->base, 0);
++    uspl_msghandler_trace_proto(&rec->base);
+ 
+     res = uspl_msghandler_validate_record(rec);
+     if(!res) {
+@@ -243,7 +260,7 @@ static Usp__Msg* uspl_msghandler_unpack_binary_msg(unsigned char* pbuf,
+         return NULL;
+     }
+ 
+-    PrintProtobufCMessageRecursive(&usp->base, 0);
++    uspl_msghandler_trace_proto(&usp->base);
+     res = uspl_msghandler_validate_msg(usp);
+     if(!res) {
+         SAH_TRACEZ_WARNING(uspl_traceme, "usprecord validation failed");
+@@ -284,7 +301,7 @@ int PRIVATE uspl_msghandler_record_pack_common(uspl_tx_t* usp_tx, UspRecord__Rec
+     int retval = -1;
+     size_t size = 0;
+ 
+-    PrintProtobufCMessageRecursive(&rec->base, 0);
++    uspl_msghandler_trace_proto(&rec->base);
+     usp_tx->pbuf_len = usp_record__record__get_packed_size(rec);
+     usp_tx->pbuf = calloc(1, usp_tx->pbuf_len);
+     when_null(usp_tx->pbuf, exit);
+@@ -410,7 +427,7 @@ int uspl_msghandler_pack_protobuf(Usp__Msg* msg, uspl_tx_t* usp) {
+     when_null(msg, exit);
+     when_null(usp, exit);
+ 
+-    PrintProtobufCMessageRecursive(&msg->base, 0);
++    uspl_msghandler_trace_proto(&msg->base);
+ 
+     /* pack usp message */
+     pbuf_len = usp__msg__get_packed_size(msg);
+diff --git a/test/usp_msghandler/makefile b/test/usp_msghandler/makefile
+index a2a11a162bde..8c7889a6f64a 100644
+--- a/test/usp_msghandler/makefile
++++ b/test/usp_msghandler/makefile
+@@ -4,5 +4,7 @@ TARGET = run_test
+ SOURCES += $(wildcard ./*.c) $(MOCK_SOURCES)
+ OBJECTS = $(addprefix $(OBJDIR)/,$(notdir $(SOURCES:.c=.o)))
+ 
++MOCK_WRAP += PrintProtobufCMessageRecursive
++
+ include ../test_targets.mk
+ 
+diff --git a/test/usp_msghandler/test_main.c b/test/usp_msghandler/test_main.c
+index 1f04a2f5e0a4..5b6f7047055a 100644
+--- a/test/usp_msghandler/test_main.c
++++ b/test/usp_msghandler/test_main.c
+@@ -64,6 +64,8 @@ int main(void) {
+         cmocka_unit_test(test_uspl_tx_new),
+         cmocka_unit_test(test_uspl_tx_delete),
+         cmocka_unit_test(test_uspl_msghandler_pack_unpack_protobuf),
++        cmocka_unit_test(test_proto_walk_skipped_when_zone_disabled),
++        cmocka_unit_test(test_proto_walk_runs_when_zone_enabled),
+     };
+     return cmocka_run_group_tests(tests, NULL, NULL);
+ }
+diff --git a/test/usp_msghandler/test_usp_msghandler.c b/test/usp_msghandler/test_usp_msghandler.c
+index 3161d7186440..5ae9df626f7a 100644
+--- a/test/usp_msghandler/test_usp_msghandler.c
++++ b/test/usp_msghandler/test_usp_msghandler.c
+@@ -60,11 +60,14 @@
+ #include <setjmp.h>
+ #include <cmocka.h>
+ 
++#include <debug/sahtrace.h>
++
+ #include "uspl_private.h"
+ #include "test_usp_msghandler.h"
+ #include "uspl_msghandler_priv.h"
+ #include "usp/uspl_msghandler.h"
+ #include "usp/uspl_get.h"
++#include "bbf/proto_trace.h"
+ 
+ static Usp__Msg* CreateGet(char* msg_id) {
+     Usp__Msg* msg;
+@@ -199,3 +202,69 @@ void test_uspl_msghandler_pack_unpack_protobuf(UNUSED void** state) {
+     uspl_msghandler_free_unpacked_message(msg);
+     free(path_exprs);
+ }
++
++/**
++ * Wrap counter for PrintProtobufCMessageRecursive.
++ * Counts every entry into the function (top-level and recursive sub-message calls).
++ * Reset to 0 at the start of each test that uses it.
++ */
++static int proto_walk_count = 0;
++
++extern void __real_PrintProtobufCMessageRecursive(ProtobufCMessage* msg, int indent);
++void __wrap_PrintProtobufCMessageRecursive(ProtobufCMessage* msg, int indent);
++
++void __wrap_PrintProtobufCMessageRecursive(ProtobufCMessage* msg, int indent) {
++    proto_walk_count++;
++    __real_PrintProtobufCMessageRecursive(msg, indent);
++}
++
++/**
++ * Guard test: uspl_trace zone is not registered → guard returns false →
++ * PrintProtobufCMessageRecursive must never be called for a full pack+unpack.
++ */
++void test_proto_walk_skipped_when_zone_disabled(UNUSED void** state) {
++    uspl_tx_t* record = NULL;
++    uspl_rx_t* usp_rx = NULL;
++    Usp__Msg* msg = CreateGet("guard-off");
++
++    assert_int_equal(uspl_tx_new(&record, "foo", "bar"), 0);
++
++    /* uspl_trace zone is absent: sahTraceGetZone returns NULL for both
++     * "uspl_trace" and "all", so sahTraceZoneLevel returns 0 < TRACE_LEVEL_INFO */
++    proto_walk_count = 0;
++    assert_int_equal(uspl_msghandler_pack_protobuf(msg, record), 0);
++    usp_rx = uspl_msghandler_unpack_protobuf(record->pbuf, record->pbuf_len);
++    assert_non_null(usp_rx);
++
++    assert_int_equal(proto_walk_count, 0);
++
++    uspl_rx_delete(&usp_rx);
++    uspl_tx_delete(&record);
++    uspl_msghandler_free_unpacked_message(msg);
++}
++
++/**
++ * Guard test: uspl_trace zone is registered at INFO level → guard returns true →
++ * PrintProtobufCMessageRecursive must be called at least once per pack+unpack.
++ */
++void test_proto_walk_runs_when_zone_enabled(UNUSED void** state) {
++    uspl_tx_t* record = NULL;
++    uspl_rx_t* usp_rx = NULL;
++    Usp__Msg* msg = CreateGet("guard-on");
++
++    assert_int_equal(uspl_tx_new(&record, "foo", "bar"), 0);
++
++    sahTraceAddZone(TRACE_LEVEL_INFO, uspl_traceme);
++
++    proto_walk_count = 0;
++    assert_int_equal(uspl_msghandler_pack_protobuf(msg, record), 0);
++    usp_rx = uspl_msghandler_unpack_protobuf(record->pbuf, record->pbuf_len);
++    assert_non_null(usp_rx);
++
++    assert_true(proto_walk_count > 0);
++
++    sahTraceRemoveZone(uspl_traceme);
++    uspl_rx_delete(&usp_rx);
++    uspl_tx_delete(&record);
++    uspl_msghandler_free_unpacked_message(msg);
++}
+diff --git a/test/usp_msghandler/test_usp_msghandler.h b/test/usp_msghandler/test_usp_msghandler.h
+index 340716f3ffc2..5358d87ae65e 100644
+--- a/test/usp_msghandler/test_usp_msghandler.h
++++ b/test/usp_msghandler/test_usp_msghandler.h
+@@ -58,6 +58,8 @@
+ void test_uspl_tx_new(void** state);
+ void test_uspl_tx_delete(void** state);
+ void test_uspl_msghandler_pack_unpack_protobuf(void** state);
++void test_proto_walk_skipped_when_zone_disabled(void** state);
++void test_proto_walk_runs_when_zone_enabled(void** state);
+ 
+ #endif // __TEST_USP_MSGHANDLER_H__
+ 
