@@ -15,7 +15,8 @@ PKG_LICENSE:=BSD-2-Clause-Patent BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE.BSD2 LICENSE.BSD3
 
 
-PKG_RELEASE:=1
+# +ppw2084: v2.8.0 + PPW-2084 (skip unconditional protobuf trace; prplos MR!2865) — see patches/
+PKG_RELEASE:=1+ppw2084
 
 include $(INCLUDE_DIR)/package.mk
 
