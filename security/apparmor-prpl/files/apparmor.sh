@@ -9,7 +9,7 @@ AA_STATUS=/usr/sbin/aa-status
 SECURITYFS=/sys/kernel/security
 SFS_MOUNTPOINT="${SECURITYFS}/apparmor"
 PARSER=/sbin/apparmor_parser
-PARSER_OPTS=
+PARSER_OPTS=-C
 ADDITIONAL_PROFILE_DIR=
 
 [ -d /etc/apparmor.d ] && PROFILE_DIRS=/etc/apparmor.d ||

@@ -1,0 +1,24 @@
+# vim:syntax=apparmor
+# AppArmor policy for tr181-bridging
+# ###AUTHOR###
+# ###COPYRIGHT###
+# ###COMMENT###
+
+include <tunables/global>
+
+# No template variables specified
+
+profile tr181-bridging /usr/bin/tr181-bridging flags=(attach_disconnected) {
+  include <abstractions/base>
+
+  /usr/bin/tr181-bridging mr,
+
+  # No abstractions specified
+
+  # No policy groups specified
+
+  # No read paths specified
+
+  # No write paths specified
+}
+

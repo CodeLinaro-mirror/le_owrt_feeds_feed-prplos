@@ -1,0 +1,24 @@
+# vim:syntax=apparmor
+# AppArmor policy for timingila
+# ###AUTHOR###
+# ###COPYRIGHT###
+# ###COMMENT###
+
+include <tunables/global>
+
+# No template variables specified
+
+profile timingila /usr/bin/timingila flags=(attach_disconnected) {
+  include <abstractions/base>
+
+  /usr/bin/timingila mr,
+
+  # No abstractions specified
+
+  # No policy groups specified
+
+  # No read paths specified
+
+  # No write paths specified
+}
+

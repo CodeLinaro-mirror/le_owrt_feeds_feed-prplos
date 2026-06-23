@@ -1,0 +1,24 @@
+# vim:syntax=apparmor
+# AppArmor policy for tr181-upnpdiscovery
+# ###AUTHOR###
+# ###COPYRIGHT###
+# ###COMMENT###
+
+include <tunables/global>
+
+# No template variables specified
+
+profile tr181-upnpdiscovery /usr/bin/tr181-upnpdiscovery flags=(attach_disconnected) {
+  include <abstractions/base>
+
+  /usr/bin/tr181-upnpdiscovery mr,
+
+  # No abstractions specified
+
+  # No policy groups specified
+
+  # No read paths specified
+
+  # No write paths specified
+}
+

@@ -1,0 +1,24 @@
+# vim:syntax=apparmor
+# AppArmor policy for dhcpv4-manager
+# ###AUTHOR###
+# ###COPYRIGHT###
+# ###COMMENT###
+
+include <tunables/global>
+
+# No template variables specified
+
+profile dhcpv4-manager /usr/bin/dhcpv4-manager flags=(attach_disconnected) {
+  include <abstractions/base>
+  
+  /usr/bin/dhcpv4-manager mr,
+
+  # No abstractions specified
+
+  # No policy groups specified
+
+  # No read paths specified
+
+  # No write paths specified
+}
+
