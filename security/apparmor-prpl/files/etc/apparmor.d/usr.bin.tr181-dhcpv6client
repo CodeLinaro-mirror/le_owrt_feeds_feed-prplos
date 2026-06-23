@@ -1,0 +1,24 @@
+# vim:syntax=apparmor
+# AppArmor policy for tr181-dhcpv6client
+# ###AUTHOR###
+# ###COPYRIGHT###
+# ###COMMENT###
+
+include <tunables/global>
+
+# No template variables specified
+
+profile tr181-dhcpv6client /usr/bin/tr181-dhcpv6client flags=(attach_disconnected) {
+  include <abstractions/base>
+
+  /usr/bin/tr181-dhcpv6client mr,
+
+  # No abstractions specified
+
+  # No policy groups specified
+
+  # No read paths specified
+
+  # No write paths specified
+}
+
