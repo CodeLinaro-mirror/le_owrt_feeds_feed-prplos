@@ -1,13 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-fwi-swupdate
-PKG_VERSION:=v0.5.0
+PKG_VERSION:=dev_PCF-2624
 SHORT_DESCRIPTION:=FirmwareImage upgrade for wrt
 
-PKG_SOURCE:=mod-fwi-swupdate-v0.5.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-fwi-swupdate/-/archive/v0.5.0
-PKG_HASH:=7b86c47d0e04e324ce7e4c124c1692eb0ff5a305c9ffa31ab76cb2b8f7483d79
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-fwi-swupdate-v0.5.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PCF-2624
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-fwi-swupdate.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -32,6 +33,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libfiletransfer
   DEPENDS += +amxrt
   DEPENDS += +swupdate
+  DEPENDS += +libfdisk
   MENU:=1
 endef
 
