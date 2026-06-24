@@ -1,0 +1,10 @@
+config FWI_FLASH_PARTITIONS
+    string "CSV list of GPT partitions that define one FirmwareImage (bank)"
+    default "u-boot,kernel,rootfs"
+	help
+	  mod-fwi-swupdate uses this option to determine which partitions should be renamed to perform activation of target bank. These partitions are also flashed during firmware upgrade
+
+config SWUPDATE_TARGET_HW_VERSION
+    string "Hardware version against which firmware upgrade should be performed"
+	help
+	  Expected format: '<board_name>:<version>'. Both <board_name> and <version> are defined in sw-description file of firmware that should be flashed by swupdate, and upgrade for different board_name/version will fail
