@@ -1,0 +1,24 @@
+config PACKAGE_mod-fwi-swupdate
+    tristate
+    select SAH_MOD_FWI_SWUPDATE
+
+if PACKAGE_mod-fwi-swupdate
+
+menu "Select mod-fwi-swupdate build options"
+    depends on PACKAGE_mod-fwi-swupdate
+
+config SAH_MOD_FWI_SWUPDATE
+    bool "Enable firmware upgrade for swupdate"
+    default y
+
+config FWI_FLASH_PARTITIONS
+    string "Partitions swapped during firmware activation"
+    default "u-boot,kernel,rootfs"
+
+config SWUPDATE_TARGET_HW_VERSION
+    string "Hardware version name passed to swupdate"
+    default "invalid:1.0"
+
+endmenu
+
+endif
