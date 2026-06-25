@@ -1,0 +1,69 @@
+#!/bin/sh
+
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+# SPDX-FileCopyrightText: Copyright (c) 2026 GlobalLogic
+# This code is subject to the terms of the BSD+Patent license.
+# See LICENSE file for more details.
+
+HELP=0
+
+# parse options
+while [ -n "$1" ]; do
+	case "$1" in
+		-h|--help) HELP=1; break;;
+		-*)
+			echo "Invalid option: $1" >&2
+			exit 1
+		;;
+		*) break;;
+	esac
+	shift;
+done
+
+print_help() {
+	cat <<EOF
+Usage: $0 <image file or URL>
+
+This is a wrapper script over Prpl's swupgrade functionality, created for backward compatibility
+upgrade-option:
+	-h | --help  display this help
+
+EOF
+}
+
+IMAGE="$1"
+
+if [ $HELP -gt 0 ]; then
+	print_help
+	exit 0
+fi
+
+if [ -z "$IMAGE" ]; then
+	print_help >&2
+	exit 1
+fi
+
+url_schema=$(uriparse "$IMAGE" | grep scheme | tr -s ' ' | cut -d ' ' -f2)
+
+if [ -z "$url_schema" ]; then
+	if [ -f "$IMAGE" ]; then
+		IMAGE="file://$(readlink -f "$IMAGE")"
+	else
+		echo "Image file not found." >&2
+		exit 1
+	fi
+fi
+
+ACTIVE=$(ba-cli -l 'DeviceInfo.ActiveFirmwareImage?' | grep -oE '[0-9]+' | head -1)
+
+if [ -z "$ACTIVE" ]; then
+	echo "Cannot determine currently unused firmware image" >&2
+	exit 1
+fi
+if [ $ACTIVE -lt 1 -o $ACTIVE -gt 2 ]; then
+	echo "Corrupted value of currently used firmware image received" >&2
+	exit 1
+fi
+INACTIVE=$(( $ACTIVE ^ 3 ))
+
+ba-cli "DeviceInfo.FirmwareImage.$INACTIVE.Download(URL = \"$IMAGE\", AutoActivate = 1)"
