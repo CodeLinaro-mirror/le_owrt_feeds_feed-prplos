@@ -3,14 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-cellular
-PKG_VERSION:=v0.6.0
+PKG_VERSION:=dev_PPW-2101
 SHORT_DESCRIPTION:=Network Model Cellular client
 
-PKG_SOURCE:=netmodel-cellular-v0.6.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-cellular/-/archive/v0.6.0
-PKG_HASH:=5c2e5acc52256582c442ef142af67262c28e7eb2a94513a8a7880d4cd7feb1fb
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-cellular-v0.6.0
-PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PPW-2101
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-cellular.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
 
