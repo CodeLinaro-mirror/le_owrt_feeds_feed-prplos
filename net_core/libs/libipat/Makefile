@@ -19,6 +19,9 @@ PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
 
+IPAT_ABI_VERSION:=$(patsubst v%,%,$(PKG_VERSION))
+IPAT_ABI_MAJOR:=$(firstword $(subst ., ,$(IPAT_ABI_VERSION)))
+
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
   SUBMENU:=Libraries
@@ -37,10 +40,14 @@ endef
 
 define Build/Install
 	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include PKG_CONFIG=$(PKG_CONFIG))
+	ln -snf libipat.so.$(IPAT_ABI_VERSION) $(PKG_INSTALL_DIR)/usr/lib/libipat.so
+	ln -snf libipat.so.$(IPAT_ABI_VERSION) $(PKG_INSTALL_DIR)/usr/lib/libipat.so.$(IPAT_ABI_MAJOR)
 endef
 
 define Build/InstallDev
 	$(call Build/Install/Default, install INSTALL=install D=$(STAGING_DIR) DEST=$(STAGING_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include PKG_CONFIG=$(PKG_CONFIG))
+	ln -snf libipat.so.$(IPAT_ABI_VERSION) $(STAGING_DIR)/usr/lib/libipat.so
+	ln -snf libipat.so.$(IPAT_ABI_VERSION) $(STAGING_DIR)/usr/lib/libipat.so.$(IPAT_ABI_MAJOR)
 endef
 
 define Package/$(PKG_NAME)/install
