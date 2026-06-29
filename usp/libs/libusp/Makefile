@@ -14,7 +14,7 @@ PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent OBUSPA
 PKG_LICENSE_FILES:=LICENSE.BSD LICENSE.OBUSPA
 
-PKG_RELEASE:=1
+PKG_RELEASE:=1+ppw2084
 
 include $(INCLUDE_DIR)/package.mk
 
