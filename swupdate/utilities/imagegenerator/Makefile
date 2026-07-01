@@ -4,11 +4,11 @@ PKG_NAME:=imagegenerator
 PKG_VERSION:=v0.1.0
 SHORT_DESCRIPTION:=Provide tools to build various format of images
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=dev_PCF-2625
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/imagegenerator.git
-PKG_MIRROR_HASH:=skip
-HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=imagegenerator-50f6a008a82e6414da93946b855e83f825b3272d.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/imagegenerator/-/archive/50f6a008a82e6414da93946b855e83f825b3272d
+PKG_HASH:=3c12c783da744c28c507170b1ce23cd0a22803de04e127c1bb34f122a3da80e8
+PKG_BUILD_DIR:=$(BUILD_DIR)/imagegenerator-50f6a008a82e6414da93946b855e83f825b3272d
+HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/imagegenerator-50f6a008a82e6414da93946b855e83f825b3272d
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE

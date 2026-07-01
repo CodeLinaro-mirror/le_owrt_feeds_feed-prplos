@@ -6,11 +6,10 @@ PKG_NAME:=tr069-manager
 PKG_VERSION:=dev_PCF-2349
 SHORT_DESCRIPTION:=TR069 Manager
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=dev_PCF-2349
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager.git
-PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=tr069-manager-20f65d37c7741be0dbe76108130fcb5929c5f8de.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/20f65d37c7741be0dbe76108130fcb5929c5f8de
+PKG_HASH:=20f9387706399fa436ec4da090ba91816119abd31d027e12c841c98b2cf3cd30
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-20f65d37c7741be0dbe76108130fcb5929c5f8de
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE

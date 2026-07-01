@@ -4,11 +4,10 @@ PKG_NAME:=mod-fwi-swupdate
 PKG_VERSION:=dev_PCF-2624
 SHORT_DESCRIPTION:=FirmwareImage upgrade for wrt
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=dev_PCF-2624
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-fwi-swupdate.git
-PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=mod-fwi-swupdate-4a3e142cdc8bad350ee28eef849d41276245ca77.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-fwi-swupdate/-/archive/4a3e142cdc8bad350ee28eef849d41276245ca77
+PKG_HASH:=784e91e8b2f542e38c999cad37952e44861b5fc9c2ac7360ac0755ef4a5fcfe5
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-fwi-swupdate-4a3e142cdc8bad350ee28eef849d41276245ca77
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
