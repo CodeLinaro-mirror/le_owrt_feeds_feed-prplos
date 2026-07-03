@@ -1,0 +1,24 @@
+config PACKAGE_tr181-display
+    tristate
+    select TR181_DISPLAY
+
+if PACKAGE_tr181-display
+
+menu "Select tr181-display build options"
+    depends on PACKAGE_tr181-display
+
+config TR181_DISPLAY
+    bool "Build a TR-181 compatible display manager"
+    default y
+
+config TR181_DISPLAY_ORDER
+    int "Display start up order"
+    default 41
+
+config TR181_DISPLAY_SCREEN_TYPE
+    string "Display type for the attached screen(s)"
+    default "LCD"
+
+endmenu
+
+endif
