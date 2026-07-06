@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-wanmgr-system-ospv2
-PKG_VERSION:=v0.2.0
+PKG_VERSION:=dev_main_PPW-1836
 SHORT_DESCRIPTION:=SoC module wan-manager handles system level changes for the OSPv2 board
 
-PKG_SOURCE:=mod-wanmgr-system-ospv2-v0.2.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-system-ospv2/-/archive/v0.2.0
-PKG_HASH:=2fd20915e3de3361a896043d713ae18e652cf1c50f81540df6450fa232f147ff
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-wanmgr-system-ospv2-v0.2.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_main_PPW-1836
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-system-ospv2.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
