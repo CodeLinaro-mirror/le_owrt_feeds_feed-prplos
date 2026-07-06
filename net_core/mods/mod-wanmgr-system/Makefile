@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-wanmgr-system
-PKG_VERSION:=v0.3.1
+PKG_VERSION:=dev_main_PPW-1836
 SHORT_DESCRIPTION:=SoC module wan-manager handles system level changes
 
-PKG_SOURCE:=mod-wanmgr-system-v0.3.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-system/-/archive/v0.3.1
-PKG_HASH:=e21aaaa93fdbb18f0b62dc798867ad64442aee030de5c4cb44e5c43f2d149d05
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-wanmgr-system-v0.3.1
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_main_PPW-1836
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-wanmgr-system.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
