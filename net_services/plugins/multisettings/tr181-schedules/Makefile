@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-schedules
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=v0.1.1
 SHORT_DESCRIPTION:=TR-181 Schedules plugin
 
-PKG_SOURCE:=tr181-schedules-v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-schedules/-/archive/v0.1.0
-PKG_HASH:=7f8cbb755b6967a36d242d4d33a96ffb84bfe3f89013129c1a250411be2ecd9a
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-schedules-v0.1.0
+PKG_SOURCE:=tr181-schedules-v0.1.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-schedules/-/archive/v0.1.1
+PKG_HASH:=ba22097d1ceeedbec4e6f6f35f5cc2877f638b2938e86c484eedfe52d584fa64
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-schedules-v0.1.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
