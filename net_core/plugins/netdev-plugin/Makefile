@@ -1,15 +1,15 @@
-# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
 # WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/netdev/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netdev-plugin
-PKG_VERSION:=v1.14.3
+PKG_VERSION:=v1.17.0
 SHORT_DESCRIPTION:=NetDev monitors the operating system's network devices
 
-PKG_SOURCE:=netdev-v1.14.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/netdev/-/archive/v1.14.3
-PKG_HASH:=7abdbad64fe5618b4c8998eed2010cbfa4488f36ed65656493cd0e2d4206ac79
-PKG_BUILD_DIR:=$(BUILD_DIR)/netdev-v1.14.3
+PKG_SOURCE:=netdev-v1.17.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/netdev/-/archive/v1.17.0
+PKG_HASH:=f1bb1627fe1b4e8346480930e1413d8912ffd465812152cdce05ce5cf24d0348
+PKG_BUILD_DIR:=$(BUILD_DIR)/netdev-v1.17.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -20,10 +20,10 @@ PKG_RELEASE:=1
 
 define SAHInit/Install
 	install -d $(1)/etc/rc.d/
-	if [[ "${CONFIG_PACKAGE_procd}" != "y" ]]; then \
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_NETDEV_START_ORDER)$(COMPONENT); \
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_NETDEV_STOP_ORDER)$(COMPONENT); \
-	fi
+ifneq ($(CONFIG_PACKAGE_procd),y)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_NETDEV_START_ORDER)$(COMPONENT)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_NETDEV_STOP_ORDER)$(COMPONENT)
+endif
 endef
 
 include $(INCLUDE_DIR)/package.mk
