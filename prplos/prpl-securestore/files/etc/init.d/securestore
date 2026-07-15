@@ -13,12 +13,15 @@ PRPL_SFL_SECURESTORE_LABEL="securestore"
 
 start_service() {
 
-    mkdir -p ${CFG_MOUNT}
-
     SECURESTORE_DEV=$(blkid -L ${PRPL_SFL_SECURESTORE_LABEL})
 
     if [ -z "${SECURESTORE_DEV}" ]; then
-        echo "ERROR: securestore partition not found"
+        echo "ERROR: ${PRPL_SFL_SECURESTORE_LABEL} partition not found"
+        return 1
+    fi
+
+    if [ -d "${CFG_MOUNT}" ]; then
+        echo "ERROR: mount point ${CFG_MOUNT} does not exist"
         return 1
     fi
 

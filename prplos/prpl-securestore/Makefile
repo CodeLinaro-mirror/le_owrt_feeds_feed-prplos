@@ -28,7 +28,7 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/etc/init.d $(1)/etc/rc.d
+	$(INSTALL_DIR) $(1)/etc/init.d $(1)/etc/rc.d $(1)/cfg
 	$(INSTALL_BIN) ./files/etc/init.d/securestore $(1)/etc/init.d/securestore
 	$(SED) "s#PRPL_SFL_SECURESTORE_LABEL=\"securestore\"#PRPL_SFL_SECURESTORE_LABEL=\"$(CONFIG_PRPL_SFL_SECURESTORE_LABEL)\"#g" \
 		$(1)/etc/init.d/securestore
