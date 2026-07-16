@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libtr69-engine
-PKG_VERSION:=v0.14.1
+PKG_VERSION:=PPW-2081_fix_refresh_of_soap_ns_prefix
 SHORT_DESCRIPTION:=libraries to define and implement the ACS RPCs methods and data parser
 
-PKG_SOURCE:=libtr69-engine-v0.14.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine/-/archive/v0.14.1
-PKG_HASH:=12b42eeab3eb3905842fbd8f29604dd0df9a22726aa084273982acf721341b9f
-PKG_BUILD_DIR:=$(BUILD_DIR)/libtr69-engine-v0.14.1
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=PPW-2081/fix_refresh_of_soap_ns_prefix
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
