@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libipat
-PKG_VERSION:=v1.9.1
+PKG_VERSION:=dev_ppw2074
 SHORT_DESCRIPTION:=IP Address Tools
 
-PKG_SOURCE:=libipat-v1.9.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libipat/-/archive/v1.9.1
-PKG_HASH:=31269fc226c3ca15115592e3b9d04a8bbd258ea14acafbff9818e48ee7e19e0b
-PKG_BUILD_DIR:=$(BUILD_DIR)/libipat-v1.9.1
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_ppw2074
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libipat.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
