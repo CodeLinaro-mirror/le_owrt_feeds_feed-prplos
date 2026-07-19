@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libqosmodule
-PKG_VERSION:=v1.2.1
+PKG_VERSION:=v1.2.1-ramopt
 SHORT_DESCRIPTION:=A helper library to ease the implementation of QoS modules
 
-PKG_SOURCE:=libqosmodule-v1.2.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libqosmodule/-/archive/v1.2.1
-PKG_HASH:=52c9941ea8ac8402dce47b7ff550d4aeb1d32fb34d5cd5e641cd3a4b0bffba8a
-PKG_BUILD_DIR:=$(BUILD_DIR)/libqosmodule-v1.2.1
+PKG_SOURCE:=libqosmodule-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libqosmodule/-/archive/61d1057bcd8201fa5b10597c14646160db63da17
+PKG_HASH:=2474bb37b02a419b8f01e92cf62e0966d4e4b4b4c16bf7aaa48965dc812f88d9
+PKG_BUILD_DIR:=$(BUILD_DIR)/libqosmodule-61d1057bcd8201fa5b10597c14646160db63da17
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -20,7 +20,7 @@ PKG_RELEASE:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-  CATEGORY:=amx
+  CATEGORY:=prpl Foundation
   SUBMENU:=Libraries
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libqosmodule
