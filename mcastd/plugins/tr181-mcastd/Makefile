@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-mcastd
-PKG_VERSION:=v0.4.0
+PKG_VERSION:=v0.4.0-ramopt
 SHORT_DESCRIPTION:=mcastd main user space app
 
-PKG_SOURCE:=tr181-mcastd-v0.4.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mcastd/-/archive/v0.4.0
-PKG_HASH:=602c0335bdbd97679a7b7fd100b77dab30c7f10f11f9bea25caef8ecabd2aa95
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mcastd-v0.4.0
+PKG_SOURCE:=tr181-mcastd-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-mcastd/-/archive/bfc0ac4cf1ad80df2501de265bd8ca88b8d2ed94
+PKG_HASH:=e39e1df193a2b85437182260b65451fed252cb6cc81a0a40c547302d3028ec7d
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-mcastd-bfc0ac4cf1ad80df2501de265bd8ca88b8d2ed94
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -21,10 +21,10 @@ PKG_BUILD_DEPENDS += mcastd-core
 
 define SAHInit/Install
 	install -d $(1)/etc/rc.d/
-	if [[ "${CONFIG_PACKAGE_procd}" != "y" ]]; then \
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_MCASTD_CORE_PLUGIN_ORDER)$(COMPONENT); \
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_MCASTD_CORE_PLUGIN_STOP_ORDER)$(COMPONENT); \
-	fi
+ifneq ($(CONFIG_PACKAGE_procd),y)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_MCASTD_CORE_PLUGIN_ORDER)$(COMPONENT)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_MCASTD_CORE_PLUGIN_STOP_ORDER)$(COMPONENT)
+endif
 endef
 
 include $(INCLUDE_DIR)/package.mk
