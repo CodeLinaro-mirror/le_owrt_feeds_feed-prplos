@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mcastd-noforward
-PKG_VERSION:=v0.1.4
+PKG_VERSION:=v0.1.4-ramopt
 SHORT_DESCRIPTION:=to avoid suppression of host membership reports on bridge interfaces
 
-PKG_SOURCE:=mcastd-noforward-v0.1.4.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/mcastd-noforward/-/archive/v0.1.4
-PKG_HASH:=960f6b3b8adce86361d1ea166c81ddf1e27b07b103787ac8ea43c64d36c8e0d8
-PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-noforward-v0.1.4
+PKG_SOURCE:=mcastd-noforward-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/mcastd-noforward/-/archive/23dc0386ba9437c230d651ff360bdf79ebf9b416
+PKG_HASH:=6d568e1cbe72a7729e9009b80847ccf0468dcb6c0babfba485d33363560d5ba8
+PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-noforward-23dc0386ba9437c230d651ff360bdf79ebf9b416
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
