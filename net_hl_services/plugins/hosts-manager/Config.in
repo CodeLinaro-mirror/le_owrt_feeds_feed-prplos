@@ -19,6 +19,10 @@ config SAH_SERVICES_AMX-HOSTS-MANAGER_RUN_AS_GROUP
     string "Group will be used for the hosts-manager plugin"
     default "tr181_app"
 
+config SAH_SERVICES_AMX-HOSTS-MANAGER_WANSTATS
+    bool "Enable the Hosts.Host.{i}.WANStats subobject"
+    default n
+
 config SAH_SERVICES_AMX-HOSTS-MANAGER_START_ORDER
     int "Init start up order for the hosts-manager plugin"
     default 83
