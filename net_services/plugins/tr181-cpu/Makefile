@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-cpu
-PKG_VERSION:=v0.3.1
+PKG_VERSION:=v0.3.1-ramopt
 SHORT_DESCRIPTION:=TR-181 compatible plugin for cpu Frequency and Voltage Scaling
 
-PKG_SOURCE:=tr181-cpu-v0.3.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-cpu/-/archive/v0.3.1
-PKG_HASH:=a071938948de251c933c26ff3f9245eaa7824f4112764d68ba7d122e2e632723
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-cpu-v0.3.1
+PKG_SOURCE:=tr181-cpu-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-cpu/-/archive/3d8bcdafb1b2292cf39c8c76164a1a12e13cc633
+PKG_HASH:=ab1e74c17c5b95705fa8922ed6ad9cb11191649a983ced949747ee0656efc1fd
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-cpu-3d8bcdafb1b2292cf39c8c76164a1a12e13cc633
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
