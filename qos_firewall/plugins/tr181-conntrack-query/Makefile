@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-conntrack-query
-PKG_VERSION:=v0.4.2
+PKG_VERSION:=v0.4.2-ramopt
 SHORT_DESCRIPTION:=tr181-conntrack-query interface plugin
 
-PKG_SOURCE:=tr181-conntrack-query-v0.4.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-conntrack-query/-/archive/v0.4.2
-PKG_HASH:=b891ce7e786b7506491effc041994baab32c15410fb5135bc6d2a994df6db5f9
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-conntrack-query-v0.4.2
+PKG_SOURCE:=tr181-conntrack-query-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-conntrack-query/-/archive/3eefedcd078a87d043d358c0cd38ec9b2ba202a4
+PKG_HASH:=d11cca8393762db2a882f54fc0fd5481b087b14206ac9682de676fec985077f9
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-conntrack-query-3eefedcd078a87d043d358c0cd38ec9b2ba202a4
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
