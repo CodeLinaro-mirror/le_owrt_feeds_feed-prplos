@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-button
-PKG_VERSION:=v0.3.7
+PKG_VERSION:=v0.3.7-ramopt
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-button-v0.3.7.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-button/-/archive/v0.3.7
-PKG_HASH:=be6e196d93be19da9918a25bdfbe2093809eb2f12397f3746b7c4cc1c59e1b7c
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-button-v0.3.7
+PKG_SOURCE:=tr181-button-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-button/-/archive/63c9dadf8ce25d579e6276eb6e3c30906bb43f26
+PKG_HASH:=b601894690df49fd266dd9de9559314c2383ec66485c96e4f9663138af3c5095
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-button-63c9dadf8ce25d579e6276eb6e3c30906bb43f26
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -20,10 +20,10 @@ PKG_RELEASE:=1
 
 define SAHInit/Install
 	install -d $(1)/etc/rc.d/
-	if [[ "${CONFIG_PACKAGE_procd}" != "y" ]]; then \
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_BUTTON_START_ORDER)$(COMPONENT); \
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_BUTTON_STOP_ORDER)$(COMPONENT); \
-	fi
+ifneq ($(CONFIG_PACKAGE_procd),y)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_BUTTON_START_ORDER)$(COMPONENT)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_BUTTON_STOP_ORDER)$(COMPONENT)
+endif
 endef
 
 include $(INCLUDE_DIR)/package.mk
