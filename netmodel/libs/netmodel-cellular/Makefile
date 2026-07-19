@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netmodel-cellular
-PKG_VERSION:=v0.5.0
+PKG_VERSION:=v0.5.0-ramopt
 SHORT_DESCRIPTION:=Network Model Cellular client
 
-PKG_SOURCE:=netmodel-cellular-v0.5.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-cellular/-/archive/v0.5.0
-PKG_HASH:=6a30a81a5285d771671f9c767aec6275c6dcb2876eeb6e42810a98abd1aaba02
-PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-cellular-v0.5.0
+PKG_SOURCE:=netmodel-cellular-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-cellular/-/archive/88cf0fe65ea4d7e305935f13a204b445df13b79e
+PKG_HASH:=fde033ca1d8ac3f715441e9f26dd559a29fa022e16cd4c89183bf68f92cdb15b
+PKG_BUILD_DIR:=$(BUILD_DIR)/netmodel-cellular-88cf0fe65ea4d7e305935f13a204b445df13b79e
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -21,7 +21,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=Netmodel
+  SUBMENU:=Ambiorix
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/netmodel/clients/netmodel-cellular
   DEPENDS += +libamxc
