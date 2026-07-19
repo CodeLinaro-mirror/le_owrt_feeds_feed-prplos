@@ -11,9 +11,13 @@ config SAH_AMX_TR181_DNS
     bool "Build a tr181 compatible dns plugin"
     default y
 
-config SAH_AMX_TR181_DNS_ORDER
+config SAH_AMX_TR181_DNS_START_ORDER
     int "Start up order for the tr181 dns plugin"
     default 30
+
+config SAH_AMX_TR181_DNS_STOP_ORDER
+    int "Shutdown order for the tr181 dns plugin"
+    default 70
 
 config SAH_AMX_TR181_DNS_CELLULAR
     bool "Add the default cellular DNS.Relay.Forwarding instances"
