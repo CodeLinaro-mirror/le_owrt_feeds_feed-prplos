@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-pcm-svc
-PKG_VERSION:=v0.18.1
+PKG_VERSION:=v0.18.1-ramopt
 SHORT_DESCRIPTION:=Upgrade Persistent Configuration Manager service module
 
-PKG_SOURCE:=mod-pcm-svc-v0.18.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-pcm-svc/-/archive/v0.18.1
-PKG_HASH:=d4b0a4e2262d257813a7b60390ae8d44e9e6843a43110a47b77797c90933b68f
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-pcm-svc-v0.18.1
+PKG_SOURCE:=mod-pcm-svc-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-pcm-svc/-/archive/6204694f44a06a5fc166b222edada7b2a2ace1a9
+PKG_HASH:=5f27f45410cc2ddbe3bdf45d622fb93c0d5db2da606213e54b61f212b1b9022b
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-pcm-svc-6204694f44a06a5fc166b222edada7b2a2ace1a9
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
