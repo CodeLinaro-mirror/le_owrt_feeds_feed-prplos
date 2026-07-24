@@ -1,0 +1,224 @@
+diff --git a/src/lxc/attach.c b/src/lxc/attach.c
+index e452cf3b5..b3e16cbf3 100644
+--- a/src/lxc/attach.c
++++ b/src/lxc/attach.c
+@@ -1378,8 +1378,21 @@ __noreturn static void do_attach(struct attach_payload *ap)
+ 		lxc_seccomp_close_notifier_fd(&conf->seccomp);
+ 	}
+ 
+-	if (!lxc_switch_uid_gid(ctx->target_ns_uid, ctx->target_ns_gid))
+-		goto on_error;
++	if (conf->cap_inheritance) {
++		ret = lxc_set_keepcaps();
++		if (ret < 0)
++			goto on_error;
++
++		if (!lxc_switch_uid_gid(ctx->target_ns_uid, ctx->target_ns_gid))
++			goto on_error;
++
++		ret = lxc_bounding_as_ambient_caps();
++		if (ret < 0)
++			goto on_error;
++	} else {
++		if (!lxc_switch_uid_gid(ctx->target_ns_uid, ctx->target_ns_gid))
++			goto on_error;
++	}
+ 
+ 	put_attach_payload(ap);
+ 
+diff --git a/src/lxc/caps.c b/src/lxc/caps.c
+index 273cf08f5..c030ff644 100644
+--- a/src/lxc/caps.c
++++ b/src/lxc/caps.c
+@@ -322,4 +322,46 @@ bool lxc_proc_cap_is_set(cap_value_t cap, cap_flag_t flag)
+ 
+ 	return lxc_cap_is_set(caps, cap, flag);
+ }
++
++int lxc_bounding_as_ambient_caps(void)
++{
++	call_cleaner(cap_free) cap_t caps = NULL;
++	int ret;
++	cap_value_t cap;
++
++	caps = cap_get_proc();
++	if (!caps)
++		return log_error_errno(-1, errno, "Failed to retrieve capabilities");
++
++	for (cap = 0; cap <= CAP_LAST_CAP; cap++) {
++		if (cap_get_bound(cap) <= 0)
++			continue;
++
++		ret = cap_set_flag(caps, CAP_PERMITTED, 1, &cap, CAP_SET);
++		if (ret < 0) {
++			return log_error_errno(ret, errno, "Failed to set cap %d as permitted", cap);
++		}
++		ret = cap_set_flag(caps, CAP_INHERITABLE, 1, &cap, CAP_SET);
++		if (ret < 0) {
++			return log_error_errno(ret, errno, "Failed to set cap %d as inheritable", cap);
++		}
++
++		ret = cap_set_proc(caps);
++		if (ret < 0)
++			return log_error_errno(ret, errno, "Failed to set capabilities");
++
++		cap_set_ambient(cap, CAP_SET);
++	}
++
++	return 0;
++}
++
++int lxc_set_keepcaps(void) {
++	int ret = prctl(PR_SET_KEEPCAPS, prctl_arg(1));
++	if (ret < 0)
++		return log_error_errno(ret, errno, "Failed to set PR_SET_KEEPCAPS");
++
++	return ret;
++}
++
+ #endif
+diff --git a/src/lxc/caps.h b/src/lxc/caps.h
+index fbec1fdb5..13f6ea71e 100644
+--- a/src/lxc/caps.h
++++ b/src/lxc/caps.h
+@@ -21,6 +21,8 @@ __hidden extern int lxc_caps_init(void);
+ __hidden extern int lxc_caps_last_cap(__u32 *cap);
+ __hidden extern bool lxc_proc_cap_is_set(cap_value_t cap, cap_flag_t flag);
+ __hidden extern bool lxc_file_cap_is_set(const char *path, cap_value_t cap, cap_flag_t flag);
++__hidden extern int lxc_bounding_as_ambient_caps(void);
++__hidden extern int lxc_set_keepcaps(void);
+ #else
+ static inline int lxc_caps_down(void)
+ {
+@@ -64,6 +66,17 @@ static inline bool lxc_file_cap_is_set(const char *path, cap_value_t cap,
+ {
+ 	return false;
+ }
++
++static inline int lxc_bounding_as_ambiant_caps(void)
++{
++	return 0;
++}
++
++static inline int lxc_set_keepcaps(void)
++{
++	return 0;
++}
++
+ #endif
+ 
+ #define lxc_priv(__lxc_function)                          \
+diff --git a/src/lxc/conf.h b/src/lxc/conf.h
+index 238242d85..966b987e2 100644
+--- a/src/lxc/conf.h
++++ b/src/lxc/conf.h
+@@ -528,6 +528,9 @@ struct lxc_conf {
+ 	/* The groups to use for the container. */
+ 	lxc_groups_t init_groups;
+ 
++	/* Whether the available caps can be set as inheritable/ambient for the container */
++	bool cap_inheritance;
++
+ 	/* indicator if the container will be destroyed on shutdown */
+ 	unsigned int ephemeral;
+ 
+diff --git a/src/lxc/confile.c b/src/lxc/confile.c
+index 46f0d2a97..26ddd8fbc 100644
+--- a/src/lxc/confile.c
++++ b/src/lxc/confile.c
+@@ -91,6 +91,7 @@ lxc_config_define(init_cmd);
+ lxc_config_define(init_cwd);
+ lxc_config_define(init_gid);
+ lxc_config_define(init_uid);
++lxc_config_define(cap_inheritance);
+ lxc_config_define(init_groups);
+ lxc_config_define(jump_table_net);
+ lxc_config_define(keyring_session);
+@@ -233,6 +234,7 @@ static struct lxc_config_t config_jump_table[] = {
+ 	{ "lxc.init.gid",                   true,  set_config_init_gid,                   get_config_init_gid,                   clr_config_init_gid,                   },
+ 	{ "lxc.init.groups",                true,  set_config_init_groups,                get_config_init_groups,                clr_config_init_groups,                },
+ 	{ "lxc.init.uid",                   true,  set_config_init_uid,                   get_config_init_uid,                   clr_config_init_uid,                   },
++	{ "lxc.cap.inheritance",            true,  set_config_cap_inheritance,            get_config_cap_inheritance,            clr_config_cap_inheritance,            },
+ 	{ "lxc.init.cwd",                   true,  set_config_init_cwd,                   get_config_init_cwd,                   clr_config_init_cwd,                   },
+ 	{ "lxc.keyring.session",            true,  set_config_keyring_session,            get_config_keyring_session,            clr_config_keyring_session             },
+ 	{ "lxc.log.file",                   true,  set_config_log_file,                   get_config_log_file,                   clr_config_log_file,                   },
+@@ -1285,6 +1287,12 @@ static int set_config_init_uid(const char *key, const char *value,
+ 	return 0;
+ }
+ 
++static int set_config_cap_inheritance(const char *key, const char *value,
++			       struct lxc_conf *lxc_conf, void *data)
++{
++	return set_config_bool_item(&lxc_conf->cap_inheritance, value, false);
++}
++
+ static int set_config_init_gid(const char *key, const char *value,
+ 			       struct lxc_conf *lxc_conf, void *data)
+ {
+@@ -4512,6 +4520,12 @@ static int get_config_init_uid(const char *key, char *retv, int inlen,
+ 	return lxc_get_conf_int(c, retv, inlen, c->init_uid);
+ }
+ 
++static int get_config_cap_inheritance(const char *key, char *retv, int inlen,
++			       struct lxc_conf *c, void *data)
++{
++	return lxc_get_conf_bool(c, retv, inlen, c->cap_inheritance);
++}
++
+ static int get_config_init_gid(const char *key, char *retv, int inlen,
+ 			       struct lxc_conf *c, void *data)
+ {
+@@ -5239,6 +5253,13 @@ static inline int clr_config_init_uid(const char *key, struct lxc_conf *c,
+ 	return 0;
+ }
+ 
++static inline int clr_config_cap_inheritance(const char *key, struct lxc_conf *c,
++				      void *data)
++{
++	c->cap_inheritance = false;
++	return 0;
++}
++
+ static inline int clr_config_init_gid(const char *key, struct lxc_conf *c,
+ 				      void *data)
+ {
+diff --git a/src/lxc/start.c b/src/lxc/start.c
+index 2aaf23b7c..ae495fe70 100644
+--- a/src/lxc/start.c
++++ b/src/lxc/start.c
+@@ -1410,14 +1410,29 @@ static int do_start(void *data)
+ 			}
+ 		}
+ 	}
++	if (handler->conf->cap_inheritance) {
++		NOTICE("Inherit capabilities");
++		ret = lxc_set_keepcaps();
++		if (ret < 0)
++			goto out_warn_father;
+ 
+-	if (!lxc_switch_uid_gid(new_uid, new_gid))
+-		goto out_warn_father;
++		if (!lxc_switch_uid_gid(new_uid, new_gid))
++			goto out_warn_father;
+ 
+-	ret = lxc_ambient_caps_down();
+-	if (ret < 0) {
+-		ERROR("Failed to clear ambient capabilities");
+-		goto out_warn_father;
++		ret = lxc_bounding_as_ambient_caps();
++		if (ret < 0) {
++			ERROR("Failed to set bounding capabilities as ambiant");
++			goto out_warn_father;
++		}
++	} else {
++		if (!lxc_switch_uid_gid(new_uid, new_gid))
++			goto out_warn_father;
++
++		ret = lxc_ambient_caps_down();
++		if (ret < 0) {
++			ERROR("Failed to clear ambient capabilities");
++			goto out_warn_father;
++		}
+ 	}
+ 
+ 	if (handler->conf->monitor_signal_pdeath != SIGKILL) {
