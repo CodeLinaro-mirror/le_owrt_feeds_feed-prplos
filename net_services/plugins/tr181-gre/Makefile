@@ -42,6 +42,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libmnl
   DEPENDS += +libcares
   DEPENDS += +mod-dmext
+  DEPENDS += +netmodel-gre
   MENU:=1
 endef
 

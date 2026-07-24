@@ -42,6 +42,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +mod-dmext
   DEPENDS += +mod-dmstats
   DEPENDS += +libmnl
+  DEPENDS += +netmodel-tuntap
   MENU:=1
 endef
 

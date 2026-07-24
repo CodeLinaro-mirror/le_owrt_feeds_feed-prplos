@@ -50,6 +50,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +strongswan-mod-kdf
   DEPENDS += +strongswan-mod-vici
   DEPENDS += +kmod-xfrm-interface
+  DEPENDS += +netmodel-ipsec
   MENU:=1
 endef
 
