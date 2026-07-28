@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-bulkdata
-PKG_VERSION:=v0.9.0
+PKG_VERSION:=v0.9.1
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-bulkdata-v0.9.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bulkdata/-/archive/v0.9.0
-PKG_HASH:=2294be842b4ee24883af28bba63e965c04f986c55c0cc4bfa9a483d831d8c1b0
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bulkdata-v0.9.0
+PKG_SOURCE:=tr181-bulkdata-v0.9.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bulkdata/-/archive/v0.9.1
+PKG_HASH:=27bbb78e48f9adfeeb2fa9edeed04dfed3e084b39f2135a4b5d86563d9948d12
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bulkdata-v0.9.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
