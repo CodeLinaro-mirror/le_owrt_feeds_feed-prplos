@@ -8,7 +8,7 @@ SHORT_DESCRIPTION:=TR-181 compatible plugin for cpu Frequency and Voltage Scalin
 
 PKG_SOURCE:=tr181-cpu-proj_prplware-v4.2.0_optimizations_v0.1.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-cpu/-/archive/proj_prplware-v4.2.0_optimizations_v0.1.0
-PKG_HASH:=skip
+PKG_HASH:=d85459f63fa7eb79fa1ce752b98e5a0eab44d9d26091659441b5c100aba872ce
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-cpu-proj_prplware-v4.2.0_optimizations_v0.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent

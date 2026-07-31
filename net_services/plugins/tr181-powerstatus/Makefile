@@ -8,7 +8,7 @@ SHORT_DESCRIPTION:=tr181-powerstatus plugin
 
 PKG_SOURCE:=tr181-powerstatus-proj_prplware-v4.2.0_optimizations_v0.1.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-powerstatus/-/archive/proj_prplware-v4.2.0_optimizations_v0.1.0
-PKG_HASH:=skip
+PKG_HASH:=b2f9e874f83f72909d747d8b159efbfe6c83b14948def35fde3ce058ae0c0384
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-powerstatus-proj_prplware-v4.2.0_optimizations_v0.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent

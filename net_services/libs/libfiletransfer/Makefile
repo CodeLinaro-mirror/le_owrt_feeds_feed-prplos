@@ -8,7 +8,7 @@ SHORT_DESCRIPTION:=Libfiletransfer is a library providing an upload/download API
 
 PKG_SOURCE:=libfiletransfer-proj_prplware-v4.2.0_optimizations_v0.1.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libfiletransfer/-/archive/proj_prplware-v4.2.0_optimizations_v0.1.0
-PKG_HASH:=skip
+PKG_HASH:=0ca0f8645ebb19a65510df853e39fa5f0010e15d8d4130c5a9965e425cfc29ec
 PKG_BUILD_DIR:=$(BUILD_DIR)/libfiletransfer-proj_prplware-v4.2.0_optimizations_v0.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent

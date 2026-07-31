@@ -6,7 +6,7 @@ SHORT_DESCRIPTION:=to avoid suppression of host membership reports on bridge int
 
 PKG_SOURCE:=mcastd-noforward-proj_prplware-v4.2.0_optimizations_v0.1.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/mcastd-noforward/-/archive/proj_prplware-v4.2.0_optimizations_v0.1.0
-PKG_HASH:=skip
+PKG_HASH:=03273e4c0f86aa13303be7e520ec6dc80711e1b1440ce0ec8733d0ec9f9baca1
 PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-noforward-proj_prplware-v4.2.0_optimizations_v0.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
