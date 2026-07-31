@@ -8,7 +8,7 @@ SHORT_DESCRIPTION:=upnp discovery manager
 
 PKG_SOURCE:=tr181-upnpdiscovery-proj_prplware-v4.2.0_optimizations_v0.1.0.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-upnpdiscovery/-/archive/proj_prplware-v4.2.0_optimizations_v0.1.0
-PKG_HASH:=b722d5ccef834ff72a58a655065d820969ae67ed4f82416ebe5dcd1b8a4779a4
+PKG_HASH:=d935d4b22c1b6be617bc44e0be0402cfd72daffd47284f82b26bca090a3e7a5f
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-upnpdiscovery-proj_prplware-v4.2.0_optimizations_v0.1.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
