@@ -23,6 +23,10 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/host-build.mk
 include $(TOPDIR)/feeds/packages/lang/python/python3-host.mk
 
+# Pin PyPI build dependencies (swig) pulled into pip's isolated PEP 517
+# build environments, which requirements.txt cannot reach (PPW-2321).
+HOST_PYTHON3_PIP_VARS += PIP_CONSTRAINT="$(CURDIR)/constraints.txt"
+
 # Similar to HostPython3/PipInstall() from python3-host.mk but with no check on hashes
 # since we use it to install SWUGenerator previously downloaded by OpenWrt with hash
 # verification. pip install with --require-hashes cannot work from a local directory.
