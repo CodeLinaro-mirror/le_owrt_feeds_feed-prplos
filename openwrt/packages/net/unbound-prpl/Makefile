@@ -8,13 +8,21 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=unbound-prpl
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 
-PKG_VERSION:=1.24.0
-PKG_SOURCE:=unbound-prpl-stable-1.24.1_v0.1.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/unbound/-/archive/prpl/stable-1.24.1_v0.1.1
+PKG_VERSION:=1.24.1
+#PKG_SOURCE:=unbound-prpl-stable-1.24.1_v0.1.1.tar.gz
+#PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/unbound/-/archive/prpl/stable-1.24.1_v0.1.1
+
+#### WIP
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/unbound.git
+PKG_MIRROR_HASH:=skip
+PKG_SOURCE_VERSION:=FEAT-397/dns-failover-module
+#### END WIP
+
 PKG_HASH:=27f0d72e411d17fa16d64a1d096c1e1246db252ef29e6a893882a7572acb8c7d
-PKG_BUILD_DIR:=$(BUILD_DIR)/unbound-prpl-stable-1.24.1_v0.1.1
+PKG_BUILD_DIR:=$(BUILD_DIR)/unbound-prpl-1.24.1
 
 PKG_MAINTAINER:=Eric Luehrsen <ericluehrsen@gmail.com>
 PKG_LICENSE:=BSD-3-Clause
@@ -112,6 +120,27 @@ define Package/libunbound-prpl/config
 	endif
 endef
 
+define Package/unbound-plugins-prpl
+  $(call Package/unbound-prpl/Default)
+  TITLE+= (plugins)
+  CATEGORY:=prpl Foundation
+  SUBMENU:=Upstream Backports/Forks
+  DEPENDS+= +unbound-daemon-prpl
+endef
+
+define Package/unbound-plugins-prpl/description
+  This package contains the Unbound plugins like 'strictorder' which modifies
+  the DNS resolver behavior.
+endef
+
+define Package/unbound-plugins-prpl/config
+	if PACKAGE_unbound-plugins-prpl
+	config PACKAGE_unbound-plugins-prpl-strictorder
+		bool "Build strictorder plugin."
+		default n
+	endif
+endef
+
 CONFIGURE_VARS += UNAME=Linux
 
 CONFIGURE_ARGS += \
@@ -127,6 +156,8 @@ CONFIGURE_ARGS += \
 	--with-run-dir=/var/lib/unbound \
 	--with-conf-file=/var/lib/unbound/unbound.conf \
 	--with-pidfile=/var/run/unbound.pid \
+    $(if $(CONFIG_PACKAGE_unbound-plugins-prpl), \
+        --with-dynlibmodule,) \
     $(if $(CONFIG_PACKAGE_libunbound_dnscrypt), \
         --enable-dnscrypt --with-libsodium="$(STAGING_DIR)/usr",) \
     $(if $(CONFIG_PACKAGE_libunbound_ipset), \
@@ -163,5 +194,29 @@ define Package/libunbound-prpl/install
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libunbound.so.* $(1)/usr/lib/
 endef
 
+# Post build and install hooks to compile the strict order plugin after unbound has been compiled
+define CompileStrictOrderPlugin
+    make -C $(PKG_BUILD_DIR)/plugins/strictorder CC="$(TARGET_CC)" CFLAGS="$(TARGET_CFLAGS)" LDFLAGS="$(TARGET_LDFLAGS)" DEST=$(PKG_INSTALL_DIR) STAGING_DIR=$(STAGING_DIR)
+endef
+
+define InstallStrictOrderPlugin
+    make -C $(PKG_BUILD_DIR)/plugins/strictorder CC="$(TARGET_CC)" DEST=$(PKG_INSTALL_DIR) STAGING_DIR=$(STAGING_DIR) install
+endef
+
+ifeq ($(CONFIG_PACKAGE_unbound-plugins-prpl-strictorder),y)
+    Hooks/Compile/Post += CompileStrictOrderPlugin
+endif
+
+ifeq ($(CONFIG_PACKAGE_unbound-plugins-prpl-strictorder),y)
+    Hooks/Install/Post += InstallStrictOrderPlugin
+endif
+
+define Package/unbound-plugins-prpl/install
+	$(INSTALL_DIR) $(1)/usr/lib/unbound
+	$(if $(CONFIG_PACKAGE_unbound-plugins-prpl-strictorder), \
+		$(CP) $(PKG_INSTALL_DIR)/usr/lib/unbound/strictorder.so $(1)/usr/lib/unbound/,)
+endef
+
 $(eval $(call BuildPackage,unbound-daemon-prpl))
 $(eval $(call BuildPackage,libunbound-prpl))
+$(eval $(call BuildPackage,unbound-plugins-prpl))
