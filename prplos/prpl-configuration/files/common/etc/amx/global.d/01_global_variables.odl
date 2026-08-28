@@ -1,3 +1,4 @@
 %config {
     %global global_vendor_prefix_ = "X_PRPLWARE-COM_";
+    %global global_procmon_force_reboot_policy = false;
 }
