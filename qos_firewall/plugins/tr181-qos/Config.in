@@ -11,9 +11,13 @@ config SAH_AMX_TR181_QOS
     bool "Build A TR-181 Compatible QOS manager"
     default y
 
-config SAH_AMX_TR181_QOS_ORDER
-    int "TR-181 QoS plugin start order"
+config SAH_AMX_TR181_QOS_START_ORDER
+    int "TR-181 QoS plugin start up order"
     default 49
+
+config SAH_AMX_TR181_QOS_STOP_ORDER
+    int "TR-181 QoS plugin shutdown order"
+    default 51
 
 config SAH_AMX_TR181_QOS_DEVICE_BASED_CLASSIFICATION
     bool "Enable device based classification"
