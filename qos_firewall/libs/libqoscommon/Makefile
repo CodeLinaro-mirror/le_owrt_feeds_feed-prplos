@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/libraries/libqoscommon/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libqoscommon
-PKG_VERSION:=v0.4.1
+PKG_VERSION:=v0.7.0
 SHORT_DESCRIPTION:=A library for the qos common api
 
-PKG_SOURCE:=libqoscommon-v0.4.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libqoscommon/-/archive/v0.4.1
-PKG_HASH:=81332d3be9a3264ff01dff304106db582a8ef6d42806bf4886481ae7cace6a5f
-PKG_BUILD_DIR:=$(BUILD_DIR)/libqoscommon-v0.4.1
+PKG_SOURCE:=libqoscommon-v0.7.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libqoscommon/-/archive/v0.7.0
+PKG_HASH:=5c7449262237d7865ea3b5af2f87b2b325c362280675557c10a3be3a12813577
+PKG_BUILD_DIR:=$(BUILD_DIR)/libqoscommon-v0.7.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
