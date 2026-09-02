@@ -1,13 +1,15 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/libraries/libqosnode/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libqosnode
-PKG_VERSION:=v1.4.2
+PKG_VERSION:=v1.7.0
 SHORT_DESCRIPTION:=A library for the qos node api
 
-PKG_SOURCE:=libqosnode-v1.4.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libqosnode/-/archive/v1.4.2
-PKG_HASH:=c8a5bbedbabed0917b47925a2087a056279e01901c99b5a014660d15b94dc1f0
-PKG_BUILD_DIR:=$(BUILD_DIR)/libqosnode-v1.4.2
+PKG_SOURCE:=libqosnode-v1.7.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libqosnode/-/archive/v1.7.0
+PKG_HASH:=e1097fbb7ffdffd8929b0e8e6adf90b6f72b4f6b04be096f454ca63240d2bb53
+PKG_BUILD_DIR:=$(BUILD_DIR)/libqosnode-v1.7.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
