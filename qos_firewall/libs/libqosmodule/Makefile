@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libqosmodule
-PKG_VERSION:=v1.2.1
+PKG_VERSION:=v1.5.0
 SHORT_DESCRIPTION:=A helper library to ease the implementation of QoS modules
 
-PKG_SOURCE:=libqosmodule-v1.2.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libqosmodule/-/archive/v1.2.1
-PKG_HASH:=52c9941ea8ac8402dce47b7ff550d4aeb1d32fb34d5cd5e641cd3a4b0bffba8a
-PKG_BUILD_DIR:=$(BUILD_DIR)/libqosmodule-v1.2.1
+PKG_SOURCE:=libqosmodule-v1.5.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libqosmodule/-/archive/v1.5.0
+PKG_HASH:=8764634b641dd633e2cd0463943b86a7c7757f7e23562b271a868ac35af87ca4
+PKG_BUILD_DIR:=$(BUILD_DIR)/libqosmodule-v1.5.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
