@@ -27,6 +27,10 @@ config SAH_SERVICES_AMX-HOSTS-MANAGER_STOP_ORDER
     int "Init stop order for the hosts-manager plugin"
     default 12
 
+config SAH_SERVICES_AMX-HOSTS-MANAGER_WANSTATS
+    bool "Enable the Hosts.Host.{i}.WANStats subobject"
+    default n
+
 endmenu
 
 endif
