@@ -1,5 +1,5 @@
 diff --git a/src/lxc/attach.c b/src/lxc/attach.c
-index e452cf3b5..b3e16cbf3 100644
+index e452cf3b5..513f04e88 100644
 --- a/src/lxc/attach.c
 +++ b/src/lxc/attach.c
 @@ -1378,8 +1378,21 @@ __noreturn static void do_attach(struct attach_payload *ap)
@@ -8,7 +8,7 @@ index e452cf3b5..b3e16cbf3 100644
  
 -	if (!lxc_switch_uid_gid(ctx->target_ns_uid, ctx->target_ns_gid))
 -		goto on_error;
-+	if (conf->cap_inheritance) {
++	if (conf->nonroot_keepcaps) {
 +		ret = lxc_set_keepcaps();
 +		if (ret < 0)
 +			goto on_error;
@@ -109,28 +109,29 @@ index fbec1fdb5..13f6ea71e 100644
  
  #define lxc_priv(__lxc_function)                          \
 diff --git a/src/lxc/conf.h b/src/lxc/conf.h
-index 238242d85..966b987e2 100644
+index 238242d85..3b066a6f0 100644
 --- a/src/lxc/conf.h
 +++ b/src/lxc/conf.h
-@@ -528,6 +528,9 @@ struct lxc_conf {
+@@ -528,6 +528,10 @@ struct lxc_conf {
  	/* The groups to use for the container. */
  	lxc_groups_t init_groups;
  
-+	/* Whether the available caps can be set as inheritable/ambient for the container */
-+	bool cap_inheritance;
++	/* Defines whether a privileged container with a nonroot user (init_uid != 0)
++	 * will keep capabilities */
++	bool nonroot_keepcaps;
 +
  	/* indicator if the container will be destroyed on shutdown */
  	unsigned int ephemeral;
  
 diff --git a/src/lxc/confile.c b/src/lxc/confile.c
-index 46f0d2a97..26ddd8fbc 100644
+index 46f0d2a97..ba3cf26ae 100644
 --- a/src/lxc/confile.c
 +++ b/src/lxc/confile.c
 @@ -91,6 +91,7 @@ lxc_config_define(init_cmd);
  lxc_config_define(init_cwd);
  lxc_config_define(init_gid);
  lxc_config_define(init_uid);
-+lxc_config_define(cap_inheritance);
++lxc_config_define(nonroot_keepcaps);
  lxc_config_define(init_groups);
  lxc_config_define(jump_table_net);
  lxc_config_define(keyring_session);
@@ -138,7 +139,7 @@ index 46f0d2a97..26ddd8fbc 100644
  	{ "lxc.init.gid",                   true,  set_config_init_gid,                   get_config_init_gid,                   clr_config_init_gid,                   },
  	{ "lxc.init.groups",                true,  set_config_init_groups,                get_config_init_groups,                clr_config_init_groups,                },
  	{ "lxc.init.uid",                   true,  set_config_init_uid,                   get_config_init_uid,                   clr_config_init_uid,                   },
-+	{ "lxc.cap.inheritance",            true,  set_config_cap_inheritance,            get_config_cap_inheritance,            clr_config_cap_inheritance,            },
++	{ "lxc.cap.nonroot",            true,  set_config_nonroot_keepcaps,            get_config_nonroot_keepcaps,            clr_config_nonroot_keepcaps,            },
  	{ "lxc.init.cwd",                   true,  set_config_init_cwd,                   get_config_init_cwd,                   clr_config_init_cwd,                   },
  	{ "lxc.keyring.session",            true,  set_config_keyring_session,            get_config_keyring_session,            clr_config_keyring_session             },
  	{ "lxc.log.file",                   true,  set_config_log_file,                   get_config_log_file,                   clr_config_log_file,                   },
@@ -146,10 +147,10 @@ index 46f0d2a97..26ddd8fbc 100644
  	return 0;
  }
  
-+static int set_config_cap_inheritance(const char *key, const char *value,
++static int set_config_nonroot_keepcaps(const char *key, const char *value,
 +			       struct lxc_conf *lxc_conf, void *data)
 +{
-+	return set_config_bool_item(&lxc_conf->cap_inheritance, value, false);
++	return set_config_bool_item(&lxc_conf->nonroot_keepcaps, value, false);
 +}
 +
  static int set_config_init_gid(const char *key, const char *value,
@@ -159,10 +160,10 @@ index 46f0d2a97..26ddd8fbc 100644
  	return lxc_get_conf_int(c, retv, inlen, c->init_uid);
  }
  
-+static int get_config_cap_inheritance(const char *key, char *retv, int inlen,
++static int get_config_nonroot_keepcaps(const char *key, char *retv, int inlen,
 +			       struct lxc_conf *c, void *data)
 +{
-+	return lxc_get_conf_bool(c, retv, inlen, c->cap_inheritance);
++	return lxc_get_conf_bool(c, retv, inlen, c->nonroot_keepcaps);
 +}
 +
  static int get_config_init_gid(const char *key, char *retv, int inlen,
@@ -172,10 +173,10 @@ index 46f0d2a97..26ddd8fbc 100644
  	return 0;
  }
  
-+static inline int clr_config_cap_inheritance(const char *key, struct lxc_conf *c,
++static inline int clr_config_nonroot_keepcaps(const char *key, struct lxc_conf *c,
 +				      void *data)
 +{
-+	c->cap_inheritance = false;
++	c->nonroot_keepcaps = false;
 +	return 0;
 +}
 +
@@ -183,15 +184,15 @@ index 46f0d2a97..26ddd8fbc 100644
  				      void *data)
  {
 diff --git a/src/lxc/start.c b/src/lxc/start.c
-index 2aaf23b7c..ae495fe70 100644
+index 2aaf23b7c..a9fe02951 100644
 --- a/src/lxc/start.c
 +++ b/src/lxc/start.c
 @@ -1410,14 +1410,29 @@ static int do_start(void *data)
  			}
  		}
  	}
-+	if (handler->conf->cap_inheritance) {
-+		NOTICE("Inherit capabilities");
++	if (handler->conf->nonroot_keepcaps) {
++		NOTICE("Keep capabilities");
 +		ret = lxc_set_keepcaps();
 +		if (ret < 0)
 +			goto out_warn_father;
