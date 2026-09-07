@@ -1,0 +1,5 @@
+
+enable() {
+    logger -t keepalived -p daemon.warn "keepalived autostart is handled by tr181-vrrp"
+    return 0
+}
