@@ -13,7 +13,7 @@ config SAH_AMX_TR181_FIREWALL
 
 config SAH_AMX_TR181_FIREWALL_ORDER
     int "Start up order"
-    default 22
+    default 24
 
 config SAH_AMX_TR181_FIREWALL_RUN_AS_USER
     string "User will be used for the tr181-firewall plugin"
