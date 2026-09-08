@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-cellular-libmm
-PKG_VERSION:=v1.5.0
+PKG_VERSION:=PPW-2225-ip-readiness-check-before-disconnect
 SHORT_DESCRIPTION:=SoC module to help handling Linux Cellular Implementation
 
-PKG_SOURCE:=mod-cellular-libmm-v1.5.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-cellular-libmm/-/archive/v1.5.0
-PKG_HASH:=426a8c25ba5d8e7df49d6f4fc7c11572b320a0011c6e2a7ceb765b181b7b27c0
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-cellular-libmm-v1.5.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=PPW-2225-ip-readiness-check-before-disconnect
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-cellular-libmm.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
