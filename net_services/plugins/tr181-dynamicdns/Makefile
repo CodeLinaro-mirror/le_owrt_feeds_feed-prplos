@@ -7,7 +7,7 @@ PKG_VERSION:=dev_PCF-2757_dyndns_ram_optimizations
 SHORT_DESCRIPTION:=DynamicDNS plugin
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=4a5b4ecb24b90980c490a1604b659e7c8aecb361
+PKG_SOURCE_VERSION:=7967a6f9461d0eb04412fdd8134d9148d81dfbdd
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dynamicdns.git
 PKG_MIRROR_HASH:=skip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
