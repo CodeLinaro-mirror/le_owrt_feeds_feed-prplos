@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-tuntap
-PKG_VERSION:=v0.1.1
+PKG_VERSION:=dev_PPW-2347
 SHORT_DESCRIPTION:=TR-181 compatible TUNTAP Tunnel Manager
 
-PKG_SOURCE:=tr181-tuntap-v0.1.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-tuntap/-/archive/v0.1.1
-PKG_HASH:=d29ea82e8aed4036dd89daba9f2c29c3a3abd93363d8b9032786bcfaca78d514
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-tuntap-v0.1.1
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PPW-2347
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-tuntap.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -43,7 +44,6 @@ define Package/$(PKG_NAME)
   DEPENDS += +mod-dmstats
   DEPENDS += +libmnl
   DEPENDS += +netmodel-tuntap
-  DEPENDS += +kmod-tun
   MENU:=1
 endef
 
