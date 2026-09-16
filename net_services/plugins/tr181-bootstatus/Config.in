@@ -1,0 +1,28 @@
+config PACKAGE_tr181-bootstatus
+    tristate
+    select SAH_AMX_TR181_BOOTSTATUS
+
+if PACKAGE_tr181-bootstatus
+
+menu "Select tr181-bootstatus build options"
+    depends on PACKAGE_tr181-bootstatus
+
+config SAH_AMX_TR181_BOOTSTATUS
+    bool "Build the tr181-bootstatus device lifecycle/boot telemetry plugin"
+    default y
+
+config SAH_AMX_TR181_BOOTSTATUS_ORDER
+    int "Start up order (must be early, before other tr181-* plugins, to catch Started/PowerOn/KernelReady)"
+    default 10
+
+config SAH_AMX_TR181_BOOTSTATUS_RUN_AS_USER
+    string "User will be used for the tr181-bootstatus plugin"
+    default "tr181_app"
+
+config SAH_AMX_TR181_BOOTSTATUS_RUN_AS_GROUP
+    string "Group will be used for the tr181-bootstatus plugin"
+    default "tr181_app"
+
+endmenu
+
+endif
