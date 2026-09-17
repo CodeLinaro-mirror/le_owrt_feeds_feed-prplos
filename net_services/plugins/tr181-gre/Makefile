@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-gre
-PKG_VERSION:=v0.1.1
+PKG_VERSION:=v0.3.0
 SHORT_DESCRIPTION:=TR-181 compatible GRE Tunnel Manager
 
-PKG_SOURCE:=tr181-gre-v0.1.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-gre/-/archive/v0.1.1
-PKG_HASH:=eee4beb8deddc27d37055bc3c4bce45a7bb1e723422cf9185ae305c5abfa9921
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-gre-v0.1.1
+PKG_SOURCE:=tr181-gre-v0.3.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-gre/-/archive/v0.3.0
+PKG_HASH:=c92943554509896a418374cb5161317050f056b06abe08c447e2ce63f3928480
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-gre-v0.3.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
