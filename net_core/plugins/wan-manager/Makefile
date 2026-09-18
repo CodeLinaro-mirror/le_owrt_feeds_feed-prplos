@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=wan-manager
-PKG_VERSION:=v1.13.2
+PKG_VERSION:=PPW-2256-cellular-iptype-user-override-revert
 SHORT_DESCRIPTION:=TR-181 compatible plugin for advanced WAN mode configuration
 
-PKG_SOURCE:=wan-manager-v1.13.2.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/wan-manager/-/archive/v1.13.2
-PKG_HASH:=cd12055a914d8b3018b56547a492220265e6337d6c387959e23db7b76bb8124d
-PKG_BUILD_DIR:=$(BUILD_DIR)/wan-manager-v1.13.2
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=PPW-2256-cellular-iptype-user-override-revert
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/wan-manager.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
