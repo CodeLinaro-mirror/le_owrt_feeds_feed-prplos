@@ -19,6 +19,12 @@ config SAH_AMX_TR181_BRIDGING_RUN_AS_GROUP
     string "Group will be used for the bridging manager plugin"
     default "tr181_app"
 
+config SAH_AMX_TR181_BRIDGING_ENABLE_STP_FOR_LAN_BRIDGE
+    bool "Enable spanning tree on the LAN bridge by default"
+    default n
+	help
+	  Off keeps the schema default, STP disabled.
+
 config SAH_AMX_TR181_BRIDGING_START_ORDER
     int "Init start up order for the bridging manager plugin"
     default 22
