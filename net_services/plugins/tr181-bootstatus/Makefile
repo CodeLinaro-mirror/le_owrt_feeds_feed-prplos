@@ -4,7 +4,11 @@ PKG_NAME:=tr181-bootstatus
 PKG_VERSION:=0.1.0
 SHORT_DESCRIPTION:=TR-181 device lifecycle & boot telemetry plugin
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bootstatus-0.1.0
+PKG_GIT_REF:=a0a39dae1fc6238390a8e594dc879cbc0cbdd66e
+PKG_SOURCE:=tr181-bootstatus-$(PKG_GIT_REF).tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bootstatus/-/archive/$(PKG_GIT_REF)
+PKG_HASH:=a2b0184e2f713b2f6d3997a2fdb0caec6e6ef4d78466b9902017995784f3bf0f
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bootstatus-$(PKG_GIT_REF)
 PKG_MAINTAINER:=Softdel
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -12,9 +16,6 @@ PKG_LICENSE_FILES:=LICENSE
 COMPONENT:=tr181-bootstatus
 
 PKG_RELEASE:=1
-
-# In-tree location of the component source in this monorepo.
-TR181_BOOTSTATUS_SRCDIR:=$(TOPDIR)/../../components/core/plugins/tr181-bootstatus
 
 define SAHInit/Install
 	install -d $(1)/etc/rc.d/
@@ -46,11 +47,6 @@ endef
 
 define Package/$(PKG_NAME)/description
 	TR-181 device lifecycle & boot telemetry plugin
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) $(TR181_BOOTSTATUS_SRCDIR)/. $(PKG_BUILD_DIR)/
 endef
 
 define Build/Compile
