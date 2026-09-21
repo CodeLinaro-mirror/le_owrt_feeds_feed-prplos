@@ -1,6 +1,7 @@
 #!/bin/sh
 
-/etc/init.d/umdns disable
-rm -f /etc/init.d/umdns
+"${SHELL:-sh}" "$IPKG_INSTROOT/etc/rc.common" "$IPKG_INSTROOT/etc/init.d/umdns" disable
+rm -f "$IPKG_INSTROOT/etc/init.d/umdns"
+mkdir -p "$IPKG_INSTROOT/etc/umdns"
 
 exit 0

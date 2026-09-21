@@ -1,4 +1,4 @@
 #!/bin/sh
 
-chmod u+s /usr/bin/newuidmap && \
-chmod u+s /usr/bin/newgidmap
+chmod u+s "$IPKG_INSTROOT/usr/bin/newuidmap" && \
+chmod u+s "$IPKG_INSTROOT/usr/bin/newgidmap"

@@ -1,5 +1,5 @@
 #!/bin/sh
 
-rm -f /etc/hotplug.d/ntp/25-dnsmasqsec
+rm -f "$IPKG_INSTROOT/etc/hotplug.d/ntp/25-dnsmasqsec"
 
 exit 0
