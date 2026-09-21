@@ -1,5 +1,6 @@
 #!/bin/sh
 
-/etc/init.d/lighttpd disable
+"${SHELL:-sh}" "$IPKG_INSTROOT/etc/rc.common" "$IPKG_INSTROOT/etc/init.d/lighttpd" disable
+rm "$IPKG_INSTROOT/etc/init.d/lighttpd"
 
 exit 0

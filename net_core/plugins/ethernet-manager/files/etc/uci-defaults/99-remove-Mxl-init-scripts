@@ -1,14 +1,11 @@
 #!/bin/sh
 
-. /lib/functions.sh
-board=$(board_name)
-
-if [ $board != "mxl,lgm" && [ "$board" != "mxl,osp-tb341" ] && [ "$board" != "mxl,osp-tb341-v2" ]; then
-    exit 0
-fi
-
-/etc/init.d/netdev_cfg.sh disable
-/etc/init.d/mxl-network-init disable
+for INITSCRIPT in netdev_cfg.sh mxl-network-init; do
+    if [[ -f "$IPKG_INSTROOT/etc/init.d/$INITSCRIPT" ]]; then
+        "${SHELL:-sh}" "$IPKG_INSTROOT/etc/rc.common" "$IPKG_INSTROOT/etc/init.d/$INITSCRIPT" disable
+        rm -f "$IPKG_INSTROOT/etc/init.d/$INITSCRIPT"
+    fi
+done
 
 exit 0
 

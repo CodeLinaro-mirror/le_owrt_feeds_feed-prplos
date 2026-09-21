@@ -1,8 +1,8 @@
 #!/bin/sh
 
-if [[ -f /etc/init.d/dnsmasq ]]; then
-    /etc/init.d/dnsmasq disable
-    rm -f /etc/init.d/dnsmasq
+if [[ -f "$IPKG_INSTROOT/etc/init.d/dnsmasq" ]]; then
+    "${SHELL:-sh}" "$IPKG_INSTROOT/etc/rc.common" "$IPKG_INSTROOT/etc/init.d/dnsmasq" disable
+    rm -f "$IPKG_INSTROOT/etc/init.d/dnsmasq"
 fi
 
 exit 0

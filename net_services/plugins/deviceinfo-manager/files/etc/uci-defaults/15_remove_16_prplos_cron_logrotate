@@ -2,6 +2,6 @@
 
 # Logrotate is now managed by tr181-deviceinfo
 
-rm -f /etc/uci-defaults/16_prplos_cron_logrotate
+rm -f "$IPKG_INSTROOT/etc/uci-defaults/17_prplos_cron_logrotate"
 
 exit 0

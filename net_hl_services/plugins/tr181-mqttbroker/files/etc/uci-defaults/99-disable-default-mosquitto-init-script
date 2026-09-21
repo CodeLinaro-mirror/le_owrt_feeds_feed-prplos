@@ -1,6 +1,6 @@
 #!/bin/sh
 
-/etc/init.d/mosquitto disable
-rm /etc/init.d/mosquitto
+"${SHELL:-sh}" "$IPKG_INSTROOT/etc/rc.common" "$IPKG_INSTROOT/etc/init.d/mosquitto" disable
+rm "$IPKG_INSTROOT/etc/init.d/mosquitto"
 
 exit 0
