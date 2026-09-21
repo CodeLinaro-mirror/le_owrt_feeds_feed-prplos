@@ -25,7 +25,7 @@ config SAH_AMX_TR181_ENVIRONMENT_ORDER
 
 config SAH_AMX_ADD_SYSINIT_DONE_SCRIPT
     bool "Add sysinit_done script"
-    default n
+    default y
 
 config SAH_AMX_ADD_DBREADY_SCRIPT
     bool "Add dbready script"
