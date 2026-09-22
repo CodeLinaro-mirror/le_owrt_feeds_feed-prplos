@@ -33,15 +33,15 @@ define Package/softhsm2/description
 endef
 
 define Package/softhsm2/install
-	$(INSTALL_DIR) $(1)/usr/lib/softhsm $(1)/usr/bin $(1)/etc/softhsm/tokens $(1)/etc/init.d
-	$(INSTALL_DIR) $(1)/root/certs $(1)/etc/config/autocert $(1)/usr/share/ca-certificates/test
+	$(INSTALL_DIR) $(1)/usr/lib/softhsm $(1)/usr/bin $(1)/cfg/etc/softhsm/tokens $(1)/etc/init.d
+	$(INSTALL_DIR) $(1)/cfg/certs $(1)/etc/config/autocert $(1)/usr/share/ca-certificates/test
 	$(INSTALL_DIR) $(1)/etc/amx/tr181-security/defaults.d
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/softhsm/libsofthsm2.so* $(1)/usr/lib/softhsm/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/softhsm2-util $(1)/usr/bin/
 	$(CP) ./files/softhsm2.conf $(1)/etc/softhsm2.conf
 	$(CP) ./files/softhsm $(1)/etc/init.d/
 	$(CP) ./files/ca.crt $(1)/usr/share/ca-certificates/test/
-	$(CP) ./files/ca.key $(1)/root/certs/
+	$(CP) ./files/ca.key $(1)/cfg/certs/
 	# Manually create all-in-one ca-certificate.crt and precalculated hash.
 	# To be replaced with a script based solution.
 	$(CP) ./files/ca.crt $(1)/usr/share/ca-certificates/test/ca-certificate.crt
