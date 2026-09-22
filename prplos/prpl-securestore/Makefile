@@ -28,11 +28,12 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/etc/init.d $(1)/etc/rc.d
-	$(INSTALL_BIN) ./files/etc/init.d/securestore $(1)/etc/init.d/securestore
-	$(SED) "s#PRPL_SFL_SECURESTORE_LABEL=\"securestore\"#PRPL_SFL_SECURESTORE_LABEL=\"$(CONFIG_PRPL_SFL_SECURESTORE_LABEL)\"#g" \
-		$(1)/etc/init.d/securestore
-	$(LN) -sr $(1)/etc/init.d/securestore $(1)/etc/rc.d/S15securestore
+	$(INSTALL_DIR) $(1)/lib/preinit $(1)/cfg
+	$(INSTALL_BIN) ./files/lib/preinit/89-mount-cfg $(1)/lib/preinit/89-mount-cfg
+	$(SED) "s#PRPL_SFL_SECURESTORE_LABEL=\"securestore\"#PRPL_SFL_SECURESTORE_LABEL=\"$(CONFIG_PRPL_SFL_SECURESTORE_LABEL)\"#" \
+		$(1)/lib/preinit/89-mount-cfg
+	$(SED) "s#PRPL_SFL_SECURESTORE_FS_TYPE=\"ext4\"#PRPL_SFL_SECURESTORE_FS_TYPE=\"$(CONFIG_PRPL_SFL_SECURESTORE_FS_TYPE)\"#" \
+		$(1)/lib/preinit/89-mount-cfg
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))

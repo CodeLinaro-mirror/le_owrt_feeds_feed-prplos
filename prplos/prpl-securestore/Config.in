@@ -4,5 +4,14 @@ config PRPL_SFL_SECURESTORE_LABEL
 	default "securestore"
 	help
 	  The partition label used to identify the securestore partition.
-	  The securestore init script will search for a partition with this
+	  The mnt-cfg preinit script will search for a partition with this
 	  label to mount at /cfg.
+
+config PRPL_SFL_SECURESTORE_FS_TYPE
+	string
+	prompt "Securestore partition filesystem type"
+	default "ext4"
+	help
+	  The filesystem type of the securestore partition.
+	  If needed, the mnt-cfg preinit script will format the securestore
+	  partition.

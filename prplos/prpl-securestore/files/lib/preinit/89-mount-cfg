@@ -1,0 +1,43 @@
+#!/bin/sh
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+# SPDX-FileCopyrightText: Copyright (c) 2026 SoftAtHome
+#
+# Script to mount prpl securestore partition under /cfg
+
+mount_cfg() {
+    CFG_MOUNT="/cfg"
+    PRPL_SFL_SECURESTORE_LABEL="securestore"
+    PRPL_SFL_SECURESTORE_FS_TYPE="ext4"
+
+    if [ ! -d "${CFG_MOUNT}" ]; then
+        echo "ERROR: mount point ${CFG_MOUNT} does not exist" > /dev/console
+        return 1
+    fi
+
+    # Other preinit scripts may have mounted it before this script runs
+    if grep -qs " on ${CFG_MOUNT} " /proc/mounts; then
+        return 0
+    fi
+
+    SECURESTORE_DEV=$(blkid -L "${PRPL_SFL_SECURESTORE_LABEL}" || blkid -t PARTLABEL="${PRPL_SFL_SECURESTORE_LABEL}" -o device)
+
+    if [ -z "${SECURESTORE_DEV}" ]; then
+        echo "ERROR: ${PRPL_SFL_SECURESTORE_LABEL} partition not found" > /dev/console
+        return 1
+    fi
+
+    mount -t ${PRPL_SFL_SECURESTORE_FS_TYPE} -o rw,noatime,nodev,noexec,nosuid "${SECURESTORE_DEV}" "${CFG_MOUNT}" || {
+        mkfs.${PRPL_SFL_SECURESTORE_FS_TYPE} "${SECURESTORE_DEV}" &&
+        mount -t ${PRPL_SFL_SECURESTORE_FS_TYPE} -o rw,noatime,nodev,noexec,nosuid "${SECURESTORE_DEV}" "${CFG_MOUNT}"
+    } > /dev/console
+
+    if [ $? -ne 0 ]; then
+        echo "ERROR: failed to mount ${PRPL_SFL_SECURESTORE_LABEL} partition" > /dev/console
+        return 1
+    fi
+
+    echo "${PRPL_SFL_SECURESTORE_LABEL} partition has been mounted on ${CFG_MOUNT}" > /dev/console
+}
+
+boot_hook_add preinit_main mount_cfg
