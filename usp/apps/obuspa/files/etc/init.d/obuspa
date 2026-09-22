@@ -8,7 +8,7 @@ PROG=/usr/bin/obuspa
 CONFIGURATION=obuspa
 
 RESET_FILE="/etc/config/obuspa_param_reset.txt"
-SQL_DB_FILE="/etc/obuspa.db"
+SQL_DB_FILE="/cfg/etc/obuspa.db"
 
 # Points to CA Bundle data model entry relevant for USP communication
 CA_BUNDLE="Security.CABundle.test"
