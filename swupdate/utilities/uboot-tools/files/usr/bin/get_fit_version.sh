@@ -110,7 +110,7 @@ data_size=0
 
 type=$(blkid -o value -s TYPE "$device")
 if [ -n "$type" ] && [ "$type" = "ext4" ] ; then
-	mount_point=$(mktemp -d /mnt/kernel.XXXXXX)
+	mount_point=$(mktemp -d /tmp/kernel.XXXXXX)
 	if ! mount -t "$type" "$device" "$mount_point" ; then
 		echo "Fail to mount $device on $mount_point" >&2
 		exit 1
