@@ -4,10 +4,10 @@ PKG_NAME:=tr181-bootstatus
 PKG_VERSION:=0.1.0
 SHORT_DESCRIPTION:=TR-181 device lifecycle & boot telemetry plugin
 
-PKG_GIT_REF:=a0a39dae1fc6238390a8e594dc879cbc0cbdd66e
+PKG_GIT_REF:=9b67b51a4c5ef4aa725ad3a55547bbcd9e810e50
 PKG_SOURCE:=tr181-bootstatus-$(PKG_GIT_REF).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bootstatus/-/archive/$(PKG_GIT_REF)
-PKG_HASH:=a2b0184e2f713b2f6d3997a2fdb0caec6e6ef4d78466b9902017995784f3bf0f
+PKG_HASH:=5d7e7bc39fb123df7d48e57323218b34870eed2af366f09c4f8f1db4fb01bf11
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bootstatus-$(PKG_GIT_REF)
 PKG_MAINTAINER:=Softdel
 PKG_LICENSE:=BSD-2-Clause-Patent

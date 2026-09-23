@@ -6,10 +6,10 @@ PKG_NAME:=deviceinfo-manager
 PKG_VERSION:=v2.43.5
 SHORT_DESCRIPTION:=TR-181 compatible DeviceInfo plugin
 
-PKG_GIT_REF:=d21b910b5f7ebbd7d1dcad84324a8af1942fba5f
+PKG_GIT_REF:=0ade4758e405d5b06aa42cc7170c03a85b74dc88
 PKG_SOURCE:=tr181-deviceinfo-$(PKG_GIT_REF).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-deviceinfo/-/archive/$(PKG_GIT_REF)
-PKG_HASH:=e89a4d8348b73f2a2db57981e11335893fe5a838af33b963a3e13603e872d132
+PKG_HASH:=29bc6f46e861746c08750c37f01d7eb766db0b2ba68e0fccc20bf7104637463d
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-deviceinfo-$(PKG_GIT_REF)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
