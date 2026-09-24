@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=imagegenerator
-PKG_VERSION:=v0.2.0
+PKG_VERSION:=dev_baf_ci
 SHORT_DESCRIPTION:=Provide tools to build various format of images
 
-PKG_SOURCE:=imagegenerator-v0.2.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/imagegenerator/-/archive/v0.2.0
-PKG_HASH:=fde37b29a4ac5ee9b503c519ffa29b6b21f07c163c8c7fe24ef960e32c4f5e31
+PKG_SOURCE:=imagegenerator-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/imagegenerator/-/archive/$(PKG_VERSION)/
+PKG_HASH:=e467ef256ef91a49adc0c913046d4085a1786b13bd4abcf45d69bab0100e673b
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -39,6 +39,7 @@ EXTRA_CFLAGS += -DPRPLOS_VERSION='\"$(PRPLOS_VERSION)\"'
 
 define Build/Compile
 	@echo "Selected board: $(CONFIG_IMAGEGENERATOR_BOARD)"
+	$(eval MAKE_PATH := src)
 	$(call Build/Compile/Default, \
 	    BOARD=$(CONFIG_IMAGEGENERATOR_BOARD) \
 	    CFLAGS=$(EXTRA_CFLAGS))
@@ -46,8 +47,8 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/security
-	$(CP) $(PKG_BUILD_DIR)/keys/public.pem $(1)/security/
-	$(CP) $(PKG_BUILD_DIR)/keys/smd_pub.pem $(1)/security/
+	$(CP) $(PKG_BUILD_DIR)/src/keys/public.pem $(1)/security/
+	$(CP) $(PKG_BUILD_DIR)/src/keys/smd_pub.pem $(1)/security/
 endef
 
 define Host/Compile
