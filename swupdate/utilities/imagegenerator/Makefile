@@ -1,62 +1,63 @@
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
+# WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/utilities/imagegenerator/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=imagegenerator
-PKG_VERSION:=v0.2.0
-SHORT_DESCRIPTION:=Provide tools to build various format of images
+PKG_VERSION:=dev_baf_ci
+SHORT_DESCRIPTION:=Provide tools to build various formats of images
 
-PKG_SOURCE:=imagegenerator-v0.2.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/imagegenerator/-/archive/v0.2.0
-PKG_HASH:=fde37b29a4ac5ee9b503c519ffa29b6b21f07c163c8c7fe24ef960e32c4f5e31
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_baf_ci
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/imagegenerator.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
 
+
 PKG_RELEASE:=1
-PKG_BUILD_DEPENDS += imagegenerator/host
-HOST_BUILD_DEPENDS += uboot-tools/host
-HOST_BUILD_DEPENDS += swugenerator/host
+PKG_BUILD_DEPENDS += uboot-tools/host
+PKG_BUILD_DEPENDS += swugenerator/host
 
 include $(INCLUDE_DIR)/package.mk
-include $(INCLUDE_DIR)/host-build.mk
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
-  SUBMENU:=Image Generation
+  SUBMENU:=Utilities
   TITLE:=$(SHORT_DESCRIPTION)
-  URL:=https://gitlab.com/prpl-foundation/components/utilities/imagegenerator.git
+  URL:=https://gitlab.com/prpl-foundation/components/utilities/imagegenerator
+  MENU:=1
 endef
 
 define Package/$(PKG_NAME)/description
 	Provide tools to build various formats of images
 endef
 
+define Build/Compile
+	$(call Build/Compile/Default, STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include PKG_CONFIG=$(PKG_CONFIG) CONFIG_IMAGEGENERATOR_BOARD=$(CONFIG_IMAGEGENERATOR_BOARD) SCRIPT_DIR=$(SCRIPT_DIR))
+endef
+
+define Build/Install
+	$(call Build/Install/Default, install INSTALL=install D=$(PKG_INSTALL_DIR) DEST=$(PKG_INSTALL_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include PKG_CONFIG=$(PKG_CONFIG) CONFIG_IMAGEGENERATOR_BOARD=$(CONFIG_IMAGEGENERATOR_BOARD) SCRIPT_DIR=$(SCRIPT_DIR))
+endef
+
+define Build/InstallDev
+	$(call Build/Install/Default, install INSTALL=install D=$(STAGING_DIR) DEST=$(STAGING_DIR) STAGINGDIR=$(STAGING_DIR) CONFIGDIR=$(STAGING_DIR) PV=$(PKG_VERSION) PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig LIBDIR=/usr/lib INSTALL_LIB_DIR=/lib INSTALL_BIN_DIR=/bin RAW_VERSION=$(PKG_VERSION) HARDCO_HAL_DIR=$(STAGING_DIR)/usr/include PKG_CONFIG=$(PKG_CONFIG) CONFIG_IMAGEGENERATOR_BOARD=$(CONFIG_IMAGEGENERATOR_BOARD) SCRIPT_DIR=$(SCRIPT_DIR))
+endef
+
+define Package/$(PKG_NAME)/install
+	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
+	if [ -d ./files ]; then \
+		$(CP) ./files/* $(1)/; \
+	fi
+	find $(1) -name *.a -exec rm {} +;
+	find $(1) -name *.h -exec rm {} +;
+	find $(1) -name *.pc -exec rm {} +;
+endef
+
 define Package/$(PKG_NAME)/config
 	source "$(SOURCE)/Config.in"
 endef
 
-PRPLOS_VERSION := $(strip $(shell $(SCRIPT_DIR)/prplos_version.sh))
-EXTRA_CFLAGS += -DPRPLOS_VERSION='\"$(PRPLOS_VERSION)\"'
-
-define Build/Compile
-	@echo "Selected board: $(CONFIG_IMAGEGENERATOR_BOARD)"
-	$(call Build/Compile/Default, \
-	    BOARD=$(CONFIG_IMAGEGENERATOR_BOARD) \
-	    CFLAGS=$(EXTRA_CFLAGS))
-endef
-
-define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/security
-	$(CP) $(PKG_BUILD_DIR)/keys/public.pem $(1)/security/
-	$(CP) $(PKG_BUILD_DIR)/keys/smd_pub.pem $(1)/security/
-endef
-
-define Host/Compile
-	@echo "Nothing to build for the host"
-endef
-
-define Host/Install
-	@echo "Nothing to install for the host"
-endef
-
 $(eval $(call BuildPackage,$(PKG_NAME)))
-$(eval $(call HostBuild))
