@@ -1,0 +1,24 @@
+config PACKAGE_amx-processmonitor-watcher
+    tristate
+    select SAH_AMX_PROCESSMONITOR_WATCHER
+
+if PACKAGE_amx-processmonitor-watcher
+
+menu "Select amx-processmonitor-watcher build options"
+    depends on PACKAGE_amx-processmonitor-watcher
+
+config SAH_AMX_PROCESSMONITOR_WATCHER
+    bool "Build amx-processmonitor-watcher plugin"
+    default y
+
+config SAH_AMX_PROCESSMONITOR_WATCHER_START_ORDER
+    int "Start up order"
+    default 99
+
+config SAH_AMX_PROCESSMONITOR_WATCHER_STOP_ORDER
+    int "Stop order"
+    default 0
+
+endmenu
+
+endif
