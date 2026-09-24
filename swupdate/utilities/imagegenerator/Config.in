@@ -1,5 +1,24 @@
+config PACKAGE_imagegenerator
+    tristate
+    select IMAGEGENERATOR
+
+if PACKAGE_imagegenerator
+
+menu "Select imagegenerator build options"
+    depends on PACKAGE_imagegenerator
+
+config IMAGEGENERATOR
+    bool "Build imagenerator"
+    default y
+	help
+	  Component that provides tools to build various images formats
+
 config IMAGEGENERATOR_BOARD
-	string "Board to build images for"
-	default ""
+    string "Board to build images for"
+    default ""
 	help
 	  The board name is used to retrieve config files and build images
+
+endmenu
+
+endif
