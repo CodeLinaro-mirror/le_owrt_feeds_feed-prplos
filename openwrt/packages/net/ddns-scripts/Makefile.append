@@ -1,0 +1,10 @@
+  ifneq ($(PKG_VERSION).$(PKG_RELEASE),2.8.2.64)
+  $(error upstream ddns-scripts was updated, please update patched scripts)
+  endif
+  
+  define Package/ddns-scripts/install-append
+  	# Override original script file
+  	$$(INSTALL_DATA) $(THISDIR)/files/ddns-script-patch.sh \
+  		$$(1)/usr/lib/ddns/dynamic_dns_functions.sh
+  endef
+  $(call append,Package/ddns-scripts/install,$(newline)$(Package/ddns-scripts/install-append))
