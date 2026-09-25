@@ -1,0 +1,9 @@
+config TR181_VRRP_INSTALL_ACTION_SCRIPT_WIFI
+    bool "Install default WiFi action scripts"
+    depends on PACKAGE_tr181-vrrp
+    depends on PACKAGE_prplmesh-process-manager
+    default y
+    help
+      Install optional VRRP action scripts for controlling PWHM, PrplMesh
+      and Sensing through the process manager data model. No action group
+      is configured automatically.

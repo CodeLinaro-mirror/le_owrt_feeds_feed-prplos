@@ -17,13 +17,17 @@ COMPONENT:=tr181-vrrp
 
 PKG_RELEASE:=1
 
+PKG_CONFIG_DEPENDS += CONFIG_TR181_VRRP_INSTALL_ACTION_SCRIPT_WIFI
+PKG_CONFIG_DEPENDS += CONFIG_PACKAGE_prplmesh-process-manager
+
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
 CMAKE_INSTALL:=1
 CMAKE_OPTIONS += \
 	-DSTART_ORDER=23 \
-	-DSTOP_ORDER=88
+	-DSTOP_ORDER=88 \
+	-DINSTALL_ACTION_SCRIPT_WIFI=$(if $(and $(filter y,$(CONFIG_TR181_VRRP_INSTALL_ACTION_SCRIPT_WIFI)),$(filter y,$(CONFIG_PACKAGE_prplmesh-process-manager))),ON,OFF) \
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
@@ -41,11 +45,16 @@ define Package/$(PKG_NAME)
   DEPENDS += +libsahtrace
   DEPENDS += +libnetmodel
   DEPENDS += +mod-dmext
+  DEPENDS += +TR181_VRRP_INSTALL_ACTION_SCRIPT_WIFI:amx-cli
   MENU:=1
 endef
 
 define Package/$(PKG_NAME)/description
 	TR-181 compatible VRRP
+endef
+
+define Package/$(PKG_NAME)/config
+  source "$(SOURCE)/Config.in"
 endef
 
 define Package/$(PKG_NAME)/install
