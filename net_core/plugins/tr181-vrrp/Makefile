@@ -19,6 +19,10 @@ PKG_RELEASE:=1
 
 PKG_CONFIG_DEPENDS += CONFIG_TR181_VRRP_INSTALL_ACTION_SCRIPT_WIFI
 PKG_CONFIG_DEPENDS += CONFIG_PACKAGE_prplmesh-process-manager
+PKG_CONFIG_DEPENDS += CONFIG_TR181_VRRP_INSTALL_ACTION_SCRIPT_IPV6
+PKG_CONFIG_DEPENDS += CONFIG_PACKAGE_ip-manager
+PKG_CONFIG_DEPENDS += CONFIG_PACKAGE_tr181-routeradvertisement
+PKG_CONFIG_DEPENDS += CONFIG_PACKAGE_dhcpv6s-manager
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
@@ -28,6 +32,7 @@ CMAKE_OPTIONS += \
 	-DSTART_ORDER=23 \
 	-DSTOP_ORDER=88 \
 	-DINSTALL_ACTION_SCRIPT_WIFI=$(if $(and $(filter y,$(CONFIG_TR181_VRRP_INSTALL_ACTION_SCRIPT_WIFI)),$(filter y,$(CONFIG_PACKAGE_prplmesh-process-manager))),ON,OFF) \
+	-DINSTALL_ACTION_SCRIPT_IPV6=$(if $(and $(filter y,$(CONFIG_TR181_VRRP_INSTALL_ACTION_SCRIPT_IPV6)),$(filter y,$(CONFIG_PACKAGE_ip-manager)),$(filter y,$(CONFIG_PACKAGE_tr181-routeradvertisement)),$(filter y,$(CONFIG_PACKAGE_dhcpv6s-manager))),ON,OFF) \
 
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
@@ -46,6 +51,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libnetmodel
   DEPENDS += +mod-dmext
   DEPENDS += +TR181_VRRP_INSTALL_ACTION_SCRIPT_WIFI:amx-cli
+  DEPENDS += +TR181_VRRP_INSTALL_ACTION_SCRIPT_IPV6:amx-cli
   MENU:=1
 endef
 

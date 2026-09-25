@@ -7,3 +7,15 @@ config TR181_VRRP_INSTALL_ACTION_SCRIPT_WIFI
       Install optional VRRP action scripts for controlling PWHM, PrplMesh
       and Sensing through the process manager data model. No action group
       is configured automatically.
+
+config TR181_VRRP_INSTALL_ACTION_SCRIPT_IPV6
+    bool "Install default IPv6 LAN action scripts"
+    depends on PACKAGE_tr181-vrrp
+    depends on PACKAGE_ip-manager
+    depends on PACKAGE_tr181-routeradvertisement
+    depends on PACKAGE_dhcpv6s-manager
+    default y
+    help
+      Install optional VRRP action scripts for LAN router advertisements
+      and DHCPv6 through the IP, RA and DHCPv6 server data models.
+      No action group or object monitor is configured automatically.
