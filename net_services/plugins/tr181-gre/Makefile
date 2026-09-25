@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-gre
-PKG_VERSION:=v0.3.0
+PKG_VERSION:=dev_PPW-1973
 SHORT_DESCRIPTION:=TR-181 compatible GRE Tunnel Manager
 
-PKG_SOURCE:=tr181-gre-v0.3.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-gre/-/archive/v0.3.0
-PKG_HASH:=c92943554509896a418374cb5161317050f056b06abe08c447e2ce63f3928480
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-gre-v0.3.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PPW-1973
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-gre.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -42,8 +43,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libcares
   DEPENDS += +mod-dmext
   DEPENDS += +netmodel-gre
-  DEPENDS += +kmod-gre
-  DEPENDS += +IPV6:kmod-gre6
+  DEPENDS += +mod-dmstats
   MENU:=1
 endef
 
