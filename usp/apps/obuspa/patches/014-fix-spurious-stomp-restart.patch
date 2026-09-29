@@ -1,0 +1,94 @@
+From 75e08445daf11e8f570a1cebf6557f9a0b1c9503 Mon Sep 17 00:00:00 2001
+From: Zhang Junjie <zhangjunjie@actiontec.com>
+Date: Tue, 29 Sep 2026 09:42:25 +0000
+Subject: [PATCH] core: fix spurious STOMP restarts on transient mgmt IP loss
+
+During a DHCP release/rebind cycle on the management interface the
+IPv4 address transiently disappears while an IPv6 global address
+remains. nu_ipaddr_has_interface_addr_changed() compares across
+address families, so the remaining IPv6 address masked the IPv4 loss
+and reported the address as changed. HandleStompSourceIPAddrChanges()
+then restarted the STOMP connection (closing it with RST), and the
+reconnect (DNS transient + retry backoff) lost any USP request the
+controller sent in that window.
+
+On the CDRouter prpl certification flow this deterministically killed
+prpl_hl-api-cert.1.4 (the profile write-back includes DHCPv4.Client
+SentOption writes that restart the DHCP request cycle) and made
+prplos.1.2.9/1.2.10 fail intermittently with "The agent never sent a
+SET_RESP".
+
+Fix in two parts:
+- nu_ipaddr.c: only compare addresses of the same family as the
+  expected address; report has_addr=false when the expected family
+  has no address (transient loss).
+- stomp.c: in HandleStompSourceIPAddrChanges(), defer the connection
+  restart while the interface address is transiently absent. The
+  normal heartbeat/socket-error path still detects genuinely dead
+  connections.
+
+Bench-validated on prplWare 4.2.1 (Freedom platform): the previously
+failing prpl_hl-api-cert.1.4 / prplos.1.2.9 / prplos.1.2.10 all pass,
+with zero spurious connection restarts across the full trigger
+sequence.
+
+Fixes: PPW-1741
+Signed-off-by: Zhang Junjie <zhangjunjie@actiontec.com>
+---
+ src/core/nu_ipaddr.c | 11 +++++++++++
+ src/core/stomp.c     | 10 ++++++++++
+ 2 files changed, 21 insertions(+)
+
+diff --git a/src/core/nu_ipaddr.c b/src/core/nu_ipaddr.c
+index af2f405..6536b4a 100644
+--- a/src/core/nu_ipaddr.c
++++ b/src/core/nu_ipaddr.c
+@@ -871,6 +871,11 @@ int nu_ipaddr_has_interface_addr_changed(char *dev, char *expected_addr, bool *h
+     char *str;
+     char buf[NU_IPADDRSTRLEN];       // Buffer used to contain the IP address of each interface found in turn
+     bool result;
++    int expected_family;
++
++    // Only compare addresses of the same family as the expected address, else a
++    // remaining IPv6 address masks a transient IPv4 loss (eg during DHCP release/rebind)
++    expected_family = (strchr(expected_addr, ':') != NULL) ? AF_INET6 : AF_INET;
+ 
+     // Exit if unable to get a linked list containing the IP Addresses of all network interfaces on the current system
+     *has_addr = false;
+@@ -903,6 +908,12 @@ int nu_ipaddr_has_interface_addr_changed(char *dev, char *expected_addr, bool *h
+             continue;
+         }
+ 
++        // Skip this result, if it is not the same address family as the expected address
++        if (family != expected_family)
++        {
++            continue;
++        }
++
+         // Determine pointer to IPv4 or IPv6 address
+         if (family == AF_INET)
+         {
+diff --git a/src/core/stomp.c b/src/core/stomp.c
+index 6790d11..fe0dc0a 100644
+--- a/src/core/stomp.c
++++ b/src/core/stomp.c
+@@ -3925,6 +3925,16 @@ void HandleStompSourceIPAddrChanges(void)
+         if ((sc->instance != INVALID) && (sc->mgmt_if_name[0] != '\0') && (sc->mgmt_ip_addr[0] != '\0'))
+         {
+             has_changed = nu_ipaddr_has_interface_addr_changed(sc->mgmt_if_name, sc->mgmt_ip_addr, &has_addr);
++
++            // Ignore a transient loss of the address (eg during a DHCP release/rebind cycle):
++            // restarting here would drop queued USP messages for the whole reconnect window.
++            // A genuinely dead connection is still detected by the heartbeat/socket-error path.
++            if ((has_changed) && (has_addr == false))
++            {
++                USP_LOG_Warning("%s: Transient loss of address on %s - deferring restart of STOMP connection %d.", __FUNCTION__, sc->mgmt_if_name, sc->instance);
++                continue;
++            }
++
+             if (has_changed)
+             {
+                 // Stop, then restart the STOMP connection
+-- 
+2.43.0
+
