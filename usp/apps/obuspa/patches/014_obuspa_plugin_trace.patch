@@ -1,0 +1,287 @@
+diff --git a/src/core/plugin_trace.h b/src/core/plugin_trace.h
+new file mode 100644
+index 0000000..1234567
+--- /dev/null
++++ b/src/core/plugin_trace.h
+@@ -0,0 +1,59 @@
++/*
++ *
++ * Copyright (C) 2026, SoftAtHome
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ *
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * 3. Neither the name of the copyright holder nor the names of its
++ *    contributors may be used to endorse or promote products derived from
++ *    this software without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
++ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ * THE POSSIBILITY OF SUCH DAMAGE.
++ *
++ */
++
++/**
++ * \file plugin_trace.h
++ *
++ * Module providing traceability logging for plugin TR-181 events
++ *
++ */
++
++#ifndef PLUGIN_TRACE_H
++#define PLUGIN_TRACE_H
++
++/*********************************************************************//**
++**
++** PLUGIN_TRACE_Log
++**
++** Logs an event to the plugin trace log file
++** Writes to /tmp/obuspa_plugin_trace.log with timestamp prefix
++**
++** \param   format - printf-style format string
++** \param   ...    - variable arguments
++**
++** \return  None
++**
++**************************************************************************/
++void PLUGIN_TRACE_Log(const char *format, ...);
++
++#endif /* PLUGIN_TRACE_H */
+diff --git a/src/core/plugin_trace.c b/src/core/plugin_trace.c
+new file mode 100644
+index 0000000..2345678
+--- /dev/null
++++ b/src/core/plugin_trace.c
+@@ -0,0 +1,106 @@
++/*
++ *
++ * Copyright (C) 2026, SoftAtHome
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ *
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * 3. Neither the name of the copyright holder nor the names of its
++ *    contributors may be used to endorse or promote products derived from
++ *    this software without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
++ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ * THE POSSIBILITY OF SUCH DAMAGE.
++ *
++ */
++
++/**
++ * \file plugin_trace.c
++ *
++ * Module providing traceability logging for plugin TR-181 events
++ *
++ */
++
++#include <stdio.h>
++#include <time.h>
++#include <stdarg.h>
++#include <pthread.h>
++
++#include "plugin_trace.h"
++
++//--------------------------------------------------------------------
++// Lock for thread-safe logging
++static pthread_mutex_t trace_lock = PTHREAD_MUTEX_INITIALIZER;
++
++//--------------------------------------------------------------------
++#define PLUGIN_TRACE_FILE "/tmp/obuspa_plugin_trace.log"
++
++/*********************************************************************//**
++**
++** PLUGIN_TRACE_Log
++**
++** Logs an event to the plugin trace log file with timestamp
++** Thread-safe implementation using mutex
++**
++** \param   format - printf-style format string
++** \param   ...    - variable arguments
++**
++** \return  None
++**
++**************************************************************************/
++void PLUGIN_TRACE_Log(const char *format, ...)
++{
++    FILE *log_file;
++    time_t now;
++    struct tm *timeinfo;
++    char timestamp[32];
++    va_list args;
++
++    // Get current time and format timestamp
++    time(&now);
++    timeinfo = localtime(&now);
++    strftime(timestamp, sizeof(timestamp), "[%Y-%m-%d %H:%M:%S]", timeinfo);
++
++    // Acquire lock for thread-safe file access
++    pthread_mutex_lock(&trace_lock);
++
++    // Open log file in append mode
++    log_file = fopen(PLUGIN_TRACE_FILE, "a");
++    if (log_file == NULL)
++    {
++        // If we can't open the file, just return silently
++        pthread_mutex_unlock(&trace_lock);
++        return;
++    }
++
++    // Write timestamp and message
++    fprintf(log_file, "%s ", timestamp);
++    va_start(args, format);
++    vfprintf(log_file, format, args);
++    va_end(args);
++    fprintf(log_file, "\n");
++
++    // Ensure data is written to disk
++    fflush(log_file);
++    fclose(log_file);
++
++    // Release lock
++    pthread_mutex_unlock(&trace_lock);
++}
+diff --git a/src/core/usp_broker.c b/src/core/usp_broker.c
+index 0ec7b8d..818beb0 100644
+--- a/src/core/usp_broker.c
++++ b/src/core/usp_broker.c
+@@ -62,6 +62,7 @@
+ #include "group_get_vector.h"
+ #include "se_cache.h"
+ #include "dm_access.h"
++#include "plugin_trace.h"
+ 
+ #ifdef FD_PASSING_EXPERIMENTAL
+ #include "fd_vector.h"
+@@ -530,6 +531,9 @@
+         return USP_ERR_RESOURCES_EXCEEDED;
+     }
+ 
++    // Log the new USP Service registration
++    PLUGIN_TRACE_Log("INFO: USP Service '%s' registered with Broker (endpoint discovered)", endpoint_id);
++
+     // Exit if unable to inform this USP Service instance into the data model
+     USP_SNPRINTF(path, sizeof(path), DEVICE_SERVICE_ROOT ".%d", us->instance);
+     err = USP_DM_InformInstance(path);
+@@ -963,9 +967,13 @@ void USP_BROKER_HandleGetSupportedDMResp(Usp__Msg *usp, char *endpoint_id, mtp_c
+     if (gsdm->n_req_obj_results == 0)
+     {
+         USP_LOG_Error("%s: Incoming GSDM Response from endpoint_is=%s  contains no results", __FUNCTION__, endpoint_id);
++        PLUGIN_TRACE_Log("INFO: GSDM response received from USP Service '%s' (msg_id=%s, no results)", endpoint_id, usp->header->msg_id);
+         return;
+     }
+ 
++    // Log GSDM response
++    PLUGIN_TRACE_Log("INFO: GSDM response received from USP Service '%s' (msg_id=%s, objects=%d)", endpoint_id, usp->header->msg_id, gsdm->n_req_obj_results);
++
+     // Calculate the list of paths to apply permissions to later
+     // This is done before processing the GSDM response, in order that it can determine the first hierarchical nodes
+     // in the path which will get added by the processing
+@@ -2953,6 +2961,9 @@ int DeRegisterUspServicePath(usp_service_t *us, char *path)
+     // Remove the specified path from the supported data model (the instance cache for this object will also be removed)
+     DATA_MODEL_DeRegisterPath(path);
+ 
++    // Log the deregistration
++    PLUGIN_TRACE_Log("INFO: Plugin '%s' deregistered data model path '%s'", us->endpoint_id, path);
++
+     // Remove the path from the list of paths that were registered as owned by the USP Service
+     STR_VECTOR_RemoveByIndex(&us->registered_paths, index);
+ 
+@@ -3099,6 +3110,9 @@ int QueueGetSupportedDMToUspService(usp_service_t *us, str_vector_t *accepted_pa
+     CalcBrokerMessageId(msg_id, sizeof(msg_id));
+     req = MSG_UTILS_Create_GetSupportedDMReq(msg_id, gsdm_paths);
+ 
++    // Log GSDM request
++    PLUGIN_TRACE_Log("INFO: GSDM request sent to USP Service '%s' (msg_id=%s, paths=%d)", us->endpoint_id, msg_id, gsdm_paths->num_entries);
++
+     // Queue the GSDM request
+     MSG_HANDLER_QueueMessage(us->endpoint_id, req, &us->controller_mtp);
+     usp__msg__free_unpacked(req, pbuf_allocator);
+@@ -6115,6 +6129,9 @@ bool RegisterObjectInBroker(char *path, int len, bool is_multi_instance, bool is
+         node->group_id = group_id;
+     }
+ 
++    // Log successful object registration
++    PLUGIN_TRACE_Log("INFO: Object '%s' registered into Broker data model (multi_instance=%s)", path, is_multi_instance ? "true" : "false");
++
+     return true;
+ }
+ 
+@@ -6861,6 +6878,9 @@ void DeRegisterAllPaths(usp_service_t *us, Usp__DeregisterResp *dreg_resp)
+     char err_msg[256];
+     Usp__DeregisterResp__DeregisteredPathResult *dreg_path_result = NULL;
+ 
++    // Log deregistration of all paths
++    PLUGIN_TRACE_Log("INFO: Plugin '%s' deregistering all data model paths (%d paths)", us->endpoint_id, us->registered_paths.num_entries);
++
+     // NOTE: We drain the vector, rather than iterating over it because DeRegisterUspServicePath removes entries from the array
+     while (us->registered_paths.num_entries > 0)
+     {
+diff --git a/src/core/cli_server.c b/src/core/cli_server.c
+index feadd95..c163d23 100644
+--- a/src/core/cli_server.c
++++ b/src/core/cli_server.c
+@@ -80,6 +80,7 @@
+ #include "group_get_vector.h"
+ #include "bdc_exec.h"
+ #include "se_cache.h"
++#include "plugin_trace.h"
+ 
+ #ifndef REMOVE_USP_SERVICE
+ #include "usp_service.h"
+@@ -1566,6 +1567,7 @@ int ExecuteCli_Dump(str_vector_t *args)
+     // Show the data model schema if required
+     if (strcmp(arg1, "datamodel")==0)
+     {
++        PLUGIN_TRACE_Log("INFO: Data model dump requested via CLI");
+         DATA_MODEL_DumpSchema();
+         return USP_ERR_OK;
+     }
+diff --git a/Makefile.am b/Makefile.am
+index 0a09351..1aa0c77 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -112,7 +112,8 @@ SOURCES = src/core/main.c \
+                     src/core/fd_vector.c \
+                     src/core/uds.c \
+                     src/core/usp_service.c \
+-                    src/core/usp_broker.c
++                    src/core/usp_broker.c \
++                    src/core/plugin_trace.c
+ 
+ 
+ obuspa_SOURCES = $(SOURCES)
