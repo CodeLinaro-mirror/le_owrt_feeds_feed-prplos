@@ -29,6 +29,7 @@ config SAH_AMX_PCM_RUN_AS_GROUP
 
 config SAH_AMX_PCM_SECURESTORE
     bool "Enable mounting the securestore partition under /cfg"
+    default n
 
 endmenu
 
