@@ -1,16 +1,15 @@
-# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
 # WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ipsec/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-ipsec
-PKG_VERSION:=dev_PCF-2277
+PKG_VERSION:=v0.2.0
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=dev_PCF-2277
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ipsec.git
-PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=tr181-ipsec-v0.2.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ipsec/-/archive/v0.2.0
+PKG_HASH:=85163abab4347187dd3eb9b6dcffd6d4e49fcd6cdd181cd7dd23e973eb7ff500
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ipsec-v0.2.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
