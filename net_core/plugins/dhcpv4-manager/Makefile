@@ -1,15 +1,15 @@
-# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
 # WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dhcpv4-manager
-PKG_VERSION:=v2.32.3
+PKG_VERSION:=v2.33.0
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-dhcpv4-v2.32.3.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4/-/archive/v2.32.3
-PKG_HASH:=4d3c48db7d98117e7dc77d9e2a49f3af532b647e419bf11d3692e5f969fc86ca
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4-v2.32.3
+PKG_SOURCE:=tr181-dhcpv4-v2.33.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4/-/archive/v2.33.0
+PKG_HASH:=4c2c9b0f437e42c1a225af03ae63834a4e50fcf03767cca93a73b2fce611fbe0
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4-v2.33.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -20,10 +20,10 @@ PKG_RELEASE:=1
 
 define SAHInit/Install
 	install -d $(1)/etc/rc.d/
-ifneq ($(CONFIG_PACKAGE_procd),y)
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_SERVICES_AMX-DHCPV4-MANAGER_START_ORDER)$(COMPONENT)
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_SERVICES_AMX-DHCPV4-MANAGER_STOP_ORDER)$(COMPONENT)
-endif
+	if [[ "${CONFIG_PACKAGE_procd}" != "y" ]]; then \
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_SERVICES_AMX-DHCPV4-MANAGER_START_ORDER)$(COMPONENT); \
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_SERVICES_AMX-DHCPV4-MANAGER_STOP_ORDER)$(COMPONENT); \
+	fi
 endef
 
 include $(INCLUDE_DIR)/package.mk
@@ -53,6 +53,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +tr181-firewall
   DEPENDS += +time-manager
   DEPENDS += +dnsmasq-prpl
+  DEPENDS += +sudo
   MENU:=1
 endef
 
