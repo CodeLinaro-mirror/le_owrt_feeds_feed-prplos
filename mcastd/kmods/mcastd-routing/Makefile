@@ -1,17 +1,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mcastd-routing
-PKG_VERSION:=v0.1.5
+PKG_VERSION:=PPW-1770-tr-181-mcastd-odl-parsing-error-mrtoif-enable-not-found-in-mcastd-intf-wan
 SHORT_DESCRIPTION:=Kernel module to manage linux's multicast forwading cache entries
 
-PKG_SOURCE:=mcastd-routing-v0.1.5.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-routing/-/archive/v0.1.5
-PKG_HASH:=88407c9ff3123cfa3ac1dadc50c57de2a32eaa9cf47a3697c110255ec1db9c44
-PKG_BUILD_DIR:=$(BUILD_DIR)/mcastd-routing-v0.1.5
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
 
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=PPW-1770-tr-181-mcastd-odl-parsing-error-mrtoif-enable-not-found-in-mcastd-intf-wan
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/kmodules/mcastd-routing.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_RELEASE:=1
 PKG_EXTMOD_SUBDIRS+=src
