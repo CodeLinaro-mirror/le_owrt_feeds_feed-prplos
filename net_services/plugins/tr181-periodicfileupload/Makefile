@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-periodicfileupload
-PKG_VERSION:=v0.8.0
+PKG_VERSION:=v0.8.0-ppw2271
 SHORT_DESCRIPTION:=periodic uploaded file manager
 
-PKG_SOURCE:=tr181-periodicfileupload-v0.8.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-periodicfileupload/-/archive/v0.8.0
-PKG_HASH:=8691b58d3a3edeb36df8c339b7b78afdaee29a4e8e1e740920438ccaa2d57f75
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-periodicfileupload-v0.8.0
+PKG_SOURCE:=tr181-periodicfileupload-v0.8.0-ppw2271.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-periodicfileupload/-/archive/96d7b28ddf8dcbf8f7e1dc7b1a8ca931118cd833
+PKG_HASH:=abd7ffbbb02c7f7a4432d5ce933c5fb0820a851f0a53b0385c5c424bc356beaf
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-periodicfileupload-96d7b28ddf8dcbf8f7e1dc7b1a8ca931118cd833
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
