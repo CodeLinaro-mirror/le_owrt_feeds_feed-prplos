@@ -125,6 +125,93 @@
                 parameter Children = "QoS.Shaper.shaper-wan";
             }
         }
+
+        object Chain {
+            instance add (0, "FORWARD_class") {
+                parameter Enable = true;
+                parameter Name = "FORWARD_class";
+                parameter IPVersion = 4;
+                parameter Direction = "NonLocal";
+                object Classification {
+                    instance add (0, "cl1") {
+                        parameter Enable = true;
+                        parameter ClassificationRef = "QoS.Classification.3";
+                    }
+                }
+            }
+            instance add (0, "FORWARD6_class") {
+                parameter Enable = true;
+                parameter Name = "FORWARD6_class";
+                parameter IPVersion = 6;
+                parameter Direction = "NonLocal";
+            }
+            instance add (0, "PREROUTING_class") {
+                parameter Enable = true;
+                parameter Name = "PREROUTING_class";
+                parameter IPVersion = 4;
+                parameter Direction = "Inbound";
+                object Classification {
+                    instance add (0, "cl1") {
+                        parameter Enable = true;
+                        parameter ClassificationRef = "QoS.Classification.4";
+                    }
+                }
+            }
+            instance add (0, "PREROUTING6_class") {
+                parameter Enable = true;
+                parameter Name = "PREROUTING6_class";
+                parameter IPVersion = 6;
+                parameter Direction = "Inbound";
+            }
+            instance add (0, "INPUT_class") {
+                parameter Enable = true;
+                parameter Name = "INPUT_class";
+                parameter IPVersion = 4;
+                parameter Direction = "LocalInbound";
+            }
+            instance add (0, "INPUT6_class") {
+                parameter Enable = true;
+                parameter Name = "INPUT6_class";
+                parameter IPVersion = 6;
+                parameter Direction = "LocalInbound";
+            }
+            instance add (0, "OUTPUT_class") {
+                parameter Enable = true;
+                parameter Name = "OUTPUT_class";
+                parameter IPVersion = 4;
+                parameter Direction = "LocalOutbound";
+            }
+            instance add (0, "OUTPUT6_class") {
+                parameter Enable = true;
+                parameter Name = "OUTPUT6_class";
+                parameter IPVersion = 6;
+                parameter Direction = "LocalOutbound";
+            }
+            instance add (0, "POSTROUTING_class") {
+                parameter Enable = true;
+                parameter Name = "POSTROUTING_class";
+                parameter IPVersion = 4;
+                parameter Direction = "Outbound";
+                object Classification {
+                    instance add (0, "cl1") {
+                        parameter Enable = true;
+                        parameter ClassificationRef = "QoS.Classification.1";
+                    }
+                }
+            }
+            instance add (0, "POSTROUTING6_class") {
+                parameter Enable = true;
+                parameter Name = "POSTROUTING6_class";
+                parameter IPVersion = 6;
+                parameter Direction = "Outbound";
+                object Classification {
+                    instance add (0, "cl1") {
+                        parameter Enable = true;
+                        parameter ClassificationRef = "QoS.Classification.2";
+                    }
+                }
+            }
+        }
     }
 }
 //! [default_configuration]
