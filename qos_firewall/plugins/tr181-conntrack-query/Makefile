@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-conntrack-query
-PKG_VERSION:=v0.9.0
+PKG_VERSION:=FIX_FEAT-437
 SHORT_DESCRIPTION:=tr181-conntrack-query interface plugin
 
-PKG_SOURCE:=tr181-conntrack-query-v0.9.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-conntrack-query/-/archive/v0.9.0
-PKG_HASH:=2ef733bbe93260e82a68ce4a184346b72cd99ae185d0c193e655ecff232fcb2c
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-conntrack-query-v0.9.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=FIX_FEAT-437
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-conntrack-query.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -46,6 +47,7 @@ define Package/$(PKG_NAME)
   DEPENDS += +libmnl
   DEPENDS += +kmod-nf-conntrack-netlink
   DEPENDS += +libnetfilter-conntrack
+  DEPENDS += +libnetlink-utils
   MENU:=1
 endef
 
