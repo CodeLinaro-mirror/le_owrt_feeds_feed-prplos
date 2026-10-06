@@ -3,14 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=multisettings
-PKG_VERSION:=revert_feat212
+PKG_VERSION:=v0.19.0
 SHORT_DESCRIPTION:=multisettings plugin
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=d9bebb1536b94c5547019b9e453a000aa7b468f2
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/multisettings.git
-PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=multisettings-v0.19.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/multisettings/-/archive/v0.19.0
+PKG_HASH:=d79f4e068eee0f62cf833d05767f5da9ce1ff93b557f3caacaac1dce253e3e38
+PKG_BUILD_DIR:=$(BUILD_DIR)/multisettings-v0.19.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE

@@ -3,14 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-security
-PKG_VERSION:=revert_feat212
+PKG_VERSION:=v0.16.0
 SHORT_DESCRIPTION:=TR-181 compatible security plugin
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=1156ac3dd54f7a631bf304c902d37a9e9532990b
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-security.git
-PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=tr181-security-v0.16.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-security/-/archive/v0.16.0
+PKG_HASH:=04a08b9136d2ae543b0ead16faf8b2ebaf339c964f27b373e35177ea03b059c0
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-security-v0.16.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE

@@ -3,14 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr069-manager
-PKG_VERSION:=revert_feat212
+PKG_VERSION:=v1.47.0
 SHORT_DESCRIPTION:=TR069 Manager
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=11fd6600d0613e0842d4653d4c4d515105f4e447
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager.git
-PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=tr069-manager-v1.47.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr069-manager/-/archive/v1.47.0
+PKG_HASH:=d70d387a08bc216fabac7f7206ab955d4c8ab820539174790d7b9a5b320fe514
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr069-manager-v1.47.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE

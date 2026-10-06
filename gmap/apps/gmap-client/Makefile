@@ -3,14 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmap-client
-PKG_VERSION:=revert_feat212
+PKG_VERSION:=v1.8.0
 SHORT_DESCRIPTION:=gMap client plugin
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=91ca381106ab3e42fef0fba0aa0737a8f1a88b2e
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-client.git
-PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=gmap-client-v1.8.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/gmap/applications/gmap-client/-/archive/v1.8.0
+PKG_HASH:=b6132709d3a851ce1208085bcbb2bd1faeedcb95fe99871bc65f8adcea4fbd1b
+PKG_BUILD_DIR:=$(BUILD_DIR)/gmap-client-v1.8.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE

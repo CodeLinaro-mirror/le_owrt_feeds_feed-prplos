@@ -3,14 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-flashmonitor
-PKG_VERSION:=revert_feat212
+PKG_VERSION:=v0.6.0
 SHORT_DESCRIPTION:=tr181-flashmonitor plugin
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=7eda40d70e75ed044db5be50d27a41622195f1f5
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-flashmonitor.git
-PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=tr181-flashmonitor-v0.6.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-flashmonitor/-/archive/v0.6.0
+PKG_HASH:=b1ecf46dd2569e357401e209a1e1e1ae7be265949ab66d08d2a28e3bb6ec022e
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-flashmonitor-v0.6.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE

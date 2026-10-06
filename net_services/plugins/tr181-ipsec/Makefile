@@ -3,14 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-ipsec
-PKG_VERSION:=revert_feat212
+PKG_VERSION:=v0.3.0
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=563357588ce2909655700409f3033df34e258501
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ipsec.git
-PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=tr181-ipsec-v0.3.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ipsec/-/archive/v0.3.0
+PKG_HASH:=e214ab4053865e65852cbfe906ef87ffb2e4d0ed30f08f1b98cdf1ebd2b96e66
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ipsec-v0.3.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE

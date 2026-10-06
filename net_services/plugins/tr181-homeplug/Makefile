@@ -3,14 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-homeplug
-PKG_VERSION:=revert_feat212
+PKG_VERSION:=v0.7.0
 SHORT_DESCRIPTION:=tr181 homeplug plugin
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=767934c40e4db492be2fbad7bf37d1cd23b3e66f
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-homeplug.git
-PKG_MIRROR_HASH:=skip
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE:=tr181-homeplug-v0.7.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-homeplug/-/archive/v0.7.0
+PKG_HASH:=98c15791e9849c6f1d02ac11dfcd123289ab8a10baa9bb621d395ee51f116f90
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-homeplug-v0.7.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
