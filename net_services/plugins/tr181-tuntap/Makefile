@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-tuntap
-PKG_VERSION:=v0.4.0
+PKG_VERSION:=revert_feat212
 SHORT_DESCRIPTION:=TR-181 compatible TUNTAP Tunnel Manager
 
-PKG_SOURCE:=tr181-tuntap-v0.4.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-tuntap/-/archive/v0.4.0
-PKG_HASH:=bb2c135f39efe506b2ff70588fb9e72ac96770a5346daaa1bd78fed8d99dd97f
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-tuntap-v0.4.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=c16b4688662a511fa66d70b89142b911d6e3085b
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-tuntap.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE

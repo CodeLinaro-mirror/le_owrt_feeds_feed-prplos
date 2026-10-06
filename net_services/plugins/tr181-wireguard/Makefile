@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-wireguard
-PKG_VERSION:=v0.2.0
+PKG_VERSION:=revert_feat212
 SHORT_DESCRIPTION:=WireGuard plugin
 
-PKG_SOURCE:=tr181-wireguard-v0.2.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-wireguard/-/archive/v0.2.0
-PKG_HASH:=f962512ba422d256da998491941ad55d40fdf6eba14a2d9b670ca74d44d0c4a9
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-wireguard-v0.2.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=195906dc0b2d342ea336d01c6eeebca3bbce23fc
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-wireguard.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
