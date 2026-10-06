@@ -53,7 +53,6 @@ define Package/$(PKG_NAME)
   DEPENDS += +tr181-firewall
   DEPENDS += +time-manager
   DEPENDS += +dnsmasq-prpl
-  DEPENDS += +sudo
   MENU:=1
 endef
 
