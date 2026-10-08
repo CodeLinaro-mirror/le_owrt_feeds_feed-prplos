@@ -1,0 +1,84 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Tarik BOUCHTAT <tarik.bouchtat@softathome.com>
+Date: Thu, 8 Oct 2026 10:00:00 +0200
+Subject: [PATCH] uds: Resume partial sendmsg() instead of resending the frame
+
+Problem: usp-cli busy-loops at high CPU and sometimes runs out of memory
+on large replies
+
+Cause: with FD_PASSING_EXPERIMENTAL, SendUdsFrames() does not track
+the bytes already sent; after a partial sendmsg() it resends the whole
+frame, corrupting the UDS stream.
+
+Solution: Track tx_bytes_sent in the FD-passing path, send only the
+remaining bytes, and attach SCM_RIGHTS only to the first chunk.
+
+References: PPW-1839
+---
+ src/core/uds.c | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
+
+diff --git a/src/core/uds.c b/src/core/uds.c
+--- a/src/core/uds.c
++++ b/src/core/uds.c
+@@ -128,8 +128,8 @@
+     int fd_count;                                // Amount of file descriptors
+ #else
+     unsigned char *tx_buf;                       // transient buffer containing the USP message frame currently being sent
+-    int tx_bytes_sent;                           // Counts the number of bytes sent of the current USP Record to tx (i.e. at the head of the usp_record_send_queue)
+ #endif
++    int tx_bytes_sent;                           // Counts the number of bytes sent of the current USP Record to tx (i.e. at the head of the usp_record_send_queue)
+     int tx_buf_len;                              // the length of the currently transmitting packet
+     uds_frame_t tx_buf_type;                     // type of the uds frame being transmitted
+     bool is_disconnect_record;                   // Is the transmitted usp message of disconnect record type
+@@ -2078,7 +2078,19 @@
+     USP_ASSERT(uc->tx_buf != NULL);
+ 
+     // Try sending the remaining data in the UDS frame
+-    bytes_sent = sendmsg(uc->socket, uc->tx_buf, 0);
++    // Ancillary data (file descriptors) is only attached to the first chunk
++    struct msghdr msg = *uc->tx_buf;
++    struct iovec iov;
++    iov.iov_base = (unsigned char *) uc->tx_buf->msg_iov->iov_base + uc->tx_bytes_sent;
++    iov.iov_len = uc->tx_buf_len - uc->tx_bytes_sent;
++    msg.msg_iov = &iov;
++    msg.msg_iovlen = 1;
++    if (uc->tx_bytes_sent > 0)
++    {
++        msg.msg_control = NULL;
++        msg.msg_controllen = 0;
++    }
++    bytes_sent = sendmsg(uc->socket, &msg, 0);
+     if (fd_key != 0)
+     {
+         // If no references left for this buffer (no notifications or subscriptions holding reference)
+@@ -2098,7 +2110,8 @@
+         return;
+     }
+ 
+-    if (bytes_sent == uc->tx_buf_len)
++    uc->tx_bytes_sent += bytes_sent;
++    if (uc->tx_bytes_sent == uc->tx_buf_len)
+     {
+         // if we sent all the data then free the buffer.
+         // The next record in the queue will be popped on the next iteration
+@@ -2283,6 +2296,7 @@
+     }
+ 
+     uc->tx_buf = bmsg;
++    uc->tx_bytes_sent = 0;
+ #else
+ 
+ void PopUdsSendItem(uds_connection_t *uc)
+@@ -2728,9 +2742,7 @@
+     uc->usp_record_send_queue.head = NULL;
+     uc->usp_record_send_queue.tail = NULL;
+     uc->tx_buf = NULL;
+-#ifndef FD_PASSING_EXPERIMENTAL
+     uc->tx_bytes_sent = 0;
+-#endif
+     uc->tx_buf_len = 0;
+     uc->tx_buf_type = kUdsFrameType_Invalid;
+     uc->is_disconnect_record = false;
+-- 
+2.34.1
