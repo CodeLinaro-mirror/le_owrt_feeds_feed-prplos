@@ -11,10 +11,10 @@ PKG_NAME:=dnsmasq-prpl
 PKG_RELEASE:=2
 
 PKG_VERSION:=2.90
-PKG_SOURCE:=dnsmasq-prpl-stable-2.90_v0.1.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/dnsmasq/-/archive/prpl/stable-2.90_v0.1.1
-PKG_HASH:=4273b7f29967678c3cc51793e8a443cb8f9d0eae1f0a7777f5637ffea42fa7d9
-PKG_BUILD_DIR:=$(BUILD_DIR)/dnsmasq-prpl-stable-2.90_v0.1.1
+PKG_SOURCE:=dnsmasq-prpl-b2749951965c770bf760855991d10d42ab9c4ed1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/mirrors/dnsmasq/-/archive/b2749951965c770bf760855991d10d42ab9c4ed1
+PKG_HASH:=3a902ab9a82bd38416f6c7388d99a8143acb48d307dccbfbbbcbb38861da715d
+PKG_BUILD_DIR:=$(BUILD_DIR)/dnsmasq-b2749951965c770bf760855991d10d42ab9c4ed1
 
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=COPYING
