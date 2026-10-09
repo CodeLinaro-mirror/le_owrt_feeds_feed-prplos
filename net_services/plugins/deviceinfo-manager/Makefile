@@ -16,7 +16,7 @@ PKG_LICENSE_FILES:=LICENSE
 
 COMPONENT:=deviceinfo-manager
 
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 define SAHInit/Install
 	install -d $(1)/etc/rc.d/

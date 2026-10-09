@@ -1,0 +1,56 @@
+From: Petr Štetiar <petr.stetiar@prplfoundation.org>
+Subject: mod-lr-logrotate: don't call back into DeviceInfo on stop
+
+On stop, the module destructor runs "logrotate -f" through system()
+and waits for it. The lastaction script of the syslog entries,
+logrotate_add.sh, calls DeviceInfo.UpdateLogRotate() with ba-cli,
+which deviceinfo-manager serves itself. On glibc, dlclose() unloads
+the module during the stop, while the bus is still up, so the
+daemon and ba-cli wait for each other until procd sends SIGKILL:
+
+  procd: Instance deviceinfo-manager::deviceinfo-manager pid 4681 not stopped on SIGTERM, sending SIGKILL instead
+
+On musl dlclose() does nothing, the destructor runs at exit and the
+call fails fast, so the bug stays hidden there.
+
+Set LOGROTATE_DM_STOPPING while the destructor runs logrotate, and
+make logrotate_add.sh return early when it is set. The daemon stops
+anyway, so the skipped update loses nothing.
+
+Upstream-Status: Pending
+Signed-off-by: Petr Štetiar <petr.stetiar@prplfoundation.org>
+---
+diff -ruN a/mod-lr-logrotate/src/mod-lr-logrotate.c b/mod-lr-logrotate/src/mod-lr-logrotate.c
+--- a/mod-lr-logrotate/src/mod-lr-logrotate.c
++++ b/mod-lr-logrotate/src/mod-lr-logrotate.c
+@@ -270,7 +270,14 @@
+     SAH_TRACEZ_IN(ME);
+     SAH_TRACEZ_WARNING(ME, "Stopping mod-lr-logrotate");
+ 
++    /*
++     * The destructor can run while the plug-in stops (dlclose), with this
++     * process blocked in system(). A logrotate script that calls back into
++     * DeviceInfo over the bus would then wait forever: tell it not to.
++     */
++    setenv("LOGROTATE_DM_STOPPING", "1", 1);
+     rotate_logs();
++    unsetenv("LOGROTATE_DM_STOPPING");
+ 
+     logrotate_list_foreach(remove_entry);
+     logrotate_list_clean();
+diff -ruN a/scripts/logrotate_add.sh b/scripts/logrotate_add.sh
+--- a/scripts/logrotate_add.sh
++++ b/scripts/logrotate_add.sh
+@@ -7,6 +7,12 @@
+     exit 22
+ fi
+ 
++# Run from mod-lr-logrotate while deviceinfo-manager stops: a call into
++# DeviceInfo would block, because the daemon waits for logrotate.
++if [ -n "$LOGROTATE_DM_STOPPING" ]; then
++    exit 0
++fi
++
+ FILENAME_PATH=$1  # e.g: /var/log/messages
+ ALIAS=$2          # e.g: cpe-LogRotate-1
+ 
