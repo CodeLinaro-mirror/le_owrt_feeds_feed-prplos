@@ -19,9 +19,6 @@ PKG_RELEASE:=2
 
 include $(INCLUDE_DIR)/package.mk
 
-# src/makefile does not link libm, but the module calls floor().
-TARGET_LDFLAGS += -lm
-
 define Package/$(PKG_NAME)
   CATEGORY:=prpl Foundation
   SUBMENU:=Modules

@@ -1,0 +1,24 @@
+From: Petr Štetiar <petr.stetiar@prplfoundation.org>
+Subject: mod-pcm-svc: link libm
+
+mod_pcm_svc.c calls floor(), but src/makefile does not link libm. On
+musl libm is part of libc, so it does not matter. On glibc the module
+fails to load with "undefined symbol: floor", and every amx service
+that imports mod_pcm_svc.odl exits at startup.
+
+Add -lm to the LDFLAGS.
+
+Upstream-Status: Pending
+Signed-off-by: Petr Štetiar <petr.stetiar@prplfoundation.org>
+---
+--- a/src/makefile
++++ b/src/makefile
+@@ -33,7 +33,7 @@
+ endif
+ 
+ LDFLAGS += $(STAGING_LIBDIR) -shared -fPIC
+-LDFLAGS += -lamxc -lamxp -lamxd -lamxo -lamxm -lamxj -lsahtrace
++LDFLAGS += -lamxc -lamxp -lamxd -lamxo -lamxm -lamxj -lsahtrace -lm
+ 
+ # targets
+ all: $(TARGET_SO)
