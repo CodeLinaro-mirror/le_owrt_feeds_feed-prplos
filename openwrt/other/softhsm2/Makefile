@@ -34,6 +34,10 @@ define Package/$(PKG_NAME)/description
   but can also work together with other cryptographic products because of the PKCS#11 interface
 endef
 
+define Build/InstallDev
+	$(call Package/$(PKG_NAME)/install,$(1))
+endef
+
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_DIR) $(1)/etc/
