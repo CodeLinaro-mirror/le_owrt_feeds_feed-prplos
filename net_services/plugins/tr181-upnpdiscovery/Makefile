@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-upnpdiscovery
-PKG_VERSION:=v0.6.1
+PKG_VERSION:=DEV_PPW-2403
 SHORT_DESCRIPTION:=upnp discovery manager
 
-PKG_SOURCE:=tr181-upnpdiscovery-v0.6.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-upnpdiscovery/-/archive/v0.6.1
-PKG_HASH:=7f2d0c08044c7fba6ddfdd8c9f856987dbb35c50068f7dd63d2e7fcadfe0b21e
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-upnpdiscovery-v0.6.1
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=DEV_PPW-2403
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-upnpdiscovery.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
