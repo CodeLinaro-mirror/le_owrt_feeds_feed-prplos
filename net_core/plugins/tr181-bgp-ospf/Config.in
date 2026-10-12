@@ -1,0 +1,22 @@
+
+menu "Select tr181-bgp-ospf build options"
+    depends on PACKAGE_tr181-bgp-ospf
+
+config TR181_BGP_OSPF_START_ORDER
+    int "tr181-bgp-ospf start up order"
+    default 99
+
+config TR181_BGP_OSPF_STOP_ORDER
+    int "tr181-bgp-ospf stop order"
+    default 0
+
+config TR181_BGP_OSPF_RUN_AS_USER
+    string "User the tr181-bgp-ospf plugin runs as"
+    default "tr181_app"
+
+config TR181_BGP_OSPF_RUN_AS_GROUP
+    string "Group the tr181-bgp-ospf plugin runs as"
+    default "tr181_app"
+
+endmenu
+
