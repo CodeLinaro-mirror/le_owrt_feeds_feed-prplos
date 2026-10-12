@@ -1,0 +1,259 @@
+diff --git a/m4/acx_openssl.m4 b/m4/acx_openssl.m4
+index 2f1adad..27e68a4 100644
+--- a/m4/acx_openssl.m4
++++ b/m4/acx_openssl.m4
+@@ -14,7 +14,7 @@ AC_DEFUN([ACX_OPENSSL],[
+ 	AC_MSG_RESULT($OPENSSL_INCLUDES)
+ 
+ 	AC_MSG_CHECKING(what are the OpenSSL libs)
+-	OPENSSL_LIBS="$OPENSSL_LIBDIRS -lcrypto"
++	OPENSSL_LIBS="$OPENSSL_LIBDIRS -lcrypto -lkcapi -lkeyutils"
+ 	AC_MSG_RESULT($OPENSSL_LIBS)
+ 
+ 	tmp_CPPFLAGS=$CPPFLAGS
+diff --git a/src/lib/data_mgr/CMakeLists.txt b/src/lib/data_mgr/CMakeLists.txt
+index a0e0c17..b2a7cb1 100644
+--- a/src/lib/data_mgr/CMakeLists.txt
++++ b/src/lib/data_mgr/CMakeLists.txt
+@@ -20,6 +20,7 @@ ENDIF()
+ include_directories(${INCLUDE_DIRS})
+ add_library(${PROJECT_NAME} OBJECT ${SOURCES})
+ target_compile_options(${PROJECT_NAME} PRIVATE ${COMPILE_OPTIONS})
++target_link_libraries(${PROJECT_NAME} -lkcapi)
+ 
+ if(BUILD_TESTS)
+     add_subdirectory(test)
+diff --git a/src/lib/data_mgr/SecureDataManager.cpp b/src/lib/data_mgr/SecureDataManager.cpp
+index 987e76b..e5c8262 100644
+--- a/src/lib/data_mgr/SecureDataManager.cpp
++++ b/src/lib/data_mgr/SecureDataManager.cpp
+@@ -45,6 +45,8 @@
+ #include "AESKey.h"
+ #include "SymmetricAlgorithm.h"
+ #include "RFC4880.h"
++#include <kcapi.h>
++#include <keyutils.h>
+ 
+ // Constructors
+ 
+@@ -394,6 +396,85 @@ void SecureDataManager::logout()
+ 	maskedKey.wipe();
+ }
+ 
++// Decrypt data with a KRS managed key
++bool SecureDataManager::decrypt_with_krs(const ByteString& encrypted, ByteString& plaintext)
++{
++	struct kcapi_handle *handle = NULL;
++
++	const char * keydescr = getenv("SOFTHSM2_CIPHER_KRS_KEY_DESCR");
++	if (keydescr == NULL)
++	{
++		INFO_MSG("KRS key description not found, decrypt with KRS disabled");
++		// Decrypt with KRS disabled, return encrypted string as is.
++		plaintext = ByteString(encrypted.const_byte_str(), encrypted.size());
++		return true;
++	}
++
++	long keyserial = keyctl_search(KEY_SPEC_USER_KEYRING, "logon", keydescr, 0);
++	if (keyserial < 0)
++	{
++		ERROR_MSG("Could not get KRS key serial");
++		return false;
++	}
++
++	if (kcapi_cipher_init(&handle, "cbc(aes-generic)", 0)) return false;
++	if (kcapi_cipher_setkey_by_key_serial(handle, keyserial))
++	{
++		ERROR_MSG("Could not get KRS key with serial");
++		kcapi_cipher_destroy(handle);
++		return false;
++	}
++
++	// Take the IV from the input data
++	ByteString IV = encrypted.substr(0, kcapi_cipher_blocksize(handle));
++
++	if (IV.size() != kcapi_cipher_blocksize(handle))
++	{
++		ERROR_MSG("Invalid IV in encrypted data");
++		kcapi_cipher_destroy(handle);
++		return false;
++	}
++
++	// Setup decrypt operation input data in "plaintext" buffer.
++	plaintext.wipe(encrypted.size() - IV.size());
++	memcpy(plaintext.byte_str(), encrypted.const_byte_str() + kcapi_cipher_blocksize(handle), plaintext.size());
++
++	ssize_t out_size = kcapi_cipher_decrypt(
++		handle,
++		plaintext.byte_str(),
++		plaintext.size(),
++		IV.const_byte_str(),
++		plaintext.byte_str(),
++		plaintext.size(),
++		0);
++	if (out_size < 0)
++	{
++		ERROR_MSG("Kernel decrypt operation failed");
++		kcapi_cipher_destroy(handle);
++		return false;
++	}
++
++	// Remove pkcs#7 padding if any
++	uint8_t last_byte = plaintext[plaintext.size() - 1];
++	bool padded = false;
++	if (last_byte < kcapi_cipher_blocksize(handle))
++	{
++		for (size_t i=plaintext.size()-last_byte-1; i<plaintext.size(); i++)
++		{
++			if (plaintext[i] != last_byte) break;
++		}
++		padded = true;
++	}
++	if (padded)
++	{
++		plaintext.resize(plaintext.size() - last_byte);
++	}
++
++	kcapi_cipher_destroy(handle);
++	return true;
++
++}
++
+ // Decrypt the supplied data
+ bool SecureDataManager::decrypt(const ByteString& encrypted, ByteString& plaintext)
+ {
+@@ -433,20 +514,85 @@ bool SecureDataManager::decrypt(const ByteString& encrypted, ByteString& plainte
+ 		return false;
+ 	}
+ 
++	ByteString intermediateText;
+ 	ByteString finalBlock;
+ 
+ 	if (!aes->decryptInit(&theKey, SymMode::CBC, IV) ||
+-	    !aes->decryptUpdate(encrypted.substr(aes->getBlockSize()), plaintext) ||
++	    !aes->decryptUpdate(encrypted.substr(aes->getBlockSize()), intermediateText) ||
+ 	    !aes->decryptFinal(finalBlock))
+ 	{
+ 		return false;
+ 	}
+ 
+-	plaintext += finalBlock;
++	intermediateText += finalBlock;
++
++	if (!decrypt_with_krs(intermediateText, plaintext)) return false;
+ 
+ 	return true;
+ }
+ 
++// Encrypt data with a KRS managed key
++bool SecureDataManager::encrypt_with_krs(const ByteString& plaintext, ByteString& encrypted)
++{
++	struct kcapi_handle *handle = NULL;
++	ByteString IV;
++
++	const char * keydescr = getenv("SOFTHSM2_CIPHER_KRS_KEY_DESCR");
++	if (keydescr == NULL)
++	{
++		INFO_MSG("KRS key description not found, encrypt with KRS disabled");
++		// Encrypt with KRS disabled, return plaintext string as is.
++		encrypted = ByteString(plaintext.const_byte_str(), plaintext.size());
++		return true;
++	}
++
++	long keyserial = keyctl_search(KEY_SPEC_USER_KEYRING, "logon", keydescr, 0);
++	if (keyserial < 0)
++	{
++		ERROR_MSG("Could not get KRS key serial");
++		return false;
++	}
++
++	if (kcapi_cipher_init(&handle, "cbc(aes-generic)", 0)) return false;
++	if (kcapi_cipher_setkey_by_key_serial(handle, keyserial))
++	{
++		ERROR_MSG("Could not get KRS key with serial");
++		kcapi_cipher_destroy(handle);
++		return false;
++	}
++
++	if (!rng->generateRandom(IV, kcapi_cipher_ivsize(handle))) return false;
++
++	// Setup encrypt operation in the "encrypted" buffer, and pad data with pkcs#7
++	size_t blocksize = kcapi_cipher_blocksize(handle);
++	size_t aligned_size = ((plaintext.size() + blocksize - 1) / blocksize) * blocksize;
++	size_t pad_size = aligned_size - plaintext.size();
++	encrypted.wipe(aligned_size);
++	memcpy(encrypted.byte_str(), plaintext.const_byte_str(), plaintext.size());
++	memset(&encrypted[plaintext.size()], (int) pad_size, pad_size);
++
++	ssize_t out_size = kcapi_cipher_encrypt(
++		handle,
++		encrypted.byte_str(),
++		encrypted.size(),
++		IV.const_byte_str(),
++		encrypted.byte_str(),
++		encrypted.size(),
++		0);
++	if (out_size < 0)
++	{
++		ERROR_MSG("Kernel encrypt operation failed");
++		kcapi_cipher_destroy(handle);
++		return false;
++	}
++
++	// Add IV to output data
++	encrypted = IV + encrypted;
++
++	kcapi_cipher_destroy(handle);
++	return true;
++}
++
+ // Encrypt the supplied data
+ bool SecureDataManager::encrypt(const ByteString& plaintext, ByteString& encrypted)
+ {
+@@ -456,8 +602,12 @@ bool SecureDataManager::encrypt(const ByteString& plaintext, ByteString& encrypt
+ 		return false;
+ 	}
+ 
++	ByteString intermediateText;
++	if (!encrypt_with_krs(plaintext, intermediateText)) return false;
++
+ 	AESKey theKey(256);
+ 	ByteString unmaskedKey;
++	ByteString IV;
+ 
+ 	{
+ 		MutexLocker lock(dataMgrMutex);
+@@ -473,14 +623,14 @@ bool SecureDataManager::encrypt(const ByteString& plaintext, ByteString& encrypt
+ 	encrypted.wipe();
+ 
+ 	// Generate random IV
+-	ByteString IV;
+ 
+ 	if (!rng->generateRandom(IV, aes->getBlockSize())) return false;
+ 
++
+ 	ByteString finalBlock;
+ 
+ 	if (!aes->encryptInit(&theKey, SymMode::CBC, IV) ||
+-	    !aes->encryptUpdate(plaintext, encrypted) ||
++	    !aes->encryptUpdate(intermediateText, encrypted) ||
+ 	    !aes->encryptFinal(finalBlock))
+ 	{
+ 		return false;
+diff --git a/src/lib/data_mgr/SecureDataManager.h b/src/lib/data_mgr/SecureDataManager.h
+index 93d99bc..514ce95 100644
+--- a/src/lib/data_mgr/SecureDataManager.h
++++ b/src/lib/data_mgr/SecureDataManager.h
+@@ -113,6 +113,12 @@ private:
+ 	// Generic function for creating an encrypted version of the key from the specified passphrase
+ 	bool pbeEncryptKey(const ByteString& passphrase, ByteString& encryptedKey);
+ 
++	// Decrypt data with a KRS managed key
++	bool decrypt_with_krs(const ByteString& encrypted, ByteString& plaintext);
++
++	// Encrypt data with a KRS managed key
++	bool encrypt_with_krs(const ByteString& plaintext, ByteString& encrypted);
++
+ 	// Unmask the key
+ 	void unmask(ByteString& key);
+ 
