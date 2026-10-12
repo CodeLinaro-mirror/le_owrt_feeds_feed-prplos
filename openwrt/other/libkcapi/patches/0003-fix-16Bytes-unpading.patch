@@ -1,0 +1,13 @@
+diff --git a/apps/kcapi-enc.c b/apps/kcapi-enc.c
+index 2fef405..b5788f0 100644
+--- a/apps/kcapi-enc.c
++++ b/apps/kcapi-enc.c
+@@ -176,7 +176,7 @@ static ssize_t return_data_fd(struct kcapi_handle *handle,
+ 
+ 		padbyte = *(off_ptr + generated_bytes - 1);
+ 
+-		if ((uint32_t)padbyte < opts->func_blocksize(handle)) {
++		if ((uint32_t)padbyte <= opts->func_blocksize(handle)) {
+ 			ssize_t i;
+ 			uint32_t padded = 1;
+ 
