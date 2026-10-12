@@ -4,10 +4,9 @@ PKG_NAME:=mod-routing-bird2
 PKG_VERSION:=v0.3.0
 SHORT_DESCRIPTION:=Support of the OSPF and BGP configuration through TR-181 interface using bird2
 
-PKG_SOURCE:=mod-routing-bird2-v0.3.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-routing-bird2/-/archive/v0.3.0
-PKG_HASH:=dc7fa15e43f06a43a011e06281ed20ca68380dfddc2dfdb34ec31cd43618e0b6
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-routing-bird2-v0.3.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-routing-bird2.git
+PKG_SOURCE_VERSION:=PCF-2769
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
 
