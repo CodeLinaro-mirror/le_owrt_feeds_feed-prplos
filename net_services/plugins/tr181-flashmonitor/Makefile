@@ -1,15 +1,15 @@
-# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
 # WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-flashmonitor/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-flashmonitor
-PKG_VERSION:=v0.6.0
+PKG_VERSION:=v0.9.0
 SHORT_DESCRIPTION:=tr181-flashmonitor plugin
 
-PKG_SOURCE:=tr181-flashmonitor-v0.6.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-flashmonitor/-/archive/v0.6.0
-PKG_HASH:=b1ecf46dd2569e357401e209a1e1e1ae7be265949ab66d08d2a28e3bb6ec022e
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-flashmonitor-v0.6.0
+PKG_SOURCE:=tr181-flashmonitor-v0.9.0.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-flashmonitor/-/archive/v0.9.0
+PKG_HASH:=6f03ef5d4b1df6c548013bcbd7e827eefc89df4948074c2f8a9d22ddad6bb86d
+PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-flashmonitor-v0.9.0
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -20,10 +20,10 @@ PKG_RELEASE:=1
 
 define SAHInit/Install
 	install -d $(1)/etc/rc.d/
-	if [[ "${CONFIG_PACKAGE_procd}" != "y" ]]; then \
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_FLASHMONITOR_ORDER)$(COMPONENT); \
-	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_FLASHMONITOR_ORDER)$(COMPONENT); \
-	fi
+ifneq ($(CONFIG_PACKAGE_procd),y)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/S$(CONFIG_SAH_AMX_TR181_FLASHMONITOR_ORDER)$(COMPONENT)
+	ln -sfr $(1)/etc/init.d/$(COMPONENT) $(1)/etc/rc.d/K$(CONFIG_SAH_AMX_TR181_FLASHMONITOR_ORDER)$(COMPONENT)
+endif
 endef
 
 include $(INCLUDE_DIR)/package.mk
