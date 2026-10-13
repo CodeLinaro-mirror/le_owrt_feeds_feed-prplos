@@ -45,7 +45,6 @@ define Package/$(PKG_NAME)
   DEPENDS += +amxrt
   DEPENDS += +mod-dmstats
   DEPENDS += +mod-vlan-ioctl
-  DEPENDS += +mod-vlan-uci
   DEPENDS += +mod-netmodel
   DEPENDS += +mod-dmext
   MENU:=1
