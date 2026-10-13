@@ -1,15 +1,16 @@
-# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling
+# WARNING: Automatically generated file using BAF (Build system Agnostic File) tooling (version v2.39.3)
 # WARNING: You should contribute changes to https://gitlab.com/prpl-foundation/components/core/plugins/tr181-cpu/-/blob/main/baf.yml instead
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-cpu
-PKG_VERSION:=v0.4.0
+PKG_VERSION:=dev_PCF-2277
 SHORT_DESCRIPTION:=TR-181 compatible plugin for cpu Frequency and Voltage Scaling
 
-PKG_SOURCE:=tr181-cpu-v0.4.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-cpu/-/archive/v0.4.0
-PKG_HASH:=32f56f20ae3141e069b7e87b98e74fa68c7f62c29f7bd81186503cb7ba0d0212
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-cpu-v0.4.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PCF-2277
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-cpu.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
