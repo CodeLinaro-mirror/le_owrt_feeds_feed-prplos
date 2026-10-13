@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=odhcpd
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_VERSION:=gen_d8118f6e_v0.3.1
 PKG_SOURCE:=odhcpd-$(PKG_VERSION).tar.gz

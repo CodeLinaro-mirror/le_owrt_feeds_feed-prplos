@@ -1,0 +1,80 @@
+Subject: [PATCH] config: recreate runtime interface when its device changes
+
+Problem: Rebinding a logical DHCP interface changes ifname but retains the
+old nonzero ifindex and cached addresses. DHCPv6 multicast reception and
+IA_NA prefix selection can therefore use the old device's state.
+
+Solution: Resolve the requested device before allocating the interface.
+When it changes, allocate a replacement and close the old runtime object,
+including its sockets, assignments and address caches. The existing
+initialization path then obtains the new index and addresses. Keep the
+logical name unchanged and retain the old object if allocation fails.
+
+Assignments are deliberately discarded on device changes; ordinary
+configuration reloads with an unchanged device retain the existing path.
+
+--- a/src/config.c
++++ b/src/config.c
+@@ -575,7 +575,7 @@
+ int config_parse_interface(void *data, size_t len, const char *name, bool overwrite)
+ {
+ 	struct odhcpd_ipaddr *addrs = NULL;
+-	struct interface *iface;
++	struct interface *iface, *old_iface = NULL;
+ 	struct blob_attr *tb[IFACE_ATTR_MAX], *c;
+ 	ssize_t addrs_len;
+ 	bool get_addrs = false;
+@@ -591,6 +591,24 @@
+ 		return -1;
+ 
+ 	iface = avl_find_element(&interfaces, name, iface, avl);
++	if (overwrite || !iface) {
++		if ((c = tb[IFACE_ATTR_IFNAME]))
++			ifname = blobmsg_get_string(c);
++		else if ((c = tb[IFACE_ATTR_NETWORKID]))
++			ifname = blobmsg_get_string(c);
++	}
++
++#ifdef WITH_UBUS
++	if ((!iface || !iface->ifname) && !ifname)
++		ifname = ubus_get_ifname(name);
++#endif
++
++	/* Runtime state and assignments belong to the old network device. */
++	if (iface && iface->ifname && ifname && strcmp(iface->ifname, ifname)) {
++		old_iface = iface;
++		iface = NULL;
++	}
++
+ 	if (!iface) {
+ 		char *new_name;
+ 
+@@ -599,6 +617,9 @@
+ 			return -1;
+ 
+ 		iface->name = strcpy(new_name, name);
++		/* Copy name before closing: a caller may pass old_iface->name. */
++		if (old_iface)
++			close_interface(old_iface);
+ 		iface->avl.key = iface->name;
+ 		iface->router_event.uloop.fd = -1;
+ 		iface->dhcpv6_event.uloop.fd = -1;
+@@ -615,18 +636,6 @@
+ 		get_addrs = overwrite = true;
+ 	}
+ 
+-	if (overwrite) {
+-		if ((c = tb[IFACE_ATTR_IFNAME]))
+-			ifname = blobmsg_get_string(c);
+-		else if ((c = tb[IFACE_ATTR_NETWORKID]))
+-			ifname = blobmsg_get_string(c);
+-	}
+-
+-#ifdef WITH_UBUS
+-	if (!iface->ifname && !ifname)
+-		ifname = ubus_get_ifname(name);
+-#endif
+-
+ 	if (!iface->ifname && !ifname)
+ 		goto err;
+ 
