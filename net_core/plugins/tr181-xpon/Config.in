@@ -11,9 +11,13 @@ config SAH_AMX_TR181_XPON
     bool "Build a TR-181 XPON manager"
     default y
 
-config SAH_AMX_TR181_XPON_ORDER
+config SAH_AMX_TR181_XPON_START_ORDER
     int "TR-181 XPON manager start up order"
     default 30
+
+config SAH_AMX_TR181_XPON_STOP_ORDER
+    int "TR-181 XPON manager stop order"
+    default 99
 
 config SAH_AMX_TR181_XPON_MAX_ONUS
     int "Maximum number of ONUs"
