@@ -1,0 +1,42 @@
+From 60d51d361e6a7e053507f7843df0519cc5cf4a7e Mon Sep 17 00:00:00 2001
+From: Junjie Zhang <junjie.zhang@actiontec.com>
+Date: Wed, 14 Oct 2026 08:47:13 +0000
+Subject: [PATCH] client: fix wsi use-after-free on handshake write error
+
+In lws_http_client_socket_service() (LRS_H1C_ISSUE_HANDSHAKE2), the
+LWS_SSL_CAPABLE_ERROR branch calls lws_close_free_wsi() - which frees
+the wsi - and then returns 0.
+
+All four role callers of lws_http_client_socket_service()
+(ops-h1.c:701, ops-ws.c:981, ops-h2.c:148, ops-raw-proxy.c:117)
+interpret a zero return as "the wsi is still alive" and continue to
+dereference it: a use-after-free.
+
+Observed as a repeating SIGSEGV of the TR-069 client daemon in
+rops_handle_POLLIN_h1() at the lwsi_state(wsi) == LRS_WAITING_CONNECT
+check (ops-h1.c:705), immediately after
+lws_http_client_socket_service() returned 0 following a failed write
+towards the ACS.
+
+The other close-and-bail sites in the same function already return
+-1; make this one consistent.
+
+References: PPW-2516
+Signed-off-by: Junjie Zhang <junjie.zhang@actiontec.com>
+
+diff --git a/lib/roles/http/client/client-http.c b/lib/roles/http/client/client-http.c
+index 16fd8b2..4ac7abf 100644
+--- a/lib/roles/http/client/client-http.c
++++ b/lib/roles/http/client/client-http.c
+@@ -286,7 +286,7 @@ hs2:
+ 			lwsl_debug("ERROR writing to client socket\n");
+ 			lws_close_free_wsi(wsi, LWS_CLOSE_STATUS_NOSTATUS,
+ 					   "cws");
+-			return 0;
++			return -1;
+ 		case LWS_SSL_CAPABLE_MORE_SERVICE:
+ 			lws_callback_on_writable(wsi);
+ 			break;
+-- 
+2.43.0
+

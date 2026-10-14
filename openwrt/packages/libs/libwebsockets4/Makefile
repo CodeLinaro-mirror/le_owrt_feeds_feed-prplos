@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libwebsockets4
 PKG_VERSION:=4.3.3
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=libwebsockets-$(PKG_VERSION).tar.gz
 PKG_SOURCE_SUBDIR:=libwebsockets-$(PKG_VERSION)
