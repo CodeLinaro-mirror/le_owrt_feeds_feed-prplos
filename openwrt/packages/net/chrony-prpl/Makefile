@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=chrony-prpl
-PKG_VERSION:=prpl/stable-4.4.y_v1.0.0
+PKG_VERSION:=prpl-stable-4.4.y_v1.0.0
 PKG_RELEASE:=2
 
 PKG_SOURCE:=chrony-$(PKG_VERSION).tar.gz
