@@ -65,7 +65,23 @@ cleanup() {
 	fi
 }
 
-trap cleanup EXIT INT TERM
+trap cleanup EXIT
+# Turn signals into a regular exit so the EXIT trap above unmounts and
+# cleans up, instead of carrying on after the cleanup handler returns
+trap 'exit 1' INT TERM
+
+# Unmount what earlier runs of this script left mounted for $1 (e.g. when
+# they were killed before their cleanup ran). Such a mount keeps serving
+# the filesystem as it was when mounted: reading through it after the
+# partition was reflashed returns the previous firmware.
+release_stale_mounts() {
+	dev=$(readlink -f "$1")
+	awk '$2 ~ /^\/mnt\/kernel\./ { print $1, $2 }' /proc/mounts | \
+	while read -r src mnt; do
+		[ "$(readlink -f "$src")" = "$dev" ] || continue
+		umount "$mnt" 2>/dev/null && rmdir "$mnt" 2>/dev/null || true
+	done
+}
 
 # $1 infile
 # $2 value size in 4-bytes blocks
@@ -110,6 +126,7 @@ data_size=0
 
 type=$(blkid -o value -s TYPE "$device")
 if [ -n "$type" ] && [ "$type" = "ext4" ] ; then
+	release_stale_mounts "$device"
 	mount_point=$(mktemp -d /mnt/kernel.XXXXXX)
 	if ! mount -t "$type" "$device" "$mount_point" ; then
 		echo "Fail to mount $device on $mount_point" >&2
