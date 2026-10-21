@@ -12,7 +12,7 @@ config SAH_AMX_TR181_BOOTSTATUS
     default y
 
 config SAH_AMX_TR181_BOOTSTATUS_ORDER
-    int "Start up order (must be early, before other tr181-* plugins, to catch Started/PowerOn/KernelReady)"
+    int "Start up order (early, so later stages are seen live; stages reached before it starts are back-dated)"
     default 10
 
 config SAH_AMX_TR181_BOOTSTATUS_RUN_AS_USER

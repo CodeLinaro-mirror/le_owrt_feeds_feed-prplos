@@ -4,10 +4,10 @@ PKG_NAME:=tr181-bootstatus
 PKG_VERSION:=0.1.0
 SHORT_DESCRIPTION:=TR-181 device lifecycle & boot telemetry plugin
 
-PKG_GIT_REF:=f8d3dec928eb880f1361253461146ffb271ca860
+PKG_GIT_REF:=8b934f759b4d47a0f6f52d3e3951fc199f821f68
 PKG_SOURCE:=tr181-bootstatus-$(PKG_GIT_REF).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-bootstatus/-/archive/$(PKG_GIT_REF)
-PKG_HASH:=e04420fea3cb5fd3c71577eb2d9d4e67a4e8662685ec1ea0762a4dca59090280
+PKG_HASH:=f0aa242c494b5e590b3ae33f89207dcfdff225d4fbd3902cf4653fc3f3086f7b
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-bootstatus-$(PKG_GIT_REF)
 PKG_MAINTAINER:=Softdel
 PKG_LICENSE:=BSD-2-Clause-Patent
@@ -40,7 +40,6 @@ define Package/$(PKG_NAME)
   DEPENDS += +libsahtrace
   DEPENDS += +libnetmodel
   DEPENDS += +amxrt
-  DEPENDS += +deviceinfo-manager
   DEPENDS += +mod-sahtrace
   MENU:=1
 endef
