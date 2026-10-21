@@ -6,10 +6,10 @@ PKG_NAME:=mod-fwi-swupdate
 PKG_VERSION:=v0.6.1
 SHORT_DESCRIPTION:=FirmwareImage upgrade for prplOS
 
-PKG_SOURCE:=mod-fwi-swupdate-v0.6.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-fwi-swupdate/-/archive/v0.6.1
-PKG_HASH:=b8b99afb3da3711a366fd2d03c7904d4b426f6369d19d84d013ff88083fa5068
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-fwi-swupdate-v0.6.1
+PKG_SOURCE:=mod-fwi-swupdate-47c69e1fb8170f23d68c1965f75fae8097672162.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-fwi-swupdate/-/archive/47c69e1fb8170f23d68c1965f75fae8097672162
+PKG_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/mod-fwi-swupdate-47c69e1fb8170f23d68c1965f75fae8097672162
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
