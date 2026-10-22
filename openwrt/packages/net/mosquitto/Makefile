@@ -13,7 +13,10 @@ PKG_VERSION:=2.0.21
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://mosquitto.org/files/source/
+PKG_SOURCE_URL:=https://mosquitto.org/files/source/ \
+	https://launchpad.net/mosquitto/2.0/$(PKG_VERSION)/+download/ \
+	https://sources.buildroot.net/mosquitto/ \
+	https://downloads.yoctoproject.org/mirror/sources/
 PKG_HASH:=7ad5e84caeb8d2bb6ed0c04614b2a7042def961af82d87f688ba33db857b899d
 
 PKG_LICENSE:=EPL-2.0
