@@ -1,0 +1,409 @@
+--- a/udpst.c
++++ b/udpst.c
+@@ -1843,6 +1843,7 @@ int proc_pstats_file(int connindex, BOOL
+         register struct connection *c = &conn[connindex];
+         time_t ttime;
+         struct timespec tspecvar;
++        int var = 0;
+         char fname[STRING_SIZE];
+ 
+         //
+@@ -1884,7 +1885,9 @@ int proc_pstats_file(int connindex, BOOL
+                 // Close and remove temp file now that access is confirmed
+                 //
+                 fclose(repo.psFilePtr);
+-                remove(fname);
++                if (remove(fname) != 0 && errno != ENOENT) {
++                        return sprintf(scratch, "REMOVE ERROR: <%.*s> %s\n", NAME_MAX, fname, strerror(errno));
++                }
+                 //
+                 // Randomize file writes to reduce I/O sync (for running alongside many instances)
+                 //
+@@ -1911,6 +1914,9 @@ int proc_pstats_file(int connindex, BOOL
+                 // Allocate JSON output buffer
+                 //
+                 repo.psBuffer  = malloc(STATS_BUFFER_SIZE);
++                if (repo.psBuffer == NULL) {
++                        return sprintf(scratch, "ERROR: Unable to allocate performance statistics buffer\n");
++                }
+                 repo.psBufSize = 0;
+                 *repo.psBuffer = '\0';
+ 
+@@ -1926,11 +1932,13 @@ int proc_pstats_file(int connindex, BOOL
+         //
+         // Rename temp file to original name and clear JSON buffer
+         //
+-        rename(fname, scratch);
++        if (rename(fname, scratch) != 0) {
++                var = sprintf(scratch, "RENAME ERROR: <%.*s> %s\n", NAME_MAX, fname, strerror(errno));
++        }
+         repo.psBufSize = 0;
+         *repo.psBuffer = '\0';
+ 
+-        return 0;
++        return var;
+ }
+ //----------------------------------------------------------------------------
+ //
+--- a/udpst_data.c
++++ b/udpst_data.c
+@@ -263,7 +263,7 @@ static void _update_send_ps(int conninde
+                         psA->qdBytes += (unsigned long long) addon;
+                         uvar--;
+                 }
+-                psA->qdBytes += (unsigned long long) (uvar * payload);
++                psA->qdBytes += (unsigned long long) uvar * payload;
+ #if defined(HAVE_SENDMMSG)
+                 psA->txBurstCount++;
+                 psA->txBurstTotal += (unsigned int) accepted;
+@@ -1252,9 +1252,9 @@ int send_statuspdu(int connindex) {
+                 psA->txStatusMsgs++;
+                 //
+                 psA->rxDatagrams += c->tiRxDatagrams;
+-                psA->rxBytes += (unsigned long long) (c->tiRxDatagrams * L3DG_OVERHEAD);
++                psA->rxBytes += (unsigned long long) c->tiRxDatagrams * L3DG_OVERHEAD;
+                 if (c->ipProtocol == IPPROTO_IPV6) {
+-                        psA->rxBytes += (unsigned long long) (c->tiRxDatagrams * IPV6_ADDSIZE);
++                        psA->rxBytes += (unsigned long long) c->tiRxDatagrams * IPV6_ADDSIZE;
+                 }
+                 psA->rxBytes += (unsigned long long) c->tiRxBytes;
+                 //
+@@ -1499,9 +1499,9 @@ int service_statuspdu(int connindex) {
+                 psA->rxStatusMsgs++;
+                 //
+                 psA->txDatagrams += c->tiRxDatagrams;
+-                psA->txBytes += (unsigned long long) (c->tiRxDatagrams * L3DG_OVERHEAD);
++                psA->txBytes += (unsigned long long) c->tiRxDatagrams * L3DG_OVERHEAD;
+                 if (c->ipProtocol == IPPROTO_IPV6) {
+-                        psA->txBytes += (unsigned long long) (c->tiRxDatagrams * IPV6_ADDSIZE);
++                        psA->txBytes += (unsigned long long) c->tiRxDatagrams * IPV6_ADDSIZE;
+                 }
+                 psA->txBytes += (unsigned long long) c->tiRxBytes;
+                 //
+@@ -2910,7 +2910,7 @@ void output_warning(int connindex, int t
+                         if (c->spduSeqErr == UINT16_MAX) {
+                                 strcpy(lcount, "OoO/Dup");
+                         } else {
+-                                var = sprintf(lcount, "%d", c->spduSeqErr);
++                                sprintf(lcount, "%d", c->spduSeqErr);
+                         }
+                         var =
+                             sprintf(scratch, "%s%s WARNING: Incoming status feedback messages lost (%s)", connid, location, lcount);
+--- a/tests/docker-compose.yml
++++ b/tests/docker-compose.yml
+@@ -4,8 +4,13 @@ services:
+     build: 
+       context: ../.
+       dockerfile: tests/Dockerfile
++    read_only: true
++    security_opt:
++      - no-new-privileges:true
+     cap_add:
+       - NET_ADMIN
++    cap_drop:
++      - ALL
+     environment: 
+       - MIN_TESTPORT=40000
+       - MAX_TESTPORT=40005
+@@ -17,8 +22,13 @@ services:
+     build: 
+       context: ../.
+       dockerfile: tests/Dockerfile
++    read_only: true
++    security_opt:
++      - no-new-privileges:true
+     cap_add:
+       - NET_ADMIN
++    cap_drop:
++      - ALL
+     environment: 
+         - MIN_TESTPORT=40000
+         - MAX_TESTPORT=40005
+--- a/udpst_control.c
++++ b/udpst_control.c
+@@ -105,6 +105,7 @@
+ #include "../udpst_control_alt1.h"
+ #endif
+ //
++#include <stddef.h>
+ #include "cJSON.h"
+ #include "udpst_common.h"
+ #include "udpst_protocol.h"
+@@ -125,8 +126,9 @@ int service_actresp(int);
+ int sock_connect(int);
+ int connected(int);
+ int open_outputfile(int);
+-void insert_auth(int, unsigned char *, unsigned char *, unsigned char *, size_t);
+-int validate_auth(int, unsigned char *, unsigned char *, unsigned char *, unsigned char *, size_t);
++static BOOL auth_timestamp(uint32_t *);
++BOOL insert_auth(int, unsigned char *, size_t, unsigned char *, size_t);
++int validate_auth(int, unsigned char *, unsigned char *, size_t, unsigned char *, size_t);
+ BOOL verify_ctrlpdu(int, struct controlHdrSR *, struct controlHdrTA *, char *, char *);
+ #ifdef __linux__
+ int kdf_hmac_sha256(char *, uint32_t, unsigned char *, unsigned char *);
+@@ -232,6 +234,7 @@ int send_setupreq(int connindex, int mcI
+         struct controlHdrSR *cHdrSR = (struct controlHdrSR *) repo.defBuffer;
+ #ifdef AUTH_KEY_ENABLE
+         char *key;
++        uint32_t auth_time;
+ #endif
+ 
+         //
+@@ -323,9 +326,14 @@ int send_setupreq(int connindex, int mcI
+                 }
+                 // Create KDF keys via shared key and timestamp (identical authUnixTime values
+                 // must be used for KDF and initial PDU to server)
+-                kdf_hmac_sha256(key, repo.systemClock.tv_sec, c->clientKey, c->serverKey);
+-                insert_auth(conf.keyId, c->clientKey, (unsigned char *) &cHdrSR->authMode, (unsigned char *) cHdrSR,
+-                            CHSR_SIZE_CVER);
++                if (!auth_timestamp(&auth_time))
++                        return -1;
++                if (!kdf_hmac_sha256(key, auth_time, c->clientKey, c->serverKey))
++                        return -1;
++                if (!insert_auth(conf.keyId, c->clientKey, offsetof(struct controlHdrSR, authMode), (unsigned char *) cHdrSR,
++                                 CHSR_SIZE_CVER)) {
++                        return -1;
++                }
+         }
+ #endif
+ #ifdef ADD_HEADER_CSUM
+@@ -422,7 +430,7 @@ int service_setupreq(int connindex) {
+         errmsg = 0;
+         pver   = (int) ntohs(cHdrSR->protocolVer);
+         if (cHdrSR->authMode == AUTHMODE_1 && (*conf.authKey != '\0' || conf.keyFile != NULL)) {
+-                i = validate_auth(pver, ckey, skey, (unsigned char *) &cHdrSR->authMode, (unsigned char *) cHdrSR,
++                i = validate_auth(pver, ckey, skey, offsetof(struct controlHdrSR, authMode), (unsigned char *) cHdrSR,
+                                   (size_t) repo.rcvDataSize);
+                 if (i > 0) {
+                         errmsg              = sprintf(scratch, "ERROR: Authentication failure of setup request from");
+@@ -523,8 +531,10 @@ int service_setupreq(int connindex) {
+                         send_proc(errConn, scratch, errmsg);
+                 }
+                 if (pver >= AUTH_ECN_PVER) {
+-                        insert_auth((int) cHdrSR->keyId, skey, (unsigned char *) &cHdrSR->authMode, (unsigned char *) cHdrSR,
+-                                    (size_t) repo.rcvDataSize);
++                        if (!insert_auth((int) cHdrSR->keyId, skey, offsetof(struct controlHdrSR, authMode), (unsigned char *) cHdrSR,
++                                         (size_t) repo.rcvDataSize)) {
++                                return 0;
++                        }
+                 }
+                 cHdrSR->checkSum = 0;
+ #ifdef ADD_HEADER_CSUM
+@@ -576,8 +586,11 @@ int service_setupreq(int connindex) {
+         cHdrSR->cmdResponse = CHSR_CRSP_ACKOK;
+         cHdrSR->testPort    = htons((uint16_t) conn[i].locPort);
+         if (pver >= AUTH_ECN_PVER) {
+-                insert_auth((int) cHdrSR->keyId, skey, (unsigned char *) &cHdrSR->authMode, (unsigned char *) cHdrSR,
+-                            (size_t) repo.rcvDataSize);
++                if (!insert_auth((int) cHdrSR->keyId, skey, offsetof(struct controlHdrSR, authMode), (unsigned char *) cHdrSR,
++                                 (size_t) repo.rcvDataSize)) {
++                        tspeccpy(&conn[i].endTime, &repo.systemClock);
++                        return 0;
++                }
+         }
+         cHdrSR->checkSum = 0;
+ #ifdef ADD_HEADER_CSUM
+@@ -607,8 +620,10 @@ int service_setupreq(int connindex) {
+                 cHdrNR->reserved1   = 0;
+                 //
+                 cHdrNR->authMode = (uint8_t) conn[i].authMode;
+-                insert_auth((int) cHdrSR->keyId, skey, (unsigned char *) &cHdrNR->authMode, (unsigned char *) cHdrNR,
+-                            CHNR_SIZE_CVER);
++                if (!insert_auth((int) cHdrSR->keyId, skey, offsetof(struct controlHdrNR, authMode), (unsigned char *) cHdrNR,
++                                 CHNR_SIZE_CVER)) {
++                        return 0;
++                }
+                 cHdrNR->checkSum = 0;
+ #ifdef ADD_HEADER_CSUM
+                 cHdrNR->checkSum = checksum(cHdrNR, CHNR_SIZE_CVER);
+@@ -648,7 +663,7 @@ int service_setupresp(int connindex) {
+         //
+         if (*conf.authKey != '\0' || conf.keyFile != NULL) {
+                 var = 0;
+-                i   = validate_auth(c->protocolVer, c->clientKey, c->serverKey, (unsigned char *) &cHdrSR->authMode,
++                i   = validate_auth(c->protocolVer, c->clientKey, c->serverKey, offsetof(struct controlHdrSR, authMode),
+                                     (unsigned char *) cHdrSR, CHSR_SIZE_CVER);
+                 if (i > 0) {
+                         var                = sprintf(scratch, "ERROR: Authentication failure of setup response from server");
+@@ -807,8 +822,11 @@ int service_setupresp(int connindex) {
+ #ifdef AUTH_KEY_ENABLE
+         if (*conf.authKey != '\0' || conf.keyFile != NULL) {
+                 cHdrTA->authMode = (uint8_t) c->authMode;
+-                insert_auth(conf.keyId, c->clientKey, (unsigned char *) &cHdrTA->authMode, (unsigned char *) cHdrTA,
+-                            CHTA_SIZE_CVER);
++                if (!insert_auth(conf.keyId, c->clientKey, offsetof(struct controlHdrTA, authMode), (unsigned char *) cHdrTA,
++                                 CHTA_SIZE_CVER)) {
++                        tspeccpy(&c->endTime, &repo.systemClock);
++                        return 0;
++                }
+         }
+ #endif
+ #ifdef ADD_HEADER_CSUM
+@@ -854,7 +872,7 @@ int service_actreq(int connindex) {
+         //
+         if (c->authMode == AUTHMODE_1 && c->protocolVer >= AUTH_ECN_PVER) {
+                 var = 0;
+-                i   = validate_auth(c->protocolVer, c->clientKey, c->serverKey, (unsigned char *) &cHdrTA->authMode,
++                i   = validate_auth(c->protocolVer, c->clientKey, c->serverKey, offsetof(struct controlHdrTA, authMode),
+                                     (unsigned char *) cHdrTA, (size_t) repo.rcvDataSize);
+                 if (i > 0) {
+                         var = sprintf(scratch, "ERROR: Authentication failure of test activation request from");
+@@ -1171,8 +1189,11 @@ int service_actreq(int connindex) {
+         // Send test activation response to client
+         //
+         if (c->protocolVer >= AUTH_ECN_PVER) {
+-                insert_auth((int) cHdrTA->keyId, c->serverKey, (unsigned char *) &cHdrTA->authMode, (unsigned char *) cHdrTA,
+-                            (size_t) repo.rcvDataSize);
++                if (!insert_auth((int) cHdrTA->keyId, c->serverKey, offsetof(struct controlHdrTA, authMode), (unsigned char *) cHdrTA,
++                                 (size_t) repo.rcvDataSize)) {
++                        tspeccpy(&c->endTime, &repo.systemClock);
++                        return 0;
++                }
+                 cHdrTA->checkSum = 0;
+ #ifdef ADD_HEADER_CSUM
+                 cHdrTA->checkSum = checksum(cHdrTA, repo.rcvDataSize);
+@@ -1253,7 +1274,7 @@ int service_actresp(int connindex) {
+         //
+         if (*conf.authKey != '\0' || conf.keyFile != NULL) {
+                 var = 0;
+-                i   = validate_auth(c->protocolVer, c->clientKey, c->serverKey, (unsigned char *) &cHdrTA->authMode,
++                i   = validate_auth(c->protocolVer, c->clientKey, c->serverKey, offsetof(struct controlHdrTA, authMode),
+                                     (unsigned char *) cHdrTA, CHTA_SIZE_CVER);
+                 if (i > 0) {
+                         var = sprintf(scratch, "ERROR: Authentication failure of test activation response from server");
+@@ -2087,16 +2108,38 @@ int open_outputfile(int connindex) {
+         return 0;
+ }
+ //----------------------------------------------------------------------------
++static BOOL auth_timestamp(uint32_t *timestamp) {
++        uintmax_t seconds = (uintmax_t) repo.systemClock.tv_sec;
++
++        if (repo.systemClock.tv_sec < 0 || seconds > UINT32_MAX) {
++                char message[] = "ERROR: Authentication timestamp outside supported 32-bit range\n";
++                send_proc(errConn, message, sizeof(message) - 1);
++                return FALSE;
++        }
++        *timestamp = (uint32_t) seconds;
++        return TRUE;
++}
++//----------------------------------------------------------------------------
+ //
+ // Insert authentication
+ //
+-void insert_auth(int keyid, unsigned char *key, unsigned char *modeptr, unsigned char *data, size_t data_len) {
+-        struct authOverlay *ao = (struct authOverlay *) (modeptr - AO_MODE_OFFSET); // Align with overlay structure
++BOOL insert_auth(int keyid, unsigned char *key, size_t mode_offset, unsigned char *data, size_t data_len) {
++        struct authOverlay overlay, *ao = &overlay;
++        size_t offset;
+ #ifdef AUTH_KEY_ENABLE
+         unsigned int uvar;
++        uint32_t auth_time;
++#endif
++        if (keyid < 0 || key == NULL || data == NULL || mode_offset < offsetof(struct authOverlay, authMode))
++                return FALSE;
++        offset = mode_offset - offsetof(struct authOverlay, authMode);
++        if (offset > data_len || sizeof(overlay) > data_len - offset)
++                return FALSE;
++        memcpy(ao, data + offset, sizeof(overlay));
++#ifdef AUTH_KEY_ENABLE
++        if (ao->authMode == AUTHMODE_1 && !auth_timestamp(&auth_time))
++                return FALSE;
+ #endif
+-        if (keyid < 0 || key == NULL || data == NULL || data_len == 0)
+-                return;
+ 
+         //
+         // Clear and fill authentication overlay
+@@ -2107,33 +2150,42 @@ void insert_auth(int keyid, unsigned cha
+         ao->reservedAuth1 = 0;
+ #ifdef AUTH_KEY_ENABLE
+         if (ao->authMode == AUTHMODE_1) {
+-                ao->authUnixTime = htonl((uint32_t) repo.systemClock.tv_sec);
++                ao->authUnixTime = htonl(auth_time);
+                 ao->keyId        = (uint8_t) keyid;
+                 ao->checkSum     = 0; // Must be cleared before HMAC calculation
+-                HMAC(EVP_sha256(), key, SHA256_KEY_LEN, data, data_len, ao->authDigest, &uvar);
++                memcpy(data + offset, ao, sizeof(overlay));
++                if (HMAC(EVP_sha256(), key, SHA256_KEY_LEN, data, data_len, ao->authDigest, &uvar) == NULL)
++                        return FALSE;
+         }
+ #endif
+-        return;
++        memcpy(data + offset, ao, sizeof(overlay));
++        return TRUE;
+ }
+ //----------------------------------------------------------------------------
+ //
+ // Validate authentication
+ // Return Values: 0 = Success, 1 = Auth. Failure, -1 = Outside Auth. Time Window
+ //
+-int validate_auth(int pver, unsigned char *ckey, unsigned char *skey, unsigned char *modeptr, unsigned char *data,
++int validate_auth(int pver, unsigned char *ckey, unsigned char *skey, size_t mode_offset, unsigned char *data,
+                   size_t data_len) {
+-        struct authOverlay *ao = (struct authOverlay *) (modeptr - AO_MODE_OFFSET); // Align with overlay structure
++        struct authOverlay overlay, *ao = &overlay;
++        size_t offset;
+         int i, var, authfail = 1;
+         char *key;
+         BOOL kdf = FALSE; // KDF keys available/provided
+         unsigned char digest1[AUTH_DIGEST_LENGTH];
+-        struct timespec tspecvar;
++        uint32_t auth_time;
++        uint64_t now, received;
+ #ifdef AUTH_KEY_ENABLE
+         unsigned int uvar;
+         unsigned char digest2[AUTH_DIGEST_LENGTH];
+ #endif
+-        if (data == NULL || data_len == 0)
++        if (data == NULL || ckey == NULL || skey == NULL || mode_offset < offsetof(struct authOverlay, authMode))
+                 return authfail;
++        offset = mode_offset - offsetof(struct authOverlay, authMode);
++        if (offset > data_len || sizeof(overlay) > data_len - offset)
++                return authfail;
++        memcpy(ao, data + offset, sizeof(overlay));
+ 
+         //
+         // Check authentication mode
+@@ -2147,6 +2199,7 @@ int validate_auth(int pver, unsigned cha
+         memcpy(digest1, ao->authDigest, AUTH_DIGEST_LENGTH);
+         memset(ao->authDigest, 0, AUTH_DIGEST_LENGTH);
+         ao->checkSum = 0; // Must be cleared before HMAC calculation
++        memcpy(data + offset, ao, sizeof(overlay));
+ 
+         //
+         // Use KDF keys if already available
+@@ -2196,8 +2249,8 @@ int validate_auth(int pver, unsigned cha
+                                 var = strlen(key);
+                         }
+ #ifdef AUTH_KEY_ENABLE
+-                        HMAC(EVP_sha256(), key, var, data, data_len, digest2, &uvar);
+-                        if (memcmp(digest1, digest2, AUTH_DIGEST_LENGTH) == 0) {
++                        if (HMAC(EVP_sha256(), key, var, data, data_len, digest2, &uvar) != NULL &&
++                            memcmp(digest1, digest2, AUTH_DIGEST_LENGTH) == 0) {
+                                 authfail = 0;
+                                 break;
+                         }
+@@ -2218,9 +2271,11 @@ int validate_auth(int pver, unsigned cha
+         // Check authentication time window if validation was successful
+         //
+         if (authfail == 0 && AUTH_ENFORCE_TIME) {
+-                tspecvar.tv_sec = (time_t) ntohl(ao->authUnixTime);
+-                if (tspecvar.tv_sec < repo.systemClock.tv_sec - AUTH_TIME_WINDOW ||
+-                    tspecvar.tv_sec > repo.systemClock.tv_sec + AUTH_TIME_WINDOW) {
++                if (!auth_timestamp(&auth_time))
++                        return -1;
++                now      = auth_time;
++                received = ntohl(ao->authUnixTime);
++                if ((now > received ? now - received : received - now) > AUTH_TIME_WINDOW) {
+                         authfail = -1;
+                 }
+         }
+@@ -2249,7 +2304,7 @@ BOOL verify_ctrlpdu(int connindex, struc
+                         pver    = (int) ntohs(cHdrSR->protocolVer);
+                 } else {
+                         // Test activation request/response
+-                        minsize = CHTA_SIZE_MVER;
++                        minsize = (c->protocolVer >= AUTH_ECN_PVER) ? CHTA_SIZE_CVER : CHTA_SIZE_MVER;
+                         maxsize = CHTA_SIZE_CVER;
+                         pver    = c->protocolVer;
+                 }
