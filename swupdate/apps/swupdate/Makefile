@@ -45,7 +45,9 @@ endif
              +OPENSOURCE_SWUPDATE_EXT_FILESYSTEM:libext2fs \
              +OPENSOURCE_SWUPDATE_EXT_FILESYSTEM:libuuid \
              +OPENSOURCE_SWUPDATE_EXT_FILESYSTEM:libcomerr \
-             +OPENSOURCE_SWUPDATE_DISKPART_HANDLER:libfdisk
+             +OPENSOURCE_SWUPDATE_DISKPART_HANDLER:libfdisk \
+             +OPENSOURCE_SWUPDATE_DISKPART_HANDLER:libblkid \
+             +OPENSOURCE_SWUPDATE_DISKFORMAT_HANDLER:libblkid
   MENU:=1
 endef
 
@@ -74,6 +76,17 @@ TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include/lua5.3
 TARGET_LDFLAGS += -L$(STAGING_DIR)/usr/lib -llua5.3
 ifneq ($(CONFIG_OPENSOURCE_SWUPDATE_EXT_FILESYSTEM),)
 TARGET_LDFLAGS += -lcom_err
+endif
+
+# fs/diskformat.o (pulled in by DISKPART_FORMAT and by the diskformat
+# handler) needs blkid. It must go to the final link only: the swupdate
+# subdirectory ld -r steps reject the shared libblkid archive.
+SWUPDATE_LDLIBS:=
+ifneq ($(CONFIG_OPENSOURCE_SWUPDATE_DISKPART_HANDLER),)
+SWUPDATE_LDLIBS += blkid
+endif
+ifneq ($(CONFIG_OPENSOURCE_SWUPDATE_DISKFORMAT_HANDLER),)
+SWUPDATE_LDLIBS += blkid
 endif
 
 # filter out ssp config to enforce strack-protector-all
@@ -156,6 +169,7 @@ ifeq ($(CONFIG_SWUPDATE_MTD),)
 endif	
 	$(call KCONFIG_SET_OPT,CONFIG_EXTRA_CFLAGS,"$(EXTRA_CFLAGS)",$(PKG_BUILD_DIR)/.config)
 	$(call KCONFIG_SET_OPT,CONFIG_EXTRA_LDFLAGS,"$(EXTRA_LDFLAGS) -L$(PKG_BUILD_DIR)/lib",$(PKG_BUILD_DIR)/.config)
+	$(call KCONFIG_SET_OPT,CONFIG_EXTRA_LDLIBS,"$(SWUPDATE_LDLIBS)",$(PKG_BUILD_DIR)/.config)
 	$(call KCONFIG_SET_OPT,CONFIG_HW_COMPATIBILITY_FILE,$(CONFIG_OPENSOURCE_SWUPDATE_HWREVISION),$(PKG_BUILD_DIR)/.config)
 	$(call KCONFIG_SET_OPT,CONFIG_SW_VERSIONS_FILE,$(CONFIG_OPENSOURCE_SWUPDATE_SWVERSIONS),$(PKG_BUILD_DIR)/.config)
 ifneq ($(CONFIG_OPENSOURCE_SWUPDATE_UBOOT),)
