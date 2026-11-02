@@ -8,7 +8,7 @@ SHORT_DESCRIPTION:=periodic uploaded file manager
 
 PKG_SOURCE:=tr181-periodicfileupload-v0.11.1.tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-periodicfileupload/-/archive/v0.11.1
-PKG_HASH:=ede0cbac997e8c3ef2cc43a2b18a5287d6ae32b193ef98592eddb714f6fcc853
+PKG_HASH:=c74e6d92a57f229dc8bbd1c044651a0b716174cbe7ed74646ab51f0c236c8b16
 PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-periodicfileupload-v0.11.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
