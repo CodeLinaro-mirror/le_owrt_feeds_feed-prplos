@@ -10,7 +10,11 @@ restart() {
 }
 
 start_service() {
+        if [ -f "/tmp/apparmor.ready" ];then
+            rm /tmp/apparmor.ready
+        fi
 	apparmor_start
+        touch /tmp/apparmor.ready
 }
 
 stop_service() {
