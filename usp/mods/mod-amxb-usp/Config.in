@@ -19,6 +19,10 @@ config SAH_MOD_AMXB_USP_REQUIRES_DEVICE_PREFIX
     bool "System wide default value for requires-device-prefix, which can be overwritten at odl level"
     default n
 
+config SAH_MOD_AMXB_USP_REGISTER_RETRY
+    bool "System wide default value for register-retry, which can be overwritten at odl level"
+    default n
+
 endmenu
 
 endif
