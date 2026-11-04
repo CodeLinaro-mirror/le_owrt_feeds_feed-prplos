@@ -1,8 +1,12 @@
+---
+ src/vendor/vendor_defs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 diff --git a/src/vendor/vendor_defs.h b/src/vendor/vendor_defs.h
-index 28778c5..b027c15 100755
+index 0ca13be5dc31..bec222afd88b 100755
 --- a/src/vendor/vendor_defs.h
 +++ b/src/vendor/vendor_defs.h
-@@ -96,7 +96,7 @@
+@@ -102,7 +102,7 @@
  
  // Location of the database file to use, if none is specified on the command line when invoking this executable
  // NOTE: As the database needs to be stored persistently, this should be changed to a directory which is not cleared on boot up
@@ -11,4 +15,3 @@ index 28778c5..b027c15 100755
  
  // Location of unix domain stream file used for CLI communication between client and server
  #define CLI_UNIX_DOMAIN_FILE                "/tmp/usp_cli"
-

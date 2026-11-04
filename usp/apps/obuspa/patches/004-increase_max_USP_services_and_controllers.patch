@@ -8,14 +8,14 @@ Subject: [PATCH] patch 4
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/vendor/vendor_defs.h b/src/vendor/vendor_defs.h
-index e48b2d9..b7d3fbf 100755
+index 0e3161369e87..0ca13be5dc31 100755
 --- a/src/vendor/vendor_defs.h
 +++ b/src/vendor/vendor_defs.h
 @@ -59,11 +59,11 @@
  #define MAX_COMPOUND_KEY_PARAMS 4   // Maximum number of parameters in a compound unique key
  #define MAX_SEARCH_KEYS 10          // Maximum number of parameters in a search expression
  
--#define MAX_CONTROLLERS 5           // Maximum number of controllers which may be present in the DB (Device.LocalAgent.Controller.{i})
+-#define MAX_CONTROLLERS 10           // Maximum number of controllers which may be present in the DB (Device.LocalAgent.Controller.{i})
 +#define MAX_CONTROLLERS 100         // Maximum number of controllers which may be present in the DB (Device.LocalAgent.Controller.{i})
  #define MAX_CONTROLLER_MTPS 3       // Maximum number of MTPs that a controller may have in the DB (Device.LocalAgent.Controller.{i}.MTP.{i})
  #define MAX_AGENT_MTPS (MAX_CONTROLLERS)  // Maximum number of MTPs that an agent may have in the DB (Device.LocalAgent.MTP.{i})
@@ -25,6 +25,3 @@ index e48b2d9..b7d3fbf 100755
  #define MAX_UDS_SERVERS 4           // Maximum number of UDS sockets that an agent may have in the DB (Device.UnixDomainSockets.UnixDomainSocket.{i})
  
  #define MAX_COAP_CONNECTIONS (MAX_CONTROLLERS)  // Maximum number of CoAP connections that an agent may have in the DB (Device.LocalAgent.Controller.{i}.MTP.{i}.CoAP)
--- 
-2.7.4
-

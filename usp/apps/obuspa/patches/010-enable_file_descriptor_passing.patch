@@ -8,10 +8,10 @@ Subject: [PATCH] enable_file_descriptor_passing
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/vendor/vendor_defs.h b/src/vendor/vendor_defs.h
-index 7b8f140..f98b511 100644
+index a111f5571ca8..d6b041943cb6 100755
 --- a/src/vendor/vendor_defs.h
 +++ b/src/vendor/vendor_defs.h
-@@ -241,7 +241,7 @@
+@@ -247,7 +247,7 @@
  //-----------------------------------------------------------------------------------------
  // Uncomment the following define to include file descriptor passing via the UDS MTP
  // This is experimental as it doesn't match the USP Specification for the feature being discussed
@@ -20,6 +20,3 @@ index 7b8f140..f98b511 100644
  
  //-----------------------------------------------------------------------------------------
  // Instance numbers of roles in Device.LocalAgent.Controller.Role.{i}
--- 
-2.34.1
-
