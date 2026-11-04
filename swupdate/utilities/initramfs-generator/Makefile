@@ -24,7 +24,7 @@ define Package/$(PKG_NAME)
   TITLE:=$(SHORT_DESCRIPTION)
   URL:=https://gitlab.com/prpl-foundation/components/utilities/initramfs-generator.git
   DEPENDS += +INITRAMFS_GENERATOR_ROOTFS_FIT:dtc
-  DEPENDS += +INITRAMFS_GENERATOR_ROOTFS_SIG_PRELOAD:libopenssl
+  DEPENDS += +openssl-util
   DEPENDS += +kmod-dm
   DEPENDS += +blkid
   DEPENDS += +lvm2
