@@ -7,11 +7,15 @@ acquired and Device.DeviceInfo datamodel have been registered with OB-USP-A.
 
 Signed-off-by: Sandesh Mahale <sandesh.mahale@vantiva.com>
 
+---
+ src/vendor/vendor.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+
 diff --git a/src/vendor/vendor.c b/src/vendor/vendor.c
-index b205faf..1ffba87 100644
+index 1197e8d76cc6..594ff97a5213 100644
 --- a/src/vendor/vendor.c
 +++ b/src/vendor/vendor.c
-@@ -42,12 +42,54 @@
+@@ -43,12 +43,54 @@
  #include <stdio.h>
  #include <stdlib.h>
  #include <stdbool.h>
@@ -66,7 +70,7 @@ index b205faf..1ffba87 100644
  /*********************************************************************//**
  **
  ** VENDOR_Init
-@@ -61,6 +103,10 @@
+@@ -62,6 +104,10 @@
  **************************************************************************/
  int VENDOR_Init(void)
  {

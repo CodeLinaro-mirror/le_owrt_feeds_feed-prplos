@@ -6,15 +6,12 @@ Subject: [PATCH] Increase MAX_COMPOUND_KEY_PARAMS
 ---
  src/vendor/vendor_defs.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
- mode change 100644 => 100755 src/vendor/vendor_defs.h
 
 diff --git a/src/vendor/vendor_defs.h b/src/vendor/vendor_defs.h
-old mode 100644
-new mode 100755
-index 97bcc52..2de5345
+index bec222afd88b..b2b0e3be3cf7 100755
 --- a/src/vendor/vendor_defs.h
 +++ b/src/vendor/vendor_defs.h
-@@ -55,7 +55,7 @@
+@@ -56,7 +56,7 @@
  #define MAX_ENDPOINT_ID_LEN (256)   // Maximum number of characters in an Endpoint ID
  #define MAX_MSG_ID_LEN (256)        // Maximum number of characters in a USP message ID allocated by this Agent
  #define MAX_PATH_SEGMENTS (32)      // Maximum number of segments (eg "Device, "LocalAgent") in a path. Does not include instance numbers.
@@ -22,7 +19,4 @@ index 97bcc52..2de5345
 +#define MAX_COMPOUND_KEY_PARAMS 8   // Maximum number of parameters in a compound unique key
  #define MAX_SEARCH_KEYS 10          // Maximum number of parameters in a search expression
  
- #define MAX_CONTROLLERS 5           // Maximum number of controllers which may be present in the DB (Device.LocalAgent.Controller.{i})
--- 
-2.7.4
-
+ #define MAX_CONTROLLERS 100         // Maximum number of controllers which may be present in the DB (Device.LocalAgent.Controller.{i})

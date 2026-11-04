@@ -8,10 +8,10 @@ Subject: [PATCH] patch 2
  1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/src/vendor/vendor_defs.h b/src/vendor/vendor_defs.h
-index b3692fe..e48b2d9 100755
+index 37d287d8914c..0e3161369e87 100755
 --- a/src/vendor/vendor_defs.h
 +++ b/src/vendor/vendor_defs.h
-@@ -137,17 +137,17 @@
+@@ -139,17 +139,17 @@
  
  //-----------------------------------------------------------------------------------------
  // Uncomment the following to remove code and features from the standard build
@@ -36,6 +36,3 @@ index b3692fe..e48b2d9 100755
  #define REMOVE_IP_CAPACITY_DIAG          // Removes Device.IP.Diagnostics.IPLayerCapacity() from the core data model
  
  //#define DONT_SORT_GET_INSTANCES          // Disables the sorting of data model paths returned in a GetInstancesResponse. Useful for slow devices supporting large data models.
--- 
-2.7.4
-

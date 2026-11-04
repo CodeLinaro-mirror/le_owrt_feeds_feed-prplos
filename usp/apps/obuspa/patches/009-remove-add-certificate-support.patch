@@ -8,10 +8,10 @@ Subject: [PATCH] remove add certificate support
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/vendor/vendor_defs.h b/src/vendor/vendor_defs.h
-index ae5a13c..4c663ad 100755
+index b2b0e3be3cf7..a111f5571ca8 100755
 --- a/src/vendor/vendor_defs.h
 +++ b/src/vendor/vendor_defs.h
-@@ -269,7 +269,7 @@
+@@ -288,7 +288,7 @@
  
  //-----------------------------------------------------------------------------------------
  // Comment out the following line to remove the AddCertificate() and Delete() certificate support
@@ -20,6 +20,3 @@ index ae5a13c..4c663ad 100755
  
  // Location of directory used to store trust store certificates which are capable of being added/deleted by a USP Controller
  // NOTE: As the certs need to be stored persistently, this should be changed to a directory which is not cleared on boot up
--- 
-2.7.4
-
