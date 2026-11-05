@@ -2,12 +2,13 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=initramfs-generator
 
-PKG_VERSION:=v0.0.0
+PKG_VERSION:=dev_main_experimentation_FEAT-360
 SHORT_DESCRIPTION:=Provide tools to build a pivoting initramfs
 
-PKG_SOURCE:=initramfs-generator-v0.0.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/initramfs-generator/-/archive/v0.0.0
-PKG_HASH:=441facdf3274a7ef6df1a4028d310804188c1c77fe59911a51b58122db9b9e07
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_main_experimentation_FEAT-360
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/utilities/initramfs-generator.git
+PKG_MIRROR_HASH:=c83677cf53f274467e298597fc08a038b859038a3c46abcbbce6ea95af2a1fb2
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
