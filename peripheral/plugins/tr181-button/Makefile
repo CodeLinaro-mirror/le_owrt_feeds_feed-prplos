@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-button
-PKG_VERSION:=v0.10.0
+PKG_VERSION:=dev_PPM-4344
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-button-v0.10.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-button/-/archive/v0.10.0
-PKG_HASH:=c668e2414ffaa8029f7c3ee8a32dc5b28966179a61cf342daa5d7830d54c2e17
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-button-v0.10.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=68c432f7824bbed9e0967225142e54b4c57d1ba8
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-button.git
+PKG_MIRROR_HASH:=9929d4f9886bac4b9ac73b26129268ff9f0da3537b8176c656fff6ddebb16cb5
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
