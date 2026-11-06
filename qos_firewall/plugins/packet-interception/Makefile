@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=packet-interception
-PKG_VERSION:=v0.11.0
+PKG_VERSION:=v0.11.1
 SHORT_DESCRIPTION:=Packet Interception component
 
-PKG_SOURCE:=packet-interception-v0.11.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/packet-interception/-/archive/v0.11.0
-PKG_HASH:=85a71d6450b89809560288d7ffcbbefd44132742a7416b49a65428ccded65da9
-PKG_BUILD_DIR:=$(BUILD_DIR)/packet-interception-v0.11.0
+PKG_SOURCE:=packet-interception-v0.11.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/packet-interception/-/archive/v0.11.1
+PKG_HASH:=1e1d9c73f6cab1d7d1e43445e56f6b234cacb8b0cf42dcc78881511f14e0893e
+PKG_BUILD_DIR:=$(BUILD_DIR)/packet-interception-v0.11.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
