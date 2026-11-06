@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libimtp
-PKG_VERSION:=v2.7.0
+PKG_VERSION:=v2.7.1
 SHORT_DESCRIPTION:=connects two USP endpoints over Unix domain socket
 
-PKG_SOURCE:=libimtp-v2.7.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libimtp/-/archive/v2.7.0
-PKG_HASH:=461809767a84fb71445edcac6c804ee83401509afe28bb9dd3b71e9c7b2d5f06
-PKG_BUILD_DIR:=$(BUILD_DIR)/libimtp-v2.7.0
+PKG_SOURCE:=libimtp-v2.7.1.tar.gz
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libimtp/-/archive/v2.7.1
+PKG_HASH:=8908572434bf0f7a3b6a2a3a9e739c6e57fc1df75d41fbff76a7f47fe3281425
+PKG_BUILD_DIR:=$(BUILD_DIR)/libimtp-v2.7.1
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
