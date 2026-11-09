@@ -1,0 +1,58 @@
+config PACKAGE_tr181-zram
+    tristate
+    select SAH_AMX_TR181_ZRAM
+
+if PACKAGE_tr181-zram
+
+menu "Select tr181-zram build options"
+    depends on PACKAGE_tr181-zram
+
+config SAH_AMX_TR181_ZRAM
+    bool "Build the tr181 swap and ZRAM plugin"
+    default y
+    select BUSYBOX_CONFIG_MKSWAP
+
+config SAH_AMX_TR181_ZRAM_ORDER
+    int "Start up order for the tr181 ZRAM plugin"
+    default 13
+	help
+	  Must be after sysctl (11), whose vm.swappiness the plugin overrides,
+	  and is after tr181-syslog (12). The init script waits for syslog-ng
+	  (syslog-ng-ctl, at most 60 s) before it starts the plugin.
+
+choice
+    prompt "Default ZRAM compression algorithm"
+    default SAH_AMX_TR181_ZRAM_DEF_COMP_LZ4
+	help
+	  CompressionAlgorithm of new Swap.ZRAM instances; the matching kernel
+	  module is installed with the plugin.
+	  LZ4: low CPU cost. ZSTD: best ratio, for memory-constrained devices.
+
+config SAH_AMX_TR181_ZRAM_DEF_COMP_LZ4
+    bool "LZ4"
+
+config SAH_AMX_TR181_ZRAM_DEF_COMP_ZSTD
+    bool "ZSTD"
+
+config SAH_AMX_TR181_ZRAM_DEF_COMP_KERNEL
+    bool "Kernel default (lzo-rle), no extra module"
+
+endchoice
+
+config SAH_AMX_TR181_ZRAM_KMOD_LZ4
+    bool "Install the LZ4 kernel module"
+    default y
+	help
+	  Makes LZ4 available to Swap.ZRAM.{i}.CompressionAlgorithm whatever
+	  the default algorithm, so that it can be switched in the field.
+
+config SAH_AMX_TR181_ZRAM_KMOD_ZSTD
+    bool "Install the ZSTD kernel module"
+    default y
+	help
+	  Makes ZSTD available to Swap.ZRAM.{i}.CompressionAlgorithm whatever
+	  the default algorithm, so that it can be switched in the field.
+
+endmenu
+
+endif
