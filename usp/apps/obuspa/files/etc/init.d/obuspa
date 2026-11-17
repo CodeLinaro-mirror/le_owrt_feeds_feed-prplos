@@ -12,9 +12,9 @@ SQL_DB_FILE="/etc/obuspa.db"
 
 # Points to CA Bundle data model entry relevant for USP communication
 CA_BUNDLE="Security.CABundle.test"
-# Points to device private key and certificate data model entry relevant for USP communication
-# For non-mTLS communication shall be empty.
-DEVICE_KEY_CERT="Security.Certificate.2"
+# Resolve the device certificate by its stable URI, independent of table instance numbering.
+# For non-mTLS communication, leave this empty.
+DEVICE_KEY_CERT="Security.Certificate.[CertificateURI=='file:///etc/config/autocert/cpe.crt']"
 
 get_ca_bundle_file_path() {
 	local BUNDLE_URI=$(ba-cli -l "${1}.CAFile()" | grep "CAFile = " | cut -d '"' -f2)
@@ -55,15 +55,23 @@ get_wait_ca_bundle()
 
 register_service()
 {
+	CA_FILE=$(get_wait_ca_bundle "$CA_BUNDLE")
+	CERTIFICATE_URI=""
+	PRIVATE_KEY_URI=""
+	if [ -n "$DEVICE_KEY_CERT" ]; then
+		CERTIFICATE_URI=$(get_certificate_path "$DEVICE_KEY_CERT")
+		PRIVATE_KEY_URI=$(get_private_key_uri "$DEVICE_KEY_CERT")
+		if [ -z "$CERTIFICATE_URI" ] || [ -z "$PRIVATE_KEY_URI" ]; then
+			logger -t obuspa "Configured device certificate did not provide both certificate and private key URIs"
+			return 1
+		fi
+	fi
+
 	procd_open_instance ${CONFIGURATION}
 	procd_set_param command ${PROG}
 
 	procd_set_param stdout 1
 	procd_set_param stderr 1
-
-	CA_FILE=$(get_wait_ca_bundle $CA_BUNDLE)
-	CERTIFICATE_URI=$(get_certificate_path ${DEVICE_KEY_CERT})
-	PRIVATE_KEY_URI=$(get_private_key_uri ${DEVICE_KEY_CERT})
 
 	# echo "CA_FILE=${CA_FILE}"
 	# echo "CERTIFICATE_URI=${CERTIFICATE_URI}"
