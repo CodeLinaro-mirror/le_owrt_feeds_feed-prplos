@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libtr69-engine
-PKG_VERSION:=v0.17.0
+PKG_VERSION:=HOP-13582-inform-failure-counter-leak
 SHORT_DESCRIPTION:=libraries to define and implement the ACS RPCs methods and data parser
 
-PKG_SOURCE:=libtr69-engine-v0.17.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine/-/archive/v0.17.0
-PKG_HASH:=5b72fbdf0d3bbbb551e9fd49d9d5cbc15401eca01b91475dc2f7ec4da2364e31
-PKG_BUILD_DIR:=$(BUILD_DIR)/libtr69-engine-v0.17.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=HOP-13582-inform-failure-counter-leak
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/libraries/libtr69-engine.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
