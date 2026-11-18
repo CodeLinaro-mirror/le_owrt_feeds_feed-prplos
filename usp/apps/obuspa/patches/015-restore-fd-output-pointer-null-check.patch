@@ -1,0 +1,47 @@
+From: Petr Štetiar <petr.stetiar@prplfoundation.org>
+Date: Wed, 04 Nov 2026 07:58:00 +0000
+Subject: [PATCH] dm_exec: restore the FD output pointer NULL check
+
+The broker copies the descriptor key and resource-limit flag from a
+synchronous UDS response to optional output parameters. Since v11.0.4,
+IsMatchingMsgId() compares the bool pointer fd_res_exceeded with true
+instead of checking whether the caller supplied it. Ordinary output
+addresses do not equal 1, so neither metadata field reaches the caller.
+
+```text
+src/core/dm_exec.c:2641:45: warning: comparison between pointer and integer
+```
+
+Restore the NULL check so both fields are copied when their output
+pointers are provided. The flag's value must not decide whether its
+output pointer is valid.
+
+With file descriptor passing enabled, the native response probe supplies
+key 42 and an exceeded flag of true. Before this change both outputs
+stay at their initial zero values. With the NULL check they return 42
+and true, and the pointer-comparison warning is gone.
+
+References: PCF-2859, PCF-2860
+Upstream-Status: Submitted [https://bitbucket.org/broadband-forum/obuspa/pull-requests/340]
+Assisted-by: codex:gpt-6.1-sol:high
+Fixes: acb8eabeb970 ("2026-06-05 v11.0.4: USP_ENDPOINT_ID environment variable")
+Signed-off-by: Petr Štetiar <petr.stetiar@prplfoundation.org>
+
+---
+ src/core/dm_exec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/core/dm_exec.c b/src/core/dm_exec.c
+index 9c00d0aaf7a0..4d840b468ea7 100644
+--- a/src/core/dm_exec.c
++++ b/src/core/dm_exec.c
+@@ -2638,7 +2638,7 @@ Usp__Msg *IsMatchingMsgId(dm_exec_msg_t *msg, char *msg_id, char *responder, Usp
+ 
+ #ifdef FD_PASSING_EXPERIMENTAL
+     // If source of message is UDS protocol - extract file descriptors key
+-    if ((fd_key != NULL) && (fd_res_exceeded==true) && (pur->mtp_conn.protocol == kMtpProtocol_UDS))
++    if ((fd_key != NULL) && (fd_res_exceeded != NULL) && (pur->mtp_conn.protocol == kMtpProtocol_UDS))
+     {
+         (*fd_key) = pur->mtp_conn.uds.fd_key;
+         (*fd_res_exceeded) = pur->mtp_conn.uds.fd_res_exceeded;
+--
