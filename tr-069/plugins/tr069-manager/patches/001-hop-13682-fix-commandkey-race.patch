@@ -1,0 +1,36 @@
+--- a/src/dmdeviceadapter/amx/adapter/DM_AmxReset.c
++++ b/src/dmdeviceadapter/amx/adapter/DM_AmxReset.c
+@@ -53,6 +53,7 @@
+ ****************************************************************************/
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <unistd.h>
+ 
+ #include <debug/sahtrace.h>
+ #include <string.h>
+@@ -64,6 +65,9 @@
+ #define REBOOT "Reboot"
+ #define FACTORY_RESET "FactoryReset"
+
++// HOP-13682: Small delay to allow async ODL save to complete before reboot
++#define REBOOT_DELAY_MS 500
++
+ //---------------------------------------------------------------------------------------------
+ /**
+  * @addtogroup sah_cwmp_amxdeviceadapter
+@@ -89,6 +93,15 @@
+     amxc_var_add_key(cstring_t, &args, "Cause", "RemoteReboot");
+     amxc_var_add_key(cstring_t, &args, "Reason", "Initiated by TR-069");
+
++    // HOP-13682: Delay before reboot to ensure persistent data is saved
++    // This fixes a race condition where RebootCommandKey was not persisted
++    // when multiple reboots occur in quick succession. The ODL save happens
++    // asynchronously, so we sync filesystem buffers and add a delay to allow
++    // the save operation to complete before triggering the actual reboot.
++    SAH_TRACEZ_INFO("DM_DA", "Syncing and delaying before reboot");
++    sync();  // Flush filesystem buffers
++    usleep(REBOOT_DELAY_MS * 1000);  // Wait for async save to complete
++
+     rv = amxb_call(amx->bus_ctx, OBJNAME, REBOOT, &args, NULL, 5);
+     if(rv != 0) {
+         SAH_TRACEZ_ERROR("DM_DA", "Invoke failed Device.Reboot - retval = %d", rv);
