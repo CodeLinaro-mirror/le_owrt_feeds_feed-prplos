@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mod-deepstandby-dummy
-PKG_VERSION:=v0.1.0
+PKG_VERSION:=dev_PPW-2677
 SHORT_DESCRIPTION:=A dummy vendor module to simulate the deep standby mode, for testing purposes
 
-PKG_SOURCE:=mod-deepstandby-dummy-v0.1.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-deepstandby-dummy/-/archive/v0.1.0
-PKG_HASH:=e80470052a817a9641a6ffacd73e4028f8317de15f675583a274bfd09a0e851b
-PKG_BUILD_DIR:=$(BUILD_DIR)/mod-deepstandby-dummy-v0.1.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PPW-2677
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/modules/mod-deepstandby-dummy.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
