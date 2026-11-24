@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tr181-ipsec
-PKG_VERSION:=v0.7.0
+PKG_VERSION:=dev_PPW-2395
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-ipsec-v0.7.0.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ipsec/-/archive/v0.7.0
-PKG_HASH:=0cc1d6f477c87bf69db131f39ca96e37e1cca3c8c68f5601d42da55ea7ff4e9a
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-ipsec-v0.7.0
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_PPW-2395
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-ipsec.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
