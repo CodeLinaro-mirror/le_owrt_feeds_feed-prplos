@@ -3,13 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dhcpv4-manager
-PKG_VERSION:=v2.36.1
+PKG_VERSION:=dev_feat-494-PPW-2161
 SHORT_DESCRIPTION:=Implementation of Device
 
-PKG_SOURCE:=tr181-dhcpv4-v2.36.1.tar.gz
-PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4/-/archive/v2.36.1
-PKG_HASH:=6f3ddd61390103955593236a063d4aadf7c36e2473957f3bb08e9e564fb68dca
-PKG_BUILD_DIR:=$(BUILD_DIR)/tr181-dhcpv4-v2.36.1
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=dev_feat-494-PPW-2161
+PKG_SOURCE_URL:=https://gitlab.com/prpl-foundation/components/core/plugins/tr181-dhcpv4.git
+PKG_MIRROR_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=Soft At Home <support.opensource@softathome.com>
 PKG_LICENSE:=BSD-2-Clause-Patent
 PKG_LICENSE_FILES:=LICENSE
@@ -17,6 +18,7 @@ PKG_LICENSE_FILES:=LICENSE
 COMPONENT:=dhcpv4-manager
 
 PKG_RELEASE:=1
+PKG_BUILD_DEPENDS += libipat
 
 define SAHInit/Install
 	install -d $(1)/etc/rc.d/
