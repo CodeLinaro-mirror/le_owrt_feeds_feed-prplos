@@ -56,6 +56,24 @@ define Package/ppp-prpl/conffiles
 /etc/ppp/options
 endef
 
+define Package/ppp-mod-pppol2tp-prpl
+  SECTION:=net
+  CATEGORY:=Network
+  URL:=https://ppp.samba.org/
+  DEPENDS:=@PACKAGE_ppp-prpl +kmod-pppol2tp
+  TITLE:=PPPoL2TP plugin
+endef
+
+define Package/ppp-mod-pppol2tp-prpl/description
+This package contains a PPPoL2TP (PPP over L2TP) plugin for ppp.
+endef
+
+define Package/ppp-mod-pppol2tp-prpl/install
+	$(INSTALL_DIR) $(1)/usr/lib/pppd/$(PKG_RELEASE_VERSION)
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/lib/pppd/$(PKG_RELEASE_VERSION)/pppol2tp.so \
+		$(1)/usr/lib/pppd/$(PKG_RELEASE_VERSION)/
+endef
+
 define Build/Configure
 $(call Build/Configure/Default,, \
 	UNAME_S="Linux" \
@@ -109,3 +127,4 @@ define Package/ppp-prpl/install
 endef
 
 $(eval $(call BuildPackage,ppp-prpl))
+$(eval $(call BuildPackage,ppp-mod-pppol2tp-prpl))
