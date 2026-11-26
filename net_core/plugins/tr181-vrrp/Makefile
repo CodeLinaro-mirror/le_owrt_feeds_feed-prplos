@@ -31,6 +31,8 @@ CMAKE_INSTALL:=1
 CMAKE_OPTIONS += \
 	-DSTART_ORDER=23 \
 	-DSTOP_ORDER=88 \
+	-DTR181_VRRP_RUN_AS_USER=tr181_vrrp \
+	-DTR181_VRRP_RUN_AS_GROUP=acl \
 	-DINSTALL_ACTION_SCRIPT_WIFI=$(if $(and $(filter y,$(CONFIG_TR181_VRRP_INSTALL_ACTION_SCRIPT_WIFI)),$(filter y,$(CONFIG_PACKAGE_prplmesh-process-manager))),ON,OFF) \
 	-DINSTALL_ACTION_SCRIPT_LAN6=$(if $(and $(filter y,$(CONFIG_TR181_VRRP_INSTALL_ACTION_SCRIPT_LAN6)),$(filter y,$(CONFIG_PACKAGE_ip-manager)),$(filter y,$(CONFIG_PACKAGE_tr181-routeradvertisement)),$(filter y,$(CONFIG_PACKAGE_dhcpv6s-manager))),ON,OFF) \
 
@@ -50,6 +52,8 @@ define Package/$(PKG_NAME)
   DEPENDS += +libsahtrace
   DEPENDS += +libnetmodel
   DEPENDS += +mod-dmext
+  DEPENDS += +tr181-usermanagement
+  DEPENDS += +acl-manager
   DEPENDS += +TR181_VRRP_INSTALL_ACTION_SCRIPT_WIFI:amx-cli
   DEPENDS += +TR181_VRRP_INSTALL_ACTION_SCRIPT_LAN6:amx-cli
   DEPENDS += +TR181_VRRP_INSTALL_ACTION_SCRIPT_LAN6:jsonfilter
